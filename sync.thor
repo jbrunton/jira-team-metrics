@@ -1,5 +1,6 @@
 require 'jira-ruby'
 require 'byebug'
+require 'yaml/store'
 
 class Sync < Thor
   desc "example", "an example task"
@@ -11,9 +12,12 @@ class Sync < Thor
   def boards
     puts "Sync boards"
     client = build_client
-    rapid_views = client.RapidView.all
-    rapid_views.each do |rapid_view|
-      puts "#{rapid_view.name} (#{rapid_view.id})"
+    rapid_views = client.RapidView.all.map do |rapid_view|
+      [rapid_view.id, rapid_view.name]
+    end.to_h
+    boards_store.transaction do
+      boards_store['boards'] = rapid_views
+      boards_store['last_updated'] = Time.now
     end
   end
 
@@ -42,5 +46,9 @@ class Sync < Thor
     puts
 
     { username: username, password: password }
+  end
+
+  def boards_store
+    @store ||= YAML::Store.new('boards.yml')
   end
 end
