@@ -9,17 +9,28 @@ class Sync < Thor
   end
 
   desc "boards", "sync list of boards"
+  method_option :status, :aliases => "-s", :desc => "Sync status"
   def boards
-    puts "Sync boards"
-    client = build_client
-    rapid_views = client.RapidView.all.map do |rapid_view|
-      [rapid_view.id, rapid_view.name]
-    end.to_h
-    boards_store.transaction do
-      boards_store['boards'] = rapid_views
-      boards_store['last_updated'] = Time.now
+    status = options[:status]
+    if status
+      boards_store.transaction do
+        last_updated = boards_store['last_updated'] || "Never"
+        puts "Last updated: #{last_updated}"
+      end
+    else
+      client = build_client
+      rapid_views = client.RapidView.all.map do |rapid_view|
+        [rapid_view.id, rapid_view.name]
+      end.to_h
+      boards_store.transaction do
+        boards_store['boards'] = rapid_views
+        boards_store['last_updated'] = Time.now
+      end
+      puts "Synced #{rapid_views.count} boards"
     end
   end
+
+private
 
   def build_client
     credentials = prompt_for_credentials
