@@ -50,6 +50,6 @@ class Boards < Thor
 private
 
   def boards_store
-    @store ||= YAML::Store.new('boards.yml')
+    @store ||= YAML::Store.new('data/boards.yml')
   end
 end
