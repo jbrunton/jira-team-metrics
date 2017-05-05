@@ -2,15 +2,10 @@ require 'jira-ruby'
 require 'byebug'
 require 'yaml/store'
 
-class Sync < Thor
-  desc "example", "an example task"
-  def example
-    puts "Hello, World!"
-  end
-
-  desc "boards", "sync list of boards"
+class Boards < Thor
+  desc "sync", "sync list of boards"
   method_option :status, :aliases => "-s", :desc => "Sync status"
-  def boards
+  def sync
     status = options[:status]
     if status
       boards_store.transaction do
