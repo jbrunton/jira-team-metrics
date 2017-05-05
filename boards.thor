@@ -5,7 +5,7 @@ require './jira_api/client_builder'
 
 class Boards < Thor
   desc "sync", "sync list of boards"
-  method_option :status, :aliases => "-s", :desc => "Sync status"
+  method_option :status, :aliases => "-s", :desc => "status"
   def sync
     status = options[:status]
     if status
@@ -23,6 +23,27 @@ class Boards < Thor
         boards_store['last_updated'] = Time.now
       end
       puts "Synced #{rapid_views.count} boards"
+    end
+  end
+
+  desc "list", "list all boards"
+  def list
+    boards_store.transaction do
+      boards_store['boards'].each do |id, name|
+        puts "#{name} (#{id})"
+      end
+    end
+  end
+
+  desc "search", "search boards"
+  def search(regex)
+    r = Regexp.new(regex)
+    boards_store.transaction do
+      boards_store['boards'].each do |id, name|
+        if r.match?(name)
+          puts "#{name} (#{id})"
+        end
+      end
     end
   end
 
