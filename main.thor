@@ -1,2 +1,2 @@
 # Thorfile
-Dir['./thor/**/*.rb'].sort.each { |f| load f }
+Dir['./tasks/**/*.rb'].sort.each { |f| load f }
