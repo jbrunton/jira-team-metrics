@@ -1,8 +1,8 @@
 require 'byebug'
 require 'yaml/store'
-require './models/jira/client_builder'
+require './tasks/jira_task'
 
-class Board < Thor
+class Board < JiraTask
   def initialize(*args)
     super
     @store = Store::Boards.instance
@@ -16,8 +16,6 @@ class Board < Thor
         last_updated = @store.board_last_updated(id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      config = Store::Config.instance
-      client = Jira::ClientBuilder.new.config(config).prompt.build
       #client = ClientBuilder.new.prompt.build
       #rapid_view = client.RapidView.find(id)
       # rapid_views = client.RapidView.all.map do |rapid_view|

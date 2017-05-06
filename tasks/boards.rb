@@ -1,9 +1,9 @@
 require 'byebug'
 require 'yaml/store'
-require './jira_api/client_builder'
+require './tasks/jira_task'
 require './store/boards'
 
-class Boards < Thor
+class Boards < JiraTask
   def initialize(*args)
     super
     @store = Store::Boards.instance
@@ -17,7 +17,6 @@ class Boards < Thor
       last_updated = @store.last_updated || "Never"
       puts "Last updated: #{last_updated}"
     else
-      client = Jira::ClientBuilder.new.config(Store::Config.instance).prompt.build
       rapid_views = client.get_rapid_boards.map do |rapid_view|
         [rapid_view.id, rapid_view.name]
       end.to_h
@@ -41,11 +40,5 @@ class Boards < Thor
         puts "#{name} (#{id})"
       end
     end
-  end
-
-private
-
-  def boards_store
-    @store ||= YAML::Store.new('data/boards.yml')
   end
 end
