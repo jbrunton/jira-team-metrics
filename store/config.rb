@@ -1,7 +1,7 @@
 module Store
   class Config
-    def initialize(store)
-      @store = store
+    def initialize(factory)
+      @store = factory.find_or_create('config')
     end
 
     def get(param)
@@ -13,7 +13,7 @@ module Store
     end
 
     def self.instance
-      @@config ||= Config.new(YAML::Store.new('data/config.yml'))
+      @@config ||= Config.new(Factory.new)
     end
   end
 end
