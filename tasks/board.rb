@@ -16,7 +16,7 @@ class Board < JiraTask
         last_updated = @store.board_last_updated(id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      #client = ClientBuilder.new.prompt.build
+      client = ClientBuilder.new.prompt.build
       #rapid_view = client.RapidView.find(id)
       # rapid_views = client.RapidView.all.map do |rapid_view|
       #   [rapid_view.id, rapid_view.name]

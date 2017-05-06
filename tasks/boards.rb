@@ -18,7 +18,7 @@ class Boards < JiraTask
       puts "Last updated: #{last_updated}"
     else
       rapid_views = client.get_rapid_boards.map do |rapid_view|
-        [rapid_view.id, rapid_view.name]
+        [rapid_view.id, {'name' => rapid_view.name, 'query' => rapid_view.query}]
       end.to_h
       @store.update(rapid_views)
       puts "Synced #{rapid_views.count} boards"
@@ -27,15 +27,16 @@ class Boards < JiraTask
 
   desc "list", "list all boards"
   def list
-    @store.boards.each do |id, name|
-      puts "#{name} (#{id})"
+    @store.boards.each do |id, board|
+      puts "#{board['name']} (#{id})"
     end
   end
 
   desc "search", "search boards"
   def search(regex)
     r = Regexp.new(regex)
-    @store.boards.each do |id, name|
+    @store.boards.each do |id, board|
+      name = board['name']
       if r.match?(name)
         puts "#{name} (#{id})"
       end
