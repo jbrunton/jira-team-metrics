@@ -15,7 +15,7 @@ module Jira
       @credentials = credentials
     end
 
-    def request(method, relative_url)
+    def request(relative_url)
       uri = URI::join(@domain, relative_url)
       #puts "issuing request to #{uri}"
       request = setup_request(uri)
@@ -24,14 +24,9 @@ module Jira
     end
 
     def search_issues(opts, &block)
-      max_results = opts[:max_results] || MAX_RESULTS
-      url = "rest/api/2/search?"
-      url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
-      url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
-      url += "&startAt=#{opts[:startAt]}" if opts[:startAt]
-      url += "&maxResults=#{max_results}"
+      url = generate_url(opts)
 
-      response = request(:get, url)
+      response = request(url)
 
       issues = response['issues'].map do |raw_issue|
         Jira::IssueBuilder.new(raw_issue).build
@@ -50,7 +45,7 @@ module Jira
 
     def get_rapid_boards
       url = "/rest/greenhopper/1.0/rapidviews/list"
-      response = request(:get, url)
+      response = request(url)
       response['views'].map do |raw_view|
         Jira::RapidBoardBuilder.new(raw_view).build
       end
@@ -62,7 +57,7 @@ module Jira
 
     def get_fields
       url = "/rest/api/2/field"
-      response = request(:get, url)
+      response = request(url)
       response.map do |field|
         field.slice('id', 'name')
       end
@@ -72,7 +67,7 @@ module Jira
       get_fields.find{ |field| field['name'] == name }
     end
 
-    private
+private
     def setup_request(uri)
       request = Net::HTTP::Get.new(uri)
       request.basic_auth @credentials[:username], @credentials[:password]
@@ -83,6 +78,15 @@ module Jira
       Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) do |http|
         http.request(request)
       end
+    end
+
+    def generate_url(opts)
+      max_results = opts[:max_results] || MAX_RESULTS
+      url = "rest/api/2/search?"
+      url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
+      url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
+      url += "&startAt=#{opts[:startAt]}" if opts[:startAt]
+      url += "&maxResults=#{max_results}"
     end
   end
 end
