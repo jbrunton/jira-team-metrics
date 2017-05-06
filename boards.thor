@@ -14,7 +14,7 @@ class Boards < Thor
         puts "Last updated: #{last_updated}"
       end
     else
-      client = ClientBuilder.new.prompt.build
+      client = ClientBuilder.new.config(Store::Config.instance).prompt.build
       rapid_views = client.RapidView.all.map do |rapid_view|
         [rapid_view.id, rapid_view.name]
       end.to_h

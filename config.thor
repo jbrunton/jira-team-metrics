@@ -2,29 +2,30 @@ require 'jira-ruby'
 require 'byebug'
 require 'yaml/store'
 require './jira_api/client_builder'
+require './store/config'
 
 class Config < Thor
+  def initialize(*args)
+    super
+    @config = Store::Config.instance
+  end
+
   desc "set PARAM VALUE", "set the config param to the given value"
   def set(param, value)
-    config_store.transaction do
-      config_store[param] = value
-    end
+    @config.set(param, value)
     puts "Updated #{param} = #{value}"
   end
 
   desc "get PARAM", "read the value for the config param"
   def get(param)
-    config_store.transaction do
-      puts "#{param} = #{config_store[param]}"
-    end
+    value = @config.get(param)
+    puts "#{param} = #{value}"
   end
 
   desc "clear PARAM", "clear the value for the config param"
   def clear(param)
-    config_store.transaction do
-      config_store[param] = nil
-      puts "Cleared #{param}"
-    end
+    @config.set(param, nil)
+    puts "Cleared #{param}"
   end
 
 private

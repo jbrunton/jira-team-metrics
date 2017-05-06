@@ -11,9 +11,14 @@ class ClientBuilder
     JIRA::Client.new(options)
   end
 
+  def config(config)
+    @config = config
+    self
+  end
+
   def prompt
-    config_store.transaction do
-      @username = config_store['username']
+    unless @config.nil?
+      @username = @config.get('username')
     end
 
     if @username.nil?
