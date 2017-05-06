@@ -82,11 +82,14 @@ private
 
     def generate_url(opts)
       max_results = opts[:max_results] || MAX_RESULTS
+
       url = "rest/api/2/search?"
       url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
       url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
       url += "&startAt=#{opts[:startAt]}" if opts[:startAt]
       url += "&maxResults=#{max_results}"
+
+      url
     end
   end
 end
