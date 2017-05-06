@@ -1,5 +1,0 @@
-engines:
-  duplication:
-    enabled: true
-    exclude_fingerprints:
-    - 1c5294354a82d95546567c8bc43ed5b9
