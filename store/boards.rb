@@ -1,7 +1,9 @@
+require './store/factory'
+
 module Store
   class Boards
-    def initialize(store)
-      @store = store
+    def initialize(factory)
+      @store = factory.find_or_create('boards')
     end
 
     def boards
@@ -20,7 +22,7 @@ module Store
     end
 
     def self.instance
-      @@config ||= Boards.new(YAML::Store.new('data/boards.yml'))
+      @@boards ||= Boards.new(Factory.instance)
     end
   end
 end
