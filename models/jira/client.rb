@@ -17,7 +17,7 @@ module Jira
 
     def request(method, relative_url)
       uri = URI::join(@domain, relative_url)
-      puts "issuing request to #{uri}"
+      #puts "issuing request to #{uri}"
       request = setup_request(uri)
       response = issue_request(uri, request)
       JSON.parse(response.body)

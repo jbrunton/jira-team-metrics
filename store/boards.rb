@@ -26,10 +26,10 @@ module Store
     #   store.transaction { store['']}
     # end
 
-    def update_board(id)
+    def update_board(id, issues)
       store = board_store(id)
       store.transaction do
-        # todo: this
+        store['issues'] = issues
         store['last_updated'] = Time.now
       end
     end
