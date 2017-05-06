@@ -1,4 +1,3 @@
-require 'jira-ruby'
 require 'byebug'
 require 'yaml/store'
 require './jira_api/client_builder'
@@ -18,8 +17,8 @@ class Boards < Thor
       last_updated = @store.last_updated || "Never"
       puts "Last updated: #{last_updated}"
     else
-      client = ClientBuilder.new.config(Store::Config.instance).prompt.build
-      rapid_views = client.RapidView.all.map do |rapid_view|
+      client = Jira::ClientBuilder.new.config(Store::Config.instance).prompt.build
+      rapid_views = client.get_rapid_boards.map do |rapid_view|
         [rapid_view.id, rapid_view.name]
       end.to_h
       @store.update(rapid_views)
