@@ -3,26 +3,54 @@ require './store/factory'
 module Store
   class Boards
     def initialize(factory)
-      @store = factory.find_or_create('boards')
+      @factory = factory
     end
 
     def boards
-      @store.transaction { @store['boards'] }
+      boards_store.transaction { boards_store['boards'] }
     end
 
     def last_updated
-      @store.transaction { @store['last_updated'] }
+      boards_store.transaction { boards_store['last_updated'] }
     end
 
     def update(boards)
-      @store.transaction do
-        @store['boards'] = boards
-        @store['last_updated'] = Time.now
+      boards_store.transaction do
+        boards_store['boards'] = boards
+        boards_store['last_updated'] = Time.now
       end
+    end
+
+    # def board(id)
+    #   store = @factory.find_or_create("board/#{id}")
+    #   store.transaction { store['']}
+    # end
+
+    def update_board(id)
+      store = board_store(id)
+      store.transaction do
+        # todo: this
+        store['last_updated'] = Time.now
+      end
+    end
+
+    def board_last_updated(id)
+      store = board_store(id)
+      store.transaction { store['last_updated'] }
     end
 
     def self.instance
       @@boards ||= Boards.new(Factory.instance)
+    end
+
+  private
+
+    def boards_store
+      @factory.find_or_create('boards')
+    end
+
+    def board_store(id)
+      @factory.find_or_create("boards/#{id}")
     end
   end
 end
