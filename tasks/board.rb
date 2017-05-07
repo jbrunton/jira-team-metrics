@@ -50,12 +50,20 @@ class Board < JiraTask
     id = id.to_i
     board = @store.get_board(id)
     completed_issues = board.issues.select{ |i| i.completed && i.started }
-    rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME']]
-    completed_issues.each do |i|
+    rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
+    data = completed_issues.map do |i|
       started = Time.parse(i.started)
       completed = Time.parse(i.completed)
       cycle_time = (completed - started) / (60 * 60 * 24)
-      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), '%.2fd' % cycle_time]
+      [i, started, completed, cycle_time]
+    end
+    max_cycle_time = data.map{ |x| x.last }.max
+    data.each do |x|
+      i = x[0]
+      completed = x[2]
+      cycle_time = x[3]
+      indicator = "-" * (cycle_time / max_cycle_time * 10).to_i
+      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), '%.2fd' % cycle_time, indicator]
     end
     print_table rows
   end
