@@ -2,6 +2,8 @@ require './store/config'
 require './models/jira/client_builder'
 
 class JiraTask < Thor
+  include Thor::Actions
+  
   no_commands do
     def config
       Store::Config.instance

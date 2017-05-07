@@ -9,6 +9,25 @@ class Board < JiraTask
     @store = Store::Boards.instance
   end
 
+  desc "summary ID", "summarize work"
+  def summary(id)
+    id = id.to_i
+    board = @store.get_board(id)
+
+    issues_by_type = board.issues.group_by { |issue| issue[:issue_type] }
+
+    labels = ['Issue Type']
+    counts = ['Count']
+    issues_by_type.each do |type, issues|
+      labels << type
+      counts << issues.count
+    end
+    labels << 'TOTAL'
+    counts << board.issues.count
+    say "Summary for #{board.name}:", :bold
+    print_table([labels, counts].transpose, indent: 2)
+  end
+
   desc "sync ID", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
   def sync(id)

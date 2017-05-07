@@ -1,4 +1,5 @@
 require './store/factory'
+require './models/jira/rapid_view'
 
 module Store
   class Boards
@@ -32,6 +33,20 @@ module Store
         store['issues'] = issues
         store['last_updated'] = Time.now
       end
+    end
+
+    def get_board(id)
+      board = boards[id]
+      store = board_store(id)
+      issues = store.transaction do
+        store['issues']
+      end
+      Jira::RapidBoard.new({
+        id: id,
+        name: board['name'],
+        query: board['query'],
+        issues: issues
+      })
     end
 
     def board_last_updated(id)
