@@ -32,7 +32,7 @@ module Store
     def update_board(id, issues)
       store = board_store(id)
       store.transaction do
-        store['issues'] = issues
+        store['issues'] = issues.map { |issue| issue.to_h }
         store['last_updated'] = Time.now
       end
     end
@@ -40,9 +40,9 @@ module Store
     def get_board(id)
       board = all.find{ |b| b.id == id }
       store = board_store(id)
-      issues = store.transaction do
-        store['issues']
-      end
+      issues = store
+        .transaction { store['issues'] }
+        .map{ |attrs| Jira::Issue.new(attrs) }
       Jira::RapidBoard.new({
         'id' => id,
         'name' => board.name,
