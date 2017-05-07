@@ -1,10 +1,9 @@
-require 'jira-ruby'
 require 'byebug'
 require 'yaml/store'
-require './jira_api/client_builder'
+require './tasks/jira_task'
 require './store/boards'
 
-class Boards < Thor
+class Boards < JiraTask
   def initialize(*args)
     super
     @store = Store::Boards.instance
@@ -18,9 +17,8 @@ class Boards < Thor
       last_updated = @store.last_updated || "Never"
       puts "Last updated: #{last_updated}"
     else
-      client = ClientBuilder.new.config(Store::Config.instance).prompt.build
-      rapid_views = client.RapidView.all.map do |rapid_view|
-        [rapid_view.id, rapid_view.name]
+      rapid_views = client.get_rapid_boards.map do |rapid_view|
+        [rapid_view.id, {'name' => rapid_view.name, 'query' => rapid_view.query}]
       end.to_h
       @store.update(rapid_views)
       puts "Synced #{rapid_views.count} boards"
@@ -29,24 +27,19 @@ class Boards < Thor
 
   desc "list", "list all boards"
   def list
-    @store.boards.each do |id, name|
-      puts "#{name} (#{id})"
+    @store.boards.each do |id, board|
+      puts "#{board['name']} (#{id})"
     end
   end
 
   desc "search", "search boards"
   def search(regex)
     r = Regexp.new(regex)
-    @store.boards.each do |id, name|
+    @store.boards.each do |id, board|
+      name = board['name']
       if r.match?(name)
         puts "#{name} (#{id})"
       end
     end
-  end
-
-private
-
-  def boards_store
-    @store ||= YAML::Store.new('data/boards.yml')
   end
 end
