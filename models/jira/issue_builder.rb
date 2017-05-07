@@ -10,7 +10,9 @@ module Jira
         'key' => key,
         'summary' => summary,
         'issue_type' => issue_type,
-        'transitions' => transitions
+        'transitions' => transitions,
+        'started' => compute_started_date,
+        'completed' => compute_completed_date
       }
 
       # unless attrs[:issue_type] == 'Epic'
@@ -36,29 +38,29 @@ module Jira
     end
 
     def transitions
-      histories = @json['changelog']['histories']
-      transitions = histories.select do |history|
-        history['items'][0]['field'] == 'status'
-      end
-      transitions.map do |history|
-        status = history['items'][0]['toString']
-        {
-          'date' => history['created'],
-          'status' => status,
-          'statusCategory' => @statuses[status]
-        }
+      @transitions ||= begin
+        histories = @json['changelog']['histories']
+        transitions = histories.select do |history|
+          history['items'][0]['field'] == 'status'
+        end
+        transitions.map do |history|
+          status = history['items'][0]['toString']
+          {
+            'date' => history['created'],
+            'status' => status,
+            'statusCategory' => @statuses[status]
+          }
+        end
       end
     end
 
     def compute_started_date
       return nil unless @json['changelog']
 
-      started_transitions = @json['changelog']['histories'].select do |entry|
-        entry['items'].any?{|item| is_started_transition(item)}
-      end
+      started_transitions = transitions.select{ |t| t['statusCategory'] == 'In Progress' }
 
       if started_transitions.any?
-        started_transitions.first['created']
+        started_transitions.first['date']
       else
         nil
       end
@@ -67,30 +69,11 @@ module Jira
     def compute_completed_date
       return nil unless @json['changelog']
 
-      last_transition = @json['changelog']['histories'].select do |entry|
-        entry['items'].any?{|item| is_status_transition(item)}
-      end.last
-
-      if !last_transition.nil? &&
-          last_transition['items'].any?{|item| is_completed_transition(item)}
-        last_transition['created']
+      if !transitions.last.nil? && transitions.last['statusCategory'] == 'Done'
+        transitions.last['date']
       else
         nil
       end
-    end
-
-    def is_status_transition(item)
-      item['field'] == "status"
-    end
-
-    def is_started_transition(item)
-      is_status_transition(item) &&
-          (item['toString'] == "In Progress" || item['toString'] == "Started")
-    end
-
-    def is_completed_transition(item)
-      is_status_transition(item) &&
-          (item['toString'] == "Done" || item['toString'] == "Closed")
     end
   end
 end
