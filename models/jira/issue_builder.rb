@@ -41,10 +41,10 @@ module Jira
       @transitions ||= begin
         histories = @json['changelog']['histories']
         transitions = histories.select do |history|
-          history['items'][0]['field'] == 'status'
+          history['items'].any?{ |x| x['field'] == 'status' }
         end
         transitions.map do |history|
-          status = history['items'][0]['toString']
+          status = history['items'].find{ |x| x['field'] == 'status' }['toString']
           {
             'date' => history['created'],
             'status' => status,
