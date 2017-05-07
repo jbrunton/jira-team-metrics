@@ -14,7 +14,6 @@ class Board < JiraTask
     id = id.to_i
     board = @store.get_board(id)
 
-    byebug
     issues_by_type = board.issues.group_by { |issue| issue[:issue_type] }
 
     labels = ['Issue Type']
