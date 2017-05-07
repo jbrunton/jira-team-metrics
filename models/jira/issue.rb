@@ -5,9 +5,9 @@ module Jira
     attr_reader :issue_type
 
     def initialize(attrs)
-      @key = attrs[:key]
-      @summary = attrs[:summary]
-      @issue_type = attrs[:issue_type]
+      @key = attrs['key']
+      @summary = attrs['summary']
+      @issue_type = attrs['issue_type']
     end
   end
 end

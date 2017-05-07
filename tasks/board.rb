@@ -14,6 +14,7 @@ class Board < JiraTask
     id = id.to_i
     board = @store.get_board(id)
 
+    byebug
     issues_by_type = board.issues.group_by { |issue| issue[:issue_type] }
 
     labels = ['Issue Type']
@@ -37,7 +38,7 @@ class Board < JiraTask
         last_updated = @store.board_last_updated(id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      board = @store.boards[id]
+      board = @store.all[id]
       progressbar = ProgressBar.create
       progressbar.progress = 0
       start_time = Time.now

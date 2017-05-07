@@ -1,4 +1,4 @@
-require './store/factory'
+require './stores/factory'
 require './models/jira/rapid_view'
 
 module Store
@@ -7,8 +7,10 @@ module Store
       @factory = factory
     end
 
-    def boards
-      boards_store.transaction { boards_store['boards'] }
+    def all
+      boards_store
+        .transaction { boards_store['boards'] }
+        .map { |_, attrs| Jira::RapidBoard.new(attrs) }
     end
 
     def last_updated
@@ -17,7 +19,7 @@ module Store
 
     def update(boards)
       boards_store.transaction do
-        boards_store['boards'] = boards
+        boards_store['boards'] = boards.map { |board| [board.id, board.to_h] }
         boards_store['last_updated'] = Time.now
       end
     end
@@ -36,16 +38,16 @@ module Store
     end
 
     def get_board(id)
-      board = boards[id]
+      board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store.transaction do
         store['issues']
       end
       Jira::RapidBoard.new({
-        id: id,
-        name: board['name'],
-        query: board['query'],
-        issues: issues
+        'id' => id,
+        'name' => board.name,
+        'query' => board.query,
+        'issues' => issues
       })
     end
 

@@ -6,9 +6,9 @@ module Jira
 
     def build
       attrs = {
-          :key => key,
-          :summary => summary,
-          :issue_type => issue_type
+        'key' => key,
+        'summary' => summary,
+        'issue_type' => issue_type
       }
 
       # unless attrs[:issue_type] == 'Epic'

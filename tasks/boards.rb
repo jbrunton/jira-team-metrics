@@ -1,7 +1,7 @@
 require 'byebug'
 require 'yaml/store'
 require './tasks/jira_task'
-require './store/boards'
+require './stores/boards'
 
 class Boards < JiraTask
   def initialize(*args)
@@ -17,9 +17,7 @@ class Boards < JiraTask
       last_updated = @store.last_updated || "Never"
       puts "Last updated: #{last_updated}"
     else
-      rapid_views = client.get_rapid_boards.map do |rapid_view|
-        [rapid_view.id, {'name' => rapid_view.name, 'query' => rapid_view.query}]
-      end.to_h
+      rapid_views = client.get_rapid_boards
       @store.update(rapid_views)
       puts "Synced #{rapid_views.count} boards"
     end
@@ -27,19 +25,20 @@ class Boards < JiraTask
 
   desc "list", "list all boards"
   def list
-    @store.boards.each do |id, board|
-      puts "#{board['name']} (#{id})"
-    end
+    say "Listing boards:", :bold
+    rows = @store.all.map{ |board| [board.id, board.name] }
+    print_table(rows, indent: 2)
   end
 
   desc "search", "search boards"
   def search(regex)
+    say "Boards matching #{regex}:", :bold
+
     r = Regexp.new(regex)
-    @store.boards.each do |id, board|
-      name = board['name']
-      if r.match?(name)
-        puts "#{name} (#{id})"
-      end
-    end
+    results = @store.all
+      .select{ |board| r.match(board.name) }
+      .map{ |board| [board.id, board.name] }
+
+    print_table(results, indent: 2)
   end
 end

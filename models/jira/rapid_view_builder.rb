@@ -8,9 +8,9 @@ module Jira
 
     def build
       attrs = {
-          id: id,
-          query: query,
-          name: name
+        'id' => id,
+        'query' => query,
+        'name' => name
       }
 
       Jira::RapidBoard.new(attrs)
