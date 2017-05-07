@@ -2,6 +2,7 @@ require 'byebug'
 require 'yaml/store'
 require './tasks/jira_task'
 require 'ruby-progressbar'
+require 'time'
 
 class Board < JiraTask
   def initialize(*args)
@@ -44,12 +45,28 @@ class Board < JiraTask
     end
   end
 
+  desc "issues ID", "list completed issues"
+  def issues(id)
+    id = id.to_i
+    board = @store.get_board(id)
+    completed_issues = board.issues.select{ |i| i.completed }
+    rows = [['KEY', 'SUMMARY', 'COMPLETED', 'CYCLE TIME']]
+    completed_issues.each do |i|
+      started = Time.parse(i.started)
+      completed = Time.parse(i.completed)
+      cycle_time = (completed - started) / (60 * 60 * 24)
+      rows << [i.key, i.summary, completed.strftime('%d %b %Y'), '%.2fd' % cycle_time]
+    end
+    print_table rows
+  end
+
 private
   def fetch_issues_for(board)
     progressbar = ProgressBar.create
     progressbar.progress = 0
     start_time = Time.now
-    issues = client.search_issues(query: board.query) do |progress|
+    statuses = domains_store.find(config.get('domain'))['statuses']
+    issues = client.search_issues(query: board.query, statuses: statuses) do |progress|
       progressbar.progress = progress
     end
     end_time = Time.now

@@ -25,12 +25,13 @@ module Jira
     end
 
     def search_issues(opts, &block)
-      url = generate_url(opts)
+      url = generate_url(opts.merge(expand: ['changelog']))
+      statuses = opts[:statuses]
 
       response = request(url)
 
       issues = response['issues'].map do |raw_issue|
-        Jira::IssueBuilder.new(raw_issue).build
+        Jira::IssueBuilder.new(raw_issue, statuses).build
       end
 
       startAt = response['startAt'] || 0
