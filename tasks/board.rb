@@ -32,7 +32,14 @@ class Board < JiraTask
       # rapid_views = client.RapidView.all.map do |rapid_view|
       #   [rapid_view.id, rapid_view.name]
       # end.to_h
-      @store.update_board(id, issues.map{|issue| {key: issue.key, summary: issue.summary}})
+      issues = issues.map do |issue|
+        {
+          key: issue.key,
+          summary: issue.summary,
+          issue_type: issue.issue_type
+        }
+      end
+      @store.update_board(id, issues)
       puts "Synced board"
     end
   end
