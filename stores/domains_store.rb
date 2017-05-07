@@ -25,6 +25,12 @@ class DomainsStore
     end
   end
 
+  def find(name)
+    @store.transaction do
+      @store['domains'][name]
+    end
+  end
+
   def self.instance
     @@instance ||= DomainsStore.new(Store::Factory.instance)
   end

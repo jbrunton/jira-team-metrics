@@ -49,7 +49,8 @@ private
     progressbar = ProgressBar.create
     progressbar.progress = 0
     start_time = Time.now
-    issues = client.search_issues(query: board.query) do |progress|
+    statuses = domains_store.find(config.get('domain'))['statuses']
+    issues = client.search_issues(query: board.query, statuses: statuses) do |progress|
       progressbar.progress = progress
     end
     end_time = Time.now

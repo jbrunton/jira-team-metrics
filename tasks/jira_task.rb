@@ -1,4 +1,5 @@
 require './stores/config'
+require './stores/domains_store'
 require './models/jira/client_builder'
 
 class JiraTask < Thor
@@ -10,7 +11,15 @@ class JiraTask < Thor
     end
 
     def client
-      @client ||= Jira::ClientBuilder.new.config(config).prompt.build
+      @client ||= Jira::ClientBuilder.new
+        .domains_store(domains_store)
+        .config(config)
+        .prompt
+        .build
+    end
+
+    def domains_store
+      DomainsStore.instance
     end
   end
 end

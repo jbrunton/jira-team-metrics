@@ -7,6 +7,11 @@ module Jira
       Jira::Client.new(@url, credentials)
     end
 
+    def domains_store(domains_store)
+      @domains_store = domains_store
+      self
+    end
+
     def config(config)
       @config = config
       self
@@ -15,7 +20,7 @@ module Jira
     def prompt
       unless @config.nil?
         @username = @config.get('username')
-        @url = @config.get('url')
+        @url = @domains_store.find(@config.get('domain'))['url'] unless @domains_store.nil?
       end
 
       if @url.nil?

@@ -1,14 +1,16 @@
 module Jira
   class IssueBuilder
-    def initialize(json)
+    def initialize(json, statuses)
       @json = json
+      @statuses = statuses
     end
 
     def build
       attrs = {
         'key' => key,
         'summary' => summary,
-        'issue_type' => issue_type
+        'issue_type' => issue_type,
+        'transitions' => transitions
       }
 
       # unless attrs[:issue_type] == 'Epic'
@@ -31,6 +33,21 @@ module Jira
 
     def issue_type
       @json['fields']['issuetype']['name']
+    end
+
+    def transitions
+      histories = @json['changelog']['histories']
+      transitions = histories.select do |history|
+        history['items'][0]['field'] == 'status'
+      end
+      transitions.map do |history|
+        status = history['items'][0]['toString']
+        {
+          'date' => history['created'],
+          'status' => status,
+          'statusCategory' => @statuses[status]
+        }
+      end
     end
 
     def compute_started_date
