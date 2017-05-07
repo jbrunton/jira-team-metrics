@@ -14,7 +14,7 @@ class Board < JiraTask
     id = id.to_i
     board = @store.get_board(id)
 
-    issues_by_type = board.issues.group_by { |issue| issue[:issue_type] }
+    issues_by_type = board.issues.group_by { |issue| issue.issue_type }
 
     labels = ['Issue Type']
     counts = ['Count']
@@ -37,29 +37,23 @@ class Board < JiraTask
         last_updated = @store.board_last_updated(id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      board = @store.boards[id]
-      progressbar = ProgressBar.create
-      progressbar.progress = 0
-      start_time = Time.now
-      issues = client.search_issues(query: board['query']) do |progress|
-        progressbar.progress = progress
-      end
-      end_time = Time.now
-      puts "Elapsed time: #{(end_time - start_time).to_i}s"
-      #client = ClientBuilder.new.prompt.build
-      #rapid_view = client.RapidView.find(id)
-      # rapid_views = client.RapidView.all.map do |rapid_view|
-      #   [rapid_view.id, rapid_view.name]
-      # end.to_h
-      issues = issues.map do |issue|
-        {
-          key: issue.key,
-          summary: issue.summary,
-          issue_type: issue.issue_type
-        }
-      end
+      board = @store.get_board(id)
+      issues = fetch_issues_for(board)
       @store.update_board(id, issues)
       puts "Synced board"
     end
+  end
+
+private
+  def fetch_issues_for(board)
+    progressbar = ProgressBar.create
+    progressbar.progress = 0
+    start_time = Time.now
+    issues = client.search_issues(query: board.query) do |progress|
+      progressbar.progress = progress
+    end
+    end_time = Time.now
+    puts "Elapsed time: #{(end_time - start_time).to_i}s"
+    issues
   end
 end

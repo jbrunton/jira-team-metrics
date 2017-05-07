@@ -1,5 +1,5 @@
-require './store/config'
-require './store/factory'
+require './stores/config'
+require './stores/factory'
 require 'byebug'
 
 RSpec.describe Store::Config do

@@ -1,4 +1,4 @@
-require './store/config'
+require './stores/config'
 require './models/jira/client_builder'
 
 class JiraTask < Thor
