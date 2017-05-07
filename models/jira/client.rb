@@ -1,5 +1,6 @@
 require 'net/http'
 require 'net/https'
+require 'json'
 
 require './models/jira/rapid_view'
 require './models/jira/rapid_view_builder'

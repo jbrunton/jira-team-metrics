@@ -1,7 +1,5 @@
-require 'jira-ruby'
 require 'byebug'
 require 'yaml/store'
-require './jira_api/client_builder'
 require './store/config'
 
 class Config < Thor
