@@ -68,6 +68,14 @@ module Jira
       get_fields.find{ |field| field['name'] == name }
     end
 
+    def get_statuses
+      url = "/rest/api/2/status"
+      response = request(url)
+      response.map do |status|
+        [status['name'], status['statusCategory']['name']]
+      end.to_h
+    end
+
 private
     def setup_request(uri)
       request = Net::HTTP::Get.new(uri)

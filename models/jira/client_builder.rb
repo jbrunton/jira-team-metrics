@@ -40,6 +40,11 @@ module Jira
       self
     end
 
+    def url(url)
+      @url = url
+      self
+    end
+
   private
     def config_store
       @store ||= YAML::Store.new('data/config.yml')
