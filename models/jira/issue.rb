@@ -26,5 +26,17 @@ module Jira
         'completed' => completed
       }
     end
+
+    def started_time
+      @started_time ||= Time.parse(started)
+    end
+
+    def completed_time
+      @completed_time ||= Time.parse(completed)
+    end
+
+    def cycle_time
+      (completed_time - started_time) / (60 * 60 * 24)
+    end
   end
 end
