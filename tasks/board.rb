@@ -3,6 +3,7 @@ require 'yaml/store'
 require './tasks/jira_task'
 require 'ruby-progressbar'
 require 'time'
+require 'descriptive_statistics'
 
 class Board < JiraTask
   def initialize(*args)
@@ -15,18 +16,29 @@ class Board < JiraTask
     id = id.to_i
     board = @store.get_board(id)
 
-    issues_by_type = board.issues.group_by { |issue| issue.issue_type }
+    completed_issues = board.issues.select{ |i| i.completed && i.started }
+    issues_by_type = completed_issues.group_by { |issue| issue.issue_type }
 
     labels = ['Issue Type']
     counts = ['Count']
+    mean_cycle_times = ['CT (mean)']
+    median_cycle_times = ['(median)']
+    stddev_cycle_times = ['(stddev)']
     issues_by_type.each do |type, issues|
       labels << type
       counts << issues.count
+      cycle_times = issues.map{ |i| i.cycle_time }
+      mean_cycle_times << ('%.2fd' % cycle_times.mean)
+      median_cycle_times << ('%.2fd' % cycle_times.median)
+      stddev_cycle_times << ('%.2fd' % cycle_times.standard_deviation)
     end
     labels << 'TOTAL'
     counts << board.issues.count
+    mean_cycle_times << ''
+    median_cycle_times << ''
+    stddev_cycle_times << ''
     say "Summary for #{board.name}:", :bold
-    print_table([labels, counts].transpose, indent: 2)
+    print_table([labels, counts, mean_cycle_times, median_cycle_times, stddev_cycle_times].transpose, indent: 2)
   end
 
   desc "sync ID", "sync board"
@@ -52,10 +64,7 @@ class Board < JiraTask
     completed_issues = board.issues.select{ |i| i.completed && i.started }
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
     data = completed_issues.map do |i|
-      started = Time.parse(i.started)
-      completed = Time.parse(i.completed)
-      cycle_time = (completed - started) / (60 * 60 * 24)
-      [i, started, completed, cycle_time]
+      [i, i.started_time, i.completed_time, i.cycle_time]
     end
     max_cycle_time = data.map{ |x| x.last }.max
     data.each do |x|
