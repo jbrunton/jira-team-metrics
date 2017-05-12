@@ -13,8 +13,10 @@ class Board < JiraTask
 
   desc "summary", "summarize work"
   method_option :board_id, :desc => "board id", :type => :numeric
+  method_option :ct_between, :desc => "compute cycle time between these states"
   def summary
     board_id = get_board_id(options)
+    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
     board = @store.get_board(board_id)
 
     completed_issues = board.issues.select{ |i| i.completed && i.started }
@@ -28,7 +30,14 @@ class Board < JiraTask
     issues_by_type.each do |type, issues|
       labels << type
       counts << issues.count
-      cycle_times = issues.map{ |i| i.cycle_time }
+      cycle_times = issues.map do |i|
+        if ct_states
+          cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
+        else
+          cycle_time = i.cycle_time
+        end
+        cycle_time
+      end
       mean_cycle_times << ('%.2fd' % cycle_times.mean)
       median_cycle_times << ('%.2fd' % cycle_times.median)
       stddev_cycle_times << ('%.2fd' % cycle_times.standard_deviation)
@@ -61,12 +70,19 @@ class Board < JiraTask
 
   desc "issues", "list completed issues"
   method_option :board_id, :desc => "board id", :type => :numeric
+  method_option :ct_between, :desc => "compute cycle time between these states"
   def issues
     board_id = get_board_id(options)
+    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
     board = @store.get_board(board_id)
     completed_issues = board.issues.select{ |i| i.completed && i.started }
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
     data = completed_issues.map do |i|
+      if ct_states
+        cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
+      else
+        cycle_time = i.cycle_time
+      end
       [i, i.started_time, i.completed_time, i.cycle_time]
     end
     max_cycle_time = data.map{ |x| x.last }.max
