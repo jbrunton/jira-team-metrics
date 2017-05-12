@@ -42,18 +42,19 @@ class Board < JiraTask
     print_table([labels, counts, mean_cycle_times, median_cycle_times, stddev_cycle_times].transpose, indent: 2)
   end
 
-  desc "sync ID", "sync board"
+  desc "sync", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
-  def sync(id)
-    id = id.to_i
+  method_option :board_id, :desc => "board id", :type => :numeric
+  def sync
+    board_id = get_board_id(options)
     status = options[:status]
     if status
-        last_updated = @store.board_last_updated(id) || "Never"
+        last_updated = @store.board_last_updated(board_id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      board = @store.get_board(id)
+      board = @store.get_board(board_id)
       issues = fetch_issues_for(board)
-      @store.update_board(id, issues)
+      @store.update_board(board_id, issues)
       puts "Synced board"
     end
   end
