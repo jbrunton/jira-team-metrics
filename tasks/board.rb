@@ -11,10 +11,11 @@ class Board < JiraTask
     @store = Store::Boards.instance
   end
 
-  desc "summary ID", "summarize work"
-  def summary(id)
-    id = id.to_i
-    board = @store.get_board(id)
+  desc "summary", "summarize work"
+  method_option :board_id, :desc => "board id", :type => :numeric
+  def summary
+    board_id = get_board_id(options)
+    board = @store.get_board(board_id)
 
     completed_issues = board.issues.select{ |i| i.completed && i.started }
     issues_by_type = completed_issues.group_by { |issue| issue.issue_type }
@@ -57,10 +58,11 @@ class Board < JiraTask
     end
   end
 
-  desc "issues ID", "list completed issues"
-  def issues(id)
-    id = id.to_i
-    board = @store.get_board(id)
+  desc "issues", "list completed issues"
+  method_option :board_id, :desc => "board id", :type => :numeric
+  def issues
+    board_id = get_board_id(options)
+    board = @store.get_board(board_id)
     completed_issues = board.issues.select{ |i| i.completed && i.started }
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
     data = completed_issues.map do |i|
@@ -89,5 +91,17 @@ private
     end_time = Time.now
     puts "Elapsed time: #{(end_time - start_time).to_i}s"
     issues
+  end
+
+  def get_board_id(options)
+    board_id = options[:board_id]
+    board_id = config.get('board_id').to_i if board_id.nil?
+    if board_id.nil?
+      say 'board_id required'
+      exit
+    else
+      say "Using board_id #{board_id} from config"
+    end
+    board_id
   end
 end
