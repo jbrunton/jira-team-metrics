@@ -46,15 +46,11 @@ module Jira
     end
 
     def cycle_time
-      (completed_time - started_time) / (60 * 60 * 24)
+      (completed - started) / (60 * 60 * 24)
     end
 
     def cycle_time_between(start_state, end_state)
-      start_date = compute_started_date(start_state)
-      end_date = compute_completed_date(end_state)
-      if end_date && start_date
-        (end_date - start_date) / (60 * 60 * 24)
-      end
+      (completed(end_state) - started(start_state)) / (60 * 60 * 24)
     end
 
   private
