@@ -55,8 +55,6 @@ module Jira
     end
 
     def compute_started_date
-      return nil unless @json['changelog']
-
       started_transitions = transitions.select{ |t| t['statusCategory'] == 'In Progress' }
 
       if started_transitions.any?

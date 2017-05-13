@@ -4,16 +4,12 @@ module Jira
     attr_reader :summary
     attr_reader :issue_type
     attr_reader :transitions
-    attr_reader :started
-    attr_reader :completed
 
     def initialize(attrs)
       @key = attrs['key']
       @summary = attrs['summary']
       @issue_type = attrs['issue_type']
       @transitions = attrs['transitions']
-      @started = attrs['started']
-      @completed = attrs['completed']
     end
 
     def to_h
@@ -25,12 +21,28 @@ module Jira
       }
     end
 
-    def started_time
-      @started_time ||= Time.parse(started)
+    def started(status = nil)
+      first_transition = transitions.find do |t|
+        if status
+          t['status'] == status
+        else
+          t['statusCategory'] == 'In Progress'
+        end
+      end
+
+      first_transition ? Time.parse(first_transition['date']) : nil
     end
 
-    def completed_time
-      @completed_time ||= Time.parse(completed)
+    def completed(status = nil)
+      last_transition = transitions.reverse.find do |t|
+        if status
+          t['status'] == status
+        else
+          t['statusCategory'] == 'Done'
+        end
+      end
+
+      last_transition ? Time.parse(last_transition['date']) : nil
     end
 
     def cycle_time
