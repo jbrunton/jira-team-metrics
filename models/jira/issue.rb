@@ -10,6 +10,8 @@ module Jira
       @summary = attrs['summary']
       @issue_type = attrs['issue_type']
       @transitions = attrs['transitions']
+      @started_cache = {}
+      @completed_cache = {}
     end
 
     def to_h
@@ -22,55 +24,39 @@ module Jira
     end
 
     def started(status = nil)
-      first_transition = transitions.find do |t|
-        if status
-          t['status'] == status
-        else
-          t['statusCategory'] == 'In Progress'
+      @started_cache[status] ||= begin
+        first_transition = transitions.find do |t|
+          if status
+            t['status'] == status
+          else
+            t['statusCategory'] == 'In Progress'
+          end
         end
-      end
 
-      first_transition ? Time.parse(first_transition['date']) : nil
+        first_transition ? Time.parse(first_transition['date']) : nil
+      end
     end
 
     def completed(status = nil)
-      last_transition = transitions.reverse.find do |t|
-        if status
-          t['status'] == status
-        else
-          t['statusCategory'] == 'Done'
+      @completed_cache[status] ||= begin
+        last_transition = transitions.reverse.find do |t|
+          if status
+            t['status'] == status
+          else
+            t['statusCategory'] == 'Done'
+          end
         end
-      end
 
-      last_transition ? Time.parse(last_transition['date']) : nil
+        last_transition ? Time.parse(last_transition['date']) : nil
+      end
     end
 
     def cycle_time
-      (completed - started) / (60 * 60 * 24)
+      completed && started ? (completed - started) / (60 * 60 * 24) : nil
     end
 
     def cycle_time_between(start_state, end_state)
-      (completed(end_state) - started(start_state)) / (60 * 60 * 24)
-    end
-
-  private
-
-    def compute_started_date(start_state)
-      started_transitions = transitions.select{ |t| t['stats'] == start_state }
-
-      if started_transitions.any?
-        Time.parse(started_transitions.first['date'])
-      else
-        nil
-      end
-    end
-
-    def compute_completed_date(end_state)
-      if !transitions.last.nil? && transitions.last['status'] == end_state
-        Time.parse(transitions.last['date'])
-      else
-        nil
-      end
+      completed(start_state) && started(start_state) ? (completed(end_state) - started(start_state)) / (60 * 60 * 24) : nil
     end
   end
 end

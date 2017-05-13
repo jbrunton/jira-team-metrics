@@ -79,19 +79,23 @@ class Board < JiraTask
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
     data = completed_issues.map do |i|
       if ct_states
+        started = i.started(ct_states[0])
+        completed = i.completed(ct_states[1])
         cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
       else
+        started = i.started
+        completed = i.completed
         cycle_time = i.cycle_time
       end
-      [i, i.started_time, i.completed_time, i.cycle_time]
+      [i, started, completed, cycle_time]
     end
-    max_cycle_time = data.map{ |x| x.last }.max
+    max_cycle_time = data.map{ |x| x.last }.compact.max
     data.each do |x|
       i = x[0]
       completed = x[2]
       cycle_time = x[3]
-      indicator = "-" * (cycle_time / max_cycle_time * 10).to_i
-      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), '%.2fd' % cycle_time, indicator]
+      indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
+      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
     print_table rows
   end
