@@ -10,16 +10,8 @@ module Jira
         'key' => key,
         'summary' => summary,
         'issue_type' => issue_type,
-        'transitions' => transitions,
-        'started' => compute_started_date,
-        'completed' => compute_completed_date
+        'transitions' => transitions
       }
-
-      # unless attrs[:issue_type] == 'Epic'
-      #   attrs[:started] = compute_started_date
-      #   attrs[:completed] = compute_completed_date
-      #   attrs[:epic_key] = epic_key
-      # end
 
       Issue.new(attrs)
     end
@@ -51,28 +43,6 @@ module Jira
             'statusCategory' => @statuses[status]
           }
         end
-      end
-    end
-
-    def compute_started_date
-      return nil unless @json['changelog']
-
-      started_transitions = transitions.select{ |t| t['statusCategory'] == 'In Progress' }
-
-      if started_transitions.any?
-        started_transitions.first['date']
-      else
-        nil
-      end
-    end
-
-    def compute_completed_date
-      return nil unless @json['changelog']
-
-      if !transitions.last.nil? && transitions.last['statusCategory'] == 'Done'
-        transitions.last['date']
-      else
-        nil
       end
     end
   end
