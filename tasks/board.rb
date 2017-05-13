@@ -11,6 +11,36 @@ class Board < JiraTask
     @store = Store::Boards.instance
   end
 
+  desc "issue", "issue details"
+  method_option :board_id, :desc => "board id", :type => :numeric
+  method_option :transitions, :desc => "show transitions"
+  def issue(key)
+    board_id = get_board_id(options)
+    board = @store.get_board(board_id)
+
+    issue = board.issues.find{ |i| i.key == key}
+
+    say "Details for #{issue.key}:", :bold
+    rows = [
+      ['Key', issue.key],
+      ['Summary', issue.summary],
+      ['Issue Type', issue.issue_type],
+      ['Started', issue.started.strftime('%d %b %Y')],
+      ['Completed', issue.completed.strftime('%d %b %Y')]
+    ]
+
+    print_table(rows, indent: 2)
+
+    if options[:transitions]
+      say "Transitions:", :bold
+      rows = issue.transitions.map do |t|
+        date = Time.parse(t['date']).strftime('%d %b %Y %H:%M')
+        [date, t['status']]
+      end
+      print_table(rows, indent: 2)
+    end
+  end
+
   desc "summary", "summarize work"
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :ct_between, :desc => "compute cycle time between these states"
