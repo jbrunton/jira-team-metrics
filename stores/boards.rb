@@ -41,7 +41,7 @@ module Store
       board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store
-        .transaction { store['issues'] }
+        .transaction { store['issues'] || [] }
         .map{ |attrs| Jira::Issue.new(attrs) }
       Jira::RapidBoard.new({
         'id' => id,
