@@ -17,8 +17,9 @@ module Jira
 
     def prompt
       unless @config.nil?
-        @username = @config.get('username')
-        @url = @domains_store.find(@config.get('domain'))['url'] unless @domains_store.nil?
+        domain_name = @config.get('defaults.domain')
+        @username = @config.get("defaults.domains.#{domain_name}.username")
+        @url = @domains_store.find(domain_name)['url'] unless @domains_store.nil?
       end
 
       if @url.nil?
@@ -46,11 +47,6 @@ module Jira
     def url(url)
       @url = url
       self
-    end
-
-  private
-    def config_store
-      @store ||= YAML::Store.new('data/config.yml')
     end
   end
 end
