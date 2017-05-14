@@ -5,7 +5,7 @@ module Store
     end
     
     def create(name)
-      YAML::Store.new("data/#{name}.yml")
+      YAML::Store.new("cache/#{name}.yml")
     end
 
     def find_or_create(name)
