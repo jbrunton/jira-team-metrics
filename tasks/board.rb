@@ -108,7 +108,7 @@ private
     progressbar = ProgressBar.create
     progressbar.progress = 0
     start_time = Time.now
-    statuses = domains_store.find(config.get('domain'))['statuses']
+    statuses = domains_store.find(config.get('defaults.domain'))['statuses']
     issues = client.search_issues(query: board.query, statuses: statuses) do |progress|
       progressbar.progress = progress
     end
@@ -119,7 +119,8 @@ private
 
   def get_board_id(options)
     board_id = options[:board_id]
-    board_id = config.get('board_id').to_i if board_id.nil?
+    domain_name = config.get('defaults.domain')
+    board_id = config.get("defaults.domains.#{domain_name}.board_id").to_i if board_id.nil?
     if board_id.nil?
       say 'board_id required'
       exit

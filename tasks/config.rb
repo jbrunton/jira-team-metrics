@@ -1,5 +1,6 @@
 require 'byebug'
 require 'yaml/store'
+require './stores/config'
 
 class Config < Thor
   def initialize(*args)
@@ -29,13 +30,14 @@ class Config < Thor
   def quickstart
     domain = ask('What JIRA domain do you want to query?')
     domain_name = ask('What name would you like to give this domain?')
+    username = ask('What is your JIRA username?')
+    @config.set 'defaults.domain', domain_name
+    @config.set "defaults.domains.#{domain_name}.username", username
     Domains.new.invoke(:add, [domain_name, domain])
-    @config.set 'domain', domain_name
-    @config.set 'username', ask('What is your JIRA username?')
     Boards.new.invoke(:sync) if yes?('Would you like to sync the boards for that domain?')
     if yes?('Would you like to set a default board ID?')
       Boards.new.invoke(:list)
-      @config.set 'board_id', ask('Which board ID do you want to query by default?')
+      @config.set "defaults.domains.#{domain_name}.board_id", ask('Which board ID do you want to query by default?')
     end
   end
 
