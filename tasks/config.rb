@@ -1,6 +1,5 @@
 require 'byebug'
 require 'yaml/store'
-require './stores/config'
 
 class Config < Thor
   def initialize(*args)

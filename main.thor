@@ -1,2 +1,3 @@
-# Thorfile
-Dir['./tasks/**/*.rb'].sort.each { |f| load f }
+require 'require_all'
+
+['models', 'stores', 'tasks'].each { |dir| require_all dir }

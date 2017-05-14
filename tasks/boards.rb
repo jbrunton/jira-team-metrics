@@ -1,7 +1,5 @@
 require 'byebug'
 require 'yaml/store'
-require './tasks/jira_task'
-require './stores/boards'
 
 class Boards < JiraTask
   def initialize(*args)

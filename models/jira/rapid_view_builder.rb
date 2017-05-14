@@ -1,5 +1,3 @@
-require './models/jira/rapid_view'
-
 module Jira
   class RapidBoardBuilder
     def initialize(json)
