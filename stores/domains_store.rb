@@ -27,7 +27,7 @@ class DomainsStore
 
   def find(name)
     @store.transaction do
-      @store['domains'][name]
+      @store['domains'][name] if @store['domains']
     end
   end
 

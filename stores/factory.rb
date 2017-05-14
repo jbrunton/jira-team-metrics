@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Store
   class Factory
     def initialize
@@ -5,7 +7,10 @@ module Store
     end
     
     def create(name)
-      YAML::Store.new("data/#{name}.yml")
+      filename = "cache/#{name}.yml"
+      dirname = File.dirname(filename)
+      Dir.mkdir(dirname) unless Dir.exist?(dirname)
+      YAML::Store.new(filename)
     end
 
     def find_or_create(name)
