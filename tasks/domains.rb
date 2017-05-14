@@ -1,6 +1,3 @@
-require './tasks/jira_task'
-require './stores/domains_store'
-
 class Domains < JiraTask
   desc "add NAME URL", "add a JIRA domain"
   def add(name, url)

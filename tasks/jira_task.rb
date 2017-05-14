@@ -1,7 +1,3 @@
-require './stores/config'
-require './stores/domains_store'
-require './models/jira/client_builder'
-
 class JiraTask < Thor
   include Thor::Actions
   

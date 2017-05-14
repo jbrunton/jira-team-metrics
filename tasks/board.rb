@@ -1,6 +1,5 @@
 require 'byebug'
 require 'yaml/store'
-require './tasks/jira_task'
 require 'ruby-progressbar'
 require 'time'
 require 'descriptive_statistics'

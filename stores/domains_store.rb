@@ -1,5 +1,3 @@
-require './stores/factory'
-
 class DomainsStore
   def initialize(factory)
     @store = factory.find_or_create('domains')

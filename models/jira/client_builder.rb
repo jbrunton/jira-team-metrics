@@ -1,5 +1,3 @@
-require './models/jira/client'
-
 module Jira
   class ClientBuilder
     def build

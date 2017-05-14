@@ -2,11 +2,6 @@ require 'net/http'
 require 'net/https'
 require 'json'
 
-require './models/jira/rapid_view'
-require './models/jira/rapid_view_builder'
-require './models/jira/issue'
-require './models/jira/issue_builder'
-
 module Jira
   class Client
     MAX_RESULTS = 50

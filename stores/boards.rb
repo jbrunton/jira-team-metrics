@@ -1,6 +1,3 @@
-require './stores/factory'
-require './models/jira/rapid_view'
-
 module Store
   class Boards
     def initialize(factory)
