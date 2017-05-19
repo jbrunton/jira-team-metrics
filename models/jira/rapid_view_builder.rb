@@ -1,30 +1,28 @@
-module Jira
-  class RapidBoardBuilder
-    def initialize(json)
-      @json = json
-    end
+class RapidBoardBuilder
+  def initialize(json)
+    @json = json
+  end
 
-    def build
-      attrs = {
-        'id' => id,
-        'query' => query,
-        'name' => name
-      }
+  def build
+    attrs = {
+      'id' => id,
+      'query' => query,
+      'name' => name
+    }
 
-      Jira::RapidBoard.new(attrs)
-    end
+    RapidBoard.new(attrs)
+  end
 
-    private
-    def id
-      @json['id']
-    end
+  private
+  def id
+    @json['id']
+  end
 
-    def query
-      @json['filter']['query']
-    end
+  def query
+    @json['filter']['query']
+  end
 
-    def name
+  def name
       @json['name']
-    end
   end
 end

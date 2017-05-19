@@ -1,7 +1,7 @@
 require './models/jira/issue'
 require 'byebug'
 
-RSpec.describe Jira::Issue do
+RSpec.describe Issue do
   let(:analysis_transition) {
     {
       'date' => '2017-01-01T12:00:00.000-0000',
@@ -35,7 +35,7 @@ RSpec.describe Jira::Issue do
   }
 
   let(:issue) {
-    Jira::Issue.new({
+    Issue.new({
       'key' => 'ABC-101',
       'summary' => 'Some Issue',
       'issue_type' => 'Story',
