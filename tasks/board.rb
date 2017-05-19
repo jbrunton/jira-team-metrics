@@ -46,9 +46,15 @@ class Board < JiraTask
   method_option :ct_between, :desc => "compute cycle time between these states"
   def summary
     board = load_board(options)
+    output_table("Summary for #{board.name}:", board.summary_table)
+  end
 
-    say "Summary for #{board.name}:", :bold
-    print_table(board.summary_table.marshal_for_terminal, indent: 2)
+  desc "issues", "list completed issues"
+  method_option :board_id, :desc => "board id", :type => :numeric
+  method_option :ct_between, :desc => "compute cycle time between these states"
+  def issues
+    board = load_board(options)
+    output_table("Issues for #{board.name}:", board.issues_table)
   end
 
   desc "sync", "sync board"
@@ -66,16 +72,6 @@ class Board < JiraTask
       @store.update_board(board_id, issues)
       puts "Synced board"
     end
-  end
-
-  desc "issues", "list completed issues"
-  method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :ct_between, :desc => "compute cycle time between these states"
-  def issues
-    board = load_board(options)
-
-    say "Issues for #{board.name}:", :bold
-    print_table(board.issues_table.marshal_for_terminal, indent: 2)
   end
 
   desc "report", "generate html report"
@@ -109,9 +105,14 @@ private
     File.join(destination_root, board_issues_path(board))
   end
 
-  def print_table(table)
+  def render_table(table)
     table_template = ERB.new(File.read("templates/table.html.erb"))
     table_template.result(table.get_binding).to_s
+  end
+
+  def output_table(description, table)
+    say description, :bold
+    print_table(table.marshal_for_terminal, indent: 2)
   end
 
   def fetch_issues_for(board)

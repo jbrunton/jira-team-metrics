@@ -26,7 +26,7 @@
   </nav>
 
   <div class="container">
-    <%= print_table(@board.summary_table) %>
+    <%= render_table(@board.summary_table) %>
     <a href="<%= board_issues_url(@board) %>" class="waves-effect waves-light btn">
       <i class="material-icons left">view_list</i>View Issues
     </a>
