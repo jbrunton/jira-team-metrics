@@ -82,14 +82,8 @@ class Board < JiraTask
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :ct_between, :desc => "compute cycle time between these states"
   def report
-    board = load_board(options)
-    @board = board
-
-    # issues_template = load_template('board_issues')
-    # create_file "reports/#{board.id}/issues.html", force:true do
-    #   issues_template.result(Binding.new(board).get_binding)
-    # end
-
+    @board = load_board(options)
+    
     template 'board_index.html.erb', "reports/#{board.id}/index.html", force: true
     template 'board_issues.html.erb', "reports/#{board.id}/issues.html", force: true
   end
