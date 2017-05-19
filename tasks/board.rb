@@ -47,12 +47,12 @@ class Board < JiraTask
   def summary
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
+    ct_states ||= {}
     board = @store.get_board(board_id)
-
-    rows = summary_for(board, ct_states)
+    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
 
     say "Summary for #{board.name}:", :bold
-    print_table(rows, indent: 2)
+    print_table(board_decorator.summary_table.marshal_for_terminal, indent: 2)
   end
 
   desc "sync", "sync board"
@@ -182,5 +182,9 @@ private
       rows << [i.key, i.issue_type, i.summary, board_decorator.pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
     rows
+  end
+
+  def format_table(table)
+
   end
 end

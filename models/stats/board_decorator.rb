@@ -37,4 +37,25 @@ class BoardDecorator < Draper::Decorator
   def pretty_print_number(number)
     '%.2fd' % number
   end
+
+  def summary_table
+    @summary_table ||= begin
+      rows = ['Story', 'Bug', 'Improvement', 'Technical Debt'].map do |issue_type|
+        [
+          issue_type,
+          issues_by_type[issue_type].count,
+          pretty_print_number(issues_by_type[issue_type].cycle_times.mean),
+          pretty_print_number(issues_by_type[issue_type].cycle_times.median),
+          pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
+        ]
+      end
+
+      headers = [
+        ['Issue Type', 'Count', 'Cycle Times', '', ''],
+        ['', '', 'Mean', 'Median', 'Std Dev']
+      ]
+
+      DataTable.new(headers, rows)
+    end
+  end
 end
