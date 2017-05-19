@@ -113,24 +113,6 @@ private
     issues
   end
 
-  def completed_issues_for(board, ct_states)
-    ct_states ||= {}
-    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
-    rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
-    data = board_decorator.completed_issues.map do |i|
-      [i, i.started, i.completed, i.cycle_time]
-    end
-    max_cycle_time = board_decorator.completed_issues.cycle_times.max
-    data.each do |x|
-      i = x[0]
-      completed = x[2]
-      cycle_time = x[3]
-      indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
-      rows << [i.key, i.issue_type, i.summary, board_decorator.pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
-    end
-    rows
-  end
-
   def load_board(options)
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
