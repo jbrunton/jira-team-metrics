@@ -7,7 +7,7 @@ module Store
     def all
       boards_store
         .transaction { boards_store['boards'] }
-        .map { |_, attrs| Jira::RapidBoard.new(attrs) }
+        .map { |_, attrs| RapidBoard.new(attrs) }
     end
 
     def last_updated
@@ -39,8 +39,8 @@ module Store
       store = board_store(id)
       issues = store
         .transaction { store['issues'] || [] }
-        .map{ |attrs| Jira::Issue.new(attrs) }
-      Jira::RapidBoard.new({
+        .map{ |attrs| Issue.new(attrs) }
+      RapidBoard.new({
         'id' => id,
         'name' => board.name,
         'query' => board.query,
