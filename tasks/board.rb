@@ -157,27 +157,24 @@ private
   end
 
   def completed_issues_for(board, ct_states)
-    completed_issues = board.issues.select{ |i| i.completed && i.started }
+    ct_states ||= {}
+    board_analyzer = BoardAnalyzer.new(board, ct_states[0], ct_states[1])
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
-    data = completed_issues.map do |i|
-      if ct_states
-        started = i.started(ct_states[0])
-        completed = i.completed(ct_states[1])
-        cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
-      else
-        started = i.started
-        completed = i.completed
-        cycle_time = i.cycle_time
-      end
-      [i, started, completed, cycle_time]
+    data = board_analyzer.completed_issues.map do |i|
+      [i, i.started, i.completed, i.cycle_time]
     end
-    max_cycle_time = data.map{ |x| x.last }.compact.max
+    max_cycle_time = board_analyzer.max_cycle_time
     data.each do |x|
       i = x[0]
       completed = x[2]
       cycle_time = x[3]
       indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
-      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
+      rows << [i.key, i.issue_type, i.summary, pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
+    rows
+  end
+
+  def pretty_print_date(date)
+    date.strftime('%d %b %Y')
   end
 end
