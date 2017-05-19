@@ -84,12 +84,29 @@ class Board < JiraTask
   def report
     @board = load_board(options)
 
-    template 'board_index.html.erb', "reports/#{@board.id}/index.html", force: true
-    template 'board_issues.html.erb', "reports/#{@board.id}/issues.html", force: true
+    template 'board_index.html.erb', board_summary_path(@board), force: true
+    template 'board_issues.html.erb', board_issues_path(@board), force: true
   end
 
+private
   def source_paths
     ['templates']
+  end
+
+  def board_summary_path(board)
+    "reports/#{board.id}/index.html"
+  end
+
+  def board_issues_path(board)
+    "reports/#{board.id}/issues.html"
+  end
+
+  def board_summary_url(board)
+    File.join(destination_root, board_summary_path(board))
+  end
+
+  def board_issues_url(board)
+    File.join(destination_root, board_issues_path(board))
   end
 
   def print_table(table)
@@ -97,7 +114,6 @@ class Board < JiraTask
     table_template.result(table.get_binding).to_s
   end
 
-private
   def fetch_issues_for(board)
     progressbar = ProgressBar.create
     progressbar.progress = 0
