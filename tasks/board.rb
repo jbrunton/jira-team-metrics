@@ -79,7 +79,9 @@ class Board < JiraTask
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
     board = @store.get_board(board_id)
+
     rows = completed_issues_for(board, ct_states)
+
     print_table rows
   end
 
@@ -167,13 +169,13 @@ private
     data = board_decorator.completed_issues.map do |i|
       [i, i.started, i.completed, i.cycle_time]
     end
-    max_cycle_time = board_decorator.max_cycle_time
+    max_cycle_time = board_decorator.completed_issues.cycle_times.max
     data.each do |x|
       i = x[0]
       completed = x[2]
       cycle_time = x[3]
       indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
-      rows << [i.key, i.issue_type, i.summary, pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
+      rows << [i.key, i.issue_type, i.summary, board_decorator.pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
     rows
   end
