@@ -83,9 +83,9 @@ class Board < JiraTask
   method_option :ct_between, :desc => "compute cycle time between these states"
   def report
     @board = load_board(options)
-    
-    template 'board_index.html.erb', "reports/#{board.id}/index.html", force: true
-    template 'board_issues.html.erb', "reports/#{board.id}/issues.html", force: true
+
+    template 'board_index.html.erb', "reports/#{@board.id}/index.html", force: true
+    template 'board_issues.html.erb', "reports/#{@board.id}/issues.html", force: true
   end
 
   def source_paths
