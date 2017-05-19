@@ -95,10 +95,14 @@ class Board < JiraTask
     board = @store.get_board(board_id)
     board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
 
-    template = ERB.new(File.read("templates/board_index.html.erb"))
-
+    index_template = ERB.new(File.read("templates/board_index.html.erb"))
     create_file "reports/#{board_id}/index.html", force: true do
-      template.result(board_decorator.get_binding)
+      index_template.result(board_decorator.get_binding)
+    end
+
+    issues_template = ERB.new(File.read("templates/board_issues.html.erb"))
+    create_file "reports/#{board_id}/issues.html", force:true do
+      issues_template.result(board_decorator.get_binding)
     end
   end
 

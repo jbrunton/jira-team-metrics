@@ -1,0 +1,36 @@
+<head>
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" media="screen,projection"/>
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Issues for <%= name %></h1>
+
+    <table>
+      <thead>
+        <td>Key</td>
+        <td>Issue Type</td>
+        <td>Summary</td>
+        <td>Completed</td>
+        <td>Cycle Time</td>
+      </thead>
+
+      <% completed_issues.each do |issue| %>
+        <tr>
+          <td><%= issue.key %></td>
+          <td><%= issue.issue_type %></td>
+          <td><%= issue.summary %></td>
+          <td><%= pretty_print_date issue.completed %></td>
+          <td><%= pretty_print_number issue.cycle_time %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+
+</body>
