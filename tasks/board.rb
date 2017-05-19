@@ -78,11 +78,12 @@ class Board < JiraTask
   def issues
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
+    ct_states ||= {}
     board = @store.get_board(board_id)
+    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
 
-    rows = completed_issues_for(board, ct_states)
-
-    print_table rows
+    say "Issues for #{board.name}:", :bold
+    print_table(board_decorator.issues_table.marshal_for_terminal, indent: 2)
   end
 
   desc "report", "generate html report"
@@ -97,12 +98,12 @@ class Board < JiraTask
 
     index_template = ERB.new(File.read("templates/board_index.html.erb"))
     create_file "reports/#{board_id}/index.html", force: true do
-      index_template.result(board_decorator.get_binding)
+      index_template.result(Binding.new(board_decorator).get_binding)
     end
 
     issues_template = ERB.new(File.read("templates/board_issues.html.erb"))
     create_file "reports/#{board_id}/issues.html", force:true do
-      issues_template.result(board_decorator.get_binding)
+      issues_template.result(Binding.new(board_decorator).get_binding)
     end
   end
 
@@ -184,7 +185,24 @@ private
     rows
   end
 
-  def format_table(table)
+  class Binding
+    attr_reader :board
 
+    def initialize(board)
+      @board = board
+    end
+
+    def print_table(table)
+      table_template = ERB.new(File.read("templates/table.html.erb"))
+      table_template.result(table.get_binding).to_s
+    end
+
+    def get_binding
+      binding()
+    end
+
+    def pretty_print_number(number)
+      board.pretty_print_number(number)
+    end
   end
 end

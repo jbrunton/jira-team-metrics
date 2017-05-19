@@ -11,6 +11,10 @@ class DataTable
     upcase_headers + rows
   end
 
+  def get_binding
+    binding()
+  end
+
 private
 
   def upcase_headers

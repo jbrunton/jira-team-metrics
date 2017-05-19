@@ -58,4 +58,24 @@ class BoardDecorator < Draper::Decorator
       DataTable.new(headers, rows)
     end
   end
+
+  def issues_table
+    @issues_table ||= begin
+      headers = [
+        ['Key', 'Issue Type', 'Summary', 'Completed', 'Cycle Time']
+      ]
+
+      rows = completed_issues.map do |issue|
+        [
+          issue.key,
+          issue.issue_type,
+          issue.summary,
+          pretty_print_date(issue.completed),
+          pretty_print_number(issue.cycle_time)
+        ]
+      end
+
+      DataTable.new(headers, rows)
+    end
+  end
 end
