@@ -16,14 +16,14 @@
   <nav>
     <div class="nav-wrapper container">
       <div class="col s12">
-        <a href="#!" class="breadcrumb"><%= board.name %></a>
+        <a href="#!" class="breadcrumb"><%= @board.name %></a>
         <a href="#!" class="breadcrumb">Issues</a>
       </div>
     </div>
   </nav>
 
   <div class="container">
-    <%= print_table(board.issues_table) %>
+    <%= print_table(@board.issues_table) %>
   </div>
 
 </body>

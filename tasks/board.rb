@@ -83,16 +83,24 @@ class Board < JiraTask
   method_option :ct_between, :desc => "compute cycle time between these states"
   def report
     board = load_board(options)
+    @board = board
 
-    index_template = load_template('board_index')
-    create_file "reports/#{board.id}/index.html", force: true do
-      index_template.result(Binding.new(board).get_binding)
-    end
+    # issues_template = load_template('board_issues')
+    # create_file "reports/#{board.id}/issues.html", force:true do
+    #   issues_template.result(Binding.new(board).get_binding)
+    # end
 
-    issues_template = load_template('board_issues')
-    create_file "reports/#{board.id}/issues.html", force:true do
-      issues_template.result(Binding.new(board).get_binding)
-    end
+    template 'board_index.html.erb', "reports/#{board.id}/index.html", force: true
+    template 'board_issues.html.erb', "reports/#{board.id}/issues.html", force: true
+  end
+
+  def source_paths
+    ['templates']
+  end
+
+  def print_table(table)
+    table_template = ERB.new(File.read("templates/table.html.erb"))
+    table_template.result(table.get_binding).to_s
   end
 
 private
@@ -127,30 +135,5 @@ private
       say "Using board_id #{board_id} from config"
     end
     board_id
-  end
-
-  def load_template(template_name)
-    ERB.new(File.read("templates/#{template_name}.html.erb"))
-  end
-
-  class Binding
-    attr_reader :board
-
-    def initialize(board)
-      @board = board
-    end
-
-    def print_table(table)
-      table_template = ERB.new(File.read("templates/table.html.erb"))
-      table_template.result(table.get_binding).to_s
-    end
-
-    def get_binding
-      binding()
-    end
-
-    def pretty_print_number(number)
-      board.pretty_print_number(number)
-    end
   end
 end
