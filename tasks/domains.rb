@@ -1,7 +1,7 @@
 class Domains < JiraTask
   desc "add NAME URL", "add a JIRA domain"
   def add(name, url)
-    client = Jira::ClientBuilder.new.config(config).url(url).prompt.build
+    client = JiraClientBuilder.new.config(config).url(url).prompt.build
     statuses = client.get_statuses
     domains_store.add({
       'name' => name,

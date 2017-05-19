@@ -7,7 +7,7 @@ class JiraTask < Thor
     end
 
     def client
-      @client ||= Jira::ClientBuilder.new
+      @client ||= JiraClientBuilder.new
         .domains_store(domains_store)
         .config(config)
         .prompt
