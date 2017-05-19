@@ -113,39 +113,6 @@ private
     issues
   end
 
-  def summary_for(board, ct_states)
-    completed_issues = board.issues.select{ |i| i.completed && i.started }
-    issues_by_type = completed_issues.group_by { |issue| issue.issue_type }
-
-    labels = ['Issue Type']
-    counts = ['Count']
-    mean_cycle_times = ['CT (mean)']
-    median_cycle_times = ['(median)']
-    stddev_cycle_times = ['(stddev)']
-    issues_by_type.each do |type, issues|
-      labels << type
-      counts << issues.count
-      cycle_times = issues.map do |i|
-        if ct_states
-          cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
-        else
-          cycle_time = i.cycle_time
-        end
-        cycle_time
-      end
-      mean_cycle_times << ('%.2fd' % cycle_times.mean)
-      median_cycle_times << ('%.2fd' % cycle_times.median)
-      stddev_cycle_times << ('%.2fd' % cycle_times.standard_deviation)
-    end
-    labels << 'TOTAL'
-    counts << board.issues.count
-    mean_cycle_times << ''
-    median_cycle_times << ''
-    stddev_cycle_times << ''
-
-    [labels, counts, mean_cycle_times, median_cycle_times, stddev_cycle_times].transpose
-  end
-
   def completed_issues_for(board, ct_states)
     ct_states ||= {}
     board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
