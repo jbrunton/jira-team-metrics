@@ -45,14 +45,10 @@ class Board < JiraTask
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :ct_between, :desc => "compute cycle time between these states"
   def summary
-    board_id = get_board_id(options)
-    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
-    ct_states ||= {}
-    board = @store.get_board(board_id)
-    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
+    board = load_board(options)
 
     say "Summary for #{board.name}:", :bold
-    print_table(board_decorator.summary_table.marshal_for_terminal, indent: 2)
+    print_table(board.summary_table.marshal_for_terminal, indent: 2)
   end
 
   desc "sync", "sync board"
@@ -76,14 +72,10 @@ class Board < JiraTask
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :ct_between, :desc => "compute cycle time between these states"
   def issues
-    board_id = get_board_id(options)
-    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
-    ct_states ||= {}
-    board = @store.get_board(board_id)
-    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
+    board = load_board(options)
 
     say "Issues for #{board.name}:", :bold
-    print_table(board_decorator.issues_table.marshal_for_terminal, indent: 2)
+    print_table(board.issues_table.marshal_for_terminal, indent: 2)
   end
 
   desc "report", "generate html report"
@@ -119,19 +111,6 @@ private
     end_time = Time.now
     puts "Elapsed time: #{(end_time - start_time).to_i}s"
     issues
-  end
-
-  def get_board_id(options)
-    board_id = options[:board_id]
-    domain_name = config.get('defaults.domain')
-    board_id = config.get("defaults.domains.#{domain_name}.board_id").to_i if board_id.nil?
-    if board_id.nil?
-      say 'board_id required'
-      exit
-    else
-      say "Using board_id #{board_id} from config"
-    end
-    board_id
   end
 
   def summary_for(board, ct_states)
@@ -183,6 +162,26 @@ private
       rows << [i.key, i.issue_type, i.summary, board_decorator.pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
     rows
+  end
+
+  def load_board(options)
+    board_id = get_board_id(options)
+    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
+    ct_states ||= {}
+    BoardDecorator.new(@store.get_board(board_id), ct_states[0], ct_states[1])
+  end
+
+  def get_board_id(options)
+    board_id = options[:board_id]
+    domain_name = config.get('defaults.domain')
+    board_id = config.get("defaults.domains.#{domain_name}.board_id").to_i if board_id.nil?
+    if board_id.nil?
+      say 'board_id required'
+      exit
+    else
+      say "Using board_id #{board_id} from config"
+    end
+    board_id
   end
 
   class Binding
