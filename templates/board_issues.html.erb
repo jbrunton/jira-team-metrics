@@ -15,10 +15,12 @@
 
   <nav>
     <div class="nav-wrapper container">
-      <div class="col s12">
-        <a href="<%= board_summary_url(@board) %>" class="breadcrumb"><%= @board.name %></a>
-        <a href="#!" class="breadcrumb">Issues</a>
-      </div>
+      <a href="#!" class="brand-logo"><%= @board.name %></a>
+
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="<%= board_summary_url(@board) %>">Summary</a></li>
+        <li class="active"><a href="#!">All Issues</a></li>
+      </ul>
     </div>
   </nav>
 
