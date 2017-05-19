@@ -11,29 +11,19 @@ class BoardDecorator < Draper::Decorator
   end
 
   def completed_issues
-    @completed_issues ||= object.issues
-      .select{ |i| i.completed && i.started }
-      .map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+    @completed_issues ||= begin
+      issues = object.issues
+        .select{ |i| i.completed && i.started }
+        .map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+      IssuesDecorator.new(issues)
+    end
   end
 
-  def cycle_times
-    @cycle_times ||= completed_issues.map{ |i| i.cycle_time }.compact
-  end
-
-  def max_cycle_time
-    @max_cycle_time ||= cycle_times.max
-  end
-
-  def mean_cycle_time
-    @mean_cycle_time ||= cycle_times.mean
-  end
-
-  def median_cycle_time
-    @median_cycle_time ||= cycle_times.median
-  end
-
-  def stddev_cycle_time
-    @stddev_cycle_time ||= cycle_times.standard_deviation
+  def issues_by_type
+    @issues_by_type ||= completed_issues
+      .group_by{ |i| i.issue_type }
+      .map{ |issue_type, issues| [issue_type, IssuesDecorator.new(issues)] }
+      .to_h
   end
 
   def get_binding

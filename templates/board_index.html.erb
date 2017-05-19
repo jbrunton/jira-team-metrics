@@ -2,13 +2,30 @@
 
 <table>
   <thead>
-    <td></td>
-    <td>
-      Cycle Times
-    </td>
+    <td>Issue Type</td>
+    <td>Count</td>
+    <td colspan="3">Cycle Times</td>
   </thead>
   <tr>
+    <td colspan="2"></td>
     <td>Mean</td>
-    <td><%= pretty_print_number(mean_cycle_time) %></td>
+    <td>Median</td>
+    <td>Std Dev</td>
+  </tr>
+  <% ['Story', 'Bug', 'Improvement', 'Technical Debt'].each do |issue_type| %>
+    <tr>
+      <td><%= issue_type %></td>
+      <td><%= issues_by_type[issue_type].count %></td>
+      <td><%= pretty_print_number issues_by_type[issue_type].cycle_times.mean %></td>
+      <td><%= pretty_print_number issues_by_type[issue_type].cycle_times.median %></td>
+      <td><%= pretty_print_number issues_by_type[issue_type].cycle_times.standard_deviation %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td>TOTAL</td>
+    <td><%= completed_issues.count %></td>
+    <td><%= pretty_print_number completed_issues.cycle_times.mean %></td>
+    <td><%= pretty_print_number completed_issues.cycle_times.median %></td>
+    <td><%= pretty_print_number completed_issues.cycle_times.standard_deviation %></td>
   </tr>
 </table>
