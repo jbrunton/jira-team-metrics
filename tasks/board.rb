@@ -78,29 +78,22 @@ class Board < JiraTask
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
     board = @store.get_board(board_id)
-    completed_issues = board.issues.select{ |i| i.completed && i.started }
-    rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
-    data = completed_issues.map do |i|
-      if ct_states
-        started = i.started(ct_states[0])
-        completed = i.completed(ct_states[1])
-        cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
-      else
-        started = i.started
-        completed = i.completed
-        cycle_time = i.cycle_time
-      end
-      [i, started, completed, cycle_time]
-    end
-    max_cycle_time = data.map{ |x| x.last }.compact.max
-    data.each do |x|
-      i = x[0]
-      completed = x[2]
-      cycle_time = x[3]
-      indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
-      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
-    end
+    rows = completed_issues_for(board, ct_states)
     print_table rows
+  end
+
+  desc "report", "generate html report"
+  method_option :board_id, :desc => "board id", :type => :numeric
+  method_option :ct_between, :desc => "compute cycle time between these states"
+  def report
+    board_id = get_board_id(options)
+    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
+    board = @store.get_board(board_id)
+    rows = completed_issues_for(board, ct_states)
+
+    create_file "reports/#{board_id}/index.html", force: true do
+      "<h1>#{board.name}</h1>"
+    end
   end
 
 private
@@ -161,5 +154,30 @@ private
     stddev_cycle_times << ''
 
     [labels, counts, mean_cycle_times, median_cycle_times, stddev_cycle_times].transpose
+  end
+
+  def completed_issues_for(board, ct_states)
+    completed_issues = board.issues.select{ |i| i.completed && i.started }
+    rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
+    data = completed_issues.map do |i|
+      if ct_states
+        started = i.started(ct_states[0])
+        completed = i.completed(ct_states[1])
+        cycle_time = i.cycle_time_between(ct_states[0], ct_states[1])
+      else
+        started = i.started
+        completed = i.completed
+        cycle_time = i.cycle_time
+      end
+      [i, started, completed, cycle_time]
+    end
+    max_cycle_time = data.map{ |x| x.last }.compact.max
+    data.each do |x|
+      i = x[0]
+      completed = x[2]
+      cycle_time = x[3]
+      indicator = cycle_time ? ("-" * (cycle_time / max_cycle_time * 10).to_i) : ""
+      rows << [i.key, i.issue_type, i.summary, completed.strftime('%d %b %Y'), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
+    end
   end
 end
