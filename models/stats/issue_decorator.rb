@@ -21,7 +21,7 @@ class IssueDecorator < Draper::Decorator
     @from_state && @to_state ? object.cycle_time_between(@from_state, @to_state) : issue.cycle_time
   end
 
-  def decorate(options)
+  def decorate(_options)
     self
   end
 end
