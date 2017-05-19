@@ -22,18 +22,20 @@
   </nav>
 
   <div class="container">
-    <table>
+    <table class="striped">
       <thead>
-        <td>Issue Type</td>
-        <td>Count</td>
-        <td colspan="3">Cycle Times</td>
-      </thead>
+      <tr>
+        <th>Issue Type</th>
+        <th>Count</th>
+        <th colspan="3">Cycle Times</th>
+      </tr>
       <tr>
         <td colspan="2"></td>
         <td>Mean</td>
         <td>Median</td>
         <td>Std Dev</td>
       </tr>
+      </thead>
       <% ['Story', 'Bug', 'Improvement', 'Technical Debt'].each do |issue_type| %>
           <tr>
             <td><%= issue_type %></td>
