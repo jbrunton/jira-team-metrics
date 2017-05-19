@@ -3,6 +3,7 @@ require 'yaml/store'
 require 'ruby-progressbar'
 require 'time'
 require 'descriptive_statistics'
+require 'erb'
 
 class Board < JiraTask
   def initialize(*args)
@@ -88,11 +89,14 @@ class Board < JiraTask
   def report
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
+    ct_states ||= {}
     board = @store.get_board(board_id)
-    rows = completed_issues_for(board, ct_states)
+    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
+
+    template = ERB.new(File.read("templates/board_index.erb"))
 
     create_file "reports/#{board_id}/index.html", force: true do
-      "<h1>#{board.name}</h1>"
+      template.result(board_decorator.get_binding)
     end
   end
 
@@ -158,12 +162,12 @@ private
 
   def completed_issues_for(board, ct_states)
     ct_states ||= {}
-    board_analyzer = BoardAnalyzer.new(board, ct_states[0], ct_states[1])
+    board_decorator = BoardDecorator.new(board, ct_states[0], ct_states[1])
     rows = [['KEY', 'TYPE', 'SUMMARY', 'COMPLETED', 'CYCLE TIME', '']]
-    data = board_analyzer.completed_issues.map do |i|
+    data = board_decorator.completed_issues.map do |i|
       [i, i.started, i.completed, i.cycle_time]
     end
-    max_cycle_time = board_analyzer.max_cycle_time
+    max_cycle_time = board_decorator.max_cycle_time
     data.each do |x|
       i = x[0]
       completed = x[2]
@@ -172,9 +176,5 @@ private
       rows << [i.key, i.issue_type, i.summary, pretty_print_date(completed), cycle_time ? ('%.2fd' % cycle_time) : '', indicator]
     end
     rows
-  end
-
-  def pretty_print_date(date)
-    date.strftime('%d %b %Y')
   end
 end
