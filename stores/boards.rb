@@ -41,7 +41,6 @@ module Store
     end
 
     def get_board(id)
-      byebug
       board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store
