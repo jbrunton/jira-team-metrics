@@ -10,12 +10,21 @@
     <tr>
       <td>Name</td>
       <td>Last Updated</td>
+      <td></td>
     </tr>
   </thead>
   <% @boards.each do |board| %>
       <tr>
         <td><%= board.name %></td>
         <td><%= board.last_updated %></td>
+        <td>
+          <a href="<%= "/#{@domain['name']}/boards/#{board.id}" %>" class="waves-effect waves-light btn">
+            Summary
+          </a>
+          <a href="<%= "/#{@domain['name']}/boards/#{board.id}/issues" %>" class="waves-effect waves-light btn">
+            Issues
+          </a>
+        </td>
       </tr>
   <% end %>
 </table>
