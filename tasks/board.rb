@@ -69,42 +69,7 @@ class Board < JiraTask
     end
   end
 
-  desc "report", "generate html report"
-  method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :ct_between, :desc => "compute cycle time between these states"
-  def report
-    @board = load_board(options)
-
-    template 'board_index.html.erb', board_summary_path(@board), force: true
-    template 'board_issues.html.erb', board_issues_path(@board), force: true
-  end
-
 private
-  def source_paths
-    ['templates']
-  end
-
-  def board_summary_path(board)
-    "reports/#{board.id}/index.html"
-  end
-
-  def board_issues_path(board)
-    "reports/#{board.id}/issues.html"
-  end
-
-  def board_summary_url(board)
-    File.join(destination_root, board_summary_path(board))
-  end
-
-  def board_issues_url(board)
-    File.join(destination_root, board_issues_path(board))
-  end
-
-  def render_table(table)
-    table_template = ERB.new(File.read("templates/table.html.erb"))
-    table_template.result(table.get_binding).to_s
-  end
-
   def output_table(description, table)
     say description, :bold
     print_table(table.marshal_for_terminal, indent: 2)
