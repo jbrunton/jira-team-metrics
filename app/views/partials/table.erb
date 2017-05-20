@@ -1,0 +1,18 @@
+<table class="striped">
+  <thead>
+    <% table.headers.each do |header_row| %>
+        <tr>
+          <% header_row.each do |h| %>
+              <th><%= h %></th>
+          <% end %>
+        </tr>
+    <% end %>
+  </thead>
+  <% table.rows.each do |row| %>
+      <tr>
+        <% row.each do |s| %>
+            <td><%= s %></td>
+        <% end %>
+      </tr>
+  <% end %>
+</table>

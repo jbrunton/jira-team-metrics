@@ -1,0 +1,10 @@
+<% content_for :nav_content do %>
+    <a href="/" class="breadcrumb">Domains</a>
+    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
+    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="#!" class="breadcrumb">Issues</a>
+<% end %>
+
+<h2>Issues for <%= @board.name %></h2>
+
+<%= erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table } %>

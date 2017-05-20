@@ -1,0 +1,22 @@
+<h1>Domains</h1>
+
+<table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Url</td>
+      <td></td>
+    </tr>
+  </thead>
+  <% @domains.each do |domain| %>
+      <tr>
+        <td><%= domain['name'] %></td>
+        <td><%= domain['url'] %></td>
+        <td>
+          <a href="<%= domain_path(domain) %>" class="waves-effect waves-light btn">
+            View Details
+          </a>
+        </td>
+      </tr>
+  <% end %>
+</table>
