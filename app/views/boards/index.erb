@@ -1,0 +1,16 @@
+<h1>Boards for domain '<%= @domain['name'] %>'</h1>
+
+<table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Last Updated</td>
+    </tr>
+  </thead>
+  <% @boards.each do |board| %>
+      <tr>
+        <td><%= board.name %></td>
+        <td><%= board.last_updated %></td>
+      </tr>
+  <% end %>
+</table>
