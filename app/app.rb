@@ -25,12 +25,12 @@ helpers do
 end
 
 before '/:domain*' do
-  domain_name = params['domain']
+  domain_name = params[:domain]
   @domain = DomainsStore.instance.find(domain_name)
 end
 
-before '/:domain/boards/:id*' do
-  board = Store::Boards.instance(@domain['name']).get_board(params[:id].to_i)
+before '/:domain/boards/:board_id*' do
+  board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
   @board = BoardDecorator.new(board, nil, nil)
 end
 
@@ -46,10 +46,15 @@ get '/:domain' do
   erb 'domains/show'.to_sym
 end
 
-get '/:domain/boards/:id' do
+get '/:domain/boards/:board_id' do
   erb 'boards/show'.to_sym
 end
 
-get '/:domain/boards/:id/issues' do
+get '/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
+end
+
+get '/:domain/boards/:board_id/issues/:issue_key' do
+  @issue = @board.issues.find{ |i| i.key == params[:issue_key] }
+  erb 'issues/show'.to_sym
 end
