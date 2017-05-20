@@ -1,0 +1,10 @@
+<tr>
+  <% row.items.each do |item| %>
+      <td><%= item %></td>
+  <% end %>
+  <td>
+    <% if row.object %>
+      <%= render_table_options(row.object) %>
+    <% end %>
+  </td>
+</tr>

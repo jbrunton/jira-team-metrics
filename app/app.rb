@@ -33,15 +33,9 @@ helpers do
     end
   end
 
-  def table_item(item)
-    if item.kind_of?(Hash)
-      link = path_for(item[:link_to]) if item[:link_to]
-      text = item[:text]
-      text = "<a href='#{link}'>#{text}</a>" if link
-      text
-    else
-      item
-    end
+  def render_table_options(object)
+    path = path_for(object)
+    "<a href='#{path}' class='waves-effect waves-light btn'>Details</a>"
   end
 end
 

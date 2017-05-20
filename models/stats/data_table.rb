@@ -1,39 +1,36 @@
 class DataTable
-  attr_reader :headers
   attr_reader :rows
 
-  def initialize(headers, rows)
-    @headers = headers
+  def initialize(rows)
     @rows = rows
   end
 
   def marshal_for_terminal
-    marshal_headers_for_terminal + marshal_rows_for_terminal
+    @rows.map{ |row| row.marshal_for_terminal }
   end
 
-  def get_binding
-    binding()
-  end
+  class Row
+    attr_reader :items
+    attr_reader :object
 
-private
+    def initialize(items, object)
+      @items = items
+      @object = object
+    end
 
-  def marshal_headers_for_terminal
-    headers.map do |row|
-      row.map{ |item| marshal_item_for_terminal(item).upcase }
+    def marshal_for_terminal
+      @items
     end
   end
 
-  def marshal_rows_for_terminal
-    rows.map do |row|
-      row.map{ |item| marshal_item_for_terminal(item) }
+  class Header < Row
+    def initialize(items)
+      super(items, nil)
+    end
+
+    def marshal_for_terminal
+      @items.map { |item| item.upcase }
     end
   end
 
-  def marshal_item_for_terminal(item)
-    if item.kind_of?(Hash)
-      item[:text]
-    else
-      item
-    end
-  end
 end
