@@ -24,25 +24,26 @@ helpers do
   end
 end
 
+before '/:domain*' do
+  domain_name = params['domain']
+  @domain = DomainsStore.instance.find(domain_name)
+end
+
+before '/:domain/boards/:id*' do
+  board = Store::Boards.instance(@domain['name']).get_board(params[:id].to_i)
+  @board = BoardDecorator.new(board, nil, nil)
+end
+
 get '/' do
   @domains = DomainsStore.instance.all
   erb 'domains/index'.to_sym
 end
 
 get '/:domain' do
-  domain_name = params['domain']
-  @domain = DomainsStore.instance.find(domain_name)
-  @boards = Store::Boards.instance(domain_name).all.select do |board|
+  @boards = Store::Boards.instance(@domain['name']).all.select do |board|
     !board.last_updated.nil?
   end
   erb 'domains/show'.to_sym
-end
-
-before '/:domain/boards/:id*' do
-  domain_name = params['domain']
-  @domain = DomainsStore.instance.find(domain_name)
-  board = Store::Boards.instance(domain_name).get_board(params[:id].to_i)
-  @board = BoardDecorator.new(board, nil, nil)
 end
 
 get '/:domain/boards/:id' do
