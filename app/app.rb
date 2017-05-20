@@ -5,6 +5,24 @@ require 'yaml/store'
 require 'require_all'
 ['models', 'stores'].each { |dir| require_all dir }
 
+helpers do
+  def home_path
+    '/'
+  end
+
+  def domain_path(domain)
+    "/#{domain['name']}"
+  end
+
+  def board_path(domain, board)
+    "#{domain_path(domain)}/boards/#{board.id}"
+  end
+
+  def board_issues_path(domain, board)
+    "#{board_path(domain, board)}/issues"
+  end
+end
+
 get '/' do
   @domains = DomainsStore.instance.all
   erb 'domains/index'.to_sym

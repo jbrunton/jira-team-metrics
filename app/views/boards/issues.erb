@@ -1,7 +1,7 @@
 <% content_for :nav_content do %>
-    <a href="/" class="breadcrumb">Home</a>
-    <a href="/<%= @domain['name'] %>" class="breadcrumb"><%= @domain['name'] %></a>
-    <a href="<%= "/#{@domain['name']}/boards/#{@board.id}" %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="/" class="breadcrumb">Domains</a>
+    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
+    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
     <a href="#!" class="breadcrumb">Issues</a>
 <% end %>
 

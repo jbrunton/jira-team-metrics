@@ -1,5 +1,5 @@
 <% content_for :nav_content do %>
-    <a href="/" class="breadcrumb">Home</a>
+    <a href="/" class="breadcrumb">Domains</a>
     <a href="#!" class="breadcrumb"><%= @domain['name'] %></a>
 <% end %>
 
@@ -18,10 +18,10 @@
         <td><%= board.name %></td>
         <td><%= board.last_updated %></td>
         <td>
-          <a href="<%= "/#{@domain['name']}/boards/#{board.id}" %>" class="waves-effect waves-light btn">
+          <a href="<%= board_path(@domain, board) %>" class="waves-effect waves-light btn">
             Summary
           </a>
-          <a href="<%= "/#{@domain['name']}/boards/#{board.id}/issues" %>" class="waves-effect waves-light btn">
+          <a href="<%= board_issues_path(@domain, board) %>" class="waves-effect waves-light btn">
             Issues
           </a>
         </td>
