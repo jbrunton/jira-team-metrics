@@ -9,7 +9,7 @@ module Store
     def create(name)
       filename = "cache/#{name}.yml"
       dirname = File.dirname(filename)
-      Dir.mkdir(dirname) unless Dir.exist?(dirname)
+      FileUtils.mkdir_p(dirname) unless Dir.exist?(dirname)
       YAML::Store.new(filename)
     end
 

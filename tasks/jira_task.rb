@@ -17,5 +17,10 @@ class JiraTask < Thor
     def domains_store
       DomainsStore.instance
     end
+
+    def boards_store
+      domain_name = config.get('defaults.domain')
+      Store::Boards.instance(domain_name)
+    end
   end
 end
