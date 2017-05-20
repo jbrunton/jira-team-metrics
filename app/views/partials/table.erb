@@ -1,18 +1,9 @@
 <table class="striped">
-  <thead>
-    <% table.headers.each do |header_row| %>
-        <tr>
-          <% header_row.each do |h| %>
-              <th><%= h %></th>
-          <% end %>
-        </tr>
-    <% end %>
-  </thead>
   <% table.rows.each do |row| %>
-      <tr>
-        <% row.each do |s| %>
-            <td><%= s %></td>
-        <% end %>
-      </tr>
+      <% if row.kind_of?(DataTable::Header) %>
+        <%= erb 'partials/table_header'.to_sym, locals: { row: row } %>
+      <% else %>
+        <%= erb 'partials/table_row'.to_sym, locals: { row: row } %>
+      <% end %>
   <% end %>
 </table>

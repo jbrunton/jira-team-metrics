@@ -1,25 +1,35 @@
 class DataTable
-  attr_reader :headers
   attr_reader :rows
 
-  def initialize(headers, rows)
-    @headers = headers
+  def initialize(rows)
     @rows = rows
   end
 
   def marshal_for_terminal
-    upcase_headers + rows
+    @rows.map{ |row| row.marshal_for_terminal }
   end
 
-  def get_binding
-    binding()
+  class Row
+    attr_reader :items
+    attr_reader :object
+
+    def initialize(items, object)
+      @items = items
+      @object = object
+    end
+
+    def marshal_for_terminal
+      @items
+    end
   end
 
-private
+  class Header < Row
+    def initialize(items)
+      super(items, nil)
+    end
 
-  def upcase_headers
-    headers.map do |row|
-      row.map{ |h| h.upcase }
+    def marshal_for_terminal
+      @items.map { |item| item.upcase }
     end
   end
 

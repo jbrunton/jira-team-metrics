@@ -22,6 +22,31 @@ helpers do
   def board_issues_path(domain, board)
     "#{board_path(domain, board)}/issues"
   end
+
+  def issue_path(issue)
+    "#{board_issues_path(@domain, @board)}/#{issue.key}"
+  end
+
+  def path_for(object)
+    if object.kind_of?(Issue)
+      issue_path(object)
+    end
+  end
+
+  def render_table_options(object)
+    path = path_for(object)
+    "<a href='#{path}' class='waves-effect waves-light btn'>Details</a>"
+  end
+end
+
+before '/:domain*' do
+  domain_name = params[:domain]
+  @domain = DomainsStore.instance.find(domain_name)
+end
+
+before '/:domain/boards/:board_id*' do
+  board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
+  @board = BoardDecorator.new(board, nil, nil)
 end
 
 get '/' do
@@ -30,25 +55,21 @@ get '/' do
 end
 
 get '/:domain' do
-  domain_name = params['domain']
-  @domain = DomainsStore.instance.find(domain_name)
-  @boards = Store::Boards.instance(domain_name).all.select do |board|
+  @boards = Store::Boards.instance(@domain['name']).all.select do |board|
     !board.last_updated.nil?
   end
   erb 'domains/show'.to_sym
 end
 
-before '/:domain/boards/:id*' do
-  domain_name = params['domain']
-  @domain = DomainsStore.instance.find(domain_name)
-  board = Store::Boards.instance(domain_name).get_board(params[:id].to_i)
-  @board = BoardDecorator.new(board, nil, nil)
-end
-
-get '/:domain/boards/:id' do
+get '/:domain/boards/:board_id' do
   erb 'boards/show'.to_sym
 end
 
-get '/:domain/boards/:id/issues' do
+get '/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
+end
+
+get '/:domain/boards/:board_id/issues/:issue_key' do
+  @issue = @board.issues.find{ |i| i.key == params[:issue_key] }
+  erb 'issues/show'.to_sym
 end
