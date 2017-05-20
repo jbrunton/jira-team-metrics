@@ -6,17 +6,12 @@ require 'descriptive_statistics'
 require 'erb'
 
 class Board < JiraTask
-  def initialize(*args)
-    super
-    @store = Store::Boards.instance
-  end
-
   desc "issue", "issue details"
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :transitions, :desc => "show transitions"
   def issue(key)
     board_id = get_board_id(options)
-    board = @store.get_board(board_id)
+    board = boards_store.get_board(board_id)
 
     issue = board.issues.find{ |i| i.key == key}
 
@@ -64,12 +59,12 @@ class Board < JiraTask
     board_id = get_board_id(options)
     status = options[:status]
     if status
-        last_updated = @store.board_last_updated(board_id) || "Never"
+        last_updated = boards_store.board_last_updated(board_id) || "Never"
         puts "Last updated: #{last_updated}"
     else
-      board = @store.get_board(board_id)
+      board = boards_store.get_board(board_id)
       issues = fetch_issues_for(board)
-      @store.update_board(board_id, issues)
+      boards_store.update_board(board_id, issues)
       puts "Synced board"
     end
   end
@@ -132,7 +127,7 @@ private
     board_id = get_board_id(options)
     ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
     ct_states ||= {}
-    BoardDecorator.new(@store.get_board(board_id), ct_states[0], ct_states[1])
+    BoardDecorator.new(boards_store.get_board(board_id), ct_states[0], ct_states[1])
   end
 
   def get_board_id(options)

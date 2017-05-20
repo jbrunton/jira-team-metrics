@@ -1,7 +1,8 @@
 module Store
   class Boards
-    def initialize(factory)
+    def initialize(factory, domain_name)
       @factory = factory
+      @domain_name = domain_name
     end
 
     def all
@@ -16,7 +17,7 @@ module Store
 
     def update(boards)
       boards_store.transaction do
-        boards_store['boards'] = boards.map { |board| [board.id, board.to_h] }
+        boards_store['boards'] = boards.map { |board| [board.id, board.to_h] }.to_h
         boards_store['last_updated'] = Time.now
       end
     end
@@ -28,13 +29,19 @@ module Store
 
     def update_board(id, issues)
       store = board_store(id)
+      board_last_updated = Time.now
       store.transaction do
         store['issues'] = issues.map { |issue| issue.to_h }
-        store['last_updated'] = Time.now
+        store['last_updated'] = board_last_updated
+      end
+      b_store = boards_store
+      b_store.transaction do
+        b_store['boards'][id]['last_updated'] = board_last_updated
       end
     end
 
     def get_board(id)
+      byebug
       board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store
@@ -53,18 +60,18 @@ module Store
       store.transaction { store['last_updated'] }
     end
 
-    def self.instance
-      @@boards ||= Boards.new(Factory.instance)
+    def self.instance(domain_name)
+      @@boards ||= Boards.new(Factory.instance, domain_name)
     end
 
   private
 
     def boards_store
-      @factory.find_or_create('boards')
+      @factory.find_or_create("domains/#{@domain_name}/boards")
     end
 
     def board_store(id)
-      @factory.find_or_create("boards/#{id}")
+      @factory.find_or_create("domains/#{@domain_name}/boards/#{id}")
     end
   end
 end

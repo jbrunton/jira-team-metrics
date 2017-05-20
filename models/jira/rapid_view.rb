@@ -3,12 +3,14 @@ class RapidBoard
   attr_reader :query
   attr_reader :name
   attr_reader :issues
+  attr_reader :last_updated
 
   def initialize(attrs)
     @id = attrs['id']
     @query = attrs['query']
     @name = attrs['name']
     @issues = attrs['issues']
+    @last_updated = attrs['last_updated']
   end
 
   def to_h
