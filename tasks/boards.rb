@@ -2,21 +2,16 @@ require 'byebug'
 require 'yaml/store'
 
 class Boards < JiraTask
-  def initialize(*args)
-    super
-    @store = Store::Boards.instance
-  end
-
   desc "sync", "sync list of boards"
   method_option :status, :aliases => "-s", :desc => "status"
   def sync
     status = options[:status]
     if status
-      last_updated = @store.last_updated || "Never"
+      last_updated = boards_store.last_updated || "Never"
       puts "Last updated: #{last_updated}"
     else
       rapid_views = client.get_rapid_boards
-      @store.update(rapid_views)
+      boards_store.update(rapid_views)
       puts "Synced #{rapid_views.count} boards"
     end
   end
@@ -24,7 +19,7 @@ class Boards < JiraTask
   desc "list", "list all boards"
   def list
     say "Listing boards:", :bold
-    rows = @store.all.map{ |board| [board.id, board.name] }
+    rows = boards_store.all.map{ |board| [board.id, board.name, board.last_updated] }
     print_table(rows, indent: 2)
   end
 
@@ -33,7 +28,7 @@ class Boards < JiraTask
     say "Boards matching #{regex}:", :bold
 
     r = Regexp.new(regex)
-    results = @store.all
+    results = boards_store.all
       .select{ |board| r.match(board.name) }
       .map{ |board| [board.id, board.name] }
 
