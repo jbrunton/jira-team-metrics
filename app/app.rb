@@ -22,6 +22,27 @@ helpers do
   def board_issues_path(domain, board)
     "#{board_path(domain, board)}/issues"
   end
+
+  def issue_path(issue)
+    "#{board_issues_path(@domain, @board)}/#{issue.key}"
+  end
+
+  def path_for(object)
+    if object.kind_of?(Issue)
+      issue_path(object)
+    end
+  end
+
+  def table_item(item)
+    if item.kind_of?(Hash)
+      link = path_for(item[:link_to]) if item[:link_to]
+      text = item[:text]
+      text = "<a href='#{link}'>#{text}</a>" if link
+      text
+    else
+      item
+    end
+  end
 end
 
 before '/:domain*' do

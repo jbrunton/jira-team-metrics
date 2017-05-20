@@ -3,7 +3,7 @@
     <% table.headers.each do |header_row| %>
         <tr>
           <% header_row.each do |h| %>
-              <th><%= h %></th>
+              <th><%= table_item(h) %></th>
           <% end %>
         </tr>
     <% end %>
@@ -11,7 +11,7 @@
   <% table.rows.each do |row| %>
       <tr>
         <% row.each do |s| %>
-            <td><%= s %></td>
+            <td><%= table_item(s) %></td>
         <% end %>
       </tr>
   <% end %>

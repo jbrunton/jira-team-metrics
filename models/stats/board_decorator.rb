@@ -67,7 +67,7 @@ class BoardDecorator < Draper::Decorator
 
       rows = completed_issues.map do |issue|
         [
-          issue.key,
+          { text: issue.key, link_to: issue },
           issue.issue_type,
           issue.summary,
           pretty_print_date(issue.completed),
