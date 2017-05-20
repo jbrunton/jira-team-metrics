@@ -1,4 +1,9 @@
-<h1>Boards for domain '<%= @domain['name'] %>'</h1>
+<% content_for :nav_content do %>
+    <a href="/" class="breadcrumb">Home</a>
+    <a href="#!" class="breadcrumb"><%= @domain['name'] %></a>
+<% end %>
+
+<h1><%= @domain['name'] %></h1>
 
 <table>
   <thead>

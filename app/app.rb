@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/content_for'
 require 'yaml/store'
 
 require 'require_all'
@@ -6,7 +7,7 @@ require 'require_all'
 
 get '/' do
   @domains = DomainsStore.instance.all
-  erb :index
+  erb 'domains/index'.to_sym
 end
 
 get '/:domain' do
@@ -15,5 +16,5 @@ get '/:domain' do
   @boards = Store::Boards.instance(domain_name).all.select do |board|
     !board.last_updated.nil?
   end
-  erb 'boards/index'.to_sym
+  erb 'domains/show'.to_sym
 end
