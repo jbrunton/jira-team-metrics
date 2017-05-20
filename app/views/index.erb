@@ -1,0 +1,16 @@
+<h1>Domains</h1>
+
+<table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Url</td>
+    </tr>
+  </thead>
+  <% @domains.each do |domain| %>
+      <tr>
+        <td><%= domain['name'] %></td>
+        <td><%= domain['url'] %></td>
+      </tr>
+  <% end %>
+</table>
