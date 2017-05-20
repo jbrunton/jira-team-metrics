@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/content_for'
 require 'yaml/store'
+require 'byebug'
 
 require 'require_all'
 ['models', 'stores'].each { |dir| require_all dir }
@@ -37,18 +38,17 @@ get '/:domain' do
   erb 'domains/show'.to_sym
 end
 
-get '/:domain/boards/:id' do
+before '/:domain/boards/:id*' do
   domain_name = params['domain']
   @domain = DomainsStore.instance.find(domain_name)
   board = Store::Boards.instance(domain_name).get_board(params[:id].to_i)
   @board = BoardDecorator.new(board, nil, nil)
+end
+
+get '/:domain/boards/:id' do
   erb 'boards/show'.to_sym
 end
 
 get '/:domain/boards/:id/issues' do
-  domain_name = params['domain']
-  @domain = DomainsStore.instance.find(domain_name)
-  board = Store::Boards.instance(domain_name).get_board(params[:id].to_i)
-  @board = BoardDecorator.new(board, nil, nil)
   erb 'boards/issues'.to_sym
 end
