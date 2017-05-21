@@ -77,12 +77,13 @@ get '/:domain/boards/:board_id' do
   trend = trend_builder.analyze(sorted_issues)
 
   @chart_data = {
-    cols: [{type: 'date', label: 'Completed'}, {type: 'number', label: 'Completed Issues'}, {type: 'string', role: 'tooltip'}, {type: 'number', label: 'WIP'}, {type: 'number', label: 'Rolling Avg CT'}],
+    cols: [{type: 'date', label: 'Completed'}, {type: 'number', label: 'Completed Issues'}, {type: 'string', role: 'tooltip'}, {type: 'number', label: 'WIP'}, {type: 'number', label: 'Rolling Avg CT'}, {type: 'number', role: 'interval'}, {type: 'number', role: 'interval'}],
     rows: sorted_issues.map.with_index do |issue, index|
       mean = trend[index][:mean]
-      {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}, {v: nil}, {v: mean}]}
+      stddev = trend[index][:stddev]
+      {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev}]}
     end + @board.wip_history.map do |date, issues|
-      {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: issues.count}, {v: nil}]}
+      {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: issues.count}, {v: nil}, {v: nil}, {v: nil}]}
     end
   }
 
