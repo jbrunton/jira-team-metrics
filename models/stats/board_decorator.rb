@@ -28,7 +28,6 @@ class BoardDecorator < Draper::Decorator
 
   def wip_history
     dates = object.issues.map{ |issue| [issue.started, issue.completed] }.flatten.compact
-    byebug
     min_date = [object.changed_issues_since, dates.min.to_date].max
     max_date = dates.max.to_date
 
