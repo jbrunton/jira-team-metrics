@@ -42,11 +42,13 @@ module Store
     end
 
     def get_board(id)
+      exclusions = (config.get("exclusions.domains.#{@domain_name}.boards.board/#{id}") || []).split
       board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store
         .transaction { store['issues'] || [] }
         .map{ |attrs| Issue.new(attrs) }
+        .select{ |issue| !exclusions.include?(issue.key) }
       RapidBoard.new({
         'id' => id,
         'name' => board.name,
@@ -74,6 +76,10 @@ module Store
 
     def board_store(id)
       @factory.find_or_create("domains/#{@domain_name}/boards/#{id}")
+    end
+
+    def config
+      Store::Config.instance
     end
   end
 end
