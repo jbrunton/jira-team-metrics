@@ -36,11 +36,15 @@ private
         history['items'].any?{ |x| x['field'] == 'status' }
       end
       transitions.map do |history|
-        status = history['items'].find{ |x| x['field'] == 'status' }['toString']
+        transition = history['items'].find{ |x| x['field'] == 'status' }
+        toStatus = transition['toString']
+        fromStatus = transition['fromString']
         {
           'date' => history['created'],
-          'status' => status,
-          'statusCategory' => @statuses[status]
+          'fromStatus' => fromStatus,
+          'fromStatusCategory' => @statuses[fromStatus],
+          'toStatus' => toStatus,
+          'toStatusCategory' => @statuses[toStatus]
         }
       end
     end
