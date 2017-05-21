@@ -27,10 +27,15 @@
       },
       vAxes: [
         {
-          title: 'Cycle Time'
+          title: 'Cycle Time',
+          minValue: 0,
+          viewWindow: {
+            min: 0
+          }
         },
         {
-          title: 'WIP'
+          title: 'WIP',
+          minValue: 0
         }
       ],
       series: {
