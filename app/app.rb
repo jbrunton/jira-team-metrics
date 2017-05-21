@@ -82,5 +82,9 @@ end
 
 get '/:domain/boards/:board_id/issues/:issue_key' do
   @issue = @board.issues.find{ |i| i.key == params[:issue_key] }
-  erb 'issues/show'.to_sym
+  if params[:fragment]
+    erb 'partials/issue'.to_sym, locals: {issue: @issue}, layout: false
+  else
+    erb 'issues/show'.to_sym
+  end
 end

@@ -8,37 +8,4 @@
 
 <h2><%= "#{@issue.key} - #{@issue.summary}" %></h2>
 
-<table class="striped">
-  <thead>
-    <tr>
-      <th colspan="2">
-        Overview
-      </th>
-    </tr>
-  </thead>
-  <tr>
-    <td>Issue Type</td>
-    <td><%= @issue.issue_type %></td>
-  </tr>
-  <tr>
-    <td>Started</td>
-    <td><%= @issue.started %></td>
-  </tr>
-  <tr>
-    <td>Completed</td>
-    <td><%= @issue.completed %></td>
-  </tr>
-  <thead>
-    <tr>
-      <th colspan="2">
-        Transitions
-      </th>
-    </tr>
-  </thead>
-  <% @issue.transitions.each do |t| %>
-      <tr>
-        <td><%= Time.parse(t['date']).strftime('%d %b %Y %H:%M') %></td>
-        <td><%= t['fromStatus'] %>&rarr;<%= t['toStatus'] %></td>
-      </tr>
-  <% end %>
-</table>
+<%= erb 'partials/issue'.to_sym, locals: {issue: @issue} %>
