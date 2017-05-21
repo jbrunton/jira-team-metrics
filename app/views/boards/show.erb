@@ -65,11 +65,17 @@
     }
   }
 
+  $(function() {
+    var div = $('#chart_div');
+    var width = div.width();
+
+    div.css('height', width * 0.5);
+  });
 
 </script>
 
 <h3>Control Chart</h3>
 <!--Div that will hold the pie chart-->
-<div id="chart_div" style="height:460"></div>
+<div id="chart_div"></div>
 <div id="selected_issue"></div>
 </body>
