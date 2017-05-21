@@ -25,10 +25,19 @@
       hAxis: {
         format: 'd MMM yy'
       },
-      vAxis: {
-        gridlines: {color: 'none'},
-        minValue: 0
-      }
+      vAxes: [
+        {
+          title: 'Cycle Time'
+        },
+        {
+          title: 'WIP'
+        }
+      ],
+      series: {
+        0: { color: 'red' },
+        1: { lineWidth: 2, pointSize: 0, color: 'blue', targetAxisIndex: 1 }
+      },
+      interpolateNulls: false
     };
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
@@ -36,9 +45,12 @@
     chart.draw(data, options);
 
     function selectHandler() {
-      var selection = chart.getSelection();
-      var key = data.getValue(selection[0].row, 2);
-      $( "#selected_issue" ).load( document.URL + "/issues/" + key + "?fragment=true" );
+      var selection = chart.getSelection()[0];
+      if (selection.column == 1) {
+        // only for issue points, not WIP history points
+        var key = data.getValue(selection.row, 2);
+        $('#selected_issue').load( document.URL + "/issues/" + key + "?fragment=true" );
+      }
     }
   }
 
