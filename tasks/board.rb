@@ -79,6 +79,29 @@ class Board < JiraTask
     end
   end
 
+  desc "exclude", "exclude given issues"
+  def exclude(issue_keys)
+    board_id = get_board_id(options)
+    domain_name = config.get('defaults.domain')
+    config.set("exclusions.domains.#{domain_name}.boards.board/#{board_id}", issue_keys)
+  end
+
+  desc "exclusions", "print excluded issues"
+  method_option :clear, :desc => "clear exclusions"
+  def exclusions
+    board_id = get_board_id(options)
+    domain_name = config.get('defaults.domain')
+    path = "exclusions.domains.#{domain_name}.boards.board/#{board_id}"
+
+    if options[:clear]
+      config.set(path, '')
+    else
+      exclusions = config.get(path)
+      say 'Excluded issues:', :bold
+      say "  #{exclusions}"
+    end
+  end
+
 private
   def output_table(description, table)
     say description, :bold
