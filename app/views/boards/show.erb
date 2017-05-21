@@ -25,14 +25,19 @@
       hAxis: {
         format: 'd MMM yy'
       },
-      vAxis: {
-        gridlines: {color: 'none'},
-        minValue: 0
-      },
+      vAxes: [
+        {
+          title: 'Cycle Time'
+        },
+        {
+          title: 'WIP'
+        }
+      ],
       series: {
         0: { color: 'red' },
-        1: { lineWidth: 2, pointSize: 0, color: 'blue' }
-      }
+        1: { lineWidth: 2, pointSize: 0, color: 'blue', targetAxisIndex: 1 }
+      },
+      interpolateNulls: false
     };
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
