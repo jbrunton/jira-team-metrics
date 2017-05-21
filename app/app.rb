@@ -73,6 +73,12 @@ get '/:domain/boards/:board_id' do
       {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}]}
     end
   }
+  @wip_data = {
+    cols: [{type: 'date', label: 'Date'}, {type: 'number', label: 'WIP'}],
+    rows: @board.wip_history.map do |date, issues|
+      {c: [{v: date_as_string(date)}, {v: issues.count}]}
+    end
+  }
   erb 'boards/show'.to_sym
 end
 

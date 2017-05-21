@@ -40,6 +40,21 @@
       var key = data.getValue(selection[0].row, 2);
       $( "#selected_issue" ).load( document.URL + "/issues/" + key + "?fragment=true" );
     }
+
+    var wipData = new google.visualization.DataTable(<%= @wip_data.to_json %>);
+
+    var wipOptions = {
+      hAxis: {
+        format: 'd MMM yy'
+      },
+      vAxis: {
+        gridlines: {color: 'none'},
+        minValue: 0
+      }
+    };
+
+    var wipChart = new google.visualization.ScatterChart(document.getElementById('wip_chart_div'));
+    wipChart.draw(wipData, wipOptions);
   }
 
 
@@ -48,5 +63,6 @@
 <h3>Control Chart</h3>
 <!--Div that will hold the pie chart-->
 <div id="chart_div" style="height:460"></div>
+<div id="wip_chart_div" style="height:460"></div>
 <div id="selected_issue"></div>
 </body>

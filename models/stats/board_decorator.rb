@@ -26,6 +26,22 @@ class BoardDecorator < Draper::Decorator
       .to_h
   end
 
+  def wip_history
+    dates = object.issues.map{ |issue| [issue.started, issue.completed] }.flatten.compact
+    min_date = dates.min.to_date
+    max_date = dates.max.to_date
+
+    dates = DateRange.new(min_date, max_date).to_a
+    dates.map do |date|
+      wip_issues = object.issues.select do |issue|
+        issue.started &&
+        issue.started < date &&
+          (issue.completed.nil? or issue.completed > date)
+      end
+      [date, wip_issues]
+    end
+  end
+
   def get_binding
     binding()
   end
