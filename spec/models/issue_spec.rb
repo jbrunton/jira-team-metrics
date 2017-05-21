@@ -5,32 +5,32 @@ RSpec.describe Issue do
   let(:analysis_transition) {
     {
       'date' => '2017-01-01T12:00:00.000-0000',
-      'status' => 'Analysis',
-      'statusCategory' => 'To Do'
+      'toStatus' => 'Analysis',
+      'toStatusCategory' => 'To Do'
     }
   }
 
   let(:in_progress_transition) {
     {
       'date' => '2017-01-02T12:00:00.000-0000',
-      'status' => 'In Progress',
-      'statusCategory' => 'In Progress'
+      'toStatus' => 'In Progress',
+      'toStatusCategory' => 'In Progress'
     }
   }
 
   let(:in_test_transition) {
     {
       'date' => '2017-01-02T18:00:00.000-0000',
-      'status' => 'In Test',
-      'statusCategory' => 'In Progress'
+      'toStatus' => 'In Test',
+      'toStatusCategory' => 'In Progress'
     }
   }
 
   let (:done_transition) {
     {
       'date' => '2017-01-03T18:00:00.000-0000',
-      'status' => 'Done',
-      'statusCategory' => 'Done'
+      'toStatus' => 'Done',
+      'toStatusCategory' => 'Done'
     }
   }
 
