@@ -30,7 +30,7 @@ class Board < JiraTask
       say "Transitions:", :bold
       rows = issue.transitions.map do |t|
         date = Time.parse(t['date']).strftime('%d %b %Y %H:%M')
-        [date, t['status']]
+        [date, "#{t['fromStatus']} -> #{t['toStatus']}"]
       end
       print_table(rows, indent: 2)
     end

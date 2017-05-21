@@ -26,9 +26,9 @@ class Issue
     @started_cache[status] ||= begin
       first_transition = transitions.find do |t|
         if status
-          t['status'] == status
+          t['toStatus'] == status
         else
-          t['statusCategory'] == 'In Progress'
+          t['toStatusCategory'] == 'In Progress'
         end
       end
 
@@ -40,9 +40,9 @@ class Issue
     @completed_cache[status] ||= begin
       last_transition = transitions.reverse.find do |t|
         if status
-          t['status'] == status
+          t['toStatus'] == status
         else
-          t['statusCategory'] == 'Done'
+          t['toStatusCategory'] == 'Done'
         end
       end
 
