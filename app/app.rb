@@ -68,11 +68,11 @@ end
 
 get '/:domain/boards/:board_id' do
   @chart_data = {
-    cols: [{type: 'date', label: 'Completed'}, {type: 'number', label: 'Cycle Time'}, {type: 'number', label: 'WIP'}, {type: 'string', role: 'tooltip'}],
+    cols: [{type: 'date', label: 'Completed'}, {type: 'number', label: 'Cycle Time'}, {type: 'string', role: 'tooltip'}, {type: 'number', label: 'WIP'}],
     rows: @board.completed_issues.map do |issue|
-      {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: nil}, {v: 'qwe'}]}
+      {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}, {v: nil}]}
     end + @board.wip_history.map do |date, issues|
-      {c: [{v: date_as_string(date)}, {v: nil}, {v: issues.count}, {v: 'asd'}]}
+      {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: issues.count}]}
     end
   }
   erb 'boards/show'.to_sym
