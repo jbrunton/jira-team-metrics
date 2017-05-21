@@ -36,7 +36,7 @@ helpers do
 
   def render_table_options(object)
     path = path_for(object)
-    "<a href='#{path}' class='waves-effect waves-light btn'>Details</a>"
+    "<a href='#{path}'>Details</a>"
   end
 
   def date_as_string(date)

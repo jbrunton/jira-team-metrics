@@ -5,6 +5,6 @@
     <a href="#!" class="breadcrumb">Issues</a>
 <% end %>
 
-<h2>Issues for <%= @board.name %></h2>
+<h3>Issues for <%= @board.name %></h3>
 
 <%= erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table } %>

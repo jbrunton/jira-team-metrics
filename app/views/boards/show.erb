@@ -4,42 +4,24 @@
     <a href="#!" class="breadcrumb"><%= @board.name %></a>
 <% end %>
 
-<h2>Summary for <%= @board.name %></h2>
+<h3>Summary for <%= @board.name %></h3>
 
 <%= erb 'partials/table'.to_sym, :locals => { :table => @board.summary_table } %>
 
-<a href="<%= board_issues_path(@domain, @board) %>" class="waves-effect waves-light btn">
-  All Issues
-</a>
+<p class="center">
+  <a href="<%= board_issues_path(@domain, @board) %>">
+    All Issues &rarr;
+  </a>
+</p>
 
 <script type="text/javascript">
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
-//    var data = new google.visualization.DataTable();
-//    data.addColumn('date', 'Time of Day');
-//    data.addColumn('number', 'Rating');
-//
-//    data.addRows([
-//      [new Date(2015, 0, 1), 5],
-//      [new Date(2015, 0, 2), 7]
-//    ]);
-
-    var data = new google.visualization.DataTable({
-      cols: [{type: 'date'}, {type: 'number'}],
-      rows: [
-        {c: [{v: 'Date(2015, 0, 1)'}, {v: 5}]},
-        {c: [{v: 'Date(2015, 0, 2)'}, {v: 7}]}
-      ]
-    });
-
     var data = new google.visualization.DataTable(<%= @chart_data.to_json %>);
 
-
     var options = {
-      title: 'Control Chart',
-      height: 500,
       hAxis: {
         format: 'd MMM yy'
       },
@@ -63,9 +45,8 @@
 
 </script>
 
+<h3>Control Chart</h3>
 <!--Div that will hold the pie chart-->
 <div id="chart_div" style="height:460"></div>
-<div id="selected_issue">
-
-</div>
+<div id="selected_issue"></div>
 </body>
