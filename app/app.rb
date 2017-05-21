@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/content_for'
 require 'yaml/store'
 require 'byebug'
+require 'chartkick'
 
 require 'require_all'
 ['models', 'stores'].each { |dir| require_all dir }
@@ -37,6 +38,10 @@ helpers do
     path = path_for(object)
     "<a href='#{path}' class='waves-effect waves-light btn'>Details</a>"
   end
+
+  def date_as_string(date)
+    "Date(#{date.year}, #{date.month}, #{date.day})"
+  end
 end
 
 before '/:domain*' do
@@ -62,6 +67,12 @@ get '/:domain' do
 end
 
 get '/:domain/boards/:board_id' do
+  @chart_data = {
+    cols: [{type: 'date', label: 'Completed'}, {type: 'number', label: 'Cycle Time'}, {type: 'string', role: 'tooltip'}],
+    rows: @board.completed_issues.map do |issue|
+      {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}]}
+    end
+  }
   erb 'boards/show'.to_sym
 end
 
