@@ -58,9 +58,16 @@
     function selectHandler() {
       var selection = chart.getSelection()[0];
       if (selection.column == 1) {
-        // only for issue points, not WIP history points
+        // completed issues column
         var key = data.getValue(selection.row, 2);
-        $('#selected_issue').load( document.URL + "/issues/" + key + "?fragment=true" );
+        $('#selected_content').load( document.URL + "/issues/" + key + "?fragment=true" );
+      } else if (selection.column == 3) {
+        // WIP column
+        var date = data.getValue(selection.row, 0);
+        var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        $('#selected_content').load(document.URL + "/wip/" + dateStr);
+      } else {
+        $('#selected_content').empty();
       }
     }
   }
@@ -77,5 +84,5 @@
 <h3>Control Chart</h3>
 <!--Div that will hold the pie chart-->
 <div id="chart_div"></div>
-<div id="selected_issue"></div>
+<div id="selected_content"></div>
 </body>

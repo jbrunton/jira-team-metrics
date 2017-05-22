@@ -125,3 +125,9 @@ get '/:domain/boards/:board_id/issues/:issue_key' do
     erb 'issues/show'.to_sym
   end
 end
+
+get '/:domain/boards/:board_id/wip/:date' do
+  date = Time.parse(params[:date])
+  issues = @board.wip_on_date(date)
+  erb 'partials/wip'.to_sym, locals: {date: date, issues: issues}, layout: false
+end
