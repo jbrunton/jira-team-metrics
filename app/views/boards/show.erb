@@ -9,12 +9,11 @@
 <%= erb 'partials/table'.to_sym, :locals => { :table => @board.summary_table } %>
 
 <p class="center">
-  <a href="<%= board_issues_path(@domain, @board) %>" class="waves-effect waves-light btn">
-    All Issues &rarr;
-  </a>
-
   <a href="<%= board_control_chart_path(@domain, @board) %>" class="waves-effect waves-light btn">
-    Control Chart &rarr;
+    <i class="material-icons left">trending_up</i>Control Chart
+  </a>
+  <a href="<%= board_issues_path(@domain, @board) %>" class="waves-effect waves-light btn">
+    <i class="material-icons left">list</i>Issues
   </a>
 </p>
 
