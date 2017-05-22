@@ -69,6 +69,15 @@ class BoardDecorator < Draper::Decorator
         ], nil)
       end
 
+      rows << DataTable::Row.new([
+        'ALL',
+        completed_issues.count,
+        pretty_print_number(completed_issues.cycle_times.mean),
+        pretty_print_number(completed_issues.cycle_times.median),
+        pretty_print_number(completed_issues.cycle_times.standard_deviation)
+      ], nil)
+
+
       headers = [
         DataTable::Header.new(['Issue Type', 'Count', 'Cycle Times', '', '']),
         DataTable::Header.new(['', '', 'Mean', 'Median', 'Std Dev'])
