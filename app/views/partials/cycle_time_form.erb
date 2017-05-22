@@ -1,0 +1,38 @@
+<div class="row">
+  <form class="col s12">
+    <div class="row">
+      <div class="input-field col s3">
+        <input id="from_state" type="text" class="validate state">
+        <label for="from_state">From State</label>
+      </div>
+      <div class="input-field col s3">
+        <input id="to_state" type="text" class="validate state">
+        <label for="to_state">To State</label>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  $(function() {
+    fetchSummary();
+
+    $('.state').autocomplete({
+      data: {
+        <% @domain['statuses'].each do |status, _| %>
+        "<%= status.html_safe %>": null,
+        <% end %>
+      }
+    });
+
+    $('form input').change(fetchSummary);
+  });
+
+  function buildComponentUrl(path) {
+    var fromState = $('#from_state').val();
+    var toState = $('#to_state').val();
+    path += '?from_state=' + encodeURIComponent(fromState);
+    path += '&to_state=' + encodeURIComponent(toState);
+    return path;
+  }
+</script>

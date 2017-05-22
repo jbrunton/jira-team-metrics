@@ -16,49 +16,13 @@
   Summary for <%= @board.name %>
 </h3>
 
-<div class="row">
-  <form class="col s12">
-    <div class="row">
-      <div class="input-field col s3">
-        <input id="from_state" type="text" class="validate state">
-        <label for="from_state">From State</label>
-      </div>
-      <div class="input-field col s3">
-        <input id="to_state" type="text" class="validate state">
-        <label for="to_state">To State</label>
-      </div>
-    </div>
-  </form>
-</div>
+<%= erb 'partials/cycle_time_form'.to_sym %>
 
 <script>
-  $(function() {
-    fetchSummary();
-
-    $('.state').autocomplete({
-      data: {
-        <% @domain['statuses'].each do |status, _| %>
-          "<%= status.html_safe %>": null,
-        <% end %>
-      },
-      limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
-      onAutocomplete: function(val) {
-        // Callback function when value is autcompleted.
-      },
-      minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
-    });
-
-    $('form input').change(fetchSummary);
-  });
-
   function fetchSummary() {
-    var summaryUrl = '<%= board_summary_path(@domain, @board) %>?fragment=true';
-    var fromState = $('#from_state').val();
-    var toState = $('#to_state').val();
-    summaryUrl += '&from_state=' + encodeURIComponent(fromState);
-    summaryUrl += '&to_state=' + encodeURIComponent(toState);
+    var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
     $('#summary').empty();
-    $('#summary').load(summaryUrl);
+    $('#summary').load(url);
   }
 </script>
 

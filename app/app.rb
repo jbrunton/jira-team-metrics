@@ -24,8 +24,8 @@ helpers do
     "#{board_path(domain, board)}/issues"
   end
 
-  def board_summary_path(domain, board)
-    "#{board_path(domain, board)}/summary"
+  def board_component_summary_path(domain, board)
+    "#{board_path(domain, board)}/components/summary"
   end
 
   def board_control_chart_path(domain, board)
@@ -137,8 +137,8 @@ get '/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
 end
 
-get '/:domain/boards/:board_id/summary' do
-  erb 'boards/summary'.to_sym, layout: !params[:fragment]
+get '/:domain/boards/:board_id/components/summary' do
+  erb 'boards/summary'.to_sym, layout: false
 end
 
 get '/:domain/boards/:board_id/issues/:issue_key' do
