@@ -13,26 +13,12 @@ class Board < JiraTask
     board_id = get_board_id(options)
     board = boards_store.get_board(board_id)
 
-    issue = board.issues.find{ |i| i.key == key}
+    issue = IssueDecorator.new(board.issues.find{ |i| i.key == key}, nil, nil)
 
-    say "Details for #{issue.key}:", :bold
-    rows = [
-      ['Key', issue.key],
-      ['Summary', issue.summary],
-      ['Issue Type', issue.issue_type],
-      ['Started', issue.started.strftime('%d %b %Y')],
-      ['Completed', issue.completed.strftime('%d %b %Y')]
-    ]
-
-    print_table(rows, indent: 2)
+    output_table("Details for #{issue.key}:", issue.overview_table)
 
     if options[:transitions]
-      say "Transitions:", :bold
-      rows = issue.transitions.map do |t|
-        date = Time.parse(t['date']).strftime('%d %b %Y %H:%M')
-        [date, "#{t['fromStatus']} -> #{t['toStatus']}"]
-      end
-      print_table(rows, indent: 2)
+      output_table("Transitions:", issue.transitions_table)
     end
   end
 

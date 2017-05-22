@@ -38,11 +38,13 @@ class BoardDecorator < Draper::Decorator
   end
 
   def wip_on_date(date)
-    object.issues.select do |issue|
+    issues = object.issues.select do |issue|
       issue.started &&
         issue.started < date &&
         (issue.completed.nil? or issue.completed > date)
     end
+
+    issues.map{ |issue| IssueDecorator.new(issue, @from_date, @to_state) }
   end
 
   def get_binding

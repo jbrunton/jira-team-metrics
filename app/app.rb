@@ -5,7 +5,7 @@ require 'byebug'
 require 'chartkick'
 
 require 'require_all'
-['models', 'stores'].each { |dir| require_all dir }
+['helpers', 'models', 'stores'].each { |dir| require_all dir }
 
 helpers do
   def home_path
@@ -118,7 +118,7 @@ get '/:domain/boards/:board_id/issues' do
 end
 
 get '/:domain/boards/:board_id/issues/:issue_key' do
-  @issue = @board.issues.find{ |i| i.key == params[:issue_key] }
+  @issue = IssueDecorator.new(@board.issues.find{ |i| i.key == params[:issue_key] }, nil, nil)
   if params[:fragment]
     erb 'partials/issue'.to_sym, locals: {issue: @issue}, layout: false
   else
