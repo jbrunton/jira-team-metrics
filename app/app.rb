@@ -24,6 +24,10 @@ helpers do
     "#{board_path(domain, board)}/issues"
   end
 
+  def board_control_chart_path(domain, board)
+    "#{board_path(domain, board)}/control_chart"
+  end
+
   def issue_path(issue)
     "#{board_issues_path(@domain, @board)}/#{issue.key}"
   end
@@ -67,11 +71,15 @@ get '/:domain' do
 end
 
 get '/:domain/boards/:board_id' do
+  erb 'boards/show'.to_sym
+end
+
+get '/:domain/boards/:board_id/control_chart' do
   trend_builder = TrendBuilder.new.
     pluck{ |issue| issue.cycle_time }.
     map do |issue, mean, stddev|
-      { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
-    end
+    { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
+  end
 
   sorted_issues = @board.completed_issues.sort_by { |issue| issue.completed }
   ct_trends = trend_builder.analyze(sorted_issues)
@@ -80,7 +88,7 @@ get '/:domain/boards/:board_id' do
   trend_builder = TrendBuilder.new.
     pluck{ |item| item[1] }.
     map do |item, mean, stddev|
-      {wip: item[1], mean: mean, stddev: stddev }
+    {wip: item[1], mean: mean, stddev: stddev }
   end
   wip_trends = trend_builder.analyze(wip_history)
 
@@ -110,7 +118,7 @@ get '/:domain/boards/:board_id' do
     end
   }
 
-  erb 'boards/show'.to_sym
+  erb 'boards/control_chart'.to_sym
 end
 
 get '/:domain/boards/:board_id/issues' do
