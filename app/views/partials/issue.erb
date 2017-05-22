@@ -1,10 +1,19 @@
 <div class="row">
-  <div class="col s6">
-    <h5>Overview</h5>
-    <%= erb 'partials/table'.to_sym, locals: {table: issue.overview_table} %>
-  </div>
-  <div class="col s6">
-    <h5>Transitions</h5>
-    <%= erb 'partials/table'.to_sym, locals: {table: issue.transitions_table} %>
-  </div>
+  <% if defined?(show_transitions) && show_transitions %>
+      <div class="col s6">
+        <h5><%= issue.key %></h5>
+        <%= erb 'partials/table'.to_sym, locals: {table: issue.overview_table} %>
+      </div>
+      <div class="col s6">
+        <h5>Transitions</h5>
+        <%= erb 'partials/table'.to_sym, locals: {table: issue.transitions_table} %>
+      </div>
+  <% else %>
+      <div class="col s3"></div>
+      <div class="col s6">
+        <h5><%= issue.key %></h5>
+        <%= erb 'partials/table'.to_sym, locals: {table: issue.overview_table} %>
+      </div>
+      <div class="col s3"></div>
+  <% end %>
 </div>

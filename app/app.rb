@@ -120,7 +120,7 @@ end
 get '/:domain/boards/:board_id/issues/:issue_key' do
   @issue = IssueDecorator.new(@board.issues.find{ |i| i.key == params[:issue_key] }, nil, nil)
   if params[:fragment]
-    erb 'partials/issue'.to_sym, locals: {issue: @issue}, layout: false
+    erb 'partials/issue'.to_sym, locals: {issue: @issue, show_transitions: true}, layout: false
   else
     erb 'issues/show'.to_sym
   end
