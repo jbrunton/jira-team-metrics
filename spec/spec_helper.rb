@@ -16,7 +16,7 @@
 
 require 'require_all'
 
-['models', 'stores'].each { |dir| require_all dir }
+['helpers', 'models', 'stores'].each { |dir| require_all dir }
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
