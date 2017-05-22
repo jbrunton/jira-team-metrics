@@ -143,6 +143,10 @@ get '/:domain/boards/:board_id/components/summary' do
   erb 'boards/summary'.to_sym, layout: false
 end
 
+get '/:domain/boards/:board_id/components/issues_list' do
+  erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table }, layout: false
+end
+
 get '/:domain/boards/:board_id/issues/:issue_key' do
   @issue = IssueDecorator.new(@board.issues.find{ |i| i.key == params[:issue_key] }, nil, nil)
   if params[:fragment]
