@@ -24,6 +24,10 @@ helpers do
     "#{board_path(domain, board)}/issues"
   end
 
+  def board_summary_path(domain, board)
+    "#{board_path(domain, board)}/summary"
+  end
+
   def board_control_chart_path(domain, board)
     "#{board_path(domain, board)}/control_chart"
   end
@@ -55,7 +59,15 @@ end
 
 before '/:domain/boards/:board_id*' do
   board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
-  @board = BoardDecorator.new(board, nil, nil)
+
+  unless params[:from_state].nil?
+    from_state = params[:from_state] unless params[:from_state].empty?
+  end
+  unless params[:to_state].nil?
+    to_state = params[:to_state] unless params[:to_state].empty?
+  end
+
+  @board = BoardDecorator.new(board, from_state, to_state)
 end
 
 get '/' do
@@ -123,6 +135,10 @@ end
 
 get '/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
+end
+
+get '/:domain/boards/:board_id/summary' do
+  erb 'boards/summary'.to_sym, layout: !params[:fragment]
 end
 
 get '/:domain/boards/:board_id/issues/:issue_key' do
