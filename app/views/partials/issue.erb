@@ -1,50 +1,10 @@
 <div class="row">
   <div class="col s6">
-    <table class="striped">
-      <thead>
-        <tr>
-          <th colspan="2">
-            Overview
-          </th>
-        </tr>
-      </thead>
-      <tr>
-        <td>Key</td>
-        <td><%= issue.key %></td>
-      </tr>
-      <tr>
-        <td>Issue Type</td>
-        <td><%= issue.issue_type %></td>
-      </tr>
-      <tr>
-        <td>Summary</td>
-        <td><%= issue.summary %></td>
-      </tr>
-      <tr>
-        <td>Started</td>
-        <td><%= issue.started %></td>
-      </tr>
-      <tr>
-        <td>Completed</td>
-        <td><%= issue.completed %></td>
-      </tr>
-    </table>
+    <h5>Overview</h5>
+    <%= erb 'partials/table'.to_sym, locals: {table: issue.overview_table} %>
   </div>
   <div class="col s6">
-    <table class="striped">
-      <thead>
-        <tr>
-          <th colspan="2">
-            Transitions
-          </th>
-        </tr>
-      </thead>
-      <% issue.transitions.each do |t| %>
-          <tr>
-            <td><%= Time.parse(t['date']).strftime('%d %b %Y %H:%M') %></td>
-            <td><%= t['fromStatus'] %>&rarr;<%= t['toStatus'] %></td>
-          </tr>
-      <% end %>
-    </table>
+    <h5>Transitions</h5>
+    <%= erb 'partials/table'.to_sym, locals: {table: issue.transitions_table} %>
   </div>
 </div>

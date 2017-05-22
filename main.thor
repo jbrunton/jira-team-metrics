@@ -1,3 +1,3 @@
 require 'require_all'
 
-['models', 'stores', 'tasks'].each { |dir| require_all dir }
+['helpers', 'models', 'stores', 'tasks'].each { |dir| require_all dir }
