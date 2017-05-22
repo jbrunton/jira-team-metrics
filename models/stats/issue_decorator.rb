@@ -32,8 +32,8 @@ class IssueDecorator < Draper::Decorator
       DataTable::Row.new(['Key', key], nil),
       DataTable::Row.new(['Summary', summary], nil),
       DataTable::Row.new(['Issue Type', issue_type], nil),
-      DataTable::Row.new(['Started', pretty_print_date(started)], nil),
-      DataTable::Row.new(['Completed', pretty_print_date(completed)], nil),
+      DataTable::Row.new(['Started', pretty_print_time(started)], nil),
+      DataTable::Row.new(['Completed', pretty_print_time(completed)], nil),
       DataTable::Row.new(['Cycle Time (days)', pretty_print_number(cycle_time)], nil)
     ]
     DataTable.new(rows)
@@ -42,7 +42,7 @@ class IssueDecorator < Draper::Decorator
   def transitions_table
     rows = transitions.map do |t|
       DataTable::Row.new([
-        pretty_print_date(Time.parse(t['date'])),
+        pretty_print_time(Time.parse(t['date'])),
         "#{t['fromStatus']} -> #{t['toStatus']}"
       ], nil)
     end
