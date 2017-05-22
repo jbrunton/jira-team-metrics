@@ -7,13 +7,29 @@
 
 <h3>Control chart for <%= @board.name %></h3>
 
+<%= erb 'partials/cycle_time_form'.to_sym %>
+
 <div id="chart_div"></div>
 
 <script type="text/javascript">
   google.charts.load('current', {'packages':['corechart']});
 
+  $(function() {
+    $('form input').change(drawChart);
+  });
+
   function drawChart() {
-    var data = new google.visualization.DataTable(<%= @chart_data.to_json %>);
+    $('#selected_content').empty();
+
+    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/control_chart.json');
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
 
     var options = {
       hAxis: {

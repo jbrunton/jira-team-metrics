@@ -19,7 +19,12 @@
 <%= erb 'partials/cycle_time_form'.to_sym %>
 
 <script>
-  function fetchSummary() {
+  $(function() {
+    fetchData();
+    $('form input').change(fetchData);
+  })
+
+  function fetchData() {
     var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
     $('#summary').empty();
     $('#summary').load(url);

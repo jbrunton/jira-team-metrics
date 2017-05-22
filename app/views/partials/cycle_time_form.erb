@@ -15,8 +15,6 @@
 
 <script>
   $(function() {
-    fetchSummary();
-
     $('.state').autocomplete({
       data: {
         <% @domain['statuses'].each do |status, _| %>
@@ -24,8 +22,6 @@
         <% end %>
       }
     });
-
-    $('form input').change(fetchSummary);
   });
 
   function buildComponentUrl(path) {
