@@ -9,7 +9,7 @@
 
 <%= erb 'partials/cycle_time_form'.to_sym %>
 
-<div id="chart_div" style="position: relative; width: 100vw; left: calc(-50vw + 50%)"></div>
+<div id="chart_div"></div>
 
 <script type="text/javascript">
   google.charts.load('current', {'packages':['corechart']});
@@ -22,7 +22,7 @@
     $('#selected_content').empty();
 
     var chart = $('#chart_div');
-    var offset = (chart.width() - $(window).width()) / 2;
+    //var offset = (chart.width() - $(window).width()) / 2;
     chart.css('height', chart.width() * 0.5);
 
     var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/control_chart.json');
@@ -52,6 +52,10 @@
           minValue: 0
         }
       ],
+      chartArea: {
+        width: '85%',
+        height: '85%'
+      },
       series: {
         0: { pointSize: 4, color: 'indianred' },
         1: { pointSize: 3, color: 'steelblue', targetAxisIndex: 1 },
