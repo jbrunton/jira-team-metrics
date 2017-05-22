@@ -58,9 +58,14 @@
     function selectHandler() {
       var selection = chart.getSelection()[0];
       if (selection.column == 1) {
-        // only for issue points, not WIP history points
+        // completed issues column
         var key = data.getValue(selection.row, 2);
         $('#selected_issue').load( document.URL + "/issues/" + key + "?fragment=true" );
+      } else if (selection.column == 3) {
+        // WIP column
+        var date = data.getValue(selection.row, 0);
+        var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        $('#selected_issue').load(document.URL + "/wip/" + dateStr);
       }
     }
   }

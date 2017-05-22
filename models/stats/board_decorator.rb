@@ -33,12 +33,15 @@ class BoardDecorator < Draper::Decorator
 
     dates = DateRange.new(min_date, max_date).to_a
     dates.map do |date|
-      wip_issues = object.issues.select do |issue|
-        issue.started &&
+      [date, wip_on_date(date)]
+    end
+  end
+
+  def wip_on_date(date)
+    object.issues.select do |issue|
+      issue.started &&
         issue.started < date &&
-          (issue.completed.nil? or issue.completed > date)
-      end
-      [date, wip_issues]
+        (issue.completed.nil? or issue.completed > date)
     end
   end
 
