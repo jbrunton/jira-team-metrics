@@ -24,6 +24,10 @@ helpers do
     "#{board_path(domain, board)}/issues"
   end
 
+  def board_component_summary_path(domain, board)
+    "#{board_path(domain, board)}/components/summary"
+  end
+
   def board_control_chart_path(domain, board)
     "#{board_path(domain, board)}/control_chart"
   end
@@ -55,7 +59,15 @@ end
 
 before '/:domain/boards/:board_id*' do
   board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
-  @board = BoardDecorator.new(board, nil, nil)
+
+  unless params[:from_state].nil?
+    from_state = params[:from_state] unless params[:from_state].empty?
+  end
+  unless params[:to_state].nil?
+    to_state = params[:to_state] unless params[:to_state].empty?
+  end
+
+  @board = BoardDecorator.new(board, from_state, to_state)
 end
 
 get '/' do
@@ -74,7 +86,7 @@ get '/:domain/boards/:board_id' do
   erb 'boards/show'.to_sym
 end
 
-get '/:domain/boards/:board_id/control_chart' do
+get '/:domain/boards/:board_id/api/control_chart.json' do
   trend_builder = TrendBuilder.new.
     pluck{ |issue| issue.cycle_time }.
     map do |issue, mean, stddev|
@@ -92,7 +104,7 @@ get '/:domain/boards/:board_id/control_chart' do
   end
   wip_trends = trend_builder.analyze(wip_history)
 
-  @chart_data = {
+  {
     cols: [
       {id: 'date', type: 'date', label: 'Completed'},
       {id: 'completed_issues', type: 'number', label: 'Completed Issues'},
@@ -116,13 +128,23 @@ get '/:domain/boards/:board_id/control_chart' do
       stddev = wip_trends[index][:stddev]
       {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: wip}, {v: nil}, {v: nil}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev},]}
     end
-  }
+  }.to_json
+end
 
+get '/:domain/boards/:board_id/control_chart' do
   erb 'boards/control_chart'.to_sym
 end
 
 get '/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
+end
+
+get '/:domain/boards/:board_id/components/summary' do
+  erb 'boards/summary'.to_sym, layout: false
+end
+
+get '/:domain/boards/:board_id/components/issues_list' do
+  erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table }, layout: false
 end
 
 get '/:domain/boards/:board_id/issues/:issue_key' do

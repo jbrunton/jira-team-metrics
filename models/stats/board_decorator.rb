@@ -2,6 +2,8 @@ require 'draper'
 require 'descriptive_statistics'
 
 class BoardDecorator < Draper::Decorator
+  include FormattingHelpers
+  
   delegate_all
 
   def initialize(board, from_state, to_state)
@@ -49,14 +51,6 @@ class BoardDecorator < Draper::Decorator
 
   def get_binding
     binding()
-  end
-
-  def pretty_print_date(date)
-    date.strftime('%d %b %Y')
-  end
-
-  def pretty_print_number(number)
-    '%.2fd' % number
   end
 
   def summary_table

@@ -4,17 +4,33 @@
     <a href="#!" class="breadcrumb"><%= @board.name %></a>
 <% end %>
 
-<h3>Summary for <%= @board.name %></h3>
+<h3>
+  <div class="float right">
+    <a href="<%= board_control_chart_path(@domain, @board) %>" class="waves-effect waves-light btn">
+      <i class="material-icons left">trending_up</i>Control Chart
+    </a>
+    <a href="<%= board_issues_path(@domain, @board) %>" class="waves-effect waves-light btn">
+      <i class="material-icons left">list</i>Issues
+    </a>
+  </div>
+  Summary for <%= @board.name %>
+</h3>
 
-<%= erb 'partials/table'.to_sym, :locals => { :table => @board.summary_table } %>
+<%= erb 'partials/cycle_time_form'.to_sym %>
 
-<p class="center">
-  <a href="<%= board_control_chart_path(@domain, @board) %>" class="waves-effect waves-light btn">
-    <i class="material-icons left">trending_up</i>Control Chart
-  </a>
-  <a href="<%= board_issues_path(@domain, @board) %>" class="waves-effect waves-light btn">
-    <i class="material-icons left">list</i>Issues
-  </a>
-</p>
+<script>
+  $(function() {
+    fetchData();
+    $('form input').change(fetchData);
+  })
+
+  function fetchData() {
+    var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
+    $('#summary').empty();
+    $('#summary').load(url);
+  }
+</script>
+
+<div id="summary"></div>
 
 </body>
