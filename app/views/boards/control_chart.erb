@@ -21,6 +21,9 @@
   function drawChart() {
     $('#selected_content').empty();
 
+    var chart = $('#chart_div');
+    chart.css('height', chart.width() * 0.5);
+
     var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/control_chart.json');
 
     var jsonData = $.ajax({
@@ -48,6 +51,10 @@
           minValue: 0
         }
       ],
+      chartArea: {
+        width: '85%',
+        height: '85%'
+      },
       series: {
         0: { pointSize: 4, color: 'indianred' },
         1: { pointSize: 3, color: 'steelblue', targetAxisIndex: 1 },
@@ -83,8 +90,6 @@
   }
 
   $(function() {
-    var chart = $('#chart_div');
-    chart.css('height', chart.width() * 0.5);
     google.charts.setOnLoadCallback(drawChart);
   });
 
