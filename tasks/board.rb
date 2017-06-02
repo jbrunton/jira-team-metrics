@@ -97,18 +97,14 @@ private
   end
 
   def fetch_issues_for(board, since_date)
-    progressbar = ProgressBar.create
-    progressbar.progress = 0
-    start_time = Time.now
     statuses = domains_store.find(config.get('defaults.domain'))['statuses']
     query = QueryBuilder.new(board.query)
       .and("status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'")
       .query
     issues = client.search_issues(query: query, statuses: statuses) do |progress|
-      progressbar.progress = progress
+      @progressbar ||= ProgressBar.create(:format => '%a %B %p%% %t')
+      @progressbar.progress = progress
     end
-    end_time = Time.now
-    puts "Elapsed time: #{(end_time - start_time).to_i}s"
     issues
   end
 
