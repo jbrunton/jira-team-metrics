@@ -28,6 +28,10 @@ class BoardDecorator < Draper::Decorator
       .to_h
   end
 
+  def issue_types
+    issues_by_type.keys
+  end
+
   def wip_history
     dates = object.issues.map{ |issue| [issue.started, issue.completed] }.flatten.compact
     min_date = [object.changed_issues_since, dates.min.to_date].max
@@ -55,10 +59,11 @@ class BoardDecorator < Draper::Decorator
 
   def summary_table
     @summary_table ||= begin
-      rows = ['Story', 'Bug', 'Improvement', 'Technical Debt'].map do |issue_type|
+      rows = issue_types.map do |issue_type|
         DataTable::Row.new([
           issue_type,
           issues_by_type[issue_type].count,
+          pretty_print_number(issues_by_type[issue_type].count.to_f / completed_issues.count * 100),
           pretty_print_number(issues_by_type[issue_type].cycle_times.mean),
           pretty_print_number(issues_by_type[issue_type].cycle_times.median),
           pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
@@ -68,6 +73,7 @@ class BoardDecorator < Draper::Decorator
       rows << DataTable::Row.new([
         'ALL',
         completed_issues.count,
+        '',
         pretty_print_number(completed_issues.cycle_times.mean),
         pretty_print_number(completed_issues.cycle_times.median),
         pretty_print_number(completed_issues.cycle_times.standard_deviation)
@@ -75,8 +81,8 @@ class BoardDecorator < Draper::Decorator
 
 
       headers = [
-        DataTable::Header.new(['Issue Type', 'Count', 'Cycle Times', '', '']),
-        DataTable::Header.new(['', '', 'Mean', 'Median', 'Std Dev'])
+        DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
+        DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
       ]
 
       DataTable.new(headers + rows)
