@@ -2,7 +2,6 @@ require 'sinatra'
 require 'sinatra/content_for'
 require 'yaml/store'
 require 'byebug'
-require 'chartkick'
 
 require 'require_all'
 ['helpers', 'models', 'stores'].each { |dir| require_all dir }
