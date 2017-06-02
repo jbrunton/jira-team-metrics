@@ -42,7 +42,7 @@ module Store
     end
 
     def get_board(id)
-      exclusions = (config.get("exclusions.domains.#{@domain_name}.boards.board/#{id}") || []).split
+      exclusions = (config.get("exclusions.domains.#{@domain_name}.boards.board/#{id}") || '').split
       board = all.find{ |b| b.id == id }
       store = board_store(id)
       issues = store
