@@ -26,11 +26,24 @@
 
   function fetchData() {
     var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
-    $('#summary').empty();
-    $('#summary').load(url);
+    $('#summary').empty().load(url);
+
+    var byMonthUrl = url + '&group_by=month';
+    $('#by_month').empty().load(byMonthUrl);
   }
 </script>
 
-<div id="summary"></div>
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs tabs-fixed-width">
+      <li class="tab col s3"><a href="#summary">Overview</a></li>
+      <li class="tab col s3"><a href="#by_month">By Month</a></li>
+      <li class="tab col s3"><a href="#by_week">By Week</a></li>
+    </ul>
+  </div>
+  <div id="summary" class="col s12"></div>
+  <div id="by_month" class="col s12"></div>
+  <div id="by_week" class="col s12"></div>
+</div>
 
 </body>
