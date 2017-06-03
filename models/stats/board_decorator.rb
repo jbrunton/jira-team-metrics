@@ -93,13 +93,20 @@ class BoardDecorator < Draper::Decorator
       DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
     ]
 
-    if group_by == 'month'
+    if ['month', 'week'].include?(group_by)
       from_date = completed_issues.first.completed
 
       while from_date < completed_issues.last.completed
-        to_date = [from_date.next_month.beginning_of_month, completed_issues.last.completed].min
+        if group_by == 'month'
+          to_date = from_date.next_month.beginning_of_month
+        else
+          to_date = from_date.next_week.beginning_of_week
+        end
+        to_date = [to_date, completed_issues.last.completed].min
         date_range = from_date...to_date
-        rows << DataTable::Header.new([pretty_print_date_range(date_range), '', '', '', '', ''])
+
+        heading = pretty_print_date_range(date_range, group_by == 'week' ? {show_day: true} : {})
+        rows << DataTable::Header.new([heading, '', '', '', '', ''])
 
         issues = completed_issues_in_range(date_range)
         rows.concat(summary_rows_for(issues))

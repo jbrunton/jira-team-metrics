@@ -27,9 +27,8 @@
   function fetchData() {
     var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
     $('#summary').empty().load(url);
-
-    var byMonthUrl = url + '&group_by=month';
-    $('#by_month').empty().load(byMonthUrl);
+    $('#by_month').empty().load(url + '&group_by=month');
+    $('#by_week').empty().load(url + '&group_by=week');
   }
 </script>
 
