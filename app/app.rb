@@ -7,12 +7,12 @@ require 'require_all'
 ['helpers', 'models', 'stores'].each { |dir| require_all dir }
 
 helpers do
-  def home_path
-    '/'
+  def domains_path
+    '/domains'
   end
 
   def domain_path(domain)
-    "/#{domain['name']}"
+    "#{domains_path}/#{domain['name']}"
   end
 
   def board_path(domain, board)
@@ -51,12 +51,12 @@ helpers do
   end
 end
 
-before '/:domain*' do
+before '/domains/:domain*' do
   domain_name = params[:domain]
   @domain = DomainsStore.instance.find(domain_name)
 end
 
-before '/:domain/boards/:board_id*' do
+before '/domains/:domain/boards/:board_id*' do
   board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
 
   unless params[:from_state].nil?
@@ -70,22 +70,26 @@ before '/:domain/boards/:board_id*' do
 end
 
 get '/' do
+  redirect to(domains_path)
+end
+
+get '/domains' do
   @domains = DomainsStore.instance.all
   erb 'domains/index'.to_sym
 end
 
-get '/:domain' do
+get '/domains/:domain' do
   @boards = Store::Boards.instance(@domain['name']).all.select do |board|
     !board.last_updated.nil?
   end
   erb 'domains/show'.to_sym
 end
 
-get '/:domain/boards/:board_id' do
+get '/domains/:domain/boards/:board_id' do
   erb 'boards/show'.to_sym
 end
 
-get '/:domain/boards/:board_id/api/control_chart.json' do
+get '/domains/:domain/boards/:board_id/api/control_chart.json' do
   trend_builder = TrendBuilder.new.
     pluck{ |issue| issue.cycle_time }.
     map do |issue, mean, stddev|
@@ -130,23 +134,23 @@ get '/:domain/boards/:board_id/api/control_chart.json' do
   }.to_json
 end
 
-get '/:domain/boards/:board_id/control_chart' do
+get '/domains/:domain/boards/:board_id/control_chart' do
   erb 'boards/control_chart'.to_sym
 end
 
-get '/:domain/boards/:board_id/issues' do
+get '/domains/:domain/boards/:board_id/issues' do
   erb 'boards/issues'.to_sym
 end
 
-get '/:domain/boards/:board_id/components/summary' do
+get '/domains/:domain/boards/:board_id/components/summary' do
   erb 'boards/summary'.to_sym, layout: false
 end
 
-get '/:domain/boards/:board_id/components/issues_list' do
+get '/domains/:domain/boards/:board_id/components/issues_list' do
   erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table }, layout: false
 end
 
-get '/:domain/boards/:board_id/issues/:issue_key' do
+get '/domains/:domain/boards/:board_id/issues/:issue_key' do
   @issue = IssueDecorator.new(@board.issues.find{ |i| i.key == params[:issue_key] }, nil, nil)
   if params[:fragment]
     erb 'partials/issue'.to_sym, locals: {issue: @issue, show_transitions: true}, layout: false
@@ -155,7 +159,7 @@ get '/:domain/boards/:board_id/issues/:issue_key' do
   end
 end
 
-get '/:domain/boards/:board_id/wip/:date' do
+get '/domains/:domain/boards/:board_id/wip/:date' do
   date = Time.parse(params[:date])
   issues = @board.wip_on_date(date)
   erb 'partials/wip'.to_sym, locals: {date: date, issues: issues}, layout: false
