@@ -59,6 +59,19 @@ class BoardDecorator < Draper::Decorator
   end
 
   def summary_table(group_by = nil)
+    if group_by == 'month'
+      first_date = completed_issues.first.completed
+      last_date = completed_issues.last.completed
+      cursor_date = first_date.beginning_of_month
+
+      rows = []
+
+      while cursor_date < last_date
+        rows << DataTable::Header.new([pretty_print_month(cursor_date)])
+        cursor_date = cursor_date.next_month
+      end
+      return DataTable.new(rows)
+    end
     rows = issue_types.map do |issue_type|
       DataTable::Row.new([
         issue_type,
@@ -78,7 +91,6 @@ class BoardDecorator < Draper::Decorator
       pretty_print_number(completed_issues.cycle_times.median),
       pretty_print_number(completed_issues.cycle_times.standard_deviation)
     ], nil)
-
 
     headers = [
       DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),

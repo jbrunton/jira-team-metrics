@@ -25,9 +25,10 @@ class Board < JiraTask
   desc "summary", "summarize work"
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :ct_between, :desc => "compute cycle time between these states"
+  method_option :group_by, :desc => "group by timeframe, either 'month' or 'week'"
   def summary
     board = load_board(options)
-    output_table("Summary for #{board.name}:", board.summary_table)
+    output_table("Summary for #{board.name}:", board.summary_table(options[:group_by]))
   end
 
   desc "issues", "list completed issues"

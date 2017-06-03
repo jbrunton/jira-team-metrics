@@ -19,11 +19,13 @@ class DataTable
     end
 
     def marshal_for_terminal
-      # truncate long strings for terminal
       @items.map  do |item|
-        if item.length > 60
-          item[0,59] + '…'
+        s = item.to_s
+        if s.length > 60
+          # truncate long strings for terminal
+          s[0,59] + '…'
         else
+          # don't return the string representation for numbers as the type informs table formatting
           item
         end
       end

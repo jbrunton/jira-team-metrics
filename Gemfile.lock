@@ -107,6 +107,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   byebug
   descriptive_statistics
   draper

@@ -1,4 +1,8 @@
 module FormattingHelpers
+  def pretty_print_month(date)
+    date.nil? ? '-' : date.strftime('%b %Y')
+  end
+
   def pretty_print_date(date)
     date.nil? ? '-' : date.strftime('%d %b %Y %z')
   end
