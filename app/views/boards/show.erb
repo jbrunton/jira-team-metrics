@@ -1,5 +1,5 @@
 <% content_for :nav_content do %>
-    <a href="/" class="breadcrumb">Domains</a>
+    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
     <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
     <a href="#!" class="breadcrumb"><%= @board.name %></a>
 <% end %>
