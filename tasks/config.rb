@@ -24,11 +24,13 @@ class Config < JiraTask
   desc "quickstart", "configure default options"
   def quickstart
     domain = ask('What JIRA domain do you want to query?')
-    domain_name = ask('What name would you like to give this domain? (e.g. My Domain)').gsub('.', '_')
+    domain_name = ask('What name would you like to give this domain? (e.g. My Domain)')
+    Domains.new.invoke(:add, [domain_name, domain])
+
     username = ask('What is your JIRA username?')
     config.set 'defaults.domain', domain_name
     config.set "defaults.domains.#{domain_name}.username", username
-    Domains.new.invoke(:add, [domain_name, domain])
+
     if yes?('Would you like to sync the boards for that domain? (y/n)')
       Boards.new.invoke(:sync)
       Config.new.invoke(:default_board) if yes?('Would you like to set a default board? (y/n)')
