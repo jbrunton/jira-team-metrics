@@ -3,6 +3,8 @@ require 'descriptive_statistics'
 
 class BoardDecorator < Draper::Decorator
   include FormattingHelpers
+
+  ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   
   delegate_all
 
@@ -20,6 +22,11 @@ class BoardDecorator < Draper::Decorator
         .sort_by{ |i| i.completed }
       IssuesDecorator.new(issues)
     end
+  end
+
+  def completed_issues_in_range(date_range)
+    completed_issues
+      .select{ |i| date_range.cover?(i.completed) }
   end
 
   def issues_by_type
@@ -58,21 +65,17 @@ class BoardDecorator < Draper::Decorator
     binding()
   end
 
-  def summary_table(group_by = nil)
-    if group_by == 'month'
-      first_date = completed_issues.first.completed
-      last_date = completed_issues.last.completed
-      cursor_date = first_date.beginning_of_month
+  def summary_rows_for(issues)
+    issues_by_type = issues
+      .group_by{ |i| i.issue_type }
+      .map{ |issue_type, issues| [issue_type, IssuesDecorator.new(issues)] }
+      .to_h
 
-      rows = []
-
-      while cursor_date < last_date
-        rows << DataTable::Header.new([pretty_print_month(cursor_date)])
-        cursor_date = cursor_date.next_month
-      end
-      return DataTable.new(rows)
+    issue_types = issues_by_type.keys.sort_by do |issue_type|
+      -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1)
     end
-    rows = issue_types.map do |issue_type|
+
+    issue_types.map do |issue_type|
       DataTable::Row.new([
         issue_type,
         issues_by_type[issue_type].count,
@@ -82,22 +85,41 @@ class BoardDecorator < Draper::Decorator
         pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
       ], nil)
     end
+  end
 
-    rows << DataTable::Row.new([
-      'ALL',
-      completed_issues.count,
-      '',
-      pretty_print_number(completed_issues.cycle_times.mean),
-      pretty_print_number(completed_issues.cycle_times.median),
-      pretty_print_number(completed_issues.cycle_times.standard_deviation)
-    ], nil)
-
-    headers = [
+  def summary_table(group_by = nil)
+    rows = [
       DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
       DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
     ]
 
-    DataTable.new(headers + rows)
+    if group_by == 'month'
+      from_date = completed_issues.first.completed
+
+      while from_date < completed_issues.last.completed
+        to_date = [from_date.next_month.beginning_of_month, completed_issues.last.completed].min
+        date_range = from_date...to_date
+        rows << DataTable::Header.new([pretty_print_date_range(date_range), '', '', '', '', ''])
+
+        issues = completed_issues_in_range(date_range)
+        rows.concat(summary_rows_for(issues))
+
+        from_date = to_date
+      end
+    else
+      rows.concat(summary_rows_for(completed_issues))
+
+      rows << DataTable::Row.new([
+        'ALL',
+        completed_issues.count,
+        '',
+        pretty_print_number(completed_issues.cycle_times.mean),
+        pretty_print_number(completed_issues.cycle_times.median),
+        pretty_print_number(completed_issues.cycle_times.standard_deviation)
+      ], nil)
+    end
+
+    DataTable.new(rows)
   end
 
   def issues_table

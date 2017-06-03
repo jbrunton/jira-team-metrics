@@ -1,10 +1,10 @@
 module FormattingHelpers
-  def pretty_print_month(date)
-    date.nil? ? '-' : date.strftime('%b %Y')
+  def pretty_print_date(date, show_tz = true)
+    date.nil? ? '-' : date.strftime('%d %b %Y' + (show_tz ? ' %z' : ''))
   end
 
-  def pretty_print_date(date)
-    date.nil? ? '-' : date.strftime('%d %b %Y %z')
+  def pretty_print_date_range(range, show_tz = false)
+    "#{pretty_print_date(range.begin, show_tz)} - #{pretty_print_date(range.end, show_tz)}"
   end
 
   def pretty_print_time(time)
