@@ -24,15 +24,37 @@ class Config < JiraTask
   desc "quickstart", "configure default options"
   def quickstart
     domain = ask('What JIRA domain do you want to query?')
-    domain_name = ask('What name would you like to give this domain?')
+    domain_name = ask('What name would you like to give this domain? (e.g. My Domain)').gsub('.', '_')
     username = ask('What is your JIRA username?')
     config.set 'defaults.domain', domain_name
     config.set "defaults.domains.#{domain_name}.username", username
     Domains.new.invoke(:add, [domain_name, domain])
-    Boards.new.invoke(:sync) if yes?('Would you like to sync the boards for that domain?')
-    if yes?('Would you like to set a default board ID?')
-      Boards.new.invoke(:list)
-      config.set "defaults.domains.#{domain_name}.board_id", ask('Which board ID do you want to query by default?')
+    if yes?('Would you like to sync the boards for that domain? (y/n)')
+      Boards.new.invoke(:sync)
+      Config.new.invoke(:default_board) if yes?('Would you like to set a default board? (y/n)')
+    end
+  end
+
+  desc "default_board", "guide to help set the default board"
+  def default_board
+    domain_name = config.get('defaults.domain')
+
+    query = ask('Enter a board ID or name (can be a partial match or regex)')
+    results = boards_store.search(query)
+      .map{ |board| [board.id, board.name] }
+
+    if results.empty?
+      say('Sorry, no results found.')
+      Config.new.invoke(:default_board)
+    elsif results.length > 1
+      say('Found multiple matches:')
+      print_table(results, indent: 2)
+      Config.new.invoke(:default_board)
+    else
+      board_id, board_name = results.first
+      config.set "defaults.domains.#{domain_name}.board_id", board_id
+      say "Default board set to #{board_name}"
+      Board.new.invoke(:sync) if yes?('Would you like to sync the default board? (y/n)')
     end
   end
 

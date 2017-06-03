@@ -24,12 +24,10 @@ class Boards < JiraTask
   end
 
   desc "search", "search boards"
-  def search(regex)
-    say "Boards matching #{regex}:", :bold
+  def search(query)
+    say "Boards matching #{query}:", :bold
 
-    r = Regexp.new(regex)
-    results = boards_store.all
-      .select{ |board| r.match(board.name) }
+    results = boards_store.search(query)
       .map{ |board| [board.id, board.name] }
 
     print_table(results, indent: 2)
