@@ -17,7 +17,7 @@ Run the quickstart command to add and sync a domain:
 
     thor config:quickstart
     
-Run the web server for pretty charts and reports like this:
+Run the web server for pretty charts and reports:
 
     run app/app.rb
 
