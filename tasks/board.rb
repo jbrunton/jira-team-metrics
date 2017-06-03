@@ -42,7 +42,7 @@ class Board < JiraTask
   desc "sync", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
   method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :since, :desc => "date to sync changes since"
+  method_option :since, :desc => "date to sync changes from"
   def sync
     board_id = get_board_id(options)
     status = options[:status]
@@ -53,15 +53,15 @@ class Board < JiraTask
       board = boards_store.get_board(board_id)
       if options[:since]
         if /\d{4}-\d{2}-\d{2}/.match(options[:since])
-          since_date = Time.parse(options[:since])
+          sync_from = Time.parse(options[:since])
         else
           raise "'since' option must be in the format YYYY-MM-DD"
         end
       else
-        since_date = Time.now - (180 * 60 * 60 * 24)
+        sync_from = Time.now - (180 * 60 * 60 * 24)
       end
-      issues = fetch_issues_for(board, since_date)
-      boards_store.update_board(board_id, issues, since_date)
+      issues = fetch_issues_for(board, sync_from)
+      boards_store.update_board(board_id, issues, sync_from)
       puts "Synced board"
     end
   end
