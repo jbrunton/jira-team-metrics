@@ -17,6 +17,7 @@ class BoardDecorator < Draper::Decorator
       issues = object.issues
         .select{ |i| i.completed && i.started }
         .map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+        .sort_by{ |i| i.completed }
       IssuesDecorator.new(issues)
     end
   end
@@ -57,36 +58,34 @@ class BoardDecorator < Draper::Decorator
     binding()
   end
 
-  def summary_table
-    @summary_table ||= begin
-      rows = issue_types.map do |issue_type|
-        DataTable::Row.new([
-          issue_type,
-          issues_by_type[issue_type].count,
-          pretty_print_number(issues_by_type[issue_type].count.to_f / completed_issues.count * 100),
-          pretty_print_number(issues_by_type[issue_type].cycle_times.mean),
-          pretty_print_number(issues_by_type[issue_type].cycle_times.median),
-          pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
-        ], nil)
-      end
-
-      rows << DataTable::Row.new([
-        'ALL',
-        completed_issues.count,
-        '',
-        pretty_print_number(completed_issues.cycle_times.mean),
-        pretty_print_number(completed_issues.cycle_times.median),
-        pretty_print_number(completed_issues.cycle_times.standard_deviation)
+  def summary_table(group_by = nil)
+    rows = issue_types.map do |issue_type|
+      DataTable::Row.new([
+        issue_type,
+        issues_by_type[issue_type].count,
+        pretty_print_number(issues_by_type[issue_type].count.to_f / completed_issues.count * 100),
+        pretty_print_number(issues_by_type[issue_type].cycle_times.mean),
+        pretty_print_number(issues_by_type[issue_type].cycle_times.median),
+        pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
       ], nil)
-
-
-      headers = [
-        DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
-        DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
-      ]
-
-      DataTable.new(headers + rows)
     end
+
+    rows << DataTable::Row.new([
+      'ALL',
+      completed_issues.count,
+      '',
+      pretty_print_number(completed_issues.cycle_times.mean),
+      pretty_print_number(completed_issues.cycle_times.median),
+      pretty_print_number(completed_issues.cycle_times.standard_deviation)
+    ], nil)
+
+
+    headers = [
+      DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
+      DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
+    ]
+
+    DataTable.new(headers + rows)
   end
 
   def issues_table
