@@ -7,11 +7,21 @@ A command line tool for generating flow metrics from JIRA.
 
 ## Getting Started
 
-Run the quickstart command to add a domain and get up and running:
+Clone and install dependencies:
+
+    git clone https://github.com/jbrunton/jira-team-metrics.git
+    cd jira-team-metrics
+    bundle install
+
+Run the quickstart command to add and sync a domain:
 
     thor config:quickstart
+    
+Run the web server for pretty charts and reports like this:
 
-You can get further help on commands using thor:
+    run app/app.rb
+
+Note that all configuration and data syncing happens through the command line. You can get further help on commands using thor:
 
     thor help -- help using thor
     thor list -- list available commands
