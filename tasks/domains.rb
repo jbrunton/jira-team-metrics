@@ -1,6 +1,9 @@
 class Domains < JiraTask
   desc "add NAME URL", "add a JIRA domain"
   def add(name, url)
+    if name.include?('.')
+      raise "Name cannot include '.' character"
+    end
     client = JiraClientBuilder.new.config(config).url(url).prompt.build
     statuses = client.get_statuses
     domains_store.add({

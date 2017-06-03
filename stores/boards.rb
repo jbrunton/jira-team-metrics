@@ -11,6 +11,11 @@ module Store
         .map { |_, attrs| RapidBoard.new(attrs) }
     end
 
+    def search(query)
+      regex = Regexp.new(query, Regexp::IGNORECASE)
+      all.select{ |board| regex.match(board.name) || regex.match(board.id.to_s) }
+    end
+
     def last_updated
       boards_store.transaction { boards_store['last_updated'] }
     end
