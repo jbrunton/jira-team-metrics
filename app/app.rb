@@ -143,7 +143,7 @@ get '/domains/:domain/boards/:board_id/issues' do
 end
 
 get '/domains/:domain/boards/:board_id/components/summary' do
-  erb 'boards/summary'.to_sym, layout: false
+  erb 'boards/summary'.to_sym, layout: false, locals: { group_by: params[:group_by] }
 end
 
 get '/domains/:domain/boards/:board_id/components/issues_list' do

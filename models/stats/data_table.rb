@@ -19,7 +19,16 @@ class DataTable
     end
 
     def marshal_for_terminal
-      @items
+      @items.map  do |item|
+        s = item.to_s
+        if s.length > 60
+          # truncate long strings for terminal
+          s[0,59] + '…'
+        else
+          # don't return the string representation for numbers as the type informs table formatting
+          item
+        end
+      end
     end
   end
 
@@ -29,7 +38,7 @@ class DataTable
     end
 
     def marshal_for_terminal
-      @items.map { |item| item.upcase }
+      super.map { |item| item.upcase }
     end
   end
 

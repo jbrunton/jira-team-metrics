@@ -32,7 +32,7 @@ module Store
     #   store.transaction { store['']}
     # end
 
-    def update_board(id, issues, since_date)
+    def update_board(id, issues, sync_from)
       store = board_store(id)
       board_last_updated = Time.now
       store.transaction do
@@ -42,7 +42,7 @@ module Store
       b_store = boards_store
       b_store.transaction do
         b_store['boards'][id]['last_updated'] = board_last_updated
-        b_store['boards'][id]['changed_issues_since'] = since_date
+        b_store['boards'][id]['sync_from'] = sync_from
       end
     end
 
@@ -58,7 +58,7 @@ module Store
         'id' => id,
         'name' => board.name,
         'query' => board.query,
-        'changed_issues_since' => board.changed_issues_since,
+        'sync_from' => board.sync_from,
         'last_updated' => board.last_updated,
         'issues' => issues
       })

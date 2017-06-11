@@ -1,1 +1,1 @@
-<%= erb 'partials/table'.to_sym, :locals => { :table => @board.summary_table } %>
+<%= erb 'partials/table'.to_sym, :locals => { :table => @board.summary_table(group_by) } %>
