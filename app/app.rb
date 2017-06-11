@@ -89,16 +89,20 @@ get '/domains/:domain/boards/:board_id' do
   erb 'boards/show'.to_sym
 end
 
-get '/domains/:domain/boards/:board_id/api/summary.json' do
+get '/domains/:domain/boards/:board_id/api/count_summary.json' do
+  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
   {
     cols: [
       {id: 'issue_type', type: 'string', label: 'Issue Type' },
       {id: 'count', type: 'number', label: 'Count' }
     ],
-    rows: [
-      {c: [{v: 'Story'}, {v: 4}]},
-      {c: [{v: 'Bugs'}, {v: 6}]}
-    ]
+    rows: summary_table.rows.map do |row|
+      {c: [{v: row.items[0]}, {v: row.items[1]}]}
+    end
+    # rows: [
+    #   {c: [{v: 'Story'}, {v: 4}]},
+    #   {c: [{v: 'Bugs'}, {v: 6}]}
+    # ]
   }.to_json
 end
 
