@@ -68,7 +68,7 @@ class BoardDecorator < Draper::Decorator
   def summary_rows_for(issues)
     issues_by_type = issues
       .group_by{ |i| i.issue_type }
-      .map{ |issue_type, issues| [issue_type, IssuesDecorator.new(issues)] }
+      .map{ |issue_type, issues_of_type| [issue_type, IssuesDecorator.new(issues_of_type)] }
       .to_h
 
     issue_types = issues_by_type.keys.sort_by do |issue_type|
@@ -97,12 +97,7 @@ class BoardDecorator < Draper::Decorator
       from_date = completed_issues.first.completed
 
       while from_date < completed_issues.last.completed
-        if group_by == 'month'
-          to_date = from_date.next_month.beginning_of_month
-        else
-          to_date = from_date.next_week.beginning_of_week
-        end
-        to_date = [to_date, completed_issues.last.completed].min
+        to_date = next_date(from_date, group_by)
         date_range = from_date...to_date
 
         heading = pretty_print_date_range(date_range, group_by == 'week' ? {show_day: true} : {})
@@ -147,5 +142,16 @@ class BoardDecorator < Draper::Decorator
 
       DataTable.new(headers + rows)
     end
+  end
+
+private
+
+  def next_date(from_date, group_by)
+    if group_by == 'month'
+      to_date = from_date.next_month.beginning_of_month
+    else
+      to_date = from_date.next_week.beginning_of_week
+    end
+    [to_date, completed_issues.last.completed].min
   end
 end
