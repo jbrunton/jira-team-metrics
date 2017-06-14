@@ -1,6 +1,3 @@
-require './models/jira/issue'
-require 'byebug'
-
 RSpec.describe Issue do
   let(:analysis_transition) {
     {

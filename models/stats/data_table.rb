@@ -9,6 +9,12 @@ class DataTable
     @rows.map{ |row| row.marshal_for_terminal }
   end
 
+  def column(index)
+    @rows
+      .select{ |row| !row.is_a?(DataTable::Header) }
+      .map{ |row| row.items[index] }
+  end
+
   class Row
     attr_reader :items
     attr_reader :object

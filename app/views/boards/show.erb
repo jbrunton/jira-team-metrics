@@ -17,8 +17,10 @@
 </h3>
 
 <%= erb 'partials/cycle_time_form'.to_sym %>
-
 <script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawSummaryCharts);
+
   $(function() {
     fetchData();
     $('form input').change(fetchData);
@@ -26,9 +28,62 @@
 
   function fetchData() {
     var url = buildComponentUrl('<%= board_component_summary_path(@domain, @board) %>');
-    $('#summary').empty().load(url);
+    $('#summary_table').empty().load(url);
     $('#by_month').empty().load(url + '&group_by=month');
     $('#by_week').empty().load(url + '&group_by=week');
+  }
+
+  function drawSummaryCharts() {
+    drawCountSummaryChart();
+    drawCycleTimeSummaryChart();
+  }
+
+  function drawCountSummaryChart() {
+    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/count_summary.json');
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
+    var options = {
+      title: 'Count of issues by issue type',
+    };
+
+    var chartDiv = $('#count_summary_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
+
+    var chart = new google.visualization.PieChart(document.getElementById('count_summary_chart'));
+    chart.draw(data, options);
+  }
+
+  function drawCycleTimeSummaryChart() {
+    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/cycle_time_summary.json');
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
+    var options = {
+      chartArea: {
+//        width: '85%',
+//        height: '85%'
+      },
+      title: 'Mean cycle times by issue type'
+    };
+
+    var chartDiv = $('#cycle_time_summary_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
+
+    var chart = new google.visualization.ColumnChart(document.getElementById('cycle_time_summary_chart'));
+    chart.draw(data, options);
   }
 </script>
 
@@ -40,9 +95,15 @@
       <li class="tab col s3"><a href="#by_week">By Week</a></li>
     </ul>
   </div>
-  <div id="summary" class="col s12"></div>
-  <div id="by_month" class="col s12"></div>
-  <div id="by_week" class="col s12"></div>
+  <div id="summary" class="col s12">
+    <div id="count_summary_chart"></div>
+    <div id="cycle_time_summary_chart"></div>
+    <div id="summary_table"></div>
+  </div>
+  <div id="by_month" class="col s12">
+  </div>
+  <div id="by_week" class="col s12">
+  </div>
 </div>
 
 </body>

@@ -1,5 +1,3 @@
-require 'byebug'
-
 RSpec.describe QueryBuilder do
   let(:some_query) { 'some query'}
   let(:builder) { QueryBuilder.new(some_query) }
