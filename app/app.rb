@@ -108,17 +108,31 @@ end
 
 get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
   summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+
+  cols = [
+    {id: 'scope', type: 'string', label: 'Scope' }
+  ]
+  summary_table.rows.each do |row|
+    issue_type = row.items[0]
+    cols << {id: issue_type, type: 'number', label: issue_type }
+    cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
+    cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
+  end
+
   {
-    cols: [
-      {id: 'scope', type: 'string', label: 'Scope' }
-    ] + summary_table.rows.map do |row|
-      issue_type = row.items[0]
-      {id: issue_type, type: 'number', label: issue_type }
-    end,
+    cols: cols,
     rows: [
       {
-        c: [{v: 'All'}] + summary_table.rows.map do |row|
-          {v: row.items[3]}
+        c: [{v: 'All'}] + begin
+          vs = []
+          summary_table.rows.map do |row|
+            mean = row.items[3].to_f
+            stddev = row.items[5].to_f
+            vs << {v: mean }
+            vs << {v: [mean - stddev, 0].max }
+            vs << {v: mean + stddev }
+          end
+          vs
         end
       }
     ]
