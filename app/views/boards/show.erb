@@ -50,11 +50,11 @@
     var data = new google.visualization.DataTable(jsonData);
 
     var options = {
-      chartArea: {
-        width: '85%',
-        height: '85%'
-      },
+      title: 'Count of issues by issue type',
     };
+
+    var chartDiv = $('#count_summary_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
 
     var chart = new google.visualization.PieChart(document.getElementById('count_summary_chart'));
     chart.draw(data, options);
@@ -73,10 +73,14 @@
 
     var options = {
       chartArea: {
-        width: '85%',
-        height: '85%'
+//        width: '85%',
+//        height: '85%'
       },
+      title: 'Mean cycle times by issue type'
     };
+
+    var chartDiv = $('#cycle_time_summary_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
 
     var chart = new google.visualization.ColumnChart(document.getElementById('cycle_time_summary_chart'));
     chart.draw(data, options);
