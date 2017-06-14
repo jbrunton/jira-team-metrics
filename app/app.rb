@@ -99,10 +99,33 @@ get '/domains/:domain/boards/:board_id/api/count_summary.json' do
     rows: summary_table.rows.map do |row|
       {c: [{v: row.items[0]}, {v: row.items[1]}]}
     end
-    # rows: [
-    #   {c: [{v: 'Story'}, {v: 4}]},
-    #   {c: [{v: 'Bugs'}, {v: 6}]}
-    # ]
+  # rows: [
+  #   {c: [{v: 'Story'}, {v: 4}]},
+  #   {c: [{v: 'Bugs'}, {v: 6}]}
+  # ]
+  }.to_json
+end
+
+get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
+  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+  {
+    cols: [
+      {id: 'scope', type: 'string', label: 'Scope' }
+    ] + summary_table.rows.map do |row|
+      issue_type = row.items[0]
+      {id: issue_type, type: 'number', label: issue_type }
+    end,
+    rows: [
+      {
+        c: [{v: 'All'}] + summary_table.rows.map do |row|
+          {v: row.items[3]}
+        end
+      }
+    ]
+  # rows: [
+  #   {c: [{v: 'Story'}, {v: 4}]},
+  #   {c: [{v: 'Bugs'}, {v: 6}]}
+  # ]
   }.to_json
 end
 

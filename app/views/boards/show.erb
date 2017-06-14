@@ -19,7 +19,7 @@
 <%= erb 'partials/cycle_time_form'.to_sym %>
 <script>
   google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawSummaryChart);
+  google.charts.setOnLoadCallback(drawSummaryCharts);
 
   $(function() {
     fetchData();
@@ -33,10 +33,12 @@
     $('#by_week').empty().load(url + '&group_by=week');
   }
 
-  function drawSummaryChart() {
-    var chart = $('#chart_div');
-    chart.css('height', chart.width() * 0.5);
+  function drawSummaryCharts() {
+    drawCountSummaryChart();
+    drawCycleTimeSummaryChart();
+  }
 
+  function drawCountSummaryChart() {
     var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/count_summary.json');
 
     var jsonData = $.ajax({
@@ -54,7 +56,29 @@
       },
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('summary_chart'));
+    var chart = new google.visualization.PieChart(document.getElementById('count_summary_chart'));
+    chart.draw(data, options);
+  }
+
+  function drawCycleTimeSummaryChart() {
+    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/cycle_time_summary.json');
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
+    var options = {
+      chartArea: {
+        width: '85%',
+        height: '85%'
+      },
+    };
+
+    var chart = new google.visualization.ColumnChart(document.getElementById('cycle_time_summary_chart'));
     chart.draw(data, options);
   }
 </script>
@@ -68,7 +92,8 @@
     </ul>
   </div>
   <div id="summary" class="col s12">
-    <div id="summary_chart"></div>
+    <div id="count_summary_chart"></div>
+    <div id="cycle_time_summary_chart"></div>
     <div id="summary_table"></div>
   </div>
   <div id="by_month" class="col s12">
