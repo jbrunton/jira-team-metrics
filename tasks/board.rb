@@ -71,7 +71,7 @@ class Board < JiraTask
     board_id = get_board_id(options)
     domain_name = config.get('defaults.domain')
     path = "exclusions.domains.#{domain_name}.boards.board/#{board_id}"
-    exclusions = config.get(path)
+    exclusions = config.get(path) || ''
     config.set(path, exclusions + ' ' + issue_keys)
   end
 
