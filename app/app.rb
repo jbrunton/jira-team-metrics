@@ -90,14 +90,14 @@ get '/domains/:domain/boards/:board_id' do
 end
 
 get '/domains/:domain/boards/:board_id/api/count_summary.json' do
-  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+  summary_table = @board.summarize
   {
     cols: [
       {id: 'issue_type', type: 'string', label: 'Issue Type' },
       {id: 'count', type: 'number', label: 'Count' }
     ],
-    rows: summary_table.rows.map do |row|
-      {c: [{v: row.items[0]}, {v: row.items[1]}]}
+    rows: summary_table.map do |row|
+      {c: [{v: row.issue_type}, {v: row.count}]}
     end
   # rows: [
   #   {c: [{v: 'Story'}, {v: 4}]},
@@ -107,13 +107,13 @@ get '/domains/:domain/boards/:board_id/api/count_summary.json' do
 end
 
 get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
-  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+  summary_table = @board.summarize
 
   cols = [
     {id: 'scope', type: 'string', label: 'Scope' }
   ]
-  summary_table.rows.each do |row|
-    issue_type = row.items[0]
+  summary_table.each do |row|
+    issue_type = row.issue_type
     cols << {id: issue_type, type: 'number', label: issue_type }
     cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
     cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
@@ -125,12 +125,10 @@ get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
       {
         c: [{v: 'All'}] + begin
           vs = []
-          summary_table.rows.map do |row|
-            mean = row.items[3].to_f
-            stddev = row.items[5].to_f
-            vs << {v: mean }
-            vs << {v: [mean - stddev, 0].max }
-            vs << {v: mean + stddev }
+          summary_table.map do |row|
+            vs << {v: row.ct_mean }
+            vs << {v: [row.ct_mean - row.ct_stddev, 0].max }
+            vs << {v: row.ct_mean + row.ct_stddev }
           end
           vs
         end

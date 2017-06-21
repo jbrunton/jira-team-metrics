@@ -15,6 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'require_all'
+require 'byebug'
 
 ['helpers', 'models', 'stores'].each { |dir| require_all dir }
 

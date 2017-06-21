@@ -65,7 +65,8 @@ class BoardDecorator < Draper::Decorator
     binding()
   end
 
-  def summary_rows_for(issues)
+  def summarize(issues = nil)
+    issues ||= completed_issues
     issues_by_type = issues
       .group_by{ |i| i.issue_type }
       .map{ |issue_type, issues_of_type| [issue_type, IssuesDecorator.new(issues_of_type)] }
@@ -76,13 +77,19 @@ class BoardDecorator < Draper::Decorator
     end
 
     issue_types.map do |issue_type|
+      SummaryRow.new(issue_type, issues_by_type[issue_type], completed_issues)
+    end
+  end
+
+  def summary_rows_for(issues)
+    summarize(issues).map do |row|
       DataTable::Row.new([
-        issue_type,
-        issues_by_type[issue_type].count,
-        pretty_print_number(issues_by_type[issue_type].count.to_f / completed_issues.count * 100),
-        pretty_print_number(issues_by_type[issue_type].cycle_times.mean),
-        pretty_print_number(issues_by_type[issue_type].cycle_times.median),
-        pretty_print_number(issues_by_type[issue_type].cycle_times.standard_deviation)
+        row.issue_type,
+        row.count,
+        pretty_print_number(row.count_percentage),
+        pretty_print_number(row.ct_mean),
+        pretty_print_number(row.ct_median),
+        pretty_print_number(row.ct_stddev)
       ], nil)
     end
   end
@@ -141,6 +148,36 @@ class BoardDecorator < Draper::Decorator
       end
 
       DataTable.new(headers + rows)
+    end
+  end
+
+  class SummaryRow
+    attr_reader :issue_type
+
+    def initialize(issue_type, select_issues, all_issues)
+      @issue_type = issue_type
+      @select_issues = select_issues
+      @all_issues = all_issues
+    end
+
+    def count
+      @select_issues.count
+    end
+
+    def count_percentage
+      @select_issues.count.to_f / @all_issues.count * 100
+    end
+
+    def ct_mean
+      @select_issues.cycle_times.mean
+    end
+
+    def ct_median
+      @select_issues.cycle_times.median
+    end
+
+    def ct_stddev
+      @select_issues.cycle_times.standard_deviation
     end
   end
 
