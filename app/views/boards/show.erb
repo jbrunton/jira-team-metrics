@@ -88,14 +88,22 @@
         style: 'boxes'
       },
       interval: {
-        max: {
+        p10: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        p90: {
           style: 'bars',
           fillOpacity: 1,
           color: '#777'
         },
         min: {
-          style: 'bars',
-          fillOpacity: 1,
+          style: 'points',
+          color: '#777'
+        },
+        max: {
+          style: 'points',
           color: '#777'
         }
       }

@@ -112,11 +112,13 @@ get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
   cols = [
     {type: 'string', label: 'Issue Type'},
     {type: 'number', label: 'Mean' },
-    {type: 'number', role: 'interval', id: 'max'},
-    {type: 'number', role: 'interval', id: 'min'},
-    {type: 'number', role: 'interval', id: 'q1'},
+    {type: 'number', role: 'interval', id: 'p10'},
+    {type: 'number', role: 'interval', id: 'p90'},
+    {type: 'number', role: 'interval', id: 'p25'},
     {type: 'number', role: 'interval', id: 'median' },
-    {type: 'number', role: 'interval', id: 'q3'}
+    {type: 'number', role: 'interval', id: 'p75'},
+    {type: 'number', role: 'interval', id: 'min'},
+    {type: 'number', role: 'interval', id: 'max'}
   ]
   # summary_table.each do |row|
   #   issue_type = row.issue_type
@@ -131,11 +133,13 @@ get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
       {c: [
         {v: row.issue_type},
         {v: row.ct_mean},
-        {v: row.ct_max},
-        {v: row.ct_min},
-        {v: row.ct_q1},
+        {v: row.ct_p10},
+        {v: row.ct_p90},
+        {v: row.ct_p25},
         {v: row.ct_median},
-        {v: row.ct_q3}
+        {v: row.ct_p75},
+        {v: row.ct_min},
+        {v: row.ct_max}
       ]}
     end
   }.to_json
