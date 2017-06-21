@@ -107,19 +107,36 @@ get '/domains/:domain/boards/:board_id/api/count_summary.json' do
 end
 
 get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
+  series = (params[:series] || '').split(',')
+
   summary_table = @board.summarize
 
   cols = [
     {type: 'string', label: 'Issue Type'},
-    {type: 'number', label: 'Mean' },
-    {type: 'number', role: 'interval', id: 'p10'},
-    {type: 'number', role: 'interval', id: 'p90'},
-    {type: 'number', role: 'interval', id: 'p25'},
-    {type: 'number', role: 'interval', id: 'median' },
-    {type: 'number', role: 'interval', id: 'p75'},
-    {type: 'number', role: 'interval', id: 'min'},
-    {type: 'number', role: 'interval', id: 'max'}
+    {type: 'number', label: 'Mean' }
   ]
+
+  if series.include?('p10-p90')
+    cols << {type: 'number', role: 'interval', id: 'p10'}
+    cols << {type: 'number', role: 'interval', id: 'p90'}
+  end
+
+  if series.include?('p25-p75')
+    cols << {type: 'number', role: 'interval', id: 'p25'}
+  end
+
+  cols << {type: 'number', role: 'interval', id: 'median' }
+
+  if series.include?('p25-p75')
+    cols << {type: 'number', role: 'interval', id: 'p75'}
+  end
+
+  if series.include?('min-max')
+    cols << {type: 'number', role: 'interval', id: 'min'}
+    cols << {type: 'number', role: 'interval', id: 'max'}
+  end
+
+
   # summary_table.each do |row|
   #   issue_type = row.issue_type
   #   cols << {id: issue_type, type: 'number', label: issue_type }
@@ -130,17 +147,32 @@ get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
   {
     cols: cols,
     rows: summary_table.map do |row|
-      {c: [
+      values = [
         {v: row.issue_type},
-        {v: row.ct_mean},
-        {v: row.ct_p10},
-        {v: row.ct_p90},
-        {v: row.ct_p25},
-        {v: row.ct_median},
-        {v: row.ct_p75},
-        {v: row.ct_min},
-        {v: row.ct_max}
-      ]}
+        {v: row.ct_mean}
+      ]
+
+      if series.include?('p10-p90')
+        values << {v: row.ct_p10}
+        values << {v: row.ct_p90}
+      end
+
+      if series.include?('p25-p75')
+        values << {v: row.ct_p25}
+      end
+
+      values << {v: row.ct_median}
+
+      if series.include?('p25-p75')
+        values << {v: row.ct_p75}
+      end
+
+      if series.include?('min-max')
+        values << {v: row.ct_min}
+        values << {v: row.ct_max}
+      end
+
+      {c: values}
     end
   }.to_json
 end
