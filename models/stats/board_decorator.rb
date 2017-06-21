@@ -179,6 +179,22 @@ class BoardDecorator < Draper::Decorator
     def ct_stddev
       @select_issues.cycle_times.standard_deviation
     end
+
+    def ct_q1
+      @select_issues.cycle_times.percentile(25)
+    end
+
+    def ct_q3
+      @select_issues.cycle_times.percentile(75)
+    end
+
+    def ct_min
+      @select_issues.cycle_times.percentile(10)
+    end
+
+    def ct_max
+      @select_issues.cycle_times.percentile(90)
+    end
   end
 
 private

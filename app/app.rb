@@ -110,34 +110,34 @@ get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
   summary_table = @board.summarize
 
   cols = [
-    {id: 'scope', type: 'string', label: 'Scope' }
+    {type: 'string', label: 'Issue Type'},
+    {type: 'number', label: 'Mean' },
+    {type: 'number', role: 'interval', id: 'max'},
+    {type: 'number', role: 'interval', id: 'min'},
+    {type: 'number', role: 'interval', id: 'q1'},
+    {type: 'number', role: 'interval', id: 'median' },
+    {type: 'number', role: 'interval', id: 'q3'}
   ]
-  summary_table.each do |row|
-    issue_type = row.issue_type
-    cols << {id: issue_type, type: 'number', label: issue_type }
-    cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
-    cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
-  end
+  # summary_table.each do |row|
+  #   issue_type = row.issue_type
+  #   cols << {id: issue_type, type: 'number', label: issue_type }
+  #   cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
+  #   cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
+  # end
 
   {
     cols: cols,
-    rows: [
-      {
-        c: [{v: 'All'}] + begin
-          vs = []
-          summary_table.map do |row|
-            vs << {v: row.ct_mean }
-            vs << {v: [row.ct_mean - row.ct_stddev, 0].max }
-            vs << {v: row.ct_mean + row.ct_stddev }
-          end
-          vs
-        end
-      }
-    ]
-  # rows: [
-  #   {c: [{v: 'Story'}, {v: 4}]},
-  #   {c: [{v: 'Bugs'}, {v: 6}]}
-  # ]
+    rows: summary_table.map do |row|
+      {c: [
+        {v: row.issue_type},
+        {v: row.ct_mean},
+        {v: row.ct_max},
+        {v: row.ct_min},
+        {v: row.ct_q1},
+        {v: row.ct_median},
+        {v: row.ct_q3}
+      ]}
+    end
   }.to_json
 end
 

@@ -72,17 +72,39 @@
     var data = new google.visualization.DataTable(jsonData);
 
     var options = {
-      chartArea: {
-//        width: '85%',
-//        height: '85%'
+      title:'Box Plot',
+      height: 500,
+      legend: {position: 'none'},
+      hAxis: {
+        gridlines: {color: '#fff'}
       },
-      title: 'Mean cycle times by issue type'
+      lineWidth: 0,
+      pointSize: 2,
+      series: [{'color': '#D3362D'}],
+      intervals: {
+        barWidth: 1,
+        boxWidth: 1,
+        lineWidth: 2,
+        style: 'boxes'
+      },
+      interval: {
+        max: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        min: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        }
+      }
     };
 
     var chartDiv = $('#cycle_time_summary_chart');
     chartDiv.css('height', chartDiv.width() * 0.5);
 
-    var chart = new google.visualization.ColumnChart(document.getElementById('cycle_time_summary_chart'));
+    var chart = new google.visualization.LineChart(document.getElementById('cycle_time_summary_chart'));
     chart.draw(data, options);
   }
 </script>
