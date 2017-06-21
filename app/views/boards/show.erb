@@ -24,6 +24,7 @@
   $(function() {
     fetchData();
     $('form input').change(fetchData);
+    $('#ct-options input').change(drawCycleTimeSummaryChart);
   })
 
   function fetchData() {
@@ -63,6 +64,17 @@
   function drawCycleTimeSummaryChart() {
     var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/cycle_time_summary.json');
 
+    url += '&series=';
+    if ($('#ct_min-max').prop('checked')) {
+      url += 'min-max,';
+    }
+    if ($('#ct_p10-p90').prop('checked')) {
+      url += 'p10-p90,';
+    }
+    if ($('#ct_p25-p75').prop('checked')) {
+      url += 'p25-p75,';
+    }
+
     var jsonData = $.ajax({
       url: url,
       dataType: "json",
@@ -72,17 +84,47 @@
     var data = new google.visualization.DataTable(jsonData);
 
     var options = {
-      chartArea: {
-//        width: '85%',
-//        height: '85%'
+      title:'Box Plot',
+      height: 500,
+      legend: {position: 'none'},
+      hAxis: {
+        gridlines: {color: '#fff'}
       },
-      title: 'Mean cycle times by issue type'
+      lineWidth: 0,
+      pointSize: 2,
+      series: [{'color': '#D3362D'}],
+      intervals: {
+        barWidth: 1,
+        boxWidth: 1,
+        lineWidth: 2,
+        style: 'boxes'
+      },
+      interval: {
+        p10: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        p90: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        min: {
+          style: 'points',
+          color: '#777'
+        },
+        max: {
+          style: 'points',
+          color: '#777'
+        }
+      }
     };
 
     var chartDiv = $('#cycle_time_summary_chart');
     chartDiv.css('height', chartDiv.width() * 0.5);
 
-    var chart = new google.visualization.ColumnChart(document.getElementById('cycle_time_summary_chart'));
+    var chart = new google.visualization.LineChart(document.getElementById('cycle_time_summary_chart'));
     chart.draw(data, options);
   }
 </script>
@@ -98,6 +140,20 @@
   <div id="summary" class="col s12">
     <div id="count_summary_chart"></div>
     <div id="cycle_time_summary_chart"></div>
+    <div id="ct-options">
+      <p>
+        <input type="checkbox" id="ct_min-max" checked="true" />
+        <label for="ct_min-max">Min / Max</label>
+      </p>
+      <p>
+        <input type="checkbox" id="ct_p10-p90" checked="true" />
+        <label for="ct_p10-p90">10th Percentile - 90th Percentile</label>
+      </p>
+      <p>
+        <input type="checkbox" id="ct_p25-p75" checked="true" />
+        <label for="ct_p25-p75">Interquartile Range</label>
+      </p>
+    </div>
     <div id="summary_table"></div>
   </div>
   <div id="by_month" class="col s12">

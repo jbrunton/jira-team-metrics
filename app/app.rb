@@ -90,14 +90,14 @@ get '/domains/:domain/boards/:board_id' do
 end
 
 get '/domains/:domain/boards/:board_id/api/count_summary.json' do
-  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+  summary_table = @board.summarize
   {
     cols: [
       {id: 'issue_type', type: 'string', label: 'Issue Type' },
       {id: 'count', type: 'number', label: 'Count' }
     ],
-    rows: summary_table.rows.map do |row|
-      {c: [{v: row.items[0]}, {v: row.items[1]}]}
+    rows: summary_table.map do |row|
+      {c: [{v: row.issue_type}, {v: row.count}]}
     end
   # rows: [
   #   {c: [{v: 'Story'}, {v: 4}]},
@@ -107,39 +107,73 @@ get '/domains/:domain/boards/:board_id/api/count_summary.json' do
 end
 
 get '/domains/:domain/boards/:board_id/api/cycle_time_summary.json' do
-  summary_table = DataTable.new(@board.summary_rows_for(@board.completed_issues))
+  series = (params[:series] || '').split(',')
+
+  summary_table = @board.summarize
 
   cols = [
-    {id: 'scope', type: 'string', label: 'Scope' }
+    {type: 'string', label: 'Issue Type'},
+    {type: 'number', label: 'Mean' }
   ]
-  summary_table.rows.each do |row|
-    issue_type = row.items[0]
-    cols << {id: issue_type, type: 'number', label: issue_type }
-    cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
-    cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
+
+  if series.include?('p10-p90')
+    cols << {type: 'number', role: 'interval', id: 'p10'}
+    cols << {type: 'number', role: 'interval', id: 'p90'}
   end
+
+  if series.include?('p25-p75')
+    cols << {type: 'number', role: 'interval', id: 'p25'}
+  end
+
+  cols << {type: 'number', role: 'interval', id: 'median' }
+
+  if series.include?('p25-p75')
+    cols << {type: 'number', role: 'interval', id: 'p75'}
+  end
+
+  if series.include?('min-max')
+    cols << {type: 'number', role: 'interval', id: 'min'}
+    cols << {type: 'number', role: 'interval', id: 'max'}
+  end
+
+
+  # summary_table.each do |row|
+  #   issue_type = row.issue_type
+  #   cols << {id: issue_type, type: 'number', label: issue_type }
+  #   cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
+  #   cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
+  # end
 
   {
     cols: cols,
-    rows: [
-      {
-        c: [{v: 'All'}] + begin
-          vs = []
-          summary_table.rows.map do |row|
-            mean = row.items[3].to_f
-            stddev = row.items[5].to_f
-            vs << {v: mean }
-            vs << {v: [mean - stddev, 0].max }
-            vs << {v: mean + stddev }
-          end
-          vs
-        end
-      }
-    ]
-  # rows: [
-  #   {c: [{v: 'Story'}, {v: 4}]},
-  #   {c: [{v: 'Bugs'}, {v: 6}]}
-  # ]
+    rows: summary_table.map do |row|
+      values = [
+        {v: row.issue_type},
+        {v: row.ct_mean}
+      ]
+
+      if series.include?('p10-p90')
+        values << {v: row.ct_p10}
+        values << {v: row.ct_p90}
+      end
+
+      if series.include?('p25-p75')
+        values << {v: row.ct_p25}
+      end
+
+      values << {v: row.ct_median}
+
+      if series.include?('p25-p75')
+        values << {v: row.ct_p75}
+      end
+
+      if series.include?('min-max')
+        values << {v: row.ct_min}
+        values << {v: row.ct_max}
+      end
+
+      {c: values}
+    end
   }.to_json
 end
 
