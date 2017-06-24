@@ -4,7 +4,7 @@ class ReportsController < ApplicationController
   end
 
   get '/:domain/boards/:board_id/issues' do
-    erb 'boards/issues'.to_sym
+    erb 'reports/issues'.to_sym
   end
 
   get '/:domain/boards/:board_id/issues/:issue_key' do
@@ -17,6 +17,14 @@ class ReportsController < ApplicationController
   end
 
   get '/:domain/boards/:board_id/control_chart' do
-    erb 'boards/control_chart'.to_sym
+    erb 'reports/control_chart'.to_sym
+  end
+
+  get '/:domain/boards/:board_id/issues_by_type' do
+    erb '/reports/issues_by_type'.to_sym
+  end
+
+  get '/:domain/boards/:board_id/cycle_times_by_type' do
+    erb '/reports/cycle_times_by_type'.to_sym
   end
 end

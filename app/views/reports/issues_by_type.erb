@@ -1,0 +1,38 @@
+<% content_for :nav_content do %>
+    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
+    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
+    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="#!" class="breadcrumb">Issues</a>
+<% end %>
+
+<h3>Issues By Type</h3>
+
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+
+  function drawChart() {
+    var url = '<%= board_api_path(@domain, @board) %>/count_summary.json';
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
+    var options = {};
+
+    var chartDiv = $('#count_summary_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
+
+    var chart = new google.visualization.PieChart(document.getElementById('count_summary_chart'));
+    chart.draw(data, options);
+  }
+
+  $(function() {
+    google.charts.setOnLoadCallback(drawChart);
+  });
+</script>
+
+<div id="count_summary_chart"></div>
