@@ -40,7 +40,7 @@
   }
 
   function drawCountSummaryChart() {
-    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/count_summary.json');
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/count_summary.json');
 
     var jsonData = $.ajax({
       url: url,
@@ -62,7 +62,7 @@
   }
 
   function drawCycleTimeSummaryChart() {
-    var url = buildComponentUrl('<%= board_path(@domain, @board) %>}/api/cycle_time_summary.json');
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary.json');
 
     url += '&series=';
     if ($('#ct_min-max').prop('checked')) {

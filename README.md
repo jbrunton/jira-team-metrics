@@ -19,7 +19,7 @@ Run the quickstart command to add and sync a domain:
     
 Run the web server for pretty charts and reports:
 
-    run app/app.rb
+    rakeup config.ru
 
 Note that all configuration and data syncing happens through the command line. You can get further help on commands using thor:
 

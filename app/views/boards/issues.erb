@@ -16,7 +16,7 @@
   })
 
   function fetchData() {
-    var url = buildComponentUrl('<%= board_path(@domain, @board) %>/components/issues_list');
+    var url = buildComponentUrl('<%= board_components_path(@domain, @board) %>/issues_list');
     $('#list').empty();
     $('#list').load(url);
   }
