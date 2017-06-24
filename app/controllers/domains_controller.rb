@@ -1,13 +1,8 @@
 class DomainsController < ApplicationController
   helpers DomainsHelper
 
-  before '/:domain*' do
-    set_domain(params)
-  end
-
-  before '/:domain/boards/:board_id*' do
-    set_board(params)
-  end
+  before ('/:domain*') { set_domain(params) }
+  before ('/:domain/boards/:board_id*') { set_board(params) }
 
   get '/' do
     @domains = DomainsStore.instance.all
