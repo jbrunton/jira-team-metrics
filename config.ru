@@ -1,9 +1,10 @@
 require 'sinatra'
 require 'sinatra/content_for'
+require 'yaml/store'
+require 'require_all'
 
-['helpers', 'models', 'stores', 'app'].each do |dir|
-  Dir.glob("./#{dir}/**.rb").each { |file| require file }
-end
+['helpers', 'models', 'stores', 'app'].each { |dir| require_all dir }
 
 map('/domains') { run DomainsController }
+map('/reports') { run ReportsController }
 map('/') { run HomeController }

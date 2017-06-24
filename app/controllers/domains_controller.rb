@@ -1,20 +1,12 @@
 class DomainsController < ApplicationController
+  helpers DomainsHelper
+
   before '/:domain*' do
-    domain_name = params[:domain]
-    @domain = DomainsStore.instance.find(domain_name)
+    set_domain(params)
   end
 
   before '/:domain/boards/:board_id*' do
-    board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
-
-    unless params[:from_state].nil?
-      from_state = params[:from_state] unless params[:from_state].empty?
-    end
-    unless params[:to_state].nil?
-      to_state = params[:to_state] unless params[:to_state].empty?
-    end
-
-    @board = BoardDecorator.new(board, from_state, to_state)
+    set_board(params)
   end
 
   get '/' do
