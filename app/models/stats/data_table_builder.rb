@@ -13,12 +13,18 @@ class DataTableBuilder
     column(opts.merge(type: 'number'))
   end
 
+  def numbers(ids)
+    ids.each{ |id| number({id: id}) }
+    self
+  end
+
   def interval(opts)
     number(opts.merge(role: 'interval'))
   end
 
   def intervals(ids)
     ids.each{ |id| interval({id: id}) }
+    self
   end
 
   def row(values)

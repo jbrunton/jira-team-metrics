@@ -20,46 +20,39 @@ class ApiController < ApplicationController
 
     builder = DataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'})
-      .column({type: 'number', label: 'Mean', id: 'mean'})
-
-    if series.include?('p10-p90')
-      builder.intervals(['p10', 'p90'])
-    end
-
-    if series.include?('p25-p75')
-      builder.interval({id: 'p25'})
-    end
-
-    builder.interval({id: 'median'})
-
-    if series.include?('p25-p75')
-      builder.interval({id: 'p75'})
-    end
+      .number({label: 'Mean', id: 'mean'})
+      .number({label: 'Median', id: 'median'})
 
     if series.include?('min-max')
-      builder.intervals(['min', 'max'])
+      builder.number({id: 'min', label: 'Min'})
+      builder.number({id: 'max', label: 'Max'})
     end
 
+    builder.number({id: 'p25', label: 'Lower Quartile'})
+    builder.number({id: 'p75', label: 'Upper Quartile'})
+
+    if series.include?('p10-p90')
+      builder.number({id: 'p10', label: '10th Percentile'})
+      builder.number({id: 'p90', label: '90th Percentile'})
+      builder.intervals(['i:p10', 'i:p90'])
+    end
+
+    builder.intervals(['i:p25', 'i:median', 'i:p75'])
+
     summary_table.map do |row|
-      values = [row.issue_type, row.ct_mean]
-
-      if series.include?('p10-p90')
-        values.concat([row.ct_p10, row.ct_p90])
-      end
-
-      if series.include?('p25-p75')
-        values << row.ct_p25
-      end
-
-      values << row.ct_median
-
-      if series.include?('p25-p75')
-        values << row.ct_p75
-      end
+      values = [row.issue_type, row.ct_mean, row.ct_median]
 
       if series.include?('min-max')
         values.concat([row.ct_min, row.ct_max])
       end
+
+      values.concat([row.ct_p25, row.ct_p75])
+
+      if series.include?('p10-p90')
+        values.concat([row.ct_p10, row.ct_p90, row.ct_p10, row.ct_p90])
+      end
+
+      values.concat([row.ct_p25, row.ct_median, row.ct_p75])
 
       builder.row(values)
     end
