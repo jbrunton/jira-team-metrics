@@ -6,39 +6,6 @@ require 'descriptive_statistics'
 require 'erb'
 
 class Board < JiraTask
-  desc "issue", "issue details"
-  method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :transitions, :desc => "show transitions"
-  def issue(key)
-    board_id = get_board_id(options)
-    board = boards_store.get_board(board_id)
-
-    issue = IssueDecorator.new(board.issues.find{ |i| i.key == key}, nil, nil)
-
-    output_table("Details for #{issue.key}:", issue.overview_table)
-
-    if options[:transitions]
-      output_table("Transitions:", issue.transitions_table)
-    end
-  end
-
-  desc "summary", "summarize work"
-  method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :ct_between, :desc => "compute cycle time between these states"
-  method_option :group_by, :desc => "group by timeframe, either 'month' or 'week'"
-  def summary
-    board = load_board(options)
-    output_table("Summary for #{board.name}:", board.summary_table(options[:group_by]))
-  end
-
-  desc "issues", "list completed issues"
-  method_option :board_id, :desc => "board id", :type => :numeric
-  method_option :ct_between, :desc => "compute cycle time between these states"
-  def issues
-    board = load_board(options)
-    output_table("Issues for #{board.name}:", board.issues_table)
-  end
-
   desc "sync", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
   method_option :board_id, :desc => "board id", :type => :numeric
@@ -92,11 +59,6 @@ class Board < JiraTask
   end
 
 private
-  def output_table(description, table)
-    say description, :bold
-    print_table(table.marshal_for_terminal, indent: 2)
-  end
-
   def fetch_issues_for(board, since_date)
     statuses = domains_store.find(config.get('defaults.domain'))['statuses']
     query = QueryBuilder.new(board.query)
@@ -107,13 +69,6 @@ private
       @progressbar.progress = progress
     end
     issues
-  end
-
-  def load_board(options)
-    board_id = get_board_id(options)
-    ct_states = options[:ct_between].split(',').map{|s| s.strip } if options[:ct_between]
-    ct_states ||= {}
-    BoardDecorator.new(boards_store.get_board(board_id), ct_states[0], ct_states[1])
   end
 
   def get_board_id(options)

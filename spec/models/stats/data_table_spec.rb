@@ -7,15 +7,6 @@ RSpec.describe DataTable do
     expect(table.rows).to eq([ROW])
   end
 
-  describe "#marshal_for_terminal" do
-    it "formats headers for the terminal" do
-      table = DataTable.new([HEADER])
-      expect(table.marshal_for_terminal).to eq([
-        ['MEAN', 'STDDEV']
-      ])
-    end
-  end
-
   describe "#column" do
     it "returns the row data in the given column" do
       table = DataTable.new([HEADER, ROW])
