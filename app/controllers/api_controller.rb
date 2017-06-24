@@ -3,11 +3,11 @@ class ApiController < ApplicationController
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
-      .add_column({id: 'issue_type', type: 'string', label: 'Issue Type'})
-      .add_column({id: 'count', type: 'number', label: 'Count' })
+      .column({id: 'issue_type', type: 'string', label: 'Issue Type'})
+      .column({id: 'count', type: 'number', label: 'Count' })
 
     summary_table.each do |row|
-      builder.add_row([row.issue_type, row.count])
+      builder.row([row.issue_type, row.count])
     end
 
     builder.build.to_json
@@ -19,27 +19,27 @@ class ApiController < ApplicationController
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
-      .add_column({type: 'string', label: 'Issue Type'})
-      .add_column({type: 'number', label: 'Mean', id: 'mean'})
+      .column({type: 'string', label: 'Issue Type'})
+      .column({type: 'number', label: 'Mean', id: 'mean'})
 
     if series.include?('p10-p90')
-      builder.add_column({type: 'number', role: 'interval', id: 'p10'})
-      builder.add_column({type: 'number', role: 'interval', id: 'p90'})
+      builder.column({type: 'number', role: 'interval', id: 'p10'})
+      builder.column({type: 'number', role: 'interval', id: 'p90'})
     end
 
     if series.include?('p25-p75')
-      builder.add_column({type: 'number', role: 'interval', id: 'p25'})
+      builder.column({type: 'number', role: 'interval', id: 'p25'})
     end
 
-    builder.add_column({type: 'number', role: 'interval', id: 'median'})
+    builder.column({type: 'number', role: 'interval', id: 'median'})
 
     if series.include?('p25-p75')
-      builder.add_column({type: 'number', role: 'interval', id: 'p75'})
+      builder.column({type: 'number', role: 'interval', id: 'p75'})
     end
 
     if series.include?('min-max')
-      builder.add_column({type: 'number', role: 'interval', id: 'min'})
-      builder.add_column({type: 'number', role: 'interval', id: 'max'})
+      builder.column({type: 'number', role: 'interval', id: 'min'})
+      builder.column({type: 'number', role: 'interval', id: 'max'})
     end
 
     summary_table.map do |row|
@@ -65,7 +65,7 @@ class ApiController < ApplicationController
         values << row.ct_max
       end
 
-      builder.add_row(values)
+      builder.row(values)
     end
 
     builder.build.to_json
