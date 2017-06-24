@@ -23,23 +23,21 @@ class ApiController < ApplicationController
       .column({type: 'number', label: 'Mean', id: 'mean'})
 
     if series.include?('p10-p90')
-      builder.interval_column({id: 'p10'})
-      builder.interval_column({id: 'p90'})
+      builder.intervals(['p10', 'p90'])
     end
 
     if series.include?('p25-p75')
-      builder.interval_column({id: 'p25'})
+      builder.interval({id: 'p25'})
     end
 
-    builder.interval_column({id: 'median'})
+    builder.interval({id: 'median'})
 
     if series.include?('p25-p75')
-      builder.interval_column({id: 'p75'})
+      builder.interval({id: 'p75'})
     end
 
     if series.include?('min-max')
-      builder.interval_column({id: 'min'})
-      builder.interval_column({id: 'max'})
+      builder.intervals(['min', 'max'])
     end
 
     summary_table.map do |row|
