@@ -7,4 +7,6 @@ require 'require_all'
 
 map('/domains') { run DomainsController }
 map('/reports') { run ReportsController }
+map('/api') { run ApiController }
+map('/components') { run ComponentsController }
 map('/') { run HomeController }

@@ -16,7 +16,7 @@ module ApplicationHelper
   end
 
   def board_components_path(domain, board)
-    "/domains/#{domain['name']}/boards/#{board.id}/components"
+    "/components/#{domain['name']}/boards/#{board.id}"
   end
 
   def board_component_summary_path(domain, board)
@@ -24,7 +24,7 @@ module ApplicationHelper
   end
 
   def board_api_path(domain, board)
-    "#{domain_path(domain)}/boards/#{board.id}/api"
+    "/api/#{domain['name']}/boards/#{board.id}"
   end
 
   def board_control_chart_path(domain, board)

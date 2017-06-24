@@ -1,5 +1,10 @@
-class DomainsController < ApplicationController
-  get '/:domain/boards/:board_id/api/count_summary.json' do
+class ApiController < ApplicationController
+  helpers DomainsHelper
+
+  before ('/:domain*') { set_domain(params) }
+  before ('/:domain/boards/:board_id*') { set_board(params) }
+
+  get '/:domain/boards/:board_id/count_summary.json' do
     summary_table = @board.summarize
     {
       cols: [
@@ -16,7 +21,7 @@ class DomainsController < ApplicationController
     }.to_json
   end
 
-  get '/:domain/boards/:board_id/api/cycle_time_summary.json' do
+  get '/:domain/boards/:board_id/cycle_time_summary.json' do
     series = (params[:series] || '').split(',')
 
     summary_table = @board.summarize
@@ -87,7 +92,7 @@ class DomainsController < ApplicationController
     }.to_json
   end
 
-  get '/:domain/boards/:board_id/api/control_chart.json' do
+  get '/:domain/boards/:board_id/control_chart.json' do
     trend_builder = TrendBuilder.new.
       pluck{ |issue| issue.cycle_time }.
       map do |issue, mean, stddev|
