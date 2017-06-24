@@ -4,22 +4,20 @@ class DataTableBuilder
     @rows = []
   end
 
-  def column(opts, values = nil)
+  def column(opts, values)
     @cols << opts
-    unless values.nil?
-      values.each_with_index do |v, index|
-        @rows[index] ||= []
-        @rows[index] << {v: v}
-      end
+    values.each_with_index do |v, index|
+      @rows[index] ||= []
+      @rows[index] << {v: v}
     end
     self
   end
 
-  def number(opts, values = nil)
+  def number(opts, values)
     column(opts.merge(type: 'number'), values)
   end
 
-  def interval(opts, values = nil)
+  def interval(opts, values)
     number(opts.merge(role: 'interval'), values)
   end
 
