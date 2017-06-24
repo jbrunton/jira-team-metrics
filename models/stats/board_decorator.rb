@@ -17,8 +17,8 @@ class BoardDecorator < Draper::Decorator
   def completed_issues
     @completed_issues ||= begin
       issues = object.issues
-        .select{ |i| i.completed && i.started }
         .map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+        .select{ |i| i.completed && i.started }
         .sort_by{ |i| i.completed }
       IssuesDecorator.new(issues)
     end
@@ -162,6 +162,10 @@ class BoardDecorator < Draper::Decorator
 
     def count
       @select_issues.count
+    end
+
+    def issue_type_label
+      "#{issue_type} (#{count})"
     end
 
     def count_percentage

@@ -15,7 +15,7 @@ class ApiController < ApplicationController
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
-      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
       .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
 

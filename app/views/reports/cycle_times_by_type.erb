@@ -14,11 +14,14 @@
 
   $(function() {
     $('#ct-options input').change(updateChart);
+    $('#ct-states input').change(updateChart);
+    google.charts.setOnLoadCallback(updateChart);
   });
 
   function updateChart() {
     $('#chart').animate({ opacity: 0 })
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary.json');
+    console.log(url);
 
     url += '&series=';
     if ($('#ct_min-max').prop('checked')) {
@@ -30,10 +33,6 @@
 
     var jsonData = $.get(url, drawChart);
   }
-
-  $(function() {
-    google.charts.setOnLoadCallback(updateChart);
-  });
 
   function drawChart(jsonData) {
     $('#chart').animate({ opacity: 1 })
