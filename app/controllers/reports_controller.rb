@@ -1,9 +1,4 @@
 class ReportsController < ApplicationController
-  helpers DomainsHelper
-
-  before ('/:domain*') { set_domain(params) }
-  before ('/:domain/boards/:board_id*') { set_board(params) }
-
   get '/:domain/boards/:board_id' do
     erb 'boards/show'.to_sym
   end

@@ -1,9 +1,4 @@
 class ApiController < ApplicationController
-  helpers DomainsHelper
-
-  before ('/:domain*') { set_domain(params) }
-  before ('/:domain/boards/:board_id*') { set_board(params) }
-
   get '/:domain/boards/:board_id/count_summary.json' do
     summary_table = @board.summarize
     {

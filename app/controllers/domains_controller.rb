@@ -1,9 +1,4 @@
 class DomainsController < ApplicationController
-  helpers DomainsHelper
-
-  before ('/:domain*') { set_domain(params) }
-  before ('/:domain/boards/:board_id*') { set_board(params) }
-
   get '/' do
     @domains = DomainsStore.instance.all
     erb 'domains/index'.to_sym

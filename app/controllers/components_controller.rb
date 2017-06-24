@@ -1,9 +1,4 @@
 class ComponentsController < ApplicationController
-  helpers DomainsHelper
-
-  before ('/:domain*') { set_domain(params) }
-  before ('/:domain/boards/:board_id*') { set_board(params) }
-
   get '/:domain/boards/:board_id/summary' do
     erb 'boards/summary'.to_sym, layout: false, locals: { group_by: params[:group_by] }
   end
