@@ -23,31 +23,30 @@ class ApiController < ApplicationController
       .column({type: 'number', label: 'Mean', id: 'mean'})
 
     if series.include?('p10-p90')
-      builder.column({type: 'number', role: 'interval', id: 'p10'})
-      builder.column({type: 'number', role: 'interval', id: 'p90'})
+      builder.interval_column({id: 'p10'})
+      builder.interval_column({id: 'p90'})
     end
 
     if series.include?('p25-p75')
-      builder.column({type: 'number', role: 'interval', id: 'p25'})
+      builder.interval_column({id: 'p25'})
     end
 
-    builder.column({type: 'number', role: 'interval', id: 'median'})
+    builder.interval_column({id: 'median'})
 
     if series.include?('p25-p75')
-      builder.column({type: 'number', role: 'interval', id: 'p75'})
+      builder.interval_column({id: 'p75'})
     end
 
     if series.include?('min-max')
-      builder.column({type: 'number', role: 'interval', id: 'min'})
-      builder.column({type: 'number', role: 'interval', id: 'max'})
+      builder.interval_column({id: 'min'})
+      builder.interval_column({id: 'max'})
     end
 
     summary_table.map do |row|
       values = [row.issue_type, row.ct_mean]
 
       if series.include?('p10-p90')
-        values << row.ct_p10
-        values << row.ct_p90
+        values.concat([row.ct_p10, row.ct_p90])
       end
 
       if series.include?('p25-p75')
@@ -61,8 +60,7 @@ class ApiController < ApplicationController
       end
 
       if series.include?('min-max')
-        values << row.ct_min
-        values << row.ct_max
+        values.concat([row.ct_min, row.ct_max])
       end
 
       builder.row(values)

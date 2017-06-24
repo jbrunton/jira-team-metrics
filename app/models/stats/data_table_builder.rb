@@ -9,6 +9,14 @@ class DataTableBuilder
     self
   end
 
+  def number_column(opts)
+    column(opts.merge(type: 'number'))
+  end
+
+  def interval_column(opts)
+    number_column(opts.merge(role: 'interval'))
+  end
+
   def row(values)
     @rows << {c: values.map{ |v| {v: v} }}
     self
