@@ -13,10 +13,11 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('#ct-options input').change(drawChart);
+    $('#ct-options input').change(updateChart);
   });
 
-  function drawChart() {
+  function updateChart() {
+    $('#chart').animate({ opacity: 0 })
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary.json');
 
     url += '&series=';
@@ -27,12 +28,15 @@
       url += 'p10-p90,';
     }
 
-    var jsonData = $.ajax({
-      url: url,
-      dataType: "json",
-      async: false
-    }).responseText;
+    var jsonData = $.get(url, drawChart);
+  }
 
+  $(function() {
+    google.charts.setOnLoadCallback(updateChart);
+  });
+
+  function drawChart(jsonData) {
+    $('#chart').animate({ opacity: 1 })
     var data = new google.visualization.DataTable(jsonData);
 
     var series = {
@@ -90,10 +94,6 @@
     var chart = new google.visualization.LineChart(document.getElementById('chart'));
     chart.draw(data, options);
   }
-
-  $(function() {
-    google.charts.setOnLoadCallback(drawChart);
-  });
 </script>
 
 <div id="ct-options">
