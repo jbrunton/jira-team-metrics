@@ -40,14 +40,18 @@
 
     var options = {
       title:'Cycle times by issue type',
-      height: 500,
       legend: {position: 'none'},
       hAxis: {
         gridlines: {color: '#fff'}
       },
       lineWidth: 0,
-      pointSize: 2,
-      series: [{'color': '#D3362D'}],
+      pointSize: 0,
+      series: [
+        {
+          pointSize: 2,
+          'color': '#D3362D'
+        }
+      ],
       intervals: {
         barWidth: 1,
         boxWidth: 1,
@@ -76,7 +80,7 @@
       }
     };
 
-    var chartDiv = $('#cycle_time_summary_chart');
+    var chartDiv = $('#chart');
     chartDiv.css('height', chartDiv.width() * 0.5);
 
     var chart = new google.visualization.LineChart(document.getElementById('chart'));
@@ -88,7 +92,6 @@
   });
 </script>
 
-<div id="chart"></div>
 <div id="ct-options">
   <p>
     <input type="checkbox" id="ct_min-max" checked="true" />
@@ -103,3 +106,5 @@
     <label for="ct_p25-p75">Interquartile Range</label>
   </p>
 </div>
+
+<div id="chart"></div>

@@ -23,7 +23,7 @@ class ApiController < ApplicationController
 
     cols = [
       {type: 'string', label: 'Issue Type'},
-      {type: 'number', label: 'Mean' }
+      {type: 'number', label: 'Mean', id: 'mean'}
     ]
 
     if series.include?('p10-p90')
@@ -35,7 +35,7 @@ class ApiController < ApplicationController
       cols << {type: 'number', role: 'interval', id: 'p25'}
     end
 
-    cols << {type: 'number', role: 'interval', id: 'median' }
+    cols << {type: 'number', role: 'interval', id: 'median'}
 
     if series.include?('p25-p75')
       cols << {type: 'number', role: 'interval', id: 'p75'}
