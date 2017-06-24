@@ -1,0 +1,110 @@
+<% content_for :nav_content do %>
+    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
+    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
+    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="#!" class="breadcrumb">Issues</a>
+<% end %>
+
+<h3>Cycle Times by Issue Type</h3>
+
+<%= erb 'partials/cycle_time_form'.to_sym %>
+
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+
+  $(function() {
+    $('#ct-options input').change(drawChart);
+  });
+
+  function drawChart() {
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary.json');
+
+    url += '&series=';
+    if ($('#ct_min-max').prop('checked')) {
+      url += 'min-max,';
+    }
+    if ($('#ct_p10-p90').prop('checked')) {
+      url += 'p10-p90,';
+    }
+    if ($('#ct_p25-p75').prop('checked')) {
+      url += 'p25-p75,';
+    }
+
+    var jsonData = $.ajax({
+      url: url,
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
+    var options = {
+      title:'Cycle times by issue type',
+      legend: {position: 'none'},
+      hAxis: {
+        gridlines: {color: '#fff'}
+      },
+      lineWidth: 0,
+      pointSize: 0,
+      series: [
+        {
+          pointSize: 2,
+          'color': '#D3362D'
+        }
+      ],
+      intervals: {
+        barWidth: 1,
+        boxWidth: 1,
+        lineWidth: 2,
+        style: 'boxes'
+      },
+      interval: {
+        p10: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        p90: {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        min: {
+          style: 'points',
+          color: '#777'
+        },
+        max: {
+          style: 'points',
+          color: '#777'
+        }
+      }
+    };
+
+    var chartDiv = $('#chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart'));
+    chart.draw(data, options);
+  }
+
+  $(function() {
+    google.charts.setOnLoadCallback(drawChart);
+  });
+</script>
+
+<div id="ct-options">
+  <p>
+    <input type="checkbox" id="ct_min-max" checked="true" />
+    <label for="ct_min-max">Min / Max</label>
+  </p>
+  <p>
+    <input type="checkbox" id="ct_p10-p90" checked="true" />
+    <label for="ct_p10-p90">10th Percentile - 90th Percentile</label>
+  </p>
+  <p>
+    <input type="checkbox" id="ct_p25-p75" checked="true" />
+    <label for="ct_p25-p75">Interquartile Range</label>
+  </p>
+</div>
+
+<div id="chart"></div>
