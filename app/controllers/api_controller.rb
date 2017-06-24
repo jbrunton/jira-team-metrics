@@ -3,12 +3,8 @@ class ApiController < ApplicationController
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
-      .column({id: 'issue_type', type: 'string', label: 'Issue Type'})
-      .column({id: 'count', type: 'number', label: 'Count' })
-
-    summary_table.each do |row|
-      builder.row([row.issue_type, row.count])
-    end
+      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
 
     builder.build.to_json
   end
@@ -19,43 +15,28 @@ class ApiController < ApplicationController
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
-      .column({type: 'string', label: 'Issue Type'})
-      .number({label: 'Mean', id: 'mean'})
-      .number({label: 'Median', id: 'median'})
+      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
+      .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
 
     if series.include?('min-max')
-      builder.number({id: 'min', label: 'Min'})
-      builder.number({id: 'max', label: 'Max'})
+      builder.number({id: 'min', label: 'Min'}, summary_table.map(&:ct_min))
+      builder.number({id: 'max', label: 'Max'}, summary_table.map(&:ct_max))
     end
 
-    builder.number({id: 'p25', label: 'Lower Quartile'})
-    builder.number({id: 'p75', label: 'Upper Quartile'})
+    builder.number({id: 'p25', label: 'Lower Quartile'}, summary_table.map(&:ct_p25))
+    builder.number({id: 'p75', label: 'Upper Quartile'}, summary_table.map(&:ct_p75))
 
     if series.include?('p10-p90')
-      builder.number({id: 'p10', label: '10th Percentile'})
-      builder.number({id: 'p90', label: '90th Percentile'})
-      builder.intervals(['i:p10', 'i:p90'])
+      builder.number({id: 'p10', label: '10th Percentile'}, summary_table.map(&:ct_p10))
+      builder.number({id: 'p90', label: '90th Percentile'}, summary_table.map(&:ct_p90))
+      builder.interval({id: 'i:p10'}, summary_table.map(&:ct_p10))
+      builder.interval({id: 'i:p90'}, summary_table.map(&:ct_p90))
     end
 
-    builder.intervals(['i:p25', 'i:median', 'i:p75'])
-
-    summary_table.map do |row|
-      values = [row.issue_type, row.ct_mean, row.ct_median]
-
-      if series.include?('min-max')
-        values.concat([row.ct_min, row.ct_max])
-      end
-
-      values.concat([row.ct_p25, row.ct_p75])
-
-      if series.include?('p10-p90')
-        values.concat([row.ct_p10, row.ct_p90, row.ct_p10, row.ct_p90])
-      end
-
-      values.concat([row.ct_p25, row.ct_median, row.ct_p75])
-
-      builder.row(values)
-    end
+    builder.interval({id: 'i:p25'}, summary_table.map(&:ct_p25))
+    builder.interval({id: 'i:median'}, summary_table.map(&:ct_median))
+    builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
     builder.build.to_json
   end

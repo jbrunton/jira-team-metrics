@@ -4,38 +4,29 @@ class DataTableBuilder
     @rows = []
   end
 
-  def column(opts)
+  def column(opts, values = nil)
     @cols << opts
+    unless values.nil?
+      values.each_with_index do |v, index|
+        @rows[index] ||= []
+        @rows[index] << {v: v}
+      end
+    end
     self
   end
 
-  def number(opts)
-    column(opts.merge(type: 'number'))
+  def number(opts, values = nil)
+    column(opts.merge(type: 'number'), values)
   end
 
-  def numbers(ids)
-    ids.each{ |id| number({id: id}) }
-    self
-  end
-
-  def interval(opts)
-    number(opts.merge(role: 'interval'))
-  end
-
-  def intervals(ids)
-    ids.each{ |id| interval({id: id}) }
-    self
-  end
-
-  def row(values)
-    @rows << {c: values.map{ |v| {v: v} }}
-    self
+  def interval(opts, values = nil)
+    number(opts.merge(role: 'interval'), values)
   end
 
   def build
     {
       cols: @cols,
-      rows: @rows
+      rows: @rows.map{ |values| {c: values} }
     }
   end
 end
