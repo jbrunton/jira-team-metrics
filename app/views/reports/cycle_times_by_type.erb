@@ -43,64 +43,15 @@
     $('#chart').animate({ opacity: 1 })
     var data = new google.visualization.DataTable(jsonData);
 
-    var series = {
-      0: {
-        color: '#D3362D',
-        pointSize: 4
-      }
-    };
-
-    if ($('#ct_min-max').prop('checked')) {
-      series['2'] = {
-        color: '#777',
-        pointSize: 4
-      };
-      series['3'] = {
-        color: '#777',
-        pointSize: 4
-      };
-    }
-
-    var options = {
-      title:'Cycle times by issue type',
-      legend: {position: 'none'},
-      hAxis: {
-        gridlines: {color: '#fff'}
-      },
-      lineWidth: 0,
-      pointSize: 0,
-      seriesColor: '#777',
-      series: series,
-      intervals: {
-        barWidth: 1,
-        boxWidth: 1,
-        lineWidth: 2,
-        style: 'boxes',
-        color: '#9e2922'
-      },
-      interval: {
-        'i:p10': {
-          style: 'bars',
-          fillOpacity: 1,
-          color: '#777'
-        },
-        'i:p90': {
-          style: 'bars',
-          fillOpacity: 1,
-          color: '#777'
-        }
-      }
-    };
-
     var chartDiv = $('#chart');
     chartDiv.css('height', chartDiv.width() * 0.5);
 
     var chart = new google.visualization.LineChart(document.getElementById('chart'));
-    chart.draw(data, options);
+    chart.draw(data, chartOpts('Cycle Times by Issue Type'));
   }
 
   function updateStoryChart() {
-    $('#story_chart').animate({ opacity: 0 })
+    $('.issue_type_chart').animate({ opacity: 0 })
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary_by_month.json');
     console.log(url);
 
@@ -116,9 +67,26 @@
   }
 
   function drawStoryChart(jsonData) {
-    $('#story_chart').animate({ opacity: 1 })
-    var data = new google.visualization.DataTable(jsonData);
+    $('.issue_type_chart').animate({ opacity: 1 })
 
+    var issue_types = ['Story', 'Bug', 'Improvement', 'Technical Debt'];
+
+    var parsedData = JSON.parse(jsonData);
+
+    for (var i = 0; i < 4; ++i) {
+      var issue_type = issue_types[i],
+          container_id = issue_type.split(' ').join('_') + '_chart';
+
+      var chartDiv = $('#' + container_id);
+      chartDiv.css('height', chartDiv.width() * 0.5);
+
+      var data = new google.visualization.DataTable(parsedData[issue_type]);
+      var chart = new google.visualization.LineChart(document.getElementById(container_id));
+      chart.draw(data, chartOpts(issue_type + ' Cycle Times by Month'));
+    }
+  }
+
+  function chartOpts(title) {
     var series = {
       0: {
         color: '#D3362D',
@@ -138,7 +106,10 @@
     }
 
     var options = {
-      title:'Cycle times by issue type',
+      title: title,
+      chartArea: {
+        width: '90%'
+      },
       legend: {position: 'none'},
       hAxis: {
         gridlines: {color: '#fff'}
@@ -168,11 +139,7 @@
       }
     };
 
-    var chartDiv = $('#story_chart');
-    chartDiv.css('height', chartDiv.width() * 0.5);
-
-    var chart = new google.visualization.LineChart(document.getElementById('story_chart'));
-    chart.draw(data, options);
+    return options;
   }
 </script>
 
@@ -188,4 +155,7 @@
 </div>
 
 <div id="chart"></div>
-<div id="story_chart"></div>
+<div class="issue_type_chart" id="Story_chart"></div>
+<div class="issue_type_chart" id="Bug_chart"></div>
+<div class="issue_type_chart" id="Improvement_chart"></div>
+<div class="issue_type_chart" id="Technical_Debt_chart"></div>

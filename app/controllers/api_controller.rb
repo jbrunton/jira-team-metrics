@@ -46,36 +46,46 @@ class ApiController < ApplicationController
 
     summary_table = @board.summarize('month')
 
-    stories = summary_table.map do |range, rows|
-      row = rows.find{ |row|  row.issue_type == 'Story' }
-      row.with_new_label(range)
+    results = {}
+
+    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+      issues = summary_table.map do |range, rows|
+        row = rows.find{ |row|  row.issue_type == issue_type }
+        if row.nil?
+          BoardDecorator::SummaryRow.new(range, IssuesDecorator.new([]), IssuesDecorator.new([]))
+        else
+          row.with_new_label(range)
+        end
+      end
+
+      builder = DataTableBuilder.new
+        .column({type: 'string', label: 'Date Range'}, issues.map(&:issue_type_label))
+        .number({label: 'Mean', id: 'mean'}, issues.map(&:ct_mean))
+        .number({label: 'Median', id: 'median'}, issues.map(&:ct_median))
+
+      if series.include?('min-max')
+        builder.number({id: 'min', label: 'Min'}, issues.map(&:ct_min))
+        builder.number({id: 'max', label: 'Max'}, issues.map(&:ct_max))
+      end
+
+      builder.number({id: 'p25', label: 'Lower Quartile'}, issues.map(&:ct_p25))
+      builder.number({id: 'p75', label: 'Upper Quartile'}, issues.map(&:ct_p75))
+
+      if series.include?('p10-p90')
+        builder.number({id: 'p10', label: '10th Percentile'}, issues.map(&:ct_p10))
+        builder.number({id: 'p90', label: '90th Percentile'}, issues.map(&:ct_p90))
+        builder.interval({id: 'i:p10'}, issues.map(&:ct_p10))
+        builder.interval({id: 'i:p90'}, issues.map(&:ct_p90))
+      end
+
+      builder.interval({id: 'i:p25'}, issues.map(&:ct_p25))
+      builder.interval({id: 'i:median'}, issues.map(&:ct_median))
+      builder.interval({id: 'i:p75'}, issues.map(&:ct_p75))
+
+      results[issue_type] = builder.build
     end
 
-    builder = DataTableBuilder.new
-      .column({type: 'string', label: 'Date Range'}, stories.map(&:issue_type_label))
-      .number({label: 'Mean', id: 'mean'}, stories.map(&:ct_mean))
-      .number({label: 'Median', id: 'median'}, stories.map(&:ct_median))
-
-    if series.include?('min-max')
-      builder.number({id: 'min', label: 'Min'}, stories.map(&:ct_min))
-      builder.number({id: 'max', label: 'Max'}, stories.map(&:ct_max))
-    end
-
-    builder.number({id: 'p25', label: 'Lower Quartile'}, stories.map(&:ct_p25))
-    builder.number({id: 'p75', label: 'Upper Quartile'}, stories.map(&:ct_p75))
-
-    if series.include?('p10-p90')
-      builder.number({id: 'p10', label: '10th Percentile'}, stories.map(&:ct_p10))
-      builder.number({id: 'p90', label: '90th Percentile'}, stories.map(&:ct_p90))
-      builder.interval({id: 'i:p10'}, stories.map(&:ct_p10))
-      builder.interval({id: 'i:p90'}, stories.map(&:ct_p90))
-    end
-
-    builder.interval({id: 'i:p25'}, stories.map(&:ct_p25))
-    builder.interval({id: 'i:median'}, stories.map(&:ct_median))
-    builder.interval({id: 'i:p75'}, stories.map(&:ct_p75))
-
-    builder.build.to_json
+    results.to_json
   end
 
   get '/:domain/boards/:board_id/control_chart.json' do
