@@ -22,5 +22,15 @@ class JiraTask < Thor
       domain_name = config.get('defaults.domain')
       Store::Boards.instance(domain_name)
     end
+
+    def get_domain(options)
+      domain_name = options[:domain] || config.get('defaults.domain')
+
+      if domain_name.empty?
+        domain_name = ask('Which domain do you want to query?')
+      end
+
+      Domain.find_by(name: domain_name)
+    end
   end
 end

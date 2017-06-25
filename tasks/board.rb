@@ -5,7 +5,9 @@ require 'time'
 require 'descriptive_statistics'
 require 'erb'
 
-class Board < JiraTask
+class BoardTask < JiraTask
+  namespace :board
+
   desc "sync", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
   method_option :board_id, :desc => "board id", :type => :numeric
