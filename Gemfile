@@ -33,6 +33,14 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'thor'
+gem 'ruby-progressbar'
+gem 'descriptive_statistics'
+gem 'draper'
+# TODO: remove these
+
+gem 'require_all'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
