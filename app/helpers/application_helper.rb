@@ -48,7 +48,7 @@ module ApplicationHelper
   # TODO: move this
   def render_table_options(object)
     path = path_for(object)
-    "<a href='#{path}'>Details</a>"
+    "<a href='#{path}'>Details</a>".html_safe
   end
 
   # TODO: move this

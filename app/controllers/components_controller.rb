@@ -5,13 +5,13 @@ class ComponentsController < ApplicationController
   #   erb 'boards/summary'.to_sym, layout: false, locals: { group_by: params[:group_by] }
   # end
   #
-  # get '/:domain/boards/:board_id/issues_list' do
-  #   erb 'partials/table'.to_sym, :locals => { :table => @board.issues_table }, layout: false
-  # end
+  def issues_list
+    render 'partials/_table', :locals => { :table => @board.issues_table }, layout: false
+  end
 
   def wip
     date = Time.parse(params[:date])
     issues = @board.wip_on_date(date)
-    render 'partials/wip'.to_sym, locals: {date: date, issues: issues}, layout: false
+    render 'partials/wip', locals: {date: date, issues: issues}, layout: false
   end
 end

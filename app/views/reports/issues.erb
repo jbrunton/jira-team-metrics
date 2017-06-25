@@ -7,7 +7,7 @@
 
 <h3>Issues for <%= @board.name %></h3>
 
-<%= erb 'partials/cycle_time_form'.to_sym %>
+<%= render partial: 'partials/cycle_time_form' %>
 
 <script>
   $(function() {

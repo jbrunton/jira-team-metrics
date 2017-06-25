@@ -5,6 +5,9 @@ class ReportsController < ApplicationController
   def issues_by_type
   end
 
+  def issues
+  end
+
   # get '/:domain/boards/:board_id' do
   #   erb 'boards/show'.to_sym
   # end
