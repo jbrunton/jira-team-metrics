@@ -24,7 +24,7 @@ class ApiController < ApplicationController
 
     BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
       issues = summary_table.map do |range, rows|
-        row = rows.find{ |row|  row.issue_type == issue_type }
+        row = rows.find{ |r| r.issue_type == issue_type }
         if row.nil?
           BoardDecorator::SummaryRow.new(range, IssuesDecorator.new([]), IssuesDecorator.new([]))
         else
