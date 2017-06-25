@@ -22,9 +22,10 @@ class ReportsController < ApplicationController
   #   end
   # end
   #
-  # get '/:domain/boards/:board_id/control_chart' do
-  #   erb 'reports/control_chart'.to_sym
-  # end
+
+  def control_chart
+  end
+
   #
   # get '/:domain/boards/:board_id/issues_by_type' do
   #   erb '/reports/issues_by_type'.to_sym

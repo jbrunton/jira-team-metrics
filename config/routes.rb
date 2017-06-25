@@ -8,8 +8,10 @@ Rails.application.routes.draw do
 
   get '/reports/:domain_name/boards/:board_id/issues_by_type', to: 'reports#issues_by_type'
   get '/reports/:domain_name/boards/:board_id/cycle_times_by_type', to: 'reports#cycle_times_by_type'
+  get '/reports/:domain_name/boards/:board_id/control_chart', to: 'reports#control_chart'
 
   get '/api/:domain_name/boards/:board_id/count_summary.json', to: 'api#count_summary'
   get '/api/:domain_name/boards/:board_id/cycle_time_summary.json', to: 'api#cycle_time_summary'
   get '/api/:domain_name/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'
+  get '/api/:domain_name/boards/:board_id/control_chart.json', to: 'api#control_chart'
 end
