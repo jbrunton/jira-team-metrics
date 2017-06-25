@@ -46,22 +46,11 @@ class ApiController < ApplicationController
   end
 
   def control_chart
-    trend_builder = TrendBuilder.new.
-      pluck{ |issue| issue.cycle_time }.
-      map do |issue, mean, stddev|
-      { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
-    end
-
     sorted_issues = @board.completed_issues.sort_by { |issue| issue.completed }
-    ct_trends = trend_builder.analyze(sorted_issues)
+    ct_trends = CT_TREND_BUILDER.analyze(sorted_issues)
 
     wip_history = @board.wip_history.map{ |date, issues| [date, issues.count] }
-    trend_builder = TrendBuilder.new.
-      pluck{ |item| item[1] }.
-      map do |item, mean, stddev|
-      {wip: item[1], mean: mean, stddev: stddev }
-    end
-    wip_trends = trend_builder.analyze(wip_history)
+    wip_trends = WIP_TREND_BUILDER.analyze(wip_history)
 
     render json: {
       cols: [
@@ -117,5 +106,17 @@ private
     builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
     builder.build
+  end
+
+  CT_TREND_BUILDER = TrendBuilder.new.
+    pluck{ |issue| issue.cycle_time }.
+    map do |issue, mean, stddev|
+    { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
+  end
+
+  WIP_TREND_BUILDER = TrendBuilder.new.
+    pluck{ |item| item[1] }.
+    map do |item, mean, stddev|
+    {wip: item[1], mean: mean, stddev: stddev }
   end
 end
