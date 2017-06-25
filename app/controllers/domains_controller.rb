@@ -1,4 +1,6 @@
 class DomainsController < ApplicationController
+  before_action :set_domain, only: [:show]
+
   def index
     @domains = DomainsStore.instance.all
   end
