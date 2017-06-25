@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'
 
+  get '/domains/:domain_name/boards/:board_id/issues/:issue_key', to: 'issues#show'
+
   get '/reports/:domain_name/boards/:board_id/issues_by_type', to: 'reports#issues_by_type'
   get '/reports/:domain_name/boards/:board_id/cycle_times_by_type', to: 'reports#cycle_times_by_type'
   get '/reports/:domain_name/boards/:board_id/control_chart', to: 'reports#control_chart'
@@ -14,4 +16,6 @@ Rails.application.routes.draw do
   get '/api/:domain_name/boards/:board_id/cycle_time_summary.json', to: 'api#cycle_time_summary'
   get '/api/:domain_name/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'
   get '/api/:domain_name/boards/:board_id/control_chart.json', to: 'api#control_chart'
+
+  get '/components/:domain_name/boards/:board_id/wip/:date', to: 'components#wip'
 end

@@ -1,9 +1,9 @@
 <table class="striped">
   <% table.rows.each do |row| %>
       <% if row.kind_of?(DataTable::Header) %>
-        <%= erb 'partials/table_header'.to_sym, locals: { row: row } %>
+        <%= render partial: 'partials/table_header', locals: { row: row } %>
       <% else %>
-        <%= erb 'partials/table_row'.to_sym, locals: { row: row } %>
+        <%= render partial: 'partials/table_row', locals: { row: row } %>
       <% end %>
   <% end %>
 </table>
