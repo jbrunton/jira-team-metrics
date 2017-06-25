@@ -7,7 +7,7 @@
 
 <h3>Cycle Times by Issue Type</h3>
 
-<%= erb 'partials/cycle_time_form'.to_sym %>
+<%= render 'partials/cycle_time_form' %>
 
 <script>
   google.charts.load('current', {'packages':['corechart']});
@@ -71,8 +71,6 @@
 
     var issue_types = ['Story', 'Bug', 'Improvement', 'Technical Debt'];
 
-    var parsedData = JSON.parse(jsonData);
-
     for (var i = 0; i < 4; ++i) {
       var issue_type = issue_types[i],
           container_id = issue_type.split(' ').join('_') + '_chart';
@@ -80,7 +78,7 @@
       var chartDiv = $('#' + container_id);
       chartDiv.css('height', chartDiv.width() * 0.5);
 
-      var data = new google.visualization.DataTable(parsedData[issue_type]);
+      var data = new google.visualization.DataTable(jsonData[issue_type]);
       var chart = new google.visualization.LineChart(document.getElementById(container_id));
       chart.draw(data, chartOpts(issue_type + ' Cycle Times by Month'));
     }

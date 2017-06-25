@@ -14,35 +14,35 @@ class ApiController < ApplicationController
     render json: builder.build
   end
 
-  # get '/:domain/boards/:board_id/cycle_time_summary.json' do
-  #   series = (params[:series] || '').split(',')
-  #   summary_table = @board.summarize
-  #   build_ct_table(summary_table, series).to_json
-  # end
-  #
-  # get '/:domain/boards/:board_id/cycle_time_summary_by_month.json' do
-  #   series = (params[:series] || '').split(',')
-  #
-  #   summary_table = @board.summarize('month')
-  #
-  #   results = {}
-  #
-  #   BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
-  #     issues = summary_table.map do |range, rows|
-  #       row = rows.find{ |r| r.issue_type == issue_type }
-  #       if row.nil?
-  #         BoardDecorator::SummaryRow.new(range, IssuesDecorator.new([]), IssuesDecorator.new([]))
-  #       else
-  #         row.with_new_label(range)
-  #       end
-  #     end
-  #
-  #     results[issue_type] = build_ct_table(issues, series)
-  #   end
-  #
-  #   results.to_json
-  # end
-  #
+  def cycle_time_summary
+    series = (params[:series] || '').split(',')
+    summary_table = @board.summarize
+    render json: build_ct_table(summary_table, series)
+  end
+
+  def cycle_time_summary_by_month
+    series = (params[:series] || '').split(',')
+
+    summary_table = @board.summarize('month')
+
+    results = {}
+
+    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+      issues = summary_table.map do |range, rows|
+        row = rows.find{ |r| r.issue_type == issue_type }
+        if row.nil?
+          BoardDecorator::SummaryRow.new(range, IssuesDecorator.new([]), IssuesDecorator.new([]))
+        else
+          row.with_new_label(range)
+        end
+      end
+
+      results[issue_type] = build_ct_table(issues, series)
+    end
+
+    render json: results
+  end
+
   # get '/:domain/boards/:board_id/control_chart.json' do
   #   trend_builder = TrendBuilder.new.
   #     pluck{ |issue| issue.cycle_time }.

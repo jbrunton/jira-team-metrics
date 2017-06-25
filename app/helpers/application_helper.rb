@@ -8,11 +8,15 @@ module ApplicationHelper
   end
 
   def board_path(domain, board)
+    "/domains/#{domain['name']}/boards/#{board.id}"
+  end
+
+  def reports_path(domain, board)
     "/reports/#{domain['name']}/boards/#{board.id}"
   end
 
   def board_issues_path(domain, board)
-    "#{board_path(domain, board)}/issues"
+    "/reports/#{domain['name']}/boards/#{board.id}/issues"
   end
 
   def board_components_path(domain, board)

@@ -3,7 +3,6 @@ class ReportsController < ApplicationController
   before_action :set_board
 
   def issues_by_type
-
   end
 
   # get '/:domain/boards/:board_id' do
@@ -31,7 +30,6 @@ class ReportsController < ApplicationController
   #   erb '/reports/issues_by_type'.to_sym
   # end
   #
-  # get '/:domain/boards/:board_id/cycle_times_by_type' do
-  #   erb '/reports/cycle_times_by_type'.to_sym
-  # end
+  def cycle_times_by_type
+  end
 end
