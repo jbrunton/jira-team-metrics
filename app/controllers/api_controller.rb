@@ -41,6 +41,43 @@ class ApiController < ApplicationController
     builder.build.to_json
   end
 
+  get '/:domain/boards/:board_id/cycle_time_summary_by_month.json' do
+    series = (params[:series] || '').split(',')
+
+    summary_table = @board.summarize('month')
+
+    stories = summary_table.map do |range, rows|
+      row = rows.find{ |row|  row.issue_type == 'Story' }
+      row.with_new_label(range)
+    end
+
+    builder = DataTableBuilder.new
+      .column({type: 'string', label: 'Date Range'}, stories.map(&:issue_type_label))
+      .number({label: 'Mean', id: 'mean'}, stories.map(&:ct_mean))
+      .number({label: 'Median', id: 'median'}, stories.map(&:ct_median))
+
+    if series.include?('min-max')
+      builder.number({id: 'min', label: 'Min'}, stories.map(&:ct_min))
+      builder.number({id: 'max', label: 'Max'}, stories.map(&:ct_max))
+    end
+
+    builder.number({id: 'p25', label: 'Lower Quartile'}, stories.map(&:ct_p25))
+    builder.number({id: 'p75', label: 'Upper Quartile'}, stories.map(&:ct_p75))
+
+    if series.include?('p10-p90')
+      builder.number({id: 'p10', label: '10th Percentile'}, stories.map(&:ct_p10))
+      builder.number({id: 'p90', label: '90th Percentile'}, stories.map(&:ct_p90))
+      builder.interval({id: 'i:p10'}, stories.map(&:ct_p10))
+      builder.interval({id: 'i:p90'}, stories.map(&:ct_p90))
+    end
+
+    builder.interval({id: 'i:p25'}, stories.map(&:ct_p25))
+    builder.interval({id: 'i:median'}, stories.map(&:ct_median))
+    builder.interval({id: 'i:p75'}, stories.map(&:ct_p75))
+
+    builder.build.to_json
+  end
+
   get '/:domain/boards/:board_id/control_chart.json' do
     trend_builder = TrendBuilder.new.
       pluck{ |issue| issue.cycle_time }.

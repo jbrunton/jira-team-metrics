@@ -13,10 +13,15 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('#ct-options input').change(updateChart);
-    $('#ct-states input').change(updateChart);
-    google.charts.setOnLoadCallback(updateChart);
+    $('#ct-options input').change(updateCharts);
+    $('#ct-states input').change(updateCharts);
+    google.charts.setOnLoadCallback(updateCharts);
   });
+
+  function updateCharts() {
+    updateChart();
+    updateStoryChart();
+  }
 
   function updateChart() {
     $('#chart').animate({ opacity: 0 })
@@ -31,7 +36,7 @@
       url += 'p10-p90,';
     }
 
-    var jsonData = $.get(url, drawChart);
+    $.get(url, drawChart);
   }
 
   function drawChart(jsonData) {
@@ -93,6 +98,82 @@
     var chart = new google.visualization.LineChart(document.getElementById('chart'));
     chart.draw(data, options);
   }
+
+  function updateStoryChart() {
+    $('#story_chart').animate({ opacity: 0 })
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary_by_month.json');
+    console.log(url);
+
+    url += '&series=';
+    if ($('#ct_min-max').prop('checked')) {
+      url += 'min-max,';
+    }
+    if ($('#ct_p10-p90').prop('checked')) {
+      url += 'p10-p90,';
+    }
+
+    $.get(url, drawStoryChart);
+  }
+
+  function drawStoryChart(jsonData) {
+    $('#story_chart').animate({ opacity: 1 })
+    var data = new google.visualization.DataTable(jsonData);
+
+    var series = {
+      0: {
+        color: '#D3362D',
+        pointSize: 4
+      }
+    };
+
+    if ($('#ct_min-max').prop('checked')) {
+      series['2'] = {
+        color: '#777',
+        pointSize: 4
+      };
+      series['3'] = {
+        color: '#777',
+        pointSize: 4
+      };
+    }
+
+    var options = {
+      title:'Cycle times by issue type',
+      legend: {position: 'none'},
+      hAxis: {
+        gridlines: {color: '#fff'}
+      },
+      lineWidth: 0,
+      pointSize: 0,
+      seriesColor: '#777',
+      series: series,
+      intervals: {
+        barWidth: 1,
+        boxWidth: 1,
+        lineWidth: 2,
+        style: 'boxes',
+        color: '#9e2922'
+      },
+      interval: {
+        'i:p10': {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        },
+        'i:p90': {
+          style: 'bars',
+          fillOpacity: 1,
+          color: '#777'
+        }
+      }
+    };
+
+    var chartDiv = $('#story_chart');
+    chartDiv.css('height', chartDiv.width() * 0.5);
+
+    var chart = new google.visualization.LineChart(document.getElementById('story_chart'));
+    chart.draw(data, options);
+  }
 </script>
 
 <div id="ct-options">
@@ -107,3 +188,4 @@
 </div>
 
 <div id="chart"></div>
+<div id="story_chart"></div>
