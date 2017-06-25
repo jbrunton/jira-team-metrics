@@ -1,13 +1,9 @@
-require 'sinatra'
-require 'sinatra/content_for'
+# This file is used by Rack-based servers to start the application.
+
 require 'yaml/store'
 require 'require_all'
-require 'byebug'
+['helpers', 'models', 'stores'].each { |dir| require_all dir }
 
-['helpers', 'models', 'stores', 'app'].each { |dir| require_all dir }
+require_relative 'config/environment'
 
-map('/domains') { run DomainsController }
-map('/reports') { run ReportsController }
-map('/api') { run ApiController }
-map('/components') { run ComponentsController }
-map('/') { run HomeController }
+run Rails.application

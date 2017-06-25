@@ -1,3 +1,3 @@
 <% issues.each do |issue| %>
-    <%= erb 'partials/issue'.to_sym, locals: {issue: issue} %>
+    <%= render partial: 'partials/issue', locals: {issue: issue} %>
 <% end %>

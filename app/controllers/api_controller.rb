@@ -1,21 +1,28 @@
+require './app/models/data_table_builder'
+
 class ApiController < ApplicationController
-  get '/:domain/boards/:board_id/count_summary.json' do
+  include ApplicationHelper
+
+  before_action :set_domain
+  before_action :set_board
+
+  def count_summary
     summary_table = @board.summarize
 
     builder = DataTableBuilder.new
       .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
       .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
 
-    builder.build.to_json
+    render json: builder.build
   end
 
-  get '/:domain/boards/:board_id/cycle_time_summary.json' do
+  def cycle_time_summary
     series = (params[:series] || '').split(',')
     summary_table = @board.summarize
-    build_ct_table(summary_table, series).to_json
+    render json: build_ct_table(summary_table, series)
   end
 
-  get '/:domain/boards/:board_id/cycle_time_summary_by_month.json' do
+  def cycle_time_summary_by_month
     series = (params[:series] || '').split(',')
 
     summary_table = @board.summarize('month')
@@ -35,28 +42,17 @@ class ApiController < ApplicationController
       results[issue_type] = build_ct_table(issues, series)
     end
 
-    results.to_json
+    render json: results
   end
 
-  get '/:domain/boards/:board_id/control_chart.json' do
-    trend_builder = TrendBuilder.new.
-      pluck{ |issue| issue.cycle_time }.
-      map do |issue, mean, stddev|
-      { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
-    end
-
+  def control_chart
     sorted_issues = @board.completed_issues.sort_by { |issue| issue.completed }
-    ct_trends = trend_builder.analyze(sorted_issues)
+    ct_trends = CT_TREND_BUILDER.analyze(sorted_issues)
 
     wip_history = @board.wip_history.map{ |date, issues| [date, issues.count] }
-    trend_builder = TrendBuilder.new.
-      pluck{ |item| item[1] }.
-      map do |item, mean, stddev|
-      {wip: item[1], mean: mean, stddev: stddev }
-    end
-    wip_trends = trend_builder.analyze(wip_history)
+    wip_trends = WIP_TREND_BUILDER.analyze(wip_history)
 
-    {
+    render json: {
       cols: [
         {id: 'date', type: 'date', label: 'Completed'},
         {id: 'completed_issues', type: 'number', label: 'Completed Issues'},
@@ -80,7 +76,7 @@ class ApiController < ApplicationController
         stddev = wip_trends[index][:stddev]
         {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: wip}, {v: nil}, {v: nil}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev},]}
       end
-    }.to_json
+    }
   end
 
 private
@@ -110,5 +106,17 @@ private
     builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
     builder.build
+  end
+
+  CT_TREND_BUILDER = TrendBuilder.new.
+    pluck{ |issue| issue.cycle_time }.
+    map do |issue, mean, stddev|
+    { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
+  end
+
+  WIP_TREND_BUILDER = TrendBuilder.new.
+    pluck{ |item| item[1] }.
+    map do |item, mean, stddev|
+    {wip: item[1], mean: mean, stddev: stddev }
   end
 end

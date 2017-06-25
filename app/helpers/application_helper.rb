@@ -8,11 +8,15 @@ module ApplicationHelper
   end
 
   def board_path(domain, board)
+    "/domains/#{domain['name']}/boards/#{board.id}"
+  end
+
+  def reports_path(domain, board)
     "/reports/#{domain['name']}/boards/#{board.id}"
   end
 
   def board_issues_path(domain, board)
-    "#{board_path(domain, board)}/issues"
+    "/reports/#{domain['name']}/boards/#{board.id}/issues"
   end
 
   def board_components_path(domain, board)
@@ -32,7 +36,7 @@ module ApplicationHelper
   end
 
   def issue_path(issue)
-    "#{board_issues_path(@domain, @board)}/#{issue.key}"
+    "#{board_path(@domain, @board)}/issues/#{issue.key}"
   end
 
   def path_for(object)
@@ -44,7 +48,7 @@ module ApplicationHelper
   # TODO: move this
   def render_table_options(object)
     path = path_for(object)
-    "<a href='#{path}'>Details</a>"
+    "<a href='#{path}'>Details</a>".html_safe
   end
 
   # TODO: move this

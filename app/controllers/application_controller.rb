@@ -1,20 +1,13 @@
-class ApplicationController < Sinatra::Base
-  helpers Sinatra::ContentFor
-  helpers ApplicationHelper
-
-  # set folder for templates to ../views, but make the path absolute
-  set :views, File.expand_path('../../views', __FILE__)
-
-  before('/:domain*') { set_domain(params) }
-  before('/:domain/boards/:board_id*') { set_board(params) }
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
 
 private
-  def set_domain(params)
-    domain_name = params[:domain]
-    @domain = DomainsStore.instance.find(domain_name)
+
+  def set_domain
+    @domain = DomainsStore.instance.find(params[:domain_name])
   end
 
-  def set_board(params)
+  def set_board
     board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
 
     unless params[:from_state].nil?

@@ -8,4 +8,4 @@
 
 <h3><%= "#{@issue.key} - #{@issue.summary}" %></h3>
 
-<%= erb 'partials/issue'.to_sym, locals: {issue: @issue, show_transitions: true} %>
+<%= render partial: 'partials/issue', locals: {issue: @issue, show_transitions: true} %>
