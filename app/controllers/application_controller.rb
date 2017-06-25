@@ -4,11 +4,11 @@ class ApplicationController < ActionController::Base
 private
 
   def set_domain
-    @domain = DomainsStore.instance.find(params[:domain_name])
+    @domain = Domain.find_by(name: params[:domain_name])
   end
 
   def set_board
-    board = Store::Boards.instance(@domain['name']).get_board(params[:board_id].to_i)
+    board = Store::Boards.instance(@domain.name).get_board(params[:board_id].to_i)
 
     unless params[:from_state].nil?
       from_state = params[:from_state] unless params[:from_state].empty?
