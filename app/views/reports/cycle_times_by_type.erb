@@ -13,11 +13,15 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('#ct-options input').change(drawChart);
+    $('#ct-options input').change(updateChart);
+    $('#ct-states input').change(updateChart);
+    google.charts.setOnLoadCallback(updateChart);
   });
 
-  function drawChart() {
+  function updateChart() {
+    $('#chart').animate({ opacity: 0 })
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/cycle_time_summary.json');
+    console.log(url);
 
     url += '&series=';
     if ($('#ct_min-max').prop('checked')) {
@@ -26,17 +30,31 @@
     if ($('#ct_p10-p90').prop('checked')) {
       url += 'p10-p90,';
     }
-    if ($('#ct_p25-p75').prop('checked')) {
-      url += 'p25-p75,';
-    }
 
-    var jsonData = $.ajax({
-      url: url,
-      dataType: "json",
-      async: false
-    }).responseText;
+    var jsonData = $.get(url, drawChart);
+  }
 
+  function drawChart(jsonData) {
+    $('#chart').animate({ opacity: 1 })
     var data = new google.visualization.DataTable(jsonData);
+
+    var series = {
+      0: {
+        color: '#D3362D',
+        pointSize: 4
+      }
+    };
+
+    if ($('#ct_min-max').prop('checked')) {
+      series['2'] = {
+        color: '#777',
+        pointSize: 4
+      };
+      series['3'] = {
+        color: '#777',
+        pointSize: 4
+      };
+    }
 
     var options = {
       title:'Cycle times by issue type',
@@ -46,35 +64,24 @@
       },
       lineWidth: 0,
       pointSize: 0,
-      series: [
-        {
-          pointSize: 2,
-          'color': '#D3362D'
-        }
-      ],
+      seriesColor: '#777',
+      series: series,
       intervals: {
         barWidth: 1,
         boxWidth: 1,
         lineWidth: 2,
-        style: 'boxes'
+        style: 'boxes',
+        color: '#9e2922'
       },
       interval: {
-        p10: {
+        'i:p10': {
           style: 'bars',
           fillOpacity: 1,
           color: '#777'
         },
-        p90: {
+        'i:p90': {
           style: 'bars',
           fillOpacity: 1,
-          color: '#777'
-        },
-        min: {
-          style: 'points',
-          color: '#777'
-        },
-        max: {
-          style: 'points',
           color: '#777'
         }
       }
@@ -86,10 +93,6 @@
     var chart = new google.visualization.LineChart(document.getElementById('chart'));
     chart.draw(data, options);
   }
-
-  $(function() {
-    google.charts.setOnLoadCallback(drawChart);
-  });
 </script>
 
 <div id="ct-options">
@@ -100,10 +103,6 @@
   <p>
     <input type="checkbox" id="ct_p10-p90" checked="true" />
     <label for="ct_p10-p90">10th Percentile - 90th Percentile</label>
-  </p>
-  <p>
-    <input type="checkbox" id="ct_p25-p75" checked="true" />
-    <label for="ct_p25-p75">Interquartile Range</label>
   </p>
 </div>
 

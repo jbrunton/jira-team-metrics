@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/content_for'
 require 'yaml/store'
 require 'require_all'
+require 'byebug'
 
 ['helpers', 'models', 'stores', 'app'].each { |dir| require_all dir }
 

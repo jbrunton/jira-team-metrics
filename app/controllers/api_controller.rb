@@ -1,19 +1,12 @@
 class ApiController < ApplicationController
   get '/:domain/boards/:board_id/count_summary.json' do
     summary_table = @board.summarize
-    {
-      cols: [
-        {id: 'issue_type', type: 'string', label: 'Issue Type' },
-        {id: 'count', type: 'number', label: 'Count' }
-      ],
-      rows: summary_table.map do |row|
-        {c: [{v: row.issue_type}, {v: row.count}]}
-      end
-    # rows: [
-    #   {c: [{v: 'Story'}, {v: 4}]},
-    #   {c: [{v: 'Bugs'}, {v: 6}]}
-    # ]
-    }.to_json
+
+    builder = DataTableBuilder.new
+      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
+
+    builder.build.to_json
   end
 
   get '/:domain/boards/:board_id/cycle_time_summary.json' do
@@ -21,70 +14,31 @@ class ApiController < ApplicationController
 
     summary_table = @board.summarize
 
-    cols = [
-      {type: 'string', label: 'Issue Type'},
-      {type: 'number', label: 'Mean', id: 'mean'}
-    ]
-
-    if series.include?('p10-p90')
-      cols << {type: 'number', role: 'interval', id: 'p10'}
-      cols << {type: 'number', role: 'interval', id: 'p90'}
-    end
-
-    if series.include?('p25-p75')
-      cols << {type: 'number', role: 'interval', id: 'p25'}
-    end
-
-    cols << {type: 'number', role: 'interval', id: 'median'}
-
-    if series.include?('p25-p75')
-      cols << {type: 'number', role: 'interval', id: 'p75'}
-    end
+    builder = DataTableBuilder.new
+      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
+      .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
+      .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
 
     if series.include?('min-max')
-      cols << {type: 'number', role: 'interval', id: 'min'}
-      cols << {type: 'number', role: 'interval', id: 'max'}
+      builder.number({id: 'min', label: 'Min'}, summary_table.map(&:ct_min))
+      builder.number({id: 'max', label: 'Max'}, summary_table.map(&:ct_max))
     end
 
+    builder.number({id: 'p25', label: 'Lower Quartile'}, summary_table.map(&:ct_p25))
+    builder.number({id: 'p75', label: 'Upper Quartile'}, summary_table.map(&:ct_p75))
 
-    # summary_table.each do |row|
-    #   issue_type = row.issue_type
-    #   cols << {id: issue_type, type: 'number', label: issue_type }
-    #   cols << {id: issue_type + '_i0', type: 'number', role: 'interval' }
-    #   cols << {id: issue_type + '_i1', type: 'number', role: 'interval' }
-    # end
+    if series.include?('p10-p90')
+      builder.number({id: 'p10', label: '10th Percentile'}, summary_table.map(&:ct_p10))
+      builder.number({id: 'p90', label: '90th Percentile'}, summary_table.map(&:ct_p90))
+      builder.interval({id: 'i:p10'}, summary_table.map(&:ct_p10))
+      builder.interval({id: 'i:p90'}, summary_table.map(&:ct_p90))
+    end
 
-    {
-      cols: cols,
-      rows: summary_table.map do |row|
-        values = [
-          {v: row.issue_type},
-          {v: row.ct_mean}
-        ]
+    builder.interval({id: 'i:p25'}, summary_table.map(&:ct_p25))
+    builder.interval({id: 'i:median'}, summary_table.map(&:ct_median))
+    builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
-        if series.include?('p10-p90')
-          values << {v: row.ct_p10}
-          values << {v: row.ct_p90}
-        end
-
-        if series.include?('p25-p75')
-          values << {v: row.ct_p25}
-        end
-
-        values << {v: row.ct_median}
-
-        if series.include?('p25-p75')
-          values << {v: row.ct_p75}
-        end
-
-        if series.include?('min-max')
-          values << {v: row.ct_min}
-          values << {v: row.ct_max}
-        end
-
-        {c: values}
-      end
-    }.to_json
+    builder.build.to_json
   end
 
   get '/:domain/boards/:board_id/control_chart.json' do
