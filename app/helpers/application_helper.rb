@@ -36,7 +36,7 @@ module ApplicationHelper
   end
 
   def issue_path(issue)
-    "#{board_issues_path(@domain, @board)}/#{issue.key}"
+    "#{board_path(@domain, @board)}/issues/#{issue.key}"
   end
 
   def path_for(object)
