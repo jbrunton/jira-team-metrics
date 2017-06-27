@@ -2,12 +2,12 @@ class DomainsController < ApplicationController
   before_action :set_domain, only: [:show]
 
   def index
-    @domains = DomainsStore.instance.all
+    @domains = Domain.all
   end
 
   def show
-    @boards = Store::Boards.instance(@domain['name']).all.select do |board|
-      !board.last_updated.nil?
+    @boards = @domain.boards.select do |board|
+      !board.last_synced.nil?
     end
   end
 end

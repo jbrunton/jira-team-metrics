@@ -13,11 +13,11 @@ class BoardTask < JiraTask
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :since, :desc => "date to sync changes from"
   def sync
-    board_id = get_board_id(options)
+    board = get_board(options)
     status = options[:status]
     if status
-        last_updated = boards_store.board_last_updated(board_id) || "Never"
-        puts "Last updated: #{last_updated}"
+      last_synced = board.last_synced || "Never"
+      puts "Last updated: #{last_synced}"
     else
       board = boards_store.get_board(board_id)
       if options[:since]

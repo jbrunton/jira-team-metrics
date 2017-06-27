@@ -8,7 +8,7 @@ private
   end
 
   def set_board
-    board = Store::Boards.instance(@domain.name).get_board(params[:board_id].to_i)
+    board = @domain.boards.find(params[:board_id])
 
     unless params[:from_state].nil?
       from_state = params[:from_state] unless params[:from_state].empty?
