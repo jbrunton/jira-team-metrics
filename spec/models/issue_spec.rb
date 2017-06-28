@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe Issue do
   let(:analysis_transition) {
     {
@@ -57,32 +59,16 @@ RSpec.describe Issue do
     ])
   end
 
-  describe "#to_h" do
-    it "returns a hash representation of the instance" do
-      expect(issue.to_h).to eq({
-        'key' => 'ABC-101',
-        'summary' => 'Some Issue',
-        'issue_type' => 'Story',
-        'transitions' => [
-          analysis_transition,
-          in_progress_transition,
-          in_test_transition,
-          done_transition
-        ]
-      })
-    end
-  end
-
-  describe "started" do
+  describe "started_time" do
     context "when passed no parameters" do
       it "returns the time of the first transition to 'In Progress' status category" do
-        expect(issue.started).to eq(Time.parse('2017-01-02T12:00:00.000-0000'))
+        expect(issue.started_time).to eq(Time.parse('2017-01-02T12:00:00.000-0000'))
       end
     end
 
     context "when passed a status name" do
       it "returns the time of the first transition to that status" do
-        expect(issue.started('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
+        expect(issue.started_time('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
       end
     end
 
@@ -94,13 +80,13 @@ RSpec.describe Issue do
   describe "completed" do
     context "when passed no parameters" do
       it "returns the time of the last transition to 'Done' status category" do
-        expect(issue.completed).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
+        expect(issue.completed_time).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
       end
     end
 
     context "when passed a status name" do
       it "returns the time of the last transition to that status" do
-        expect(issue.completed('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
+        expect(issue.completed_time('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
       end
     end
 
@@ -111,7 +97,7 @@ RSpec.describe Issue do
 
   describe "#cycle_time" do
     it "returns the time in days the issue was in progress" do
-      expect(issue.cycle_time).to eq(1.25)
+      expect(issue.cycle_time_between(nil, nil)).to eq(1.25)
     end
   end
 
