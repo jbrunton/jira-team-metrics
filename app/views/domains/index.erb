@@ -9,6 +9,16 @@
       return false;
     });
   });
+
+  App.cable.subscriptions.create("SyncChannel",
+      {
+        received: function (data) {
+          var row = $('#domain-row-' + data.domain);
+          row.find('.sync-spinner').hide();
+          row.find('.sync-button').show();
+        }
+      });
+
 </script>
 
 <h3>Domains</h3>

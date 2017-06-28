@@ -5,6 +5,11 @@ class SyncDomainJob < ApplicationJob
     puts "*** Syncing #{domain.name}"
     sleep(5)
     puts "*** Done"
+
+    ActionCable.server.broadcast(
+      "sync_status",
+      domain: domain.id
+    )
     # Do something later
   end
 end
