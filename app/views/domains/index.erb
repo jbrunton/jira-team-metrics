@@ -10,6 +10,14 @@
     });
   });
 
+  $(function(){
+    $('#add-domain-modal').modal({
+      complete: function() {
+        $.post('<%= domains_path %>', $( "#add-domain" ).serialize());
+      }
+    });
+  });
+
   App.cable.subscriptions.create("SyncChannel",
       {
         received: function (data) {
@@ -60,3 +68,33 @@
       </tr>
   <% end %>
 </table>
+
+<div class="fixed-action-btn">
+  <a href="#add-domain-modal" class="btn-floating btn-large red">
+    <i class="large material-icons">add</i>
+  </a>
+</div>
+
+<!-- Modal Structure -->
+<div id="add-domain-modal" class="modal bottom-sheet">
+  <div class="modal-content">
+    <h4>Add Domain</h4>
+    <form id="add-domain" class="col s12">
+      <div class="row">
+        <div class="input-field col s4">
+          <input id="name" type="text" class="validate">
+          <label for="name">Name</label>
+        </div>
+        <div class="input-field col s8">
+          <input id="url" type="text" class="validate">
+          <label for="url">URL</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="waves-effect waves-light btn modal-close">
+      Add
+    </a>
+  </div>
+</div>

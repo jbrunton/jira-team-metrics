@@ -12,7 +12,18 @@ class DomainsController < ApplicationController
     end
   end
 
+  def create
+    byebug
+    Domain.create(domain_params)
+    redirect_to domains_path
+  end
+
   def sync
     SyncDomainJob.perform_later(@domain)
+  end
+
+private
+  def domain_params
+    params.permit(:name, :url)
   end
 end

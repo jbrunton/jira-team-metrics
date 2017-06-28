@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def domain_path(domain)
-    "#{domains_path}/#{domain['name']}"
+    "#{domains_path}/#{domain.name}"
   end
 
   def board_path(domain, board)
