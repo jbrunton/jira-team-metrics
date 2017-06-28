@@ -14,6 +14,5 @@ class DomainsController < ApplicationController
 
   def sync
     SyncDomainJob.perform_later(@domain)
-    redirect_to domains_path
   end
 end

@@ -1,3 +1,16 @@
+<script>
+  $(function() {
+    $('.sync-button').click(function() {
+      $(this).hide();
+      $(this).siblings('.sync-spinner').show();
+
+      var target = $(this).attr('href');
+      $.get(target);
+      return false;
+    });
+  });
+</script>
+
 <h3>Domains</h3>
 
 <table>
@@ -9,14 +22,30 @@
     </tr>
   </thead>
   <% @domains.each do |domain| %>
-      <tr>
+      <tr id="domain-row-<%= domain.id %>">
         <td><%= domain['name'] %></td>
         <td><%= domain['url'] %></td>
         <td>
           <a href="<%= domain_path(domain) %>" class="waves-effect waves-light btn">
             View Details
           </a>
-          <a href="<%= domain_path(domain) %>/sync" class="waves-effect waves-light btn">Process</a>
+
+          <a href="<%= domain_path(domain) %>/sync" class="sync-button waves-effect waves-light btn">
+            Process
+          </a>
+          <div class="sync-spinner preloader-wrapper small active" style="vertical-align: middle; display: none;">
+            <div class="spinner-layer spinner-green-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div>
+              <div class="gap-patch">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
         </td>
       </tr>
   <% end %>
