@@ -5,7 +5,7 @@ class IssuesController < ApplicationController
   def show
     @issue = IssueDecorator.new(@board.issues.find{ |i| i.key == params[:issue_key] }, nil, nil)
     if params[:fragment]
-      render 'partials/issue', locals: {issue: @issue, show_transitions: true}, layout: false
+      render partial: 'partials/issue', locals: {issue: @issue, show_transitions: true}, layout: false
     end
   end
 end

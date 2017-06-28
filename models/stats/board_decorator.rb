@@ -14,10 +14,20 @@ class BoardDecorator < Draper::Decorator
     @to_state = to_state
   end
 
+  def issues
+    @issues ||= begin
+      exclusions = (Store::Config.instance.get("exclusions.domains.#{domain.name}.boards.board/#{jira_id}") || '').split
+      all_issues.select{ |issue| !exclusions.include?(issue.key) }
+    end
+  end
+
+  def all_issues
+    @all_issues ||= object.issues.map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+  end
+
   def completed_issues
     @completed_issues ||= begin
-      issues = object.issues
-        .map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+      issues = self.issues
         .select{ |i| i.completed && i.started }
         .sort_by{ |i| i.completed }
       IssuesDecorator.new(issues)
@@ -52,13 +62,10 @@ class BoardDecorator < Draper::Decorator
   end
 
   def wip_on_date(date)
-    issues = object.issues.select do |issue|
-      issue.started_time(@from_state) &&
-        issue.started_time(@from_state) < date &&
-        (issue.completed_time(@to_state).nil? or issue.completed_time(@to_state) > date)
+    issues.select do |issue|
+      issue.started && issue.started < date &&
+        (issue.completed.nil? or issue.completed > date)
     end
-
-    issues.map{ |issue| IssueDecorator.new(issue, @from_date, @to_state) }
   end
 
   def get_binding
