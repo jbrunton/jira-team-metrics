@@ -1,20 +1,18 @@
-class RapidBoardBuilder
+class BoardAttributesBuilder
   def initialize(json)
     @json = json
   end
 
   def build
-    attrs = {
-      'id' => id,
+    {
+      'jira_id' => jira_id,
       'query' => query,
       'name' => name
     }
-
-    RapidBoard.new(attrs)
   end
 
-  private
-  def id
+private
+  def jira_id
     @json['id']
   end
 

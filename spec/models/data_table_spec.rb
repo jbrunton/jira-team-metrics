@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe DataTable do
   HEADER = DataTable::Header.new(['Mean', 'StdDev'])
   ROW = DataTable::Row.new([1, 2], nil)

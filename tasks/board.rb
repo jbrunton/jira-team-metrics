@@ -5,19 +5,20 @@ require 'time'
 require 'descriptive_statistics'
 require 'erb'
 
-class Board < JiraTask
+class BoardTask < JiraTask
+  namespace :board
+
   desc "sync", "sync board"
   method_option :status, :aliases => "-s", :desc => "status"
   method_option :board_id, :desc => "board id", :type => :numeric
   method_option :since, :desc => "date to sync changes from"
   def sync
-    board_id = get_board_id(options)
+    board = get_board(options)
     status = options[:status]
     if status
-        last_updated = boards_store.board_last_updated(board_id) || "Never"
-        puts "Last updated: #{last_updated}"
+      last_synced = board.last_synced || "Never"
+      puts "Last updated: #{last_synced}"
     else
-      board = boards_store.get_board(board_id)
       if options[:since]
         if /\d{4}-\d{2}-\d{2}/.match(options[:since])
           sync_from = Time.parse(options[:since])
@@ -27,8 +28,15 @@ class Board < JiraTask
       else
         sync_from = Time.now - (180 * 60 * 60 * 24)
       end
+      board.issues.delete_all
       issues = fetch_issues_for(board, sync_from)
-      boards_store.update_board(board_id, issues, sync_from)
+      issues.each do |i|
+        board.issues.create(i)
+      end
+      board.last_synced = DateTime.now
+      board.sync_from = sync_from
+      board.save
+      #boards_store.update_board(board_id, issues, sync_from)
       puts "Synced board"
     end
   end

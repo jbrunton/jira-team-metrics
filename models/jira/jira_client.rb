@@ -27,7 +27,7 @@ class JiraClient
     response = request(url)
 
     issues = response['issues'].map do |raw_issue|
-      IssueBuilder.new(raw_issue, statuses).build
+      IssueAttributesBuilder.new(raw_issue, statuses).build
     end
 
     startAt = response['startAt'] || 0
@@ -45,7 +45,7 @@ class JiraClient
     url = "/rest/greenhopper/1.0/rapidviews/list"
     response = request(url)
     response['views'].map do |raw_view|
-      RapidBoardBuilder.new(raw_view).build
+      BoardAttributesBuilder.new(raw_view).build
     end
   end
 
