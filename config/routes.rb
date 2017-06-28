@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   get '/domains', to: 'domains#index'
   get '/domains/:domain_name', to: 'domains#show'
+  get '/domains/:domain_name/sync', to: 'domains#sync'
 
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'
 

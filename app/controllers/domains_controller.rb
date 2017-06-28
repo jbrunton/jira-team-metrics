@@ -1,5 +1,5 @@
 class DomainsController < ApplicationController
-  before_action :set_domain, only: [:show]
+  before_action :set_domain, only: [:show, :sync]
   helper FormattingHelpers
 
   def index
@@ -10,5 +10,10 @@ class DomainsController < ApplicationController
     @boards = @domain.boards.select do |board|
       !board.last_synced.nil?
     end
+  end
+
+  def sync
+    SyncDomainJob.perform_later(@domain)
+    redirect_to domains_path
   end
 end
