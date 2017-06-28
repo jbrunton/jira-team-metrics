@@ -19,7 +19,6 @@ class BoardTask < JiraTask
       last_synced = board.last_synced || "Never"
       puts "Last updated: #{last_synced}"
     else
-      board = boards_store.get_board(board_id)
       if options[:since]
         if /\d{4}-\d{2}-\d{2}/.match(options[:since])
           sync_from = Time.parse(options[:since])
@@ -29,8 +28,15 @@ class BoardTask < JiraTask
       else
         sync_from = Time.now - (180 * 60 * 60 * 24)
       end
+      board.issues.delete_all
       issues = fetch_issues_for(board, sync_from)
-      boards_store.update_board(board_id, issues, sync_from)
+      issues.each do |i|
+        board.issues.create(i)
+      end
+      board.last_synced = DateTime.now
+      board.sync_from = sync_from
+      board.save
+      #boards_store.update_board(board_id, issues, sync_from)
       puts "Synced board"
     end
   end

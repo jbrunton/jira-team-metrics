@@ -9,14 +9,14 @@
   <thead>
     <tr>
       <td>Name</td>
-      <td>Last Updated</td>
+      <td>Last Synced</td>
       <td></td>
     </tr>
   </thead>
   <% @boards.each do |board| %>
       <tr>
         <td><%= board.name %></td>
-        <td><%= board.last_updated %></td>
+        <td><%= pretty_print_time(board.last_synced) %></td>
         <td>
           <a href="<%= board_path(@domain, board) %>" class="waves-effect waves-light btn">
             <i class="material-icons left">dashboard</i>Summary

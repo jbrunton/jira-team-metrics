@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170625203302) do
+ActiveRecord::Schema.define(version: 20170627215010) do
 
   create_table "boards", force: :cascade do |t|
+    t.string "jira_id"
     t.string "name"
     t.string "query"
+    t.datetime "sync_from"
     t.datetime "last_synced"
     t.integer "domain_id"
     t.datetime "created_at", null: false
@@ -29,6 +31,17 @@ ActiveRecord::Schema.define(version: 20170625203302) do
     t.datetime "last_synced"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.string "key"
+    t.string "issue_type"
+    t.string "summary"
+    t.string "transitions"
+    t.integer "board_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_issues_on_board_id"
   end
 
 end

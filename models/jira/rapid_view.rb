@@ -1,5 +1,5 @@
 class RapidBoard
-  attr_reader :id
+  attr_reader :jira_id
   attr_reader :query
   attr_reader :name
   attr_reader :issues
@@ -7,7 +7,7 @@ class RapidBoard
   attr_reader :sync_from
 
   def initialize(attrs)
-    @id = attrs['id']
+    @jira_id = attrs['jira_id']
     @query = attrs['query']
     @name = attrs['name']
     @issues = attrs['issues']
@@ -17,7 +17,7 @@ class RapidBoard
 
   def to_h
     {
-      'id' => id,
+      'jira_id' => jira_id,
       'name' => name,
       'query' => query
     }

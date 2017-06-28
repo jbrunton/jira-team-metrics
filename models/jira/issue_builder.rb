@@ -13,7 +13,7 @@ class IssueBuilder
       'transitions' => transitions
     }
 
-    Issue.new(attrs)
+    attrs
   end
 
 private

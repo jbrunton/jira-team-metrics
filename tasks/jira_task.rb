@@ -41,7 +41,7 @@ class JiraTask < Thor
         raise 'Please provide a board id or set a default board for the domain'
       end
 
-      domain.boards.find(board_id)
+      domain.boards.find_by(jira_id: board_id)
     end
   end
 end

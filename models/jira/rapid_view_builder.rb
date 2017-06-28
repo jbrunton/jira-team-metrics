@@ -5,7 +5,7 @@ class RapidBoardBuilder
 
   def build
     attrs = {
-      'id' => id,
+      'jira_id' => jira_id,
       'query' => query,
       'name' => name
     }
@@ -14,7 +14,7 @@ class RapidBoardBuilder
   end
 
   private
-  def id
+  def jira_id
     @json['id']
   end
 

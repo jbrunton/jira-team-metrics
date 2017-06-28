@@ -12,6 +12,7 @@ class Boards < JiraTask
       last_synced = domain.last_synced || "Never"
       puts "Last synced: #{last_synced}"
     else
+      domain.boards.destroy_all
       boards = client.get_rapid_boards
       boards.each do |b|
         domain.boards.create(b.to_h)

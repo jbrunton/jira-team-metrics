@@ -1,5 +1,6 @@
 class DomainsController < ApplicationController
   before_action :set_domain, only: [:show]
+  helper FormattingHelpers
 
   def index
     @domains = Domain.all

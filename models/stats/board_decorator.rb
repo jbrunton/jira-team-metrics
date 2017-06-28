@@ -41,7 +41,7 @@ class BoardDecorator < Draper::Decorator
   end
 
   def wip_history
-    dates = object.issues.map{ |issue| [issue.started, issue.completed] }.flatten.compact
+    dates = object.issues.map{ |issue| [issue.started_time(@from_state), issue.completed_time(@to_state)] }.flatten.compact
     min_date = [object.sync_from, dates.min.to_date].max
     max_date = dates.max.to_date
 
@@ -53,9 +53,9 @@ class BoardDecorator < Draper::Decorator
 
   def wip_on_date(date)
     issues = object.issues.select do |issue|
-      issue.started &&
-        issue.started < date &&
-        (issue.completed.nil? or issue.completed > date)
+      issue.started_time(@from_state) &&
+        issue.started_time(@from_state) < date &&
+        (issue.completed_time(@to_state).nil? or issue.completed_time(@to_state) > date)
     end
 
     issues.map{ |issue| IssueDecorator.new(issue, @from_date, @to_state) }
