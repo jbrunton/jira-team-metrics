@@ -15,7 +15,7 @@ class Boards < JiraTask
       domain.boards.destroy_all
       boards = client.get_rapid_boards
       boards.each do |b|
-        domain.boards.create(b.to_h)
+        domain.boards.create(b)
       end
       puts "Synced #{boards.count} boards"
     end

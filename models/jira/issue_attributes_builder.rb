@@ -1,19 +1,17 @@
 
-class IssueBuilder
+class IssueAttributesBuilder
   def initialize(json, statuses)
     @json = json
     @statuses = statuses
   end
 
   def build
-    attrs = {
+    {
       'key' => key,
       'summary' => summary,
       'issue_type' => issue_type,
       'transitions' => transitions
     }
-
-    attrs
   end
 
 private

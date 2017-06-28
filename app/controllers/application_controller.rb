@@ -8,7 +8,7 @@ private
   end
 
   def set_board
-    board = @domain.boards.find(params[:board_id])
+    board = @domain.boards.find_by(jira_id: params[:board_id])
 
     unless params[:from_state].nil?
       from_state = params[:from_state] unless params[:from_state].empty?
