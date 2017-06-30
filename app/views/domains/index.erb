@@ -11,10 +11,20 @@
   });
 
   $(function(){
-    $('#add-domain-modal').modal({
-      complete: function() {
-        $.post('<%= domains_path %>', $( "#add-domain" ).serialize());
-      }
+    $('#add-domain-modal').modal();
+    $('#submit').click(function() {
+      $.post('<%= domains_path %>', $( "#add-domain" ).serialize())
+            .done(function(data) {
+              window.location = data.target;
+            })
+            .fail(function(data) {
+              if (data.status == 400) {
+                // validation error
+                $('#form-content').html(data.responseText);
+              } else {
+                alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+              }
+            });
     });
   });
 
@@ -77,23 +87,11 @@
 
 <!-- Modal Structure -->
 <div id="add-domain-modal" class="modal bottom-sheet">
-  <div class="modal-content">
-    <h4>Add Domain</h4>
-    <form id="add-domain" class="col s12">
-      <div class="row">
-        <div class="input-field col s4">
-          <input id="name" type="text" class="validate">
-          <label for="name">Name</label>
-        </div>
-        <div class="input-field col s8">
-          <input id="url" type="text" class="validate">
-          <label for="url">URL</label>
-        </div>
-      </div>
-    </form>
+  <div id='form-content' class="modal-content">
+    <%= render 'form' %>
   </div>
   <div class="modal-footer">
-    <a href="#" class="waves-effect waves-light btn modal-close">
+    <a id="submit" href="#" class="waves-effect waves-light btn">
       Add
     </a>
   </div>

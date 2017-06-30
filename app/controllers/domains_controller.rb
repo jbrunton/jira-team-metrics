@@ -1,9 +1,11 @@
 class DomainsController < ApplicationController
   before_action :set_domain, only: [:show, :sync]
-  helper FormattingHelpers
+  include FormattingHelpers
+  include ApplicationHelper
 
   def index
     @domains = Domain.all
+    @domain = Domain.new
   end
 
   def show
@@ -13,9 +15,13 @@ class DomainsController < ApplicationController
   end
 
   def create
-    byebug
-    Domain.create(domain_params)
-    redirect_to domains_path
+    asd
+    @domain = Domain.new(domain_params)
+    if @domain.save
+      render json: { target: domain_path(@domain) }, status: 200
+    else
+      render partial: 'form', status: 400
+    end
   end
 
   def sync
@@ -24,6 +30,6 @@ class DomainsController < ApplicationController
 
 private
   def domain_params
-    params.permit(:name, :url)
+    params.require(:domain).permit(:name, :url)
   end
 end
