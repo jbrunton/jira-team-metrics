@@ -8,10 +8,23 @@
       $.get(target);
       return false;
     });
+
+    $('.destroy-confirm').click(function() {
+      var target = $(this).attr('href');
+      $.ajax({ url: target, type: 'DELETE' })
+          .done(function(data) {
+            window.location = data.target;
+          })
+          .fail(function() {
+            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+          });
+      return false;
+    });
   });
 
   $(function(){
-    $('#add-domain-modal').modal();
+    $('.modal').modal();
+    //$('#add-domain-modal').modal();
     $('#submit').click(function() {
       $.post('<%= domains_path %>', $( "#add-domain" ).serialize())
             .done(function(data) {
@@ -27,6 +40,21 @@
             });
     });
   });
+
+  function destroy(domainId) {
+//    var target = $(this).attr('href');
+//    $('#confirm-destroy').click(function() {
+//      $.ajax({ url: target, type: 'DELETE' })
+//          .done(function(data) {
+//            window.location = data.target;
+//          })
+//          .fail(function() {
+//            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+//          });
+//    });
+//    $('#destroy').modal('open');
+    return false;
+  }
 
   App.cable.subscriptions.create("SyncChannel",
       {
@@ -74,6 +102,23 @@
               </div>
             </div>
           </div>
+
+          <a class="waves-effect waves-light btn red lighten-2" href="#destroy-modal-<%= domain.id %>">
+            <i class="material-icons left">delete</i>
+            Delete
+          </a>
+
+          <!-- Modal Structure -->
+          <div id="destroy-modal-<%= domain.id %>" class="modal">
+            <div class="modal-content">
+              <h4>Delete domain?</h4>
+              <p>Are you sure you want to delete the domain <b><%= domain.name %></b>?</p>
+            </div>
+            <div class="modal-footer">
+              <a href="<%= domain_path(domain) %>" class="destroy-confirm modal-action waves-effect waves-green btn-flat">Delete</a>
+              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+            </div>
+          </div>
         </td>
       </tr>
   <% end %>
@@ -94,5 +139,17 @@
     <a id="submit" href="#" class="waves-effect waves-light btn">
       Add
     </a>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="destroy" class="modal">
+  <div class="modal-content">
+    <h4>Modal Header</h4>
+    <p>A bunch of text</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    <a id='confirm-destroy' href="#!" class="modal-action waves-effect waves-green btn-flat">Delete</a>
   </div>
 </div>
