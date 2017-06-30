@@ -12,6 +12,7 @@ class DomainsController < ApplicationController
     @boards = @domain.boards.select do |board|
       !board.last_synced.nil?
     end
+    @credentials = Credentials.new
   end
 
   def create
@@ -29,11 +30,21 @@ class DomainsController < ApplicationController
   end
 
   def sync
-    SyncDomainJob.perform_later(@domain)
+    @credentials = Credentials.new(credentials_params)
+    if @credentials.valid?
+      SyncDomainJob.perform_later(@domain, @credentials.username, @credentials.password)
+      render json: {}, status: 200
+    else
+      render partial: 'shared/sync_form', status: 400
+    end
   end
 
 private
   def domain_params
     params.require(:domain).permit(:name, :url)
+  end
+
+  def credentials_params
+    params.require(:credentials).permit(:username, :password)
   end
 end

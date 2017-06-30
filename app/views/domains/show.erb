@@ -8,8 +8,18 @@
     $('.modal').modal();
 
     $('#sync').click(function() {
-      $('.modal').modal('close');
-      $.get('<%= domain_path(@domain) %>/sync');
+      $.post('<%= domain_path(@domain) %>/sync', $( "#sync-form" ).serialize())
+          .done(function() {
+            $('.modal').modal('close');
+          })
+          .fail(function(data) {
+            if (data.status == 400) {
+              // validation error
+              $('.modal-content').html(data.responseText);
+            } else {
+              alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+            }
+          });
     });
   });
 
@@ -29,7 +39,7 @@
 <h3>
   <%= @domain['name'] %>
   <!-- Modal Trigger -->
-  <a class="waves-effect waves-light btn right" href="#modal1"><i class="material-icons left">system_update_alt</i>Sync</a>
+  <a class="waves-effect waves-light btn right" href="#sync-modal"><i class="material-icons left">system_update_alt</i>Sync</a>
 </h3>
 
 <div class="progress" style="display: none;">
@@ -64,7 +74,7 @@
 </table>
 
 <!-- Modal Structure -->
-<div id="modal1" class="modal bottom-sheet">
+<div id="sync-modal" class="modal bottom-sheet">
   <div class="modal-content">
     <%= render partial: 'shared/sync_form' %>
   </div>

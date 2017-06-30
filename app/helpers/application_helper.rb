@@ -88,6 +88,6 @@ module ApplicationHelper
   end
 
   def object_name_for(object)
-    object.class.table_name.singularize # e.g. organization
+    object.class.name.tableize # e.g. organization
   end
 end

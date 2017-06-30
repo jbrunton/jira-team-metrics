@@ -5,13 +5,13 @@ require 'json'
 class JiraClient
   MAX_RESULTS = 50
 
-  def initialize(domain, credentials)
-    @domain = domain
+  def initialize(url, credentials)
+    @url = domain
     @credentials = credentials
   end
 
   def request(relative_url)
-    uri = URI::join(@domain, relative_url)
+    uri = URI::join(@url, relative_url)
     #puts "issuing request to #{uri}"
     request = setup_request(uri)
     response = issue_request(uri, request)

@@ -1,15 +1,19 @@
 class SyncDomainJob < ApplicationJob
   queue_as :default
 
-  def perform(domain)
+  def perform(domain, username, password)
     puts "*** Syncing #{domain.name}"
     ActionCable.server.broadcast(
       "sync_status",
       domain: domain.id,
       status: 'syncing'
     )
-    sleep(5)
-    puts "*** Done"
+
+    domain.boards.destroy_all
+    boards = JiraClient.new(domain.url, {username: username, password: password}).get_rapid_boards
+    boards.each do |b|
+      domain.boards.create(b)
+    end
 
     ActionCable.server.broadcast(
       "sync_status",

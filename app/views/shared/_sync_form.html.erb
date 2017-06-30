@@ -1,12 +1,10 @@
 <form id="sync-form" class="col s12">
   <div class="row">
     <div class="input-field col s6">
-      <input id="username" type="text" class="validate">
-      <label for="username">Username</label>
+      <%= form_input(@credentials, :username) %>
     </div>
     <div class="input-field col s6">
-      <input id="password" type="text" class="validate">
-      <label for="password">Password</label>
+      <%= form_input(@credentials, :password) %>
     </div>
   </div>
 </form>

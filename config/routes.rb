@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get '/domains/:domain_name', to: 'domains#show'
   post '/domains', to: 'domains#create'
   delete '/domains/:domain_name', to: 'domains#destroy'
-  get '/domains/:domain_name/sync', to: 'domains#sync'
+  post '/domains/:domain_name/sync', to: 'domains#sync'
 
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'
 
