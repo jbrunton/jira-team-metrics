@@ -35,10 +35,10 @@
         $('#sync-indicator').hide();
         if (data.error) {
           if (data.errorCode == 401) {
-            alert(data.message + '. Please check your credentials.')
+            alert(data.error + '. Please check your credentials.')
             $('.modal').modal('open');
           } else {
-            alert('Unexpected error: ' + data.message);
+            alert('Unexpected error: ' + data.error);
           }
         } else {
           location.reload();

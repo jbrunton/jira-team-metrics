@@ -25,7 +25,7 @@ class SyncDomainJob < ApplicationJob
       SyncDomainChannel.broadcast_to(
         domain,
         error: e.message,
-        errorCode: e.response.code,
+        errorCode: e.try(:response).try(:code),
         in_progress: false
       )
       raise
