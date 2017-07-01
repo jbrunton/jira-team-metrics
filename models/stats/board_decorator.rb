@@ -52,7 +52,7 @@ class BoardDecorator < Draper::Decorator
 
   def wip_history
     dates = object.issues.map{ |issue| [issue.started_time(@from_state), issue.completed_time(@to_state)] }.flatten.compact
-    min_date = [object.sync_from, dates.min.to_date].max
+    min_date = [object.synced_from, dates.min.to_date].max
     max_date = dates.max.to_date
 
     dates = DateRange.new(min_date, max_date).to_a

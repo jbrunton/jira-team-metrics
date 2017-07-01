@@ -31,6 +31,8 @@ class SyncDomainJob < ApplicationJob
       raise
     end
 
+    statuses = client.get_statuses
+
     SyncDomainChannel.broadcast_to(
       domain,
       status: 'updating cache',
@@ -42,6 +44,7 @@ class SyncDomainJob < ApplicationJob
     end
 
     domain.last_synced = DateTime.now
+    domain.statuses = statuses
     domain.save
 
     SyncDomainChannel.broadcast_to(

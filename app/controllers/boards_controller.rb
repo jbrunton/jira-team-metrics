@@ -5,6 +5,7 @@ class BoardsController < ApplicationController
   before_action :set_board
 
   def show
+    @credentials = Credentials.new
   end
 
   def search
@@ -12,5 +13,20 @@ class BoardsController < ApplicationController
     respond_to do |format|
       format.json { render json: @boards.map{ |board| board.as_json.merge(link: board_path(@domain, board)) } }
       end
+  end
+
+  def sync
+    @credentials = Credentials.new(credentials_params)
+    if @credentials.valid?
+      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
+      render json: {}, status: 200
+    else
+      render partial: 'shared/sync_form', status: 400
+    end
+  end
+
+private
+  def credentials_params
+    params.require(:credential).permit(:username, :password)
   end
 end
