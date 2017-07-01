@@ -19,7 +19,7 @@ class JiraClient
   end
 
   def search_issues(opts, &block)
-    yield(0) if block_given?
+    yield(0) if block_given? && opts[:startAt].nil?
 
     url = generate_url(opts.merge(expand: ['changelog']))
     statuses = opts[:statuses]

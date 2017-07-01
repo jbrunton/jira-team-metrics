@@ -64,7 +64,8 @@ class SyncBoardJob < ApplicationJob
       SyncBoardChannel.broadcast_to(
         board,
         status: 'fetching from JIRA (' + progress.to_s + '%)',
-        in_progress: true
+        in_progress: true,
+        progress: progress
       )
     end
     issues
