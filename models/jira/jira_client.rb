@@ -6,7 +6,7 @@ class JiraClient
   MAX_RESULTS = 50
 
   def initialize(url, credentials)
-    @url = domain
+    @url = url
     @credentials = credentials
   end
 
