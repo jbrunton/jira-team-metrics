@@ -2,7 +2,7 @@
 
 require 'yaml/store'
 require 'require_all'
-['helpers', 'models', 'stores'].each { |dir| require_all dir }
+['helpers', 'models'].each { |dir| require_all dir }
 
 require_relative 'config/environment'
 
