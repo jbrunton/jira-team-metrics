@@ -2,16 +2,29 @@ class SyncDomainJob < ApplicationJob
   queue_as :default
 
   def perform(domain, username, password)
-    puts "*** Syncing #{domain.name}"
-    ActionCable.server.broadcast(
-      "sync_status",
-      domain: domain.id,
-      status: 'syncing'
+    #TODO: do this in a transaction
+    SyncDomainChannel.broadcast_to(
+      domain,
+      status: 'clearing cache',
+      in_progress: true
     )
 
-    #TODO: do this in a transaction
     domain.boards.destroy_all
+
+    SyncDomainChannel.broadcast_to(
+      domain,
+      status: 'fetching from JIRA',
+      in_progress: true
+    )
+
     boards = JiraClient.new(domain.url, {username: username, password: password}).get_rapid_boards
+
+    SyncDomainChannel.broadcast_to(
+      domain,
+      status: 'updating cache',
+      in_progress: true
+    )
+
     boards.each do |b|
       domain.boards.create(b)
     end
@@ -19,10 +32,9 @@ class SyncDomainJob < ApplicationJob
     domain.last_synced = DateTime.now
     domain.save
 
-    ActionCable.server.broadcast(
-      "sync_status",
-      domain: domain.id,
-      status: 'done'
+    SyncDomainChannel.broadcast_to(
+      domain,
+      in_progress: false
     )
     # Do something later
   end

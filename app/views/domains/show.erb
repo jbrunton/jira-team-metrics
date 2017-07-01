@@ -23,17 +23,20 @@
     });
   });
 
-  App.cable.subscriptions.create("SyncChannel",
-      {
-        received: function (data) {
-          if (data.status == 'syncing') {
-            $('.progress').show();
-          } else if (data.status == 'done') {
-            $('.progress').hide();
-            location.reload();
-          }
-        }
-      });
+  App.cable.subscriptions.create({
+    channel: "SyncDomainChannel",
+    id: <%= @domain.id %>
+  }, {
+    received: function (data) {
+      if (data.in_progress) {
+        $('#sync-indicator').show();
+        $('#sync-status').text(data.status);
+      } else {
+        $('#sync-indicator').hide();
+        location.reload();
+      }
+    }
+  });
 </script>
 
 <p class="right">
@@ -47,8 +50,11 @@
   <%= @domain['name'] %>
 </h3>
 
-<div class="progress" style="display: none;">
-  <div class="indeterminate"></div>
+<div id="sync-indicator" style="display: none;">
+  <p id="sync-status"></p>
+  <div class="progress">
+    <div class="indeterminate"></div>
+  </div>
 </div>
 
 <table>
