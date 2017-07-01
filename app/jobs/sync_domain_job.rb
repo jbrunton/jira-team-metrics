@@ -17,7 +17,19 @@ class SyncDomainJob < ApplicationJob
       in_progress: true
     )
 
-    boards = JiraClient.new(domain.url, {username: username, password: password}).get_rapid_boards
+    client = JiraClient.new(domain.url, {username: username, password: password})
+    begin
+      boards = client.get_rapid_boards
+    rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+      Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
+      SyncDomainChannel.broadcast_to(
+        domain,
+        error: e.message,
+        errorCode: e.response.code,
+        in_progress: false
+      )
+      raise
+    end
 
     SyncDomainChannel.broadcast_to(
       domain,
