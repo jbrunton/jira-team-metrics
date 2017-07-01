@@ -21,6 +21,31 @@
             }
           });
     });
+
+    performSearch();
+    $('#search').on('input', performSearch);
+
+    function performSearch() {
+      var query = $('#search').val();
+      if (query.length > 0) {
+        var searchUrl = '<%= domain_path(@domain) %>/boards/search.json?query=' + query;
+        $.get(searchUrl)
+            .done(function (data) {
+              $('#search-results').empty();
+              var collection = $('<ul class="collection"></ul>');
+              $(data).each(function (i, board) {
+                collection.append(
+                    '<li class="collection-item"><a href="' + board.link + '">' + board.name + '</a></li>'
+                );
+              });
+              if (data.length) {
+                $('#search-results').append(collection);
+              }
+            });
+      } else {
+        $('#search-results').empty();
+      }
+    }
   });
 
   App.cable.subscriptions.create({
@@ -66,32 +91,11 @@
   </div>
 </div>
 
-<table>
-  <thead>
-    <tr>
-      <td>Name</td>
-      <td>Last Synced</td>
-      <td></td>
-    </tr>
-  </thead>
-  <% @boards.each do |board| %>
-      <tr>
-        <td><%= board.name %></td>
-        <td><%= pretty_print_time(board.last_synced) %></td>
-        <td>
-          <a href="<%= board_path(@domain, board) %>" class="waves-effect waves-light btn">
-            <i class="material-icons left">dashboard</i>Summary
-          </a>
-          <a href="<%= board_control_chart_path(@domain, board) %>" class="waves-effect waves-light btn">
-            <i class="material-icons left">trending_up</i>Control Chart
-          </a>
-          <a href="<%= board_issues_path(@domain, board) %>" class="waves-effect waves-light btn">
-            <i class="material-icons left">list</i>Issues
-          </a>
-        </td>
-      </tr>
-  <% end %>
-</table>
+<div class="input-field">
+  <input id="search" type="search" required>
+  <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+</div>
+<div id="search-results"></div>
 
 <!-- Modal Structure -->
 <div id="sync-modal" class="modal bottom-sheet">
