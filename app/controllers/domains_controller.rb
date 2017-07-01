@@ -1,6 +1,5 @@
 class DomainsController < ApplicationController
   before_action :set_domain, only: [:show, :sync, :destroy]
-  include FormattingHelpers
   include ApplicationHelper
 
   def index

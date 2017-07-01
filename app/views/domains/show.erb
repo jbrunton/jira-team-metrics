@@ -36,10 +36,15 @@
       });
 </script>
 
+<p class="right">
+  <span>Last synced:
+    <i><%= pretty_print_date(@domain.last_synced) || 'never' %></i>
+    &middot;
+  </span>
+  <a class="waves-effect waves-light btn" href="#sync-modal"><i class="material-icons left">system_update_alt</i>Sync</a>
+</p>
 <h3>
   <%= @domain['name'] %>
-  <!-- Modal Trigger -->
-  <a class="waves-effect waves-light btn right" href="#sync-modal"><i class="material-icons left">system_update_alt</i>Sync</a>
 </h3>
 
 <div class="progress" style="display: none;">
