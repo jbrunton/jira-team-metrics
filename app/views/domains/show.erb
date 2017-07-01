@@ -86,11 +86,24 @@
 
 <div class="row">
   <div class="col s8">
-    <div class="input-field">
-      <input id="search" type="search" required>
-      <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-    </div>
-    <div id="search-results"></div>
+        <ul class="tabs">
+          <li class="tab col s3"><a href="#synced_boards">Synced Boards</a></li>
+          <li class="tab col s3"><a href="#search_boards">Search</a></li>
+        </ul>
+      <div id="synced_boards">
+        <ul class="collection">
+          <% @boards.each do |board| %>
+              <li class="collection-item"><%= link_to board.name, board_path(@domain, board) %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div id="search_boards">
+        <div class="input-field">
+          <input id="search" type="search" required>
+          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+        </div>
+        <div id="search-results"></div>
+      </div>
   </div>
   <div class="col s4">
     <div class="card">
