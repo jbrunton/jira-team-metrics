@@ -44,6 +44,6 @@ private
   end
 
   def credentials_params
-    params.require(:credentials).permit(:username, :password)
+    params.require(:credential).permit(:username, :password)
   end
 end

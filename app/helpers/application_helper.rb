@@ -90,6 +90,6 @@ module ApplicationHelper
   end
 
   def object_name_for(object)
-    object.class.name.tableize # e.g. organization
+    object.class.name.tableize.singularize # e.g. organization
   end
 end
