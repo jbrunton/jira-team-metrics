@@ -8,21 +8,32 @@ class BoardDecorator < Draper::Decorator
   
   delegate_all
 
-  def initialize(board, from_state, to_state)
+  def initialize(board, from_state, to_state, exclude_filters = [])
     super(board)
     @from_state = from_state
     @to_state = to_state
+    @exclude_filters = exclude_filters
   end
 
   def issues
     @issues ||= begin
-      exclusions = board.exclusions
       all_issues.select{ |issue| !exclusions.include?(issue.key) }
     end
   end
 
   def all_issues
     @all_issues ||= object.issues.map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+  end
+
+  def exclusions
+    if @exclusions.nil?
+      @exclusions = board.exclusions
+      @exclude_filters.each do |filter|
+        @exclusions.concat(filter.exclusions)
+      end
+    end
+    puts "Excluding: " + @exclusions.to_s
+    @exclusions
   end
 
   def completed_issues
