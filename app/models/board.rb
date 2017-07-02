@@ -4,15 +4,20 @@ class Board < ApplicationRecord
   has_many :filters, :dependent => :delete_all
 
   def exclusions
-    config_hash = YAML.load(config || '')
-    config_hash ||= {}
-    exclusions_string = config_hash['exclude']
-    exclusions_string ||= ''
-    exclusions_string.split
+    config_hash['exclude'] || ''
+  end
+
+  def config_filters
+    config_hash['filters'] || []
+  end
+
+  def config_hash
+    YAML.load(config || '') || {}
   end
 
   DEFAULT_CONFIG = <<~CONFIG
     ---
     exclude:
+    filters:
   CONFIG
 end

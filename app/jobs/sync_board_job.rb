@@ -10,6 +10,7 @@ class SyncBoardJob < ApplicationJob
     )
 
     board.issues.destroy_all
+    board.filters.destroy_all
 
     SyncBoardChannel.broadcast_to(
       board,
@@ -31,8 +32,9 @@ class SyncBoardJob < ApplicationJob
     #   raise
     # end
 
+    credentials = {username: username, password: password}
     sync_from = Time.now - (180 * 60 * 60 * 24)
-    issues = fetch_issues_for(board, sync_from, {username: username, password: password})
+    issues = fetch_issues_for(board, sync_from, credentials)
 
     SyncBoardChannel.broadcast_to(
       board,
@@ -47,6 +49,12 @@ class SyncBoardJob < ApplicationJob
     board.synced_from = sync_from
     board.save
 
+    board.config_filters.each do |filter|
+      issues = fetch_issues_for_query(board, filter['query'], credentials)
+      issue_keys = issues.map{ |issue| issue['key'] }.join(' ')
+      board.filters.create(name: filter['name'], issue_keys: issue_keys)
+    end
+
     SyncBoardChannel.broadcast_to(
       board,
       in_progress: false
@@ -55,10 +63,15 @@ class SyncBoardJob < ApplicationJob
   end
 
   def fetch_issues_for(board, since_date, credentials)
-    statuses = board.domain.statuses
+    query = "status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'"
+    fetch_issues_for_query(board, query, credentials)
+  end
+
+  def fetch_issues_for_query(board, subquery, credentials)
     query = QueryBuilder.new(board.query)
-      .and("status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'")
+      .and(subquery)
       .query
+    statuses = board.domain.statuses
     client = JiraClient.new(board.domain.url, credentials)
     issues = client.search_issues(query: query, statuses: statuses) do |progress|
       SyncBoardChannel.broadcast_to(

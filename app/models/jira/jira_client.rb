@@ -31,7 +31,11 @@ class JiraClient
     end
 
     startAt = response['startAt'] || 0
-    progress = ((response['startAt'] + issues.length) * 100.0 / response['total']).to_i
+    if response['total'] == 0
+      progress = 100
+    else
+      progress = ((response['startAt'] + issues.length) * 100.0 / response['total']).to_i
+    end
     yield(progress) if block_given?
     if startAt + response['maxResults'] < response['total']
       startAt = startAt + response['maxResults']
