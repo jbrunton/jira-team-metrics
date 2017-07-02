@@ -29,10 +29,10 @@ class BoardDecorator < Draper::Decorator
     if @exclusions.nil?
       @exclusions = []
       @exclude_filters.each do |filter|
-        if filter.query_filter?
-          @exclusions.concat(filter.exclusions)
-        else
+        if filter.config_filter?
           @exclusions.concat(object.exclusions)
+        else
+          @exclusions.concat(filter.exclusions)
         end
       end
     end
