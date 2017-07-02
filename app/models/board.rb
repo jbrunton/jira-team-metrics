@@ -4,7 +4,9 @@ class Board < ApplicationRecord
   has_many :filters, :dependent => :delete_all
 
   def exclusions
-    config_hash['exclude'] || ''
+    exclusions_string = config_hash['exclude']
+    exclusions_string ||= ''
+    exclusions_string.split
   end
 
   def config_filters
