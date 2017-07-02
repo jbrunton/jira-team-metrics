@@ -82,7 +82,8 @@
         // WIP column
         var date = data.getValue(selection.row, 0);
         var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        $('#selected_content').load('<%= board_components_path(@domain, @board) %>/wip/' + dateStr);
+        var url = buildComponentUrl('<%= board_components_path(@domain, @board) %>/wip/' + dateStr);
+        $('#selected_content').load(url);
       } else {
         $('#selected_content').empty();
       }
