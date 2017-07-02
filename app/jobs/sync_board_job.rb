@@ -17,21 +17,7 @@ class SyncBoardJob < ApplicationJob
       status: 'fetching from JIRA',
       in_progress: true
     )
-
-    # client = JiraClient.new(board.domain.url, {username: username, password: password})
-    # begin
-    #   boards = client.get_rapid_boards
-    # rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
-    #   Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-    #   SyncBoardChannel.broadcast_to(
-    #     board,
-    #     error: e.message,
-    #     errorCode: e.try(:response).try(:code),
-    #     in_progress: false
-    #   )
-    #   raise
-    # end
-
+    
     credentials = {username: username, password: password}
     sync_from = Time.now - (180 * 60 * 60 * 24)
     issues = fetch_issues_for(board, sync_from, credentials)
