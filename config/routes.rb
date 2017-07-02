@@ -1,10 +1,18 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  root 'domains#index'
+
   get '/domains', to: 'domains#index'
   get '/domains/:domain_name', to: 'domains#show'
+  post '/domains', to: 'domains#create'
+  delete '/domains/:domain_name', to: 'domains#destroy'
+  post '/domains/:domain_name/sync', to: 'domains#sync'
 
+  get '/domains/:domain_name/boards/search', to: 'boards#search'
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'
+  post '/domains/:domain_name/boards/:board_id/sync', to: 'boards#sync'
+  post '/domains/:domain_name/boards/:board_id', to: 'boards#update'
 
   get '/domains/:domain_name/boards/:board_id/issues/:issue_key', to: 'issues#show'
 

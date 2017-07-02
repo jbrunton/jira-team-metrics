@@ -1,7 +1,7 @@
 require 'draper'
 
 class IssueDecorator < Draper::Decorator
-  include FormattingHelpers
+  include FormattingHelper
 
   delegate_all
 

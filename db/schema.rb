@@ -16,7 +16,8 @@ ActiveRecord::Schema.define(version: 20170627215010) do
     t.string "jira_id"
     t.string "name"
     t.string "query"
-    t.datetime "sync_from"
+    t.string "config"
+    t.datetime "synced_from"
     t.datetime "last_synced"
     t.integer "domain_id"
     t.datetime "created_at", null: false

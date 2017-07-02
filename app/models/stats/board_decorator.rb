@@ -2,7 +2,7 @@ require 'draper'
 require 'descriptive_statistics'
 
 class BoardDecorator < Draper::Decorator
-  include FormattingHelpers
+  include FormattingHelper
 
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   
@@ -16,7 +16,7 @@ class BoardDecorator < Draper::Decorator
 
   def issues
     @issues ||= begin
-      exclusions = (Store::Config.instance.get("exclusions.domains.#{domain.name}.boards.board/#{jira_id}") || '').split
+      exclusions = board.exclusions
       all_issues.select{ |issue| !exclusions.include?(issue.key) }
     end
   end
@@ -52,7 +52,7 @@ class BoardDecorator < Draper::Decorator
 
   def wip_history
     dates = object.issues.map{ |issue| [issue.started_time(@from_state), issue.completed_time(@to_state)] }.flatten.compact
-    min_date = [object.sync_from, dates.min.to_date].max
+    min_date = [object.synced_from, dates.min.to_date].max
     max_date = dates.max.to_date
 
     dates = DateRange.new(min_date, max_date).to_a

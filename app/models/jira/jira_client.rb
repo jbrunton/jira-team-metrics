@@ -5,21 +5,21 @@ require 'json'
 class JiraClient
   MAX_RESULTS = 50
 
-  def initialize(domain, credentials)
-    @domain = domain
+  def initialize(url, credentials)
+    @url = url
     @credentials = credentials
   end
 
   def request(relative_url)
-    uri = URI::join(@domain, relative_url)
-    #puts "issuing request to #{uri}"
+    uri = URI::join(@url, relative_url)
     request = setup_request(uri)
     response = issue_request(uri, request)
+    response.value
     JSON.parse(response.body)
   end
 
   def search_issues(opts, &block)
-    yield(0) if block_given?
+    yield(0) if block_given? && opts[:startAt].nil?
 
     url = generate_url(opts.merge(expand: ['changelog']))
     statuses = opts[:statuses]
