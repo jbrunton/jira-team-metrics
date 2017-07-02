@@ -3,30 +3,21 @@ class SyncBoardJob < ApplicationJob
 
   def perform(board, username, password)
     #TODO: do this in a transaction
-    SyncBoardChannel.broadcast_to(
-      board,
-      status: 'clearing cache',
-      in_progress: true
-    )
+
+    @notifier = StatusNotifier.new(SyncBoardChannel, board)
+
+    @notifier.notify_status('clearing cache')
 
     board.issues.destroy_all
     board.filters.destroy_all
 
-    SyncBoardChannel.broadcast_to(
-      board,
-      status: 'fetching from JIRA',
-      in_progress: true
-    )
-    
+    @notifier.notify_status('fetching issues from JIRA')
+
     credentials = {username: username, password: password}
     sync_from = Time.now - (180 * 60 * 60 * 24)
     issues = fetch_issues_for(board, sync_from, credentials)
 
-    SyncBoardChannel.broadcast_to(
-      board,
-      status: 'updating cache',
-      in_progress: true
-    )
+    @notifier.notify_status('updating cache')
 
     issues.each do |i|
       board.issues.create(i)
@@ -37,11 +28,7 @@ class SyncBoardJob < ApplicationJob
 
     create_filters(board, credentials)
 
-    SyncBoardChannel.broadcast_to(
-      board,
-      in_progress: false
-    )
-    # Do something later
+    @notifier.notify_complete
   end
 
   def fetch_issues_for(board, since_date, credentials)
@@ -56,12 +43,7 @@ class SyncBoardJob < ApplicationJob
     statuses = board.domain.statuses
     client = JiraClient.new(board.domain.url, credentials)
     issues = client.search_issues(query: query, statuses: statuses) do |progress|
-      SyncBoardChannel.broadcast_to(
-        board,
-        status: status + ' (' + progress.to_s + '%)',
-        in_progress: true,
-        progress: progress
-      )
+      @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
     end
     issues
   end
