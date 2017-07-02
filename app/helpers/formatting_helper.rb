@@ -1,4 +1,4 @@
-module FormattingHelpers
+module FormattingHelper
   def pretty_print_date(date, opts = {show_tz: true})
     opts ||= {}
     strfm = '%d %b %Y';

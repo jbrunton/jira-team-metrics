@@ -2,7 +2,7 @@ require 'draper'
 require 'descriptive_statistics'
 
 class BoardDecorator < Draper::Decorator
-  include FormattingHelpers
+  include FormattingHelper
 
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   

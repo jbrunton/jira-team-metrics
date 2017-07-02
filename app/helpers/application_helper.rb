@@ -1,5 +1,5 @@
 module ApplicationHelper
-  include FormattingHelpers
+  include FormattingHelper
 
   def domains_path
     '/domains'

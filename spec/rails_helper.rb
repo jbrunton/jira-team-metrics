@@ -8,7 +8,7 @@ require 'rspec/rails'
 
 # TODO: delete this eventually
 require 'require_all'
-['helpers', 'models', 'stores'].each { |dir| require_all dir }
+['helpers', 'models'].each { |dir| require_all dir }
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
