@@ -16,7 +16,7 @@ class BoardDecorator < Draper::Decorator
 
   def issues
     @issues ||= begin
-      exclusions = (Store::Config.instance.get("exclusions.domains.#{domain.name}.boards.board/#{jira_id}") || '').split
+      exclusions = board.config[:exclude]
       all_issues.select{ |issue| !exclusions.include?(issue.key) }
     end
   end
