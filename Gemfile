@@ -38,9 +38,6 @@ gem 'thor'
 gem 'ruby-progressbar'
 gem 'descriptive_statistics'
 gem 'draper'
-# TODO: remove these
-
-gem 'require_all'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
