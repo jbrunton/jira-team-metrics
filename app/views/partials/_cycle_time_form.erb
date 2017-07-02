@@ -10,9 +10,12 @@
         <label for="to_state">To State</label>
       </div>
     </div>
+    <p>Include:</p>
     <% @board.filters.each do |filter| %>
-        <input name="filters[]" class="board-filter" value="<%= filter.id %>" type="checkbox" id="filter-<%= filter.id %>" <%= 'checked="checked"' if filter.query_filter? %> />
-        <label for="filter-<%= filter.id %>"><%= filter.name %></label>
+        <div>
+          <input name="filters[]" class="board-filter" value="<%= filter.id %>" type="checkbox" id="filter-<%= filter.id %>" <%= 'checked="checked"' if filter.query_filter? %> />
+          <label for="filter-<%= filter.id %>"><%= filter.name %></label>
+        </div>
     <% end %>
   </form>
 </div>
