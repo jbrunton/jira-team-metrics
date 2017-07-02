@@ -19,10 +19,6 @@ private
 
     filters = (params[:filters] || [])
     exclude_filters = board.filters.select{ |filter| !filters.include?(filter.id.to_s) }
-    unless (filters.include?('excluded-issues'))
-      exclude_filters << Filter.new(name: 'Excluded Issues', issue_keys: board.exclusions.join(' '))
-    end
-
     @board = BoardDecorator.new(board, from_state, to_state, exclude_filters)
   end
 end

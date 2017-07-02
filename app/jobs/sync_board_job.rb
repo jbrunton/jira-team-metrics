@@ -52,8 +52,10 @@ class SyncBoardJob < ApplicationJob
     board.config_filters.each do |filter|
       issues = fetch_issues_for_query(board, filter['query'], credentials)
       issue_keys = issues.map{ |issue| issue['key'] }.join(' ')
-      board.filters.create(name: filter['name'], issue_keys: issue_keys)
+      board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :query_filter)
     end
+
+    board.filters.create(name: 'Excluded Issues', filter_type: :config_filter)
 
     SyncBoardChannel.broadcast_to(
       board,
