@@ -36,7 +36,6 @@ class BoardDecorator < Draper::Decorator
         end
       end
     end
-    puts "Excluding: " + @exclusions.to_s
     @exclusions
   end
 

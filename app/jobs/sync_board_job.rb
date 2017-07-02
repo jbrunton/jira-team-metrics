@@ -49,13 +49,7 @@ class SyncBoardJob < ApplicationJob
     board.synced_from = sync_from
     board.save
 
-    board.config_filters.each do |filter|
-      issues = fetch_issues_for_query(board, filter['query'], credentials)
-      issue_keys = issues.map{ |issue| issue['key'] }.join(' ')
-      board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :query_filter)
-    end
-
-    board.filters.create(name: 'Excluded Issues', filter_type: :config_filter)
+    create_filters(board, credentials)
 
     SyncBoardChannel.broadcast_to(
       board,
@@ -66,10 +60,10 @@ class SyncBoardJob < ApplicationJob
 
   def fetch_issues_for(board, since_date, credentials)
     query = "status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'"
-    fetch_issues_for_query(board, query, credentials)
+    fetch_issues_for_query(board, query, credentials, 'fetching issues from JIRA')
   end
 
-  def fetch_issues_for_query(board, subquery, credentials)
+  def fetch_issues_for_query(board, subquery, credentials, status)
     query = QueryBuilder.new(board.query)
       .and(subquery)
       .query
@@ -78,11 +72,21 @@ class SyncBoardJob < ApplicationJob
     issues = client.search_issues(query: query, statuses: statuses) do |progress|
       SyncBoardChannel.broadcast_to(
         board,
-        status: 'fetching from JIRA (' + progress.to_s + '%)',
+        status: status + ' (' + progress.to_s + '%)',
         in_progress: true,
         progress: progress
       )
     end
     issues
+  end
+
+  def create_filters(board, credentials)
+    board.config_filters.each do |filter|
+      issues = fetch_issues_for_query(board, filter['query'], credentials, 'syncing ' + filter['name'] + ' filter')
+      issue_keys = issues.map { |issue| issue['key'] }.join(' ')
+      board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :query_filter)
+    end
+
+    board.filters.create(name: 'Excluded Issues', filter_type: :config_filter)
   end
 end
