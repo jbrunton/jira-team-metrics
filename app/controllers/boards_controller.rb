@@ -2,7 +2,7 @@ class BoardsController < ApplicationController
   include ApplicationHelper
 
   before_action :set_domain
-  before_action :set_board
+  before_action :set_board, only: [:show, :update, :sync]
 
   def show
     @credentials = Credentials.new

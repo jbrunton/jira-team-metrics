@@ -11,7 +11,7 @@
     $('#sync').click(function () {
       $.post('<%= board_path(@domain, @board) %>/sync', $("#sync-form").serialize())
           .done(function () {
-            location.reload();
+            $('#sync-modal').modal('close');
           })
           .fail(function (data) {
             if (data.status == 400) {
@@ -46,10 +46,10 @@
     received: function (data) {
       if (data.in_progress) {
         $('#sync-indicator').show();
-        if (data.progress) {
-          $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
-        } else {
+        if (data.progress == null) {
           $('.progress #indicator').addClass('indeterminate').removeClass('determinate').css('width', '');
+        } else {
+          $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
         }
         $('#sync-status').text(data.status);
       } else {

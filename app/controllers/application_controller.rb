@@ -17,6 +17,8 @@ private
       to_state = params[:to_state] unless params[:to_state].empty?
     end
 
-    @board = BoardDecorator.new(board, from_state, to_state)
+    filters = (params[:filters] || [])
+    exclude_filters = board.filters.select{ |filter| !filters.include?(filter.id.to_s) }
+    @board = BoardDecorator.new(board, from_state, to_state, exclude_filters)
   end
 end

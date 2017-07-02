@@ -1,15 +1,22 @@
 <div class="row" id="ct-states">
-  <form class="col s12">
+  <form id="filter-params" class="col s12">
     <div class="row">
       <div class="input-field col s3">
-        <input id="from_state" type="text" class="validate state" autocomplete="off">
+        <input name="from_state" id="from_state" type="text" class="validate state" autocomplete="off">
         <label for="from_state">From State</label>
       </div>
       <div class="input-field col s3">
-        <input id="to_state" type="text" class="validate state" autocomplete="off">
+        <input name="to_state" id="to_state" type="text" class="validate state" autocomplete="off">
         <label for="to_state">To State</label>
       </div>
     </div>
+    <p>Include:</p>
+    <% @board.filters.each do |filter| %>
+        <div>
+          <input name="filters[]" class="board-filter" value="<%= filter.id %>" type="checkbox" id="filter-<%= filter.id %>" <%= 'checked="checked"' if filter.query_filter? %> />
+          <label for="filter-<%= filter.id %>"><%= filter.name %></label>
+        </div>
+    <% end %>
   </form>
 </div>
 
@@ -25,10 +32,6 @@
   });
 
   function buildComponentUrl(path) {
-    var fromState = $('#from_state').val();
-    var toState = $('#to_state').val();
-    path += '?from_state=' + encodeURIComponent(fromState);
-    path += '&to_state=' + encodeURIComponent(toState);
-    return path;
+    return path + '?' + $('#filter-params').serialize();
   }
 </script>
