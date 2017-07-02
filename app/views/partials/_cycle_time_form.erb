@@ -11,8 +11,12 @@
       </div>
     </div>
     <% @board.filters.each do |filter| %>
-        <input name="filters[]" class="board-filter" value="<%= filter.id %>" type="checkbox" data-id="<%= filter.id %>" id="filter-<%= filter.id %>" checked="checked" />
+        <input name="filters[]" class="board-filter" value="<%= filter.id %>" type="checkbox" id="filter-<%= filter.id %>" checked="checked" />
         <label for="filter-<%= filter.id %>"><%= filter.name %></label>
+    <% end %>
+    <% unless @board.exclusions.empty? %>
+        <input name="filters[]" class="board-filter" value="excluded-issues" type="checkbox" id="filter-config-exclusions" />
+        <label for="filter-config-exclusions">Excluded Issues</label>
     <% end %>
   </form>
 </div>
