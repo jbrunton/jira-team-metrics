@@ -19,7 +19,6 @@ private
 
     filters = (params[:filters] || [])
     exclude_filters = board.filters.select{ |filter| !filters.include?(filter.id.to_s) }
-    exclude_filters.each { |f| puts "Excluding " + f.name }
     @board = BoardDecorator.new(board, from_state, to_state, exclude_filters)
   end
 end
