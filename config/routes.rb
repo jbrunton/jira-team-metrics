@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get '/domains/:domain_name/boards/search', to: 'boards#search'
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'
   post '/domains/:domain_name/boards/:board_id/sync', to: 'boards#sync'
+  post '/domains/:domain_name/boards/:board_id', to: 'boards#update'
 
   get '/domains/:domain_name/boards/:board_id/issues/:issue_key', to: 'issues#show'
 

@@ -16,7 +16,7 @@ class BoardDecorator < Draper::Decorator
 
   def issues
     @issues ||= begin
-      exclusions = board.config[:exclude]
+      exclusions = board.exclusions
       all_issues.select{ |issue| !exclusions.include?(issue.key) }
     end
   end
