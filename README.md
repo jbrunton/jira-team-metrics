@@ -13,17 +13,8 @@ Clone and install dependencies:
     cd jira-team-metrics
     bundle install
 
-Run the quickstart command to add and sync a domain:
+Run the web server:
 
-    thor config:quickstart
-    
-Run the web server for pretty charts and reports:
+    bundle exec rails s
 
-    rakeup config.ru
-
-Note that all configuration and data syncing happens through the command line. You can get further help on commands using thor:
-
-    thor help -- help using thor
-    thor list -- list available commands
-    thor help <command> -- help for a specific command
-    
+Then navigate to http://localhost:3000/ and add a domain to analyze.
