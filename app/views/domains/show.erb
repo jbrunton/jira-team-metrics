@@ -67,25 +67,7 @@
     channel: "SyncDomainChannel",
     id: <%= @domain.id %>
   }, {
-    received: function (data) {
-      syncIndicatorFor(data);
-      if (data.in_progress) {
-        $('#sync-indicator').show();
-        $('#sync-status').text(data.status);
-      } else {
-        $('#sync-indicator').hide();
-        if (data.error) {
-          if (data.errorCode == 401) {
-            alert(data.error + '. Please check your credentials.')
-            $('.modal').modal('open');
-          } else {
-            alert('Unexpected error: ' + data.error);
-          }
-        } else {
-          location.reload();
-        }
-      }
-    }
+    received: statusReceived
   });
 
   function syncIndicatorFor(message) {
@@ -101,7 +83,7 @@
 <div id="sync-indicator" style="display: none;">
   <p id="sync-status"></p>
   <div class="progress">
-    <div class="indeterminate"></div>
+    <div id="indicator" class="indeterminate"></div>
   </div>
 </div>
 

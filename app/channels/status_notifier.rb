@@ -18,11 +18,12 @@ class StatusNotifier
   end
 
   def notify_error(error, error_code)
-    broadcast(
+    message = {
       error: error,
-      errorCode: error_code,
       in_progress: false
-    )
+    }
+    message = message.merge(errorCode: error_code) unless error_code.nil?
+    broadcast(message)
   end
 
   def notify_progress(status, progress)

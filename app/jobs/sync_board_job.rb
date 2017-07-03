@@ -1,7 +1,7 @@
 class SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, username, password)
+  def perform(board, username, password, notify_complete = true)
     #TODO: do this in a transaction
 
     @notifier = StatusNotifier.new(board, "Syncing #{board.name}: ")
@@ -28,7 +28,7 @@ class SyncBoardJob < ApplicationJob
 
     create_filters(board, credentials)
 
-    @notifier.notify_complete
+    @notifier.notify_complete if notify_complete
   end
 
   def fetch_issues_for(board, since_date, credentials)
@@ -42,10 +42,11 @@ class SyncBoardJob < ApplicationJob
       .query
     statuses = board.domain.statuses
     client = JiraClient.new(board.domain.url, credentials)
-    issues = client.search_issues(query: query, statuses: statuses) do |progress|
-      @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
+    HttpErrorHandler.new(@notifier).invoke do
+      client.search_issues(query: query, statuses: statuses) do |progress|
+        @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
+      end
     end
-    issues
   end
 
   def create_filters(board, credentials)

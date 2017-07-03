@@ -12,7 +12,6 @@ class JiraClient
 
   def request(relative_url)
     uri = URI::join(@url, relative_url)
-    puts "Issuing request to " + uri.to_s
     request = setup_request(uri)
     response = issue_request(uri, request)
     response.value
