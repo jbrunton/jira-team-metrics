@@ -1,11 +1,12 @@
 class StatusNotifier
-  def initialize(model)
+  def initialize(model, status_prefix = '')
     @model = model
+    @status_prefix = status_prefix
   end
 
   def notify_status(status)
     broadcast(
-      status: status,
+      status: @status_prefix + status,
       in_progress: true
     )
   end
@@ -26,7 +27,7 @@ class StatusNotifier
 
   def notify_progress(status, progress)
     broadcast(
-      status: status,
+      status: @status_prefix + status,
       in_progress: true,
       progress: progress
     )
