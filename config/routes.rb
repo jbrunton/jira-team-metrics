@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post '/domains', to: 'domains#create'
   delete '/domains/:domain_name', to: 'domains#destroy'
   post '/domains/:domain_name/sync', to: 'domains#sync'
+  post '/domains/:domain_name', to: 'domains#update'
 
   get '/domains/:domain_name/boards/search', to: 'boards#search'
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'

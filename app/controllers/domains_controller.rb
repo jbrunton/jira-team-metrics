@@ -1,5 +1,5 @@
 class DomainsController < ApplicationController
-  before_action :set_domain, only: [:show, :sync, :destroy]
+  before_action :set_domain, only: [:show, :sync, :update, :destroy]
   include ApplicationHelper
 
   def index
@@ -23,6 +23,16 @@ class DomainsController < ApplicationController
     end
   end
 
+  def update
+    respond_to do |format|
+      if @domain.update(domain_params)
+        format.json { render json: {}, status: :ok }
+      else
+        format.json { render partial: 'config_form', status: 400 }
+      end
+    end
+  end
+
   def destroy
     @domain.destroy
     render json: { target: domains_path }, status: 200
@@ -40,7 +50,7 @@ class DomainsController < ApplicationController
 
 private
   def domain_params
-    params.require(:domain).permit(:name, :url)
+    params.require(:domain).permit(:name, :url, :config)
   end
 
   def credentials_params
