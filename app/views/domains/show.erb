@@ -62,38 +62,13 @@
               });
     });
   });
-
-  App.cable.subscriptions.create({
-    channel: "SyncDomainChannel",
-    id: <%= @domain.id %>
-  }, {
-    received: statusReceived
-  });
-
-  function syncIndicatorFor(message) {
-    //var id = message.domain + ":" + message.board;
-    //console.log("Syncing for " + id + ": " + message);
-  }
 </script>
 
 <h3>
   <%= @domain['name'] %>
 </h3>
 
-<div id="sync-indicator" style="display: none;">
-  <p>
-    <span id="sync-status-title"></span>
-    &middot;
-    <span class="grey-text" id="sync-status"></span>
-  </p>
-  <div class="progress">
-    <div id="indicator" class="indeterminate"></div>
-  </div>
-</div>
-
-<div id="sync-status-container">
-
-</div>
+<%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncDomainChannel', model_id: @domain.id } %>
 
 <div class="row">
   <div class="col s8">
@@ -130,17 +105,7 @@
   </div>
 </div>
 
-<!-- Modal Structure -->
-<div id="sync-modal" class="modal bottom-sheet">
-  <div class="modal-content">
-    <%= render partial: 'shared/sync_form' %>
-  </div>
-  <div class="modal-footer">
-    <a id="sync" href="#" class="waves-effect waves-light btn">
-      Sync
-    </a>
-  </div>
-</div>
+<%= render partial: 'shared/sync_modal' %>
 
 <div id="config-modal" class="modal bottom-sheet">
   <div id="config-content" class="modal-content">

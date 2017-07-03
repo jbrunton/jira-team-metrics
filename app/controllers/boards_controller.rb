@@ -5,7 +5,6 @@ class BoardsController < ApplicationController
   before_action :set_board, only: [:show, :update, :sync]
 
   def show
-    @credentials = Credentials.new
   end
 
   def search
