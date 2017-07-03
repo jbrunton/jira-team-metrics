@@ -4,4 +4,8 @@ class Domain < ApplicationRecord
 
   validates :name, presence: true
   validates :url, presence: true
+
+  def config_hash
+    YAML.load(config || '') || {}
+  end
 end

@@ -46,6 +46,21 @@
         $('#search-results').empty();
       }
     }
+
+    $('#update-config').click(function () {
+      $.post('<%= domain_path(@domain) %>', $("#config-form").serialize())
+              .done(function () {
+                location.reload();
+              })
+              .fail(function (data) {
+                if (data.status == 400) {
+                  // validation error
+                  $('#config-modal-content').html(data.responseText);
+                } else {
+                  alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+                }
+              });
+    });
   });
 
   App.cable.subscriptions.create({
@@ -113,6 +128,7 @@
       </div>
       <div class="card-action">
         <a href="#sync-modal">Sync</a>
+        <a href="#config-modal">Config</a>
       </div>
     </div>
   </div>
@@ -126,6 +142,17 @@
   <div class="modal-footer">
     <a id="sync" href="#" class="waves-effect waves-light btn">
       Sync
+    </a>
+  </div>
+</div>
+
+<div id="config-modal" class="modal bottom-sheet">
+  <div id="config-content" class="modal-content">
+    <%= render partial: 'config_form' %>
+  </div>
+  <div class="modal-footer">
+    <a id="update-config" href="#" class="waves-effect waves-light btn">
+      Update
     </a>
   </div>
 </div>
