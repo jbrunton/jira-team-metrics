@@ -13,7 +13,11 @@ Clone and install dependencies:
     cd jira-team-metrics
     bundle install
 
-Run the web server:
+First time around, you'll need to run migrations:
+
+    bundle exec rake db:migrate
+
+To use, run the web server:
 
     bundle exec rails s
 
