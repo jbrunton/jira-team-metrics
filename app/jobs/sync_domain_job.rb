@@ -25,12 +25,14 @@ private
   end
 
   def fetch_data(domain, credentials)
-    @notifier.notify_status('fetching from JIRA')
-
     client = JiraClient.new(domain.url, credentials)
     HttpErrorHandler.new(@notifier).invoke do
+      @notifier.notify_status('fetching boards from JIRA')
       boards = client.get_rapid_boards
+
+      @notifier.notify_status('fetching status metadata from JIRA')
       statuses = client.get_statuses
+
       [boards, statuses]
     end
   end
