@@ -1,27 +1,23 @@
 class StatusNotifier
-  def initialize(channel, object)
-    @channel = channel
-    @object = object
+  def initialize(model)
+    @model = model
   end
 
   def notify_status(status)
-    @channel.broadcast_to(
-      @object,
+    broadcast(
       status: status,
       in_progress: true
     )
   end
 
   def notify_complete
-    @channel.broadcast_to(
-      @object,
+    broadcast(
       in_progress: false
     )
   end
 
   def notify_error(error, error_code)
-    @channel.broadcast_to(
-      @object,
+    broadcast(
       error: error,
       errorCode: error_code,
       in_progress: false
@@ -29,11 +25,23 @@ class StatusNotifier
   end
 
   def notify_progress(status, progress)
-    @channel.broadcast_to(
-      @object,
+    broadcast(
       status: status,
       in_progress: true,
       progress: progress
     )
+  end
+
+private
+  def broadcast(message)
+    case
+    when @model.is_a?(Board)
+      SyncBoardChannel.broadcast_to(@model, message)
+      SyncDomainChannel.broadcast_to(@model.domain, message)
+    when @model.is_a?(Domain)
+      SyncDomainChannel.broadcast_to(@model, message)
+    else
+      raise "Unexpected model type: #{@model.class}"
+    end
   end
 end

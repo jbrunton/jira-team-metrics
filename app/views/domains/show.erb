@@ -68,6 +68,7 @@
     id: <%= @domain.id %>
   }, {
     received: function (data) {
+      syncIndicatorFor(data);
       if (data.in_progress) {
         $('#sync-indicator').show();
         $('#sync-status').text(data.status);
@@ -86,6 +87,11 @@
       }
     }
   });
+
+  function syncIndicatorFor(message) {
+    //var id = message.domain + ":" + message.board;
+    //console.log("Syncing for " + id + ": " + message);
+  }
 </script>
 
 <h3>
@@ -97,6 +103,10 @@
   <div class="progress">
     <div class="indeterminate"></div>
   </div>
+</div>
+
+<div id="sync-status-container">
+
 </div>
 
 <div class="row">

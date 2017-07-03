@@ -3,7 +3,7 @@ class SyncDomainJob < ApplicationJob
 
   def perform(domain, username, password)
     #TODO: do this in a transaction
-    @notifier = StatusNotifier.new(SyncDomainChannel, domain)
+    @notifier = StatusNotifier.new(domain)
     clear_cache(domain)
     boards, statuses = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses)

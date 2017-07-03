@@ -4,7 +4,7 @@ class SyncBoardJob < ApplicationJob
   def perform(board, username, password)
     #TODO: do this in a transaction
 
-    @notifier = StatusNotifier.new(SyncBoardChannel, board)
+    @notifier = StatusNotifier.new(board)
 
     @notifier.notify_status('clearing cache')
 
