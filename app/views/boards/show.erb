@@ -50,7 +50,11 @@
 <h3><%= @board.name %></h3>
 
 <div id="sync-indicator" style="display: none;">
-  <p id="sync-status"></p>
+  <p>
+    <span id="sync-status-title"></span>
+    &middot;
+    <span class="grey-text" id="sync-status"></span>
+  </p>
   <div class="progress">
     <div id="indicator" class="indeterminate"></div>
   </div>

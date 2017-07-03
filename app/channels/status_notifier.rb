@@ -1,12 +1,12 @@
 class StatusNotifier
-  def initialize(model, status_prefix = '')
+  def initialize(model, status_title)
     @model = model
-    @status_prefix = status_prefix
+    @status_title = status_title
   end
 
   def notify_status(status)
     broadcast(
-      status: @status_prefix + status,
+      status: status,
       in_progress: true
     )
   end
@@ -28,7 +28,7 @@ class StatusNotifier
 
   def notify_progress(status, progress)
     broadcast(
-      status: @status_prefix + status,
+      status: status,
       in_progress: true,
       progress: progress
     )
@@ -36,6 +36,7 @@ class StatusNotifier
 
 private
   def broadcast(message)
+    message.merge!(statusTitle: @status_title) unless message[:status].nil?
     case
     when @model.is_a?(Board)
       SyncBoardChannel.broadcast_to(@model, message)

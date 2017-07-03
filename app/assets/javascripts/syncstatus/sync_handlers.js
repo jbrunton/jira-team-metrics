@@ -6,6 +6,7 @@ function statusReceived(data) {
     } else {
       $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
     }
+    $('#sync-status-title').text(data.statusTitle);
     $('#sync-status').text(data.status);
   } else {
     $('#sync-indicator').hide();

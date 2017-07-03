@@ -4,7 +4,7 @@ class SyncBoardJob < ApplicationJob
   def perform(board, username, password, notify_complete = true)
     #TODO: do this in a transaction
 
-    @notifier = StatusNotifier.new(board, "Syncing #{board.name}: ")
+    @notifier = StatusNotifier.new(board, "syncing #{board.name}")
 
     @notifier.notify_status('clearing cache')
 
