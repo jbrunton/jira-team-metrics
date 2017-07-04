@@ -13,6 +13,8 @@
 //= require rails-ujs
 //= require jquery
 //= require materialize
+//= require handlebars.runtime
+//= require_tree ./templates
 //= require_tree .
 
 $.ajaxSetup({

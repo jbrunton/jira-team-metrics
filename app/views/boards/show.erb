@@ -38,45 +38,11 @@
           });
     });
   });
-
-  App.cable.subscriptions.create({
-    channel: "SyncBoardChannel",
-    id: <%= @board.jira_id %>
-  }, {
-    received: function (data) {
-      if (data.in_progress) {
-        $('#sync-indicator').show();
-        if (data.progress == null) {
-          $('.progress #indicator').addClass('indeterminate').removeClass('determinate').css('width', '');
-        } else {
-          $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
-        }
-        $('#sync-status').text(data.status);
-      } else {
-        $('#sync-indicator').hide();
-        if (data.error) {
-          if (data.errorCode == 401) {
-            alert(data.error + '. Please check your credentials.')
-            $('.modal').modal('open');
-          } else {
-            alert('Unexpected error: ' + data.error);
-          }
-        } else {
-          location.reload();
-        }
-      }
-    }
-  });
 </script>
 
 <h3><%= @board.name %></h3>
 
-<div id="sync-indicator" style="display: none;">
-  <p id="sync-status"></p>
-  <div class="progress">
-    <div id="indicator" class="indeterminate"></div>
-  </div>
-</div>
+<%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncBoardChannel', model_id: @board.jira_id } %>
 
 <div class="row">
   <div class="col s8">
@@ -103,18 +69,6 @@
   </div>
 </div>
 
-<!-- Modal Structure -->
-<div id="sync-modal" class="modal bottom-sheet">
-  <div id="sync-content" class="modal-content">
-    <%= render partial: 'shared/sync_form' %>
-  </div>
-  <div class="modal-footer">
-    <a id="sync" href="#" class="waves-effect waves-light btn">
-      Sync
-    </a>
-  </div>
-</div>
-
 <div id="config-modal" class="modal bottom-sheet">
   <div id="config-content" class="modal-content">
     <%= render partial: 'config_form' %>
@@ -125,3 +79,5 @@
     </a>
   </div>
 </div>
+
+<%= render partial: 'shared/sync_modal' %>

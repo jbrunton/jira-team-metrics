@@ -11,7 +11,6 @@ class DomainsController < ApplicationController
     @boards = @domain.boards.select do |board|
       !board.last_synced.nil?
     end
-    @credentials = Credentials.new
   end
 
   def create

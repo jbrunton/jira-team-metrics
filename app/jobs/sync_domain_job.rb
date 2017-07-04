@@ -3,18 +3,19 @@ class SyncDomainJob < ApplicationJob
 
   def perform(domain, username, password)
     #TODO: do this in a transaction
-    @notifier = StatusNotifier.new(domain, "Syncing #{domain.name}: ")
+    @notifier = StatusNotifier.new(domain, "syncing #{domain.name}")
     clear_cache(domain)
     boards, statuses = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses)
-    @notifier.notify_complete
 
     domain.config_hash['boards'].each do |board_details|
       board = domain.boards.find_by(jira_id: board_details['jira_id'])
       board.config = board_details['config'].to_yaml(line_width: -1)
       board.save
-      SyncBoardJob.perform_now(board, username, password)
+      SyncBoardJob.perform_now(board, username, password, false)
     end
+
+    @notifier.notify_complete
   end
 
 private
@@ -24,18 +25,16 @@ private
   end
 
   def fetch_data(domain, credentials)
-    @notifier.notify_status('fetching from JIRA')
     client = JiraClient.new(domain.url, credentials)
-    begin
+    HttpErrorHandler.new(@notifier).invoke do
+      @notifier.notify_status('fetching boards from JIRA')
       boards = client.get_rapid_boards
-      statuses = client.get_statuses
-    rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
-      Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      @notifier.notify_error(e.message, e.try(:response).try(:code))
-      raise
-    end
 
-    [boards, statuses]
+      @notifier.notify_status('fetching status metadata from JIRA')
+      statuses = client.get_statuses
+
+      [boards, statuses]
+    end
   end
 
   def update_cache(domain, boards, statuses)

@@ -1,0 +1,19 @@
+<script>
+  App.cable.subscriptions.create({
+    channel: "<%= channel %>",
+    id: <%= model_id %>
+  }, {
+    received: statusReceived
+  });
+</script>
+
+<div id="sync-indicator" style="display: none;">
+  <p>
+    <span id="sync-status-title"></span>
+    &middot;
+    <span class="grey-text" id="sync-status"></span>
+  </p>
+  <div class="progress">
+    <div id="indicator" class="indeterminate"></div>
+  </div>
+</div>
