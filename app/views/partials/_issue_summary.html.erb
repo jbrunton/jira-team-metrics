@@ -1,0 +1,25 @@
+<li>
+  <div class="collapsible-header<%= ' active' if expand %>">
+    <%= issue.key %> - <%= issue.short_summary %>
+  </div>
+  <div class="collapsible-body">
+    <table class="issue-details">
+      <tr>
+        <th>Issue Type</th>
+        <td><%= issue.issue_type %></td>
+      </tr>
+      <tr>
+        <th>Summary</th>
+        <td><%= issue.summary %></td>
+      </tr>
+      <tr>
+        <th>Labels</th>
+        <td>
+          <% issue.labels.each do |label| %>
+              <div class="chip"><%= label %></div>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+</li>

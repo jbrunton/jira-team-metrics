@@ -1,0 +1,19 @@
+<li>
+  <div class="collapsible-header<%= ' active' if expand %>">Cycle Time</div>
+  <div class="collapsible-body">
+    <table class="issue-details">
+      <tr>
+        <th>Started</th>
+        <td><%= pretty_print_time(issue.started_time) %></td>
+      </tr>
+      <tr>
+        <th>Completed</th>
+        <td><%= pretty_print_time(issue.completed_time) %></td>
+      </tr>
+      <tr>
+        <th>Days</th>
+        <td><%= pretty_print_number(issue.cycle_time) %></td>
+      </tr>
+    </table>
+  </div>
+</li>

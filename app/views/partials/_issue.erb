@@ -2,69 +2,19 @@
   <div class="col s6">
 
     <ul class="collapsible" data-collapsible="expandable">
-      <li>
-        <div class="collapsible-header active"><%= issue.key %></div>
-        <div class="collapsible-body">
-          <table class="issue-details">
-            <tr>
-              <th>Issue Type</th>
-              <td><%= issue.issue_type %></td>
-            </tr>
-            <tr>
-              <th>Summary</th>
-              <td><%= issue.summary %></td>
-            </tr>
-            <tr>
-              <th>Labels</th>
-              <td>
-                <% issue.labels.each do |label| %>
-                    <div class="chip"><%= label %></div>
-                <% end %>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </li>
-
-      <li>
-        <div class="collapsible-header<%= ' active' if (defined?(show_transitions) && show_transitions) %>">Cycle Times</div>
-        <div class="collapsible-body">
-          <table class="issue-details">
-            <tr>
-              <th>Started</th>
-              <td><%= pretty_print_time(issue.started_time) %></td>
-            </tr>
-            <tr>
-              <th>Completed</th>
-              <td><%= pretty_print_time(issue.completed_time) %></td>
-            </tr>
-            <tr>
-              <th>Days</th>
-              <td><%= pretty_print_number(issue.cycle_time) %></td>
-            </tr>
-          </table>
-        </div>
-      </li>
+      <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
+      <% if expand %>
+          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: true } %>
+      <% end %>
     </ul>
   </div>
 
   <div class="col s6">
     <ul class="collapsible" data-collapsible="expandable">
-      <li>
-        <div class="collapsible-header<%= ' active' if (defined?(show_transitions) && show_transitions) %>">Transitions</div>
-        <div class="collapsible-body">
-          <table class="issue-details">
-            <% issue.transitions.each do |t| %>
-                <tr>
-                  <td><%= pretty_print_time(Time.parse(t['date'])) %></td>
-                  <td class="right-align"><%= t['fromStatus'] %></td>
-                  <td>&rarr;</td>
-                  <td><%= t['toStatus'] %></td>
-                </tr>
-            <% end %>
-          </table>
-        </div>
-      </li>
+      <% if !expand %>
+          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: false } %>
+      <% end %>
+      <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
     </ul>
   </div>
 </div>
