@@ -80,19 +80,28 @@ class ApiController < ApplicationController
   end
 
   def compare
-    selected_rows = (0..3).map do |k|
-      {c: [{v: k * 2}, {v: 1 - 1 * (k.to_f/4) * (k.to_f/4)}, {v: nil}]}
+    sorted_issues = @board.completed_issues.sort_by { |issue| -issue.cycle_time }
+    selected_issues = sorted_issues.select{ |issue| issue.fields['Developer'] == params[:developer]}
+    other_issues = sorted_issues.select{ |issue| !selected_issues.include?(issue) }
+
+    selected_rows = selected_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
     end
-    others_rows = (0..9).map do |k|
-      {c: [{v: k}, {v: nil}, {v: 1 - 1 * (k.to_f/10) * (k.to_f/10)}]}
+    other_rows = other_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
     end
-    render json: {
+    chart_data = {
       cols: [
         {id: 'rank', type: 'number', label: 'Rank'},
         {id: 'ct_selected', type: 'number', label: 'Cycle Time (Selected)'},
         {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
       ],
-      rows: selected_rows + others_rows
+      rows: selected_rows + other_rows
+    }
+    render json: {
+      chartData: chart_data
     }
   end
 

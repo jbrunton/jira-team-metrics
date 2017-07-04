@@ -9,13 +9,15 @@
 
 <%= render 'partials/cycle_time_form' %>
 
+<input id="developer" />
+
 <div id="chart_div"></div>
 
 <script type="text/javascript">
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('form input').change(drawChart);
+    $('input').change(drawChart);
   });
 
   function drawChart() {
@@ -24,7 +26,8 @@
     var chart = $('#chart_div');
     chart.css('height', chart.width() * 0.5);
 
-    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json');
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json')
+        + '&developer=' + $('#developer').val();
 
     var jsonData = $.ajax({
       url: url,
@@ -32,7 +35,7 @@
       async: false
     }).responseText;
 
-    var data = new google.visualization.DataTable(jsonData);
+    var data = new google.visualization.DataTable(JSON.parse(jsonData)['chartData']);
 
     var options = {
       chartArea: {
