@@ -17,3 +17,11 @@
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 @import "materialize";
 
+table.issue-details {
+  th {
+    width: 25%;
+  }
+  td,th {
+    vertical-align: top;
+  }
+}

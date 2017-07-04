@@ -10,7 +10,8 @@ class IssueAttributesBuilder
       'key' => key,
       'summary' => summary,
       'issue_type' => issue_type,
-      'transitions' => transitions
+      'transitions' => transitions,
+      'labels' => labels
     }
   end
 
@@ -25,6 +26,10 @@ private
 
   def issue_type
     @json['fields']['issuetype']['name']
+  end
+
+  def labels
+    @json['fields']['labels']
   end
 
   def transitions

@@ -1,19 +1,20 @@
 <div class="row">
-  <% if defined?(show_transitions) && show_transitions %>
-      <div class="col s6">
-        <h5><%= issue.key %></h5>
-        <%= render partial: 'partials/table', locals: {table: issue.overview_table} %>
-      </div>
-      <div class="col s6">
-        <h5>Transitions</h5>
-        <%= render partial: 'partials/table', locals: {table: issue.transitions_table} %>
-      </div>
-  <% else %>
-      <div class="col s3"></div>
-      <div class="col s6">
-        <h5><%= issue.key %></h5>
-        <%= render partial: 'partials/table', locals: {table: issue.overview_table} %>
-      </div>
-      <div class="col s3"></div>
-  <% end %>
+  <div class="col s6">
+
+    <ul class="collapsible" data-collapsible="expandable">
+      <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
+      <% if expand %>
+          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: true } %>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="col s6">
+    <ul class="collapsible" data-collapsible="expandable">
+      <% if !expand %>
+          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: false } %>
+      <% end %>
+      <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
+    </ul>
+  </div>
 </div>

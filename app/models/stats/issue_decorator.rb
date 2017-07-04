@@ -34,7 +34,8 @@ class IssueDecorator < Draper::Decorator
       DataTable::Row.new(['Issue Type', issue_type], nil),
       DataTable::Row.new(['Started', pretty_print_time(started)], nil),
       DataTable::Row.new(['Completed', pretty_print_time(completed)], nil),
-      DataTable::Row.new(['Cycle Time (days)', pretty_print_number(cycle_time)], nil)
+      DataTable::Row.new(['Cycle Time (days)', pretty_print_number(cycle_time)], nil),
+      DataTable::Row.new(['Labels', labels.join(', ')], nil)
     ]
     DataTable.new(rows)
   end

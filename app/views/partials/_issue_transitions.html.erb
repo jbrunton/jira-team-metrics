@@ -1,0 +1,15 @@
+<li>
+  <div class="collapsible-header<%= ' active' if expand %>">Transitions</div>
+  <div class="collapsible-body">
+    <table class="issue-details">
+      <% issue.transitions.each do |t| %>
+          <tr>
+            <td><%= pretty_print_time(Time.parse(t['date'])) %></td>
+            <td class="right-align"><%= t['fromStatus'] %></td>
+            <td>&rarr;</td>
+            <td><%= t['toStatus'] %></td>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+</li>

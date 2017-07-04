@@ -1,6 +1,11 @@
 class Issue < ApplicationRecord
   serialize :transitions
+  serialize :labels
   belongs_to :board
+
+  def short_summary
+    summary.truncate(50, separator: /\s/)
+  end
 
   def started_time(status = nil)
     first_transition = transitions.find do |t|

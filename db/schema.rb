@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "key"
     t.string "issue_type"
     t.string "summary"
+    t.string "labels"
     t.string "transitions"
     t.integer "board_id"
     t.datetime "created_at", null: false
