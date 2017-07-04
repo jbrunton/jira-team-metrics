@@ -17,4 +17,6 @@ function alertModal(opts) {
   });
 
   modal.modal('open');
+
+  return modal;
 }
