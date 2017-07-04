@@ -79,6 +79,23 @@ class ApiController < ApplicationController
     }
   end
 
+  def compare
+    selected_rows = (0..3).map do |k|
+      {c: [{v: k * 2}, {v: 1 - 1 * (k.to_f/4) * (k.to_f/4)}, {v: nil}]}
+    end
+    others_rows = (0..9).map do |k|
+      {c: [{v: k}, {v: nil}, {v: 1 - 1 * (k.to_f/10) * (k.to_f/10)}]}
+    end
+    render json: {
+      cols: [
+        {id: 'rank', type: 'number', label: 'Rank'},
+        {id: 'ct_selected', type: 'number', label: 'Cycle Time (Selected)'},
+        {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
+      ],
+      rows: selected_rows + others_rows
+    }
+  end
+
 private
   def build_ct_table(summary_table, series)
     builder = DataTableBuilder.new
