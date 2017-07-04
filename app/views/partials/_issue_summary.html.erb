@@ -20,6 +20,13 @@
           <% end %>
         </td>
       </tr>
+
+      <% issue.fields.keys.each do |field_name| %>
+        <tr>
+          <th><%= field_name %></th>
+          <td><%= issue.field(field_name) %></td>
+        </tr>
+      <% end %>
     </table>
   </div>
 </li>

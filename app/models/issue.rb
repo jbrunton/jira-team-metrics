@@ -1,6 +1,7 @@
 class Issue < ApplicationRecord
-  serialize :transitions
   serialize :labels
+  serialize :transitions
+  serialize :fields
   belongs_to :board
 
   def short_summary
@@ -35,5 +36,14 @@ class Issue < ApplicationRecord
     started = started_time(start_state)
     completed = completed_time(end_state)
     completed && started ? (completed - started) / (60 * 60 * 24) : nil
+  end
+
+  def field(field_name)
+    field_value = fields[field_name]
+    if field_value.is_a?(Array)
+      field_value.join(', ')
+    else
+      field_value
+    end
   end
 end

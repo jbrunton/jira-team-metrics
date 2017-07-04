@@ -27,7 +27,7 @@ class JiraClient
     response = request(url)
 
     issues = response['issues'].map do |raw_issue|
-      IssueAttributesBuilder.new(raw_issue, statuses).build
+      IssueAttributesBuilder.new(raw_issue, statuses, opts[:fields]).build
     end
 
     startAt = response['startAt'] || 0
@@ -56,8 +56,8 @@ class JiraClient
   def get_fields
     url = "/rest/api/2/field"
     response = request(url)
-    response.map do |field|
-      field.slice('id', 'name')
+    response.select{ |field| field['schema'] }.map do |field|
+      field.slice('id', 'name').merge(type: field['schema']['type'])
     end
   end
 

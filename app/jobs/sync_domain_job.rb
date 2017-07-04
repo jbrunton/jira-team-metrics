@@ -5,8 +5,8 @@ class SyncDomainJob < ApplicationJob
     #TODO: do this in a transaction
     @notifier = StatusNotifier.new(domain, "syncing #{domain.name}")
     clear_cache(domain)
-    boards, statuses = fetch_data(domain, {username: username, password: password})
-    update_cache(domain, boards, statuses)
+    boards, statuses, fields = fetch_data(domain, {username: username, password: password})
+    update_cache(domain, boards, statuses, fields)
 
     domain.config_hash['boards'].each do |board_details|
       board = domain.boards.find_by(jira_id: board_details['jira_id'])
@@ -33,11 +33,16 @@ private
       @notifier.notify_status('fetching status metadata from JIRA')
       statuses = client.get_statuses
 
-      [boards, statuses]
+      @notifier.notify_status('fetching fields from JIRA')
+      fields = client.get_fields.select do |field|
+        (domain.config_hash['fields'] || []).include?(field['name'])
+      end
+
+      [boards, statuses, fields]
     end
   end
 
-  def update_cache(domain, boards, statuses)
+  def update_cache(domain, boards, statuses, fields)
     @notifier.notify_status('updating cache')
 
     boards.each do |b|
@@ -46,6 +51,7 @@ private
 
     domain.last_synced = DateTime.now
     domain.statuses = statuses
+    domain.fields = fields
     domain.save
   end
 end

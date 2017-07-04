@@ -1,8 +1,9 @@
 
 class IssueAttributesBuilder
-  def initialize(json, statuses)
+  def initialize(json, statuses, field_definitions)
     @json = json
     @statuses = statuses
+    @field_definitions = field_definitions
   end
 
   def build
@@ -11,6 +12,7 @@ class IssueAttributesBuilder
       'summary' => summary,
       'issue_type' => issue_type,
       'transitions' => transitions,
+      'fields' => fields,
       'labels' => labels
     }
   end
@@ -30,6 +32,28 @@ private
 
   def labels
     @json['fields']['labels']
+  end
+
+  def fields
+    @fields ||= begin
+      fields = {}
+      @field_definitions.each do |field|
+        field_id = field['id']
+        field_value = @json['fields'][field_id]
+        fields[field['name']] =
+          case field['type']
+            when 'string'
+              field_value
+            when 'array'
+              field_value.map{ |x| x['value'] }
+            when 'user'
+              field_value['name']
+            else
+              nil
+          end unless field_value.nil?
+      end
+      fields
+    end
   end
 
   def transitions
