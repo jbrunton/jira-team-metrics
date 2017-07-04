@@ -3,17 +3,13 @@
 
     <ul class="collapsible" data-collapsible="expandable">
       <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
-      <% if expand %>
-          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: true } %>
-      <% end %>
+      <%= render partial: 'partials/issue_fields', locals: { issue: issue, expand: expand } %>
     </ul>
   </div>
 
   <div class="col s6">
     <ul class="collapsible" data-collapsible="expandable">
-      <% if !expand %>
-          <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: false } %>
-      <% end %>
+      <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
     </ul>
   </div>

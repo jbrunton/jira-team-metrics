@@ -92,4 +92,13 @@ module ApplicationHelper
   def object_name_for(object)
     object.class.name.tableize.singularize # e.g. organization
   end
+
+  def issue_field(issue, field_name)
+    field_value = issue.fields[field_name]
+    if field_value.is_a?(Array)
+      field_value.map{ |v| content_tag(:div, v, class: 'chip') }.join.html_safe
+    else
+      field_value
+    end
+  end
 end
