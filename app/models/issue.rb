@@ -1,5 +1,6 @@
 class Issue < ApplicationRecord
   serialize :transitions
+  serialize :labels
   belongs_to :board
 
   def started_time(status = nil)

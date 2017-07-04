@@ -4,6 +4,7 @@ class CreateIssues < ActiveRecord::Migration[5.1]
       t.string :key
       t.string :issue_type
       t.string :summary
+      t.string :labels
       t.string :transitions
       t.references :board, foreign_key: true
 
