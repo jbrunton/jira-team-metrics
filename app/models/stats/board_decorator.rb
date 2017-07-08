@@ -8,16 +8,20 @@ class BoardDecorator < Draper::Decorator
   
   delegate_all
 
-  def initialize(board, from_state, to_state, exclude_filters = [])
+  def initialize(board, from_state, to_state, query = nil)
     super(board)
     @from_state = from_state
     @to_state = to_state
-    @exclude_filters = exclude_filters
+    @query = query
   end
 
   def issues
     @issues ||= begin
-      all_issues.select{ |issue| !exclusions.include?(issue.key) }
+      if @query.blank?
+        all_issues
+      else
+        MqlInterpreter.new(all_issues).eval(@query)
+      end
     end
   end
 

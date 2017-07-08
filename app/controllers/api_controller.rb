@@ -79,6 +79,35 @@ class ApiController < ApplicationController
     }
   end
 
+  def compare
+    sorted_issues = @board.completed_issues.sort_by { |issue| issue.cycle_time }
+    selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues).eval(params[:selection_query]))
+    other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
+
+    chart_data = data_for_compare_chart(sorted_issues, selected_issues, other_issues)
+
+    others_q1 = other_issues.cycle_times.percentile(25)
+    others_q3 = other_issues.cycle_times.percentile(75)
+
+    selected_lt_q3 = selected_issues.select{ |issue| issue.cycle_time <= others_q3 }
+
+    render json: {
+      chartData: chart_data,
+      quartiles: {
+        dev: {
+          q1: selected_issues.cycle_times.percentile(25),
+          q3: selected_issues.cycle_times.percentile(75),
+          percentLtQ3: selected_lt_q3.count.to_f / selected_issues.count * 100,
+          percentGtQ3: (selected_issues.count - selected_lt_q3.count).to_f / selected_issues.count * 100
+        },
+        others: {
+          q1: others_q1,
+          q3: others_q3
+        }
+      }
+    }
+  end
+
 private
   def build_ct_table(summary_table, series)
     builder = DataTableBuilder.new
@@ -106,6 +135,25 @@ private
     builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
     builder.build
+  end
+
+  def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
+    selected_rows = selected_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
+    end
+    other_rows = other_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
+    end
+    {
+      cols: [
+        {id: 'rank', type: 'number', label: 'Rank'},
+        {id: 'ct_selected', type: 'number', label: 'Cycle Time (Selected)'},
+        {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
+      ],
+      rows: selected_rows + other_rows
+    }
   end
 
   CT_TREND_BUILDER = TrendBuilder.new.

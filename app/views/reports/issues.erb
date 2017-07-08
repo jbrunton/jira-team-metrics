@@ -12,7 +12,8 @@
 <script>
   $(function() {
     fetchData();
-    $('form input').change(fetchData);
+    $('input').change(fetchData);
+    $('textarea').change(fetchData);
   })
 
   function fetchData() {

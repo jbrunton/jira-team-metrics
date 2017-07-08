@@ -2,12 +2,14 @@
     <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
     <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
     <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="#!" class="breadcrumb">Control Chart</a>
+    <a href="#!" class="breadcrumb">Compare</a>
 <% end %>
 
 <h3>Control chart for <%= @board.name %></h3>
 
 <%= render 'partials/cycle_time_form' %>
+
+<input id="selection_query" />
 
 <div id="chart_div"></div>
 
@@ -15,8 +17,8 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('form input').change(drawChart);
-    $('form textarea').change(drawChart);
+    $('input').change(drawChart);
+    $('textarea').change(drawChart);
   });
 
   function drawChart() {
@@ -25,42 +27,32 @@
     var chart = $('#chart_div');
     chart.css('height', chart.width() * 0.5);
 
-    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/control_chart.json');
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json')
+        + '&selection_query=' + $('#selection_query').val();
 
-    var jsonData = $.ajax({
+    var jsonData = JSON.parse($.ajax({
       url: url,
       dataType: "json",
       async: false
-    }).responseText;
+    }).responseText);
 
-    var data = new google.visualization.DataTable(jsonData);
+    var data = new google.visualization.DataTable(jsonData['chartData']);
+
+    $('#dev-q1').text(jsonData.quartiles.dev.q1);
+    $('#dev-q3').text(jsonData.quartiles.dev.q3);
+    $('#dev-lt-q3').text(jsonData.quartiles.dev.percentLtQ3);
+    $('#dev-gt-q3').text(jsonData.quartiles.dev.percentGtQ3);
+    $('#others-q1').text(jsonData.quartiles.others.q1);
+    $('#others-q3').text(jsonData.quartiles.others.q3);
 
     var options = {
-      hAxis: {
-        format: 'd MMM yy'
-      },
-      vAxes: [
-        {
-          title: 'Cycle Time',
-          minValue: 0,
-          viewWindow: {
-            min: 0
-          }
-        },
-        {
-          title: 'WIP',
-          minValue: 0
-        }
-      ],
       chartArea: {
         width: '85%',
         height: '85%'
       },
       series: {
         0: { pointSize: 4, color: 'indianred' },
-        1: { pointSize: 3, color: 'steelblue', targetAxisIndex: 1 },
-        2: { lineWidth: 2, pointSize: 0, color: 'indianred' },
-        3: { lineWidth: 1.5, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
+        1: { pointSize: 3, color: 'steelblue' }
       },
       intervals: {
         style: 'area',
@@ -69,7 +61,7 @@
       interpolateNulls: false
     };
 
-    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
     google.visualization.events.addListener(chart, 'select', selectHandler);
     chart.draw(data, options);
 
@@ -100,5 +92,34 @@
   });
 
 </script>
+
+<table>
+  <tr>
+    <th></th>
+    <th>Dev</th>
+    <th>Others</th>
+  </tr>
+  <tr>
+    <th>Q1</th>
+    <td id="dev-q1"></td>
+    <td id="others-q1"></td>
+  </tr>
+  <tr>
+    <th>Q3</th>
+    <td id="dev-q3"></td>
+    <td id="others-q3"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>% in IQR</th>
+    <td id="dev-lt-q3"></td>
+  </tr>
+  <tr>
+    <th>% > Q3</th>
+    <td id="dev-gt-q3"></td>
+  </tr>
+</table>
 
 <div id="selected_content"></div>

@@ -65,6 +65,11 @@ GEM
       request_store (~> 1.0)
     erubi (1.6.0)
     execjs (2.7.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     ffi (1.9.18)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -106,6 +111,7 @@ GEM
     nio4r (2.1.0)
     nokogiri (1.7.2)
       mini_portile2 (~> 2.1.0)
+    parslet (1.8.0)
     phantomjs (2.1.1.0)
     puma (3.9.1)
     rack (2.0.3)
@@ -202,12 +208,14 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   descriptive_statistics
   draper
+  factory_girl_rails
   handlebars_assets
   jasmine-rails
   jbuilder (~> 2.5)
   jquery-rails
   listen (>= 3.0.5, < 3.2)
   materialize-sass
+  parslet
   puma (~> 3.7)
   rails (~> 5.1.1)
   rspec-rails
