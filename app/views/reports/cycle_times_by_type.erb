@@ -13,8 +13,8 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('#ct-options input').change(updateCharts);
-    $('#ct-states input').change(updateCharts);
+    $('input').change(updateCharts);
+    $('textarea').change(updateCharts);
     google.charts.setOnLoadCallback(updateCharts);
   });
 

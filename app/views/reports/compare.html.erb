@@ -9,7 +9,7 @@
 
 <%= render 'partials/cycle_time_form' %>
 
-<input id="developer" />
+<input id="selection_query" />
 
 <div id="chart_div"></div>
 
@@ -18,6 +18,7 @@
 
   $(function() {
     $('input').change(drawChart);
+    $('textarea').change(drawChart);
   });
 
   function drawChart() {
@@ -27,7 +28,7 @@
     chart.css('height', chart.width() * 0.5);
 
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json')
-        + '&developer=' + $('#developer').val();
+        + '&selection_query=' + $('#selection_query').val();
 
     var jsonData = JSON.parse($.ajax({
       url: url,

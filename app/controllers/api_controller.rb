@@ -81,17 +81,11 @@ class ApiController < ApplicationController
 
   def compare
     sorted_issues = @board.completed_issues.sort_by { |issue| issue.cycle_time }
-    selected_issues = IssuesDecorator.new(sorted_issues.select{ |issue| issue.fields['Developer'] == params[:developer]})
+    selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues).eval(params[:selection_query]))
     other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
 
-    selected_rows = selected_issues.map do |issue|
-      rank = sorted_issues.index(issue) + 1
-      {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
-    end
-    other_rows = other_issues.map do |issue|
-      rank = sorted_issues.index(issue) + 1
-      {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
-    end
+    selected_rows, other_rows = rows_for_compare_chart(sorted_issues, selected_issues, other_issues)
+
     chart_data = {
       cols: [
         {id: 'rank', type: 'number', label: 'Rank'},
@@ -150,6 +144,18 @@ private
     builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
 
     builder.build
+  end
+
+  def rows_for_compare_chart(sorted_issues, selected_issues, other_issues)
+    selected_rows = selected_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
+    end
+    other_rows = other_issues.map do |issue|
+      rank = sorted_issues.index(issue) + 1
+      {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
+    end
+    [selected_rows, other_rows]
   end
 
   CT_TREND_BUILDER = TrendBuilder.new.
