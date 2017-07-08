@@ -80,9 +80,9 @@ class ApiController < ApplicationController
   end
 
   def compare
-    sorted_issues = @board.completed_issues.sort_by { |issue| -issue.cycle_time }
-    selected_issues = sorted_issues.select{ |issue| issue.fields['Developer'] == params[:developer]}
-    other_issues = sorted_issues.select{ |issue| !selected_issues.include?(issue) }
+    sorted_issues = @board.completed_issues.sort_by { |issue| issue.cycle_time }
+    selected_issues = IssuesDecorator.new(sorted_issues.select{ |issue| issue.fields['Developer'] == params[:developer]})
+    other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
 
     selected_rows = selected_issues.map do |issue|
       rank = sorted_issues.index(issue) + 1
@@ -100,8 +100,26 @@ class ApiController < ApplicationController
       ],
       rows: selected_rows + other_rows
     }
+
+    others_q1 = other_issues.cycle_times.percentile(25)
+    others_q3 = other_issues.cycle_times.percentile(75)
+
+    selected_lt_q3 = selected_issues.select{ |issue| issue.cycle_time <= others_q3 }
+
     render json: {
-      chartData: chart_data
+      chartData: chart_data,
+      quartiles: {
+        dev: {
+          q1: selected_issues.cycle_times.percentile(25),
+          q3: selected_issues.cycle_times.percentile(75),
+          percentLtQ3: selected_lt_q3.count.to_f / selected_issues.count * 100,
+          percentGtQ3: (selected_issues.count - selected_lt_q3.count).to_f / selected_issues.count * 100
+        },
+        others: {
+          q1: others_q1,
+          q3: others_q3
+        }
+      }
     }
   end
 

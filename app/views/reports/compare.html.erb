@@ -29,13 +29,20 @@
     var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json')
         + '&developer=' + $('#developer').val();
 
-    var jsonData = $.ajax({
+    var jsonData = JSON.parse($.ajax({
       url: url,
       dataType: "json",
       async: false
-    }).responseText;
+    }).responseText);
 
-    var data = new google.visualization.DataTable(JSON.parse(jsonData)['chartData']);
+    var data = new google.visualization.DataTable(jsonData['chartData']);
+
+    $('#dev-q1').text(jsonData.quartiles.dev.q1);
+    $('#dev-q3').text(jsonData.quartiles.dev.q3);
+    $('#dev-lt-q3').text(jsonData.quartiles.dev.percentLtQ3);
+    $('#dev-gt-q3').text(jsonData.quartiles.dev.percentGtQ3);
+    $('#others-q1').text(jsonData.quartiles.others.q1);
+    $('#others-q3').text(jsonData.quartiles.others.q3);
 
     var options = {
       chartArea: {
@@ -84,5 +91,34 @@
   });
 
 </script>
+
+<table>
+  <tr>
+    <th></th>
+    <th>Dev</th>
+    <th>Others</th>
+  </tr>
+  <tr>
+    <th>Q1</th>
+    <td id="dev-q1"></td>
+    <td id="others-q1"></td>
+  </tr>
+  <tr>
+    <th>Q3</th>
+    <td id="dev-q3"></td>
+    <td id="others-q3"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>% in IQR</th>
+    <td id="dev-lt-q3"></td>
+  </tr>
+  <tr>
+    <th>% > Q3</th>
+    <td id="dev-gt-q3"></td>
+  </tr>
+</table>
 
 <div id="selected_content"></div>
