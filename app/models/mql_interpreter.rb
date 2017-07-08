@@ -29,7 +29,9 @@ class MqlInterpreter
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison }
+    rule(:expression) { filter | comparison | not_expression }
+
+    rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
     rule(:primary) { lparen >> or_operation >> rparen | expression }
 
@@ -61,6 +63,9 @@ class MqlInterpreter
     rule(
       :and => { :left => subtree(:left), :right => subtree(:right) }
     ) { AndExpr.new(left, right) }
+    rule(
+      :not => subtree(:expression)
+    ) { NotExpr.new(expression) }
     # ... other rules
   end
 
@@ -98,6 +103,13 @@ class MqlInterpreter
       lhs_issues = lhs.eval(issues)
       rhs_issues = rhs.eval(issues)
       lhs_issues.select{ |issue| rhs_issues.include?(issue) }
+    end
+  end
+
+  NotExpr = Struct.new(:expr) do
+    def eval(issues)
+      exclude_issues = expr.eval(issues)
+      issues.select{ |issue| !exclude_issues.include?(issue) }
     end
   end
 

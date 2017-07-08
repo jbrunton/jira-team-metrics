@@ -62,5 +62,21 @@ RSpec.describe MqlInterpreter do
         expect(issues).to eq([issue_b, issue_c])
       end
     end
+
+    context "when given a negated expression" do
+      let(:issue_a) { create(:issue, fields: {'MyField' => 'A'}) }
+      let(:issue_b) { create(:issue, fields: {'MyField' => 'B'}) }
+      let(:issue_c) { create(:issue, fields: {'MyField' => 'C'}) }
+
+      it "negates the expression" do
+        issues = MqlInterpreter.new([issue_a, issue_b, issue_c]).eval("not MyField = 'A'")
+        expect(issues).to eq([issue_b, issue_c])
+      end
+
+      it "negates compound expressions" do
+        issues = MqlInterpreter.new([issue_a, issue_b, issue_c]).eval("not (MyField = 'A' or MyField = 'B')")
+        expect(issues).to eq([issue_c])
+      end
+    end
   end
 end
