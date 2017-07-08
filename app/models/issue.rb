@@ -37,4 +37,8 @@ class Issue < ApplicationRecord
     completed = completed_time(end_state)
     completed && started ? (completed - started) / (60 * 60 * 24) : nil
   end
+
+  def domain_url
+    "#{board.domain.url}/browse/#{key}"
+  end
 end
