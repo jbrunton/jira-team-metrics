@@ -52,17 +52,14 @@ class SyncBoardJob < ApplicationJob
 
   def create_filters(board, credentials)
     board.config_filters.each do |filter|
-      issues = fetch_issues_for_query(board, filter['query'], credentials, 'syncing ' + filter['name'] + ' filter')
-      issue_keys = issues.map { |issue| issue['key'] }.join(' ')
-      board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :query_filter)
+      if filter['query']
+        issues = fetch_issues_for_query(board, filter['query'], credentials, 'syncing ' + filter['name'] + ' filter')
+        issue_keys = issues.map { |issue| issue['key'] }.join(' ')
+        board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :query_filter)
+      else
+        issue_keys = filter['issues'].map{ |issue| issue['key'] }.join(' ')
+        board.filters.create(name: filter['name'], issue_keys: issue_keys, filter_type: :config_filter)
+      end
     end
-
-    issues_by_type = board.issues.group_by{ |issue| issue.issue_type }
-    issues_by_type.keys.each do |issue_type|
-      issue_keys = issues_by_type[issue_type].map{ |issue| issue.key }.join(' ')
-      board.filters.create(name: issue_type, filter_type: :issue_type_filter, issue_keys: issue_keys)
-    end
-
-    board.filters.create(name: 'Excluded Issues', filter_type: :config_filter)
   end
 end
