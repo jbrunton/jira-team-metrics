@@ -1,6 +1,7 @@
 class Issue < ApplicationRecord
-  serialize :transitions
   serialize :labels
+  serialize :transitions
+  serialize :fields
   belongs_to :board
 
   def short_summary

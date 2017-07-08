@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "name"
     t.string "url"
     t.string "statuses"
+    t.string "fields"
     t.text "config"
     t.datetime "last_synced"
     t.datetime "created_at", null: false
@@ -51,6 +52,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "summary"
     t.string "labels"
     t.string "transitions"
+    t.string "fields"
     t.integer "board_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
