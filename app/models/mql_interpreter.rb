@@ -12,17 +12,38 @@ class MqlInterpreter
   end
 
   class MqlParser < Parslet::Parser
-    rule(:identifier) { match('[a-zA-Z]').repeat(1) }
-    rule(:operator)   { match('[=]') }
-    rule(:filter)     { str('filter') >> operator.as(:op) >> string.as(:filter) }
+    rule(:space)      { match('\s').repeat(1) }
+    rule(:space?)     { space.maybe }
+
+    rule(:and_operator) { str("and") >> space? }
+    rule(:or_operator)  { str("or")  >> space? }
+    rule(:lparen) { str("(") >> space? }
+    rule(:rparen) { str(")") >> space? }
+
+    rule(:identifier) { match('[a-zA-Z]').repeat(1).as(:identifier) >> space? }
+    rule(:operator)   { (str('=') | str('and')).as(:op) >> space? }
+    rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:comparison) { identifier.as(:field) >> operator.as(:op) >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
-        str("'")
+        str("'") >> space?
     end
     rule(:expression) { filter | comparison }
-    root(:expression)
+
+    rule(:primary) { lparen >> or_operation >> rparen | expression }
+
+    rule(:and_operation) {
+      (primary.as(:left) >> and_operator >>
+        and_operation.as(:right)).as(:and) |
+        primary }
+
+    rule(:or_operation)  {
+      (and_operation.as(:left) >> or_operator >>
+        or_operation.as(:right)).as(:or) |
+        and_operation }
+
+    root(:or_operation)
   end
 
   class MqlTransform < Parslet::Transform
@@ -34,6 +55,12 @@ class MqlInterpreter
       :field => simple(:field),
       :op => '=',
       :string => subtree(:string)) { Comparison.new(field, string) }
+    rule(
+      :or => { :left => subtree(:left), :right => subtree(:right) }
+    ) { OrExpr.new(left, right) }
+    rule(
+      :and => { :left => subtree(:left), :right => subtree(:right) }
+    ) { AndExpr.new(left, right) }
     # ... other rules
   end
 
@@ -55,6 +82,22 @@ class MqlInterpreter
       issues.select do |issue|
         filter.include?(issue)
       end
+    end
+  end
+
+  OrExpr = Struct.new(:lhs, :rhs) do
+    def eval(issues)
+      lhs_issues = lhs.eval(issues)
+      rhs_issues = rhs.eval(issues)
+      lhs_issues + rhs_issues
+    end
+  end
+
+  AndExpr = Struct.new(:lhs, :rhs) do
+    def eval(issues)
+      lhs_issues = lhs.eval(issues)
+      rhs_issues = rhs.eval(issues)
+      lhs_issues.select{ |issue| rhs_issues.include?(issue) }
     end
   end
 
