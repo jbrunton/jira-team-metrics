@@ -1,7 +1,14 @@
-class Parser
+class MqlInterpreter
 
-  def parse(input)
-    MqlParser.new.parse(input)
+  def initialize(board)
+    @board = board
+  end
+
+  def eval(query)
+    parser = MqlParser.new
+    transform = MqlTransform.new
+    ast = transform.apply(parser.parse(query))
+    ast.eval(@board.issues)
   end
 
   class MqlParser < Parslet::Parser
