@@ -4,14 +4,12 @@ class Filter < ApplicationRecord
 
   def include?(issue)
     @issue_keys ||= begin
-      (issue_keys || '').split
+      if config_filter?
+        board.exclusions
+      else
+        (issue_keys || '').split
+      end
     end
     @issue_keys.include?(issue.key)
-  end
-
-  def exclusions
-    exclusions_string = issue_keys
-    exclusions_string ||= ''
-    exclusions_string.split
   end
 end
