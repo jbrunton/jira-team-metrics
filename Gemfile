@@ -39,6 +39,7 @@ gem 'thor'
 gem 'ruby-progressbar'
 gem 'descriptive_statistics'
 gem 'draper'
+gem 'parslet'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
