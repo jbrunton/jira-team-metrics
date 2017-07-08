@@ -1,6 +1,9 @@
 <li>
   <div class="collapsible-header<%= ' active' if expand %>">
-    <%= issue.key %> - <%= issue.short_summary %>
+    <span><%= issue.key %> - <%= issue.short_summary %></span>
+    <a id="launch-<%= issue.key %>" class="right" href="<%= issue.domain_url %>" target="_blank">
+      <i class="material-icons" style="margin: 0;">launch</i>
+    </a>
   </div>
   <div class="collapsible-body">
     <table class="issue-details">
@@ -15,3 +18,8 @@
     </table>
   </div>
 </li>
+<script>
+  $('#launch-<%= issue.key %>').on('click.collapse', function(e) {
+    e.stopPropagation();
+  });
+</script>
