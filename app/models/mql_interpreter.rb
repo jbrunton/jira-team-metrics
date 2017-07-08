@@ -12,20 +12,24 @@ class MqlInterpreter
   end
 
   class MqlParser < Parslet::Parser
-    rule(:field) { match('[a-zA-Z]').repeat(1) }
+    rule(:identifier) { match('[a-zA-Z]').repeat(1) }
     rule(:operator)   { match('[=]') }
-    rule(:string)     { match("'a'") }
-    rule(:comparison) { field.as(:field) >> operator.as(:op) >> string.as(:string) }
+    rule(:filter)     { str('filter') >> operator.as(:op) >> string.as(:filter) }
+    rule(:comparison) { identifier.as(:field) >> operator.as(:op) >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'")
     end
-    root(:comparison)
+    rule(:expression) { filter | comparison }
+    root(:expression)
   end
 
   class MqlTransform < Parslet::Transform
     rule(:string => subtree(:string)) { StringValue.new(string) }
+    rule(
+      :filter => subtree(:filter),
+      :op => '=') { FilterExpr.new(filter) }
     rule(
       :field => simple(:field),
       :op => '=',
@@ -42,6 +46,15 @@ class MqlInterpreter
   StringValue = Struct.new(:value) do
     def eval
       value.to_s
+    end
+  end
+
+  FilterExpr = Struct.new(:filter_name) do
+    def eval(issues)
+      filter = Filter.find_by(name: filter_name[:value].to_s)
+      issues.select do |issue|
+        filter.include?(issue)
+      end
     end
   end
 
