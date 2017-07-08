@@ -11,6 +11,11 @@
       </div>
     </div>
     <div class="row">
+      <div class="col s6">
+        <textarea name="query"></textarea>
+      </div>
+    </div>
+    <div class="row">
       <div class="col s3">
         <p>Include:</p>
         <% @board.filters.select{ |filter| !filter.issue_type_filter? }.each do |filter| %>
