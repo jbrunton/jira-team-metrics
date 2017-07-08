@@ -20,10 +20,10 @@ class MqlInterpreter
     rule(:lparen) { str("(") >> space? }
     rule(:rparen) { str(")") >> space? }
 
-    rule(:identifier) { match('[a-zA-Z]').repeat(1).as(:identifier) >> space? }
+    rule(:identifier) { match('[a-zA-Z_]').repeat(1).as(:identifier) >> space? }
     rule(:operator)   { (str('=') | str('and')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
-    rule(:comparison) { identifier.as(:field) >> operator.as(:op) >> string.as(:string) }
+    rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
@@ -52,7 +52,7 @@ class MqlInterpreter
       :filter => subtree(:filter),
       :op => '=') { FilterExpr.new(filter) }
     rule(
-      :field => simple(:field),
+      :field => subtree(:field),
       :op => '=',
       :string => subtree(:string)) { Comparison.new(field, string) }
     rule(
@@ -104,8 +104,11 @@ class MqlInterpreter
   Comparison = Struct.new(:field, :value) do
     def eval(issues)
       issues.select do |issue|
-        if issue.respond_to?(field.to_s)
-          issue.send(field.to_s) == value[:value].to_s
+        field_name = field[:identifier].to_s
+        if ['key', 'issue_type', 'summary'].include?(field_name)
+          issue.send(field_name) == value[:value].to_s
+        elsif !issue.fields[field_name].nil?
+          issue.fields[field_name] == value[:value].to_s
         else
           false
         end
