@@ -15,24 +15,12 @@
   google.charts.load('current', {'packages':['corechart']});
 
   $(function() {
-    $('form input').change(drawChart);
-    $('form textarea').change(drawChart);
+    $('form input').change(updateChart);
+    $('form textarea').change(updateChart);
   });
 
-  function drawChart() {
-    $('#selected_content').empty();
-
-    var chart = $('#chart_div');
-    chart.css('height', chart.width() * 0.5);
-
-    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/control_chart.json');
-
-    var jsonData = $.ajax({
-      url: url,
-      dataType: "json",
-      async: false
-    }).responseText;
-
+  function drawChart(jsonData) {
+    $('#chart_div').animate({ opacity: 1 })
     var data = new google.visualization.DataTable(jsonData);
 
     var options = {
@@ -78,7 +66,8 @@
       if (selection.column == 1) {
         // completed issues column
         var key = data.getValue(selection.row, 2);
-        $('#selected_content').load( '<%= board_path(@domain, @board) %>/issues/' + key + '?fragment=true', function() {
+        $('#selected_content').animate({ opacity: 0 }).load( '<%= board_path(@domain, @board) %>/issues/' + key + '?fragment=true', function() {
+          $(this).animate({ opacity: 1 });
           $('.collapsible').collapsible();
         });
       } else if (selection.column == 3) {
@@ -86,7 +75,8 @@
         var date = data.getValue(selection.row, 0);
         var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         var url = buildComponentUrl('<%= board_components_path(@domain, @board) %>/wip/' + dateStr);
-        $('#selected_content').load(url, function() {
+        $('#selected_content').animate({ opacity: 0 }).load(url, function() {
+          $(this).animate({ opacity: 1 })
           $('.collapsible').collapsible();
         });
       } else {
@@ -95,8 +85,20 @@
     }
   }
 
+  function updateChart() {
+    $('#chart_div').animate({ opacity: 0 })
+    $('#selected_content').empty();
+
+    var chart = $('#chart_div');
+    chart.css('height', chart.width() * 0.5);
+
+    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/control_chart.json');
+
+    $.get(url, drawChart);
+  }
+
   $(function() {
-    google.charts.setOnLoadCallback(drawChart);
+    google.charts.setOnLoadCallback(updateChart);
   });
 
 </script>
