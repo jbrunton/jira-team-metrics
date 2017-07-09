@@ -139,11 +139,11 @@ private
 
   def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
     selected_rows = selected_issues.map do |issue|
-      rank = sorted_issues.index(issue) + 1
+      rank = sorted_issues.count - sorted_issues.index(issue)
       {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
     end
     other_rows = other_issues.map do |issue|
-      rank = sorted_issues.index(issue) + 1
+      rank = sorted_issues.count - sorted_issues.index(issue)
       {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
     end
     {
