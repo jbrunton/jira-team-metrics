@@ -85,6 +85,7 @@ class ApiController < ApplicationController
     other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
 
     chart_data = data_for_compare_chart(sorted_issues, selected_issues, other_issues)
+    histogram_data = data_for_compare_histogram(sorted_issues, selected_issues)
 
     others_q1 = other_issues.cycle_times.percentile(25)
     others_q3 = other_issues.cycle_times.percentile(75)
@@ -93,6 +94,7 @@ class ApiController < ApplicationController
 
     render json: {
       chartData: chart_data,
+      histogramData: histogram_data,
       quartiles: {
         dev: {
           q1: selected_issues.cycle_times.percentile(25),
@@ -139,11 +141,11 @@ private
 
   def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
     selected_rows = selected_issues.map do |issue|
-      percentile = (sorted_issues.index(issue).to_f / sorted_issues.count) * 100
+      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
       {c: [{v: percentile}, {v: issue.cycle_time}, {v: nil}]}
     end
     other_rows = other_issues.map do |issue|
-      percentile = ((sorted_issues.index(issue) + 1).to_f / sorted_issues.count) * 100
+      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
       {c: [{v: percentile}, {v: nil}, {v: issue.cycle_time}]}
     end
     {
@@ -153,6 +155,20 @@ private
         {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
       ],
       rows: selected_rows + other_rows
+    }
+  end
+
+  def data_for_compare_histogram(sorted_issues, selected_issues)
+    selected_rows = selected_issues.map do |issue|
+      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
+      {c: [{v: issue.key}, {v: percentile}]}
+    end
+    {
+      cols: [
+        {id: 'issue', type: 'string', label: 'Issue'},
+        {id: 'percentile', type: 'number', label: 'Percentile'},
+      ],
+      rows: selected_rows
     }
   end
 
