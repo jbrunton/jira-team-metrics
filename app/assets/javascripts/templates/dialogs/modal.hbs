@@ -4,7 +4,11 @@
     {{{ body }}}
   </div>
   <div class="modal-footer">
-    <a href="#!" class="modal-cancel modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-    <a href="#!" class="modal-ok modal-action modal-close waves-effect waves-green btn-flat">OK</a>
+    {{#if negativeAction}}
+      <a href="#!" class="modal-cancel modal-action modal-close waves-effect waves-green btn-flat">{{negativeAction.text}}</a>
+    {{/if}}
+    {{#if positiveAction}}
+      <a href="#!" class="modal-ok modal-action modal-close waves-effect waves-light btn">{{positiveAction.text}}</a>
+    {{/if}}
   </div>
 </div>

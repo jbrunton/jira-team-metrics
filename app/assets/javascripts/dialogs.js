@@ -1,16 +1,22 @@
 function alertModal(opts) {
-  return modal({
-    title: opts.title,
+  return modal(Object.assign({
     body: '<p>' + opts.message + '</p>',
     modalClass: 'modal',
-    template: 'alert'
-  });
+    positiveAction: {
+      text: 'OK'
+    }
+  }, opts));
 }
 
 function fixedFooterModal(opts) {
   return modal(Object.assign({
     modalClass: 'modal modal-fixed-footer',
-    template: 'modal'
+    positiveAction: {
+      text: 'OK'
+    },
+    negativeAction: {
+      text: 'Cancel'
+    }
   }, opts));
 }
 
@@ -25,7 +31,7 @@ function modal(opts) {
     context.body = opts.body;
   }
 
-  var modal = $(render('dialogs/' + opts.template, opts))
+  var modal = $(render('dialogs/modal', opts))
       .appendTo('body');
 
   if (opts.render) {

@@ -57,7 +57,10 @@
         Materialize.updateTextFields();
         $modal.find('#domain_config').trigger('autoresize');
       },
-      confirm: submitConfig
+      confirm: submitConfig,
+      positiveAction: {
+        text: 'Submit'
+      }
     });
   }
 
