@@ -95,8 +95,9 @@
   <div class="col s4">
     <div class="card">
       <div class="card-content">
-        <span class="card-title">Sync Status</span>
+        <span class="card-title">Domain Status</span>
         <p>Last synced: <%= pretty_print_date(@domain.last_synced) %></p>
+        <p>Synced boards: <%= @boards.count %> of <%= @domain.boards.count %></p>
       </div>
       <div class="card-action">
         <a href="#sync-modal">Sync</a>
