@@ -4,42 +4,6 @@
     <a href="#!" class="breadcrumb"><%= @board.name %></a>
 <% end %>
 
-<script>
-  $(function() {
-    $('.modal').modal();
-
-    $('#sync').click(function () {
-      $.post('<%= board_path(@domain, @board) %>/sync', $("#sync-form").serialize())
-          .done(function () {
-            $('#sync-modal').modal('close');
-          })
-          .fail(function (data) {
-            if (data.status == 400) {
-              // validation error
-              $('#sync-modal-content').html(data.responseText);
-            } else {
-              alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
-            }
-          });
-    });
-
-    $('#update-config').click(function () {
-      $.post('<%= board_path(@domain, @board) %>', $("#config-form").serialize())
-          .done(function () {
-            location.reload();
-          })
-          .fail(function (data) {
-            if (data.status == 400) {
-              // validation error
-              $('#config-modal-content').html(data.responseText);
-            } else {
-              alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
-            }
-          });
-    });
-  });
-</script>
-
 <h3><%= @board.name %></h3>
 
 <%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncBoardChannel', model_id: @board.jira_id } %>
@@ -56,29 +20,6 @@
     </ul>
   </div>
   <div class="col s4">
-    <div class="card">
-      <div class="card-content">
-        <span class="card-title">Board Status</span>
-        <p>Last synced: <%= pretty_print_date(@board.last_synced) %></p>
-        <p>Synced from: <%= pretty_print_date(@board.synced_from) %></p>
-      </div>
-      <div class="card-action">
-        <a href="#sync-modal">Sync</a>
-        <a href="#config-modal">Config</a>
-      </div>
-    </div>
+    <%= render partial: 'shared/status_card', locals: { object: @board } %>
   </div>
 </div>
-
-<div id="config-modal" class="modal bottom-sheet">
-  <div id="config-content" class="modal-content">
-    <%= render partial: 'config_form' %>
-  </div>
-  <div class="modal-footer">
-    <a id="update-config" href="#" class="waves-effect waves-light btn">
-      Update
-    </a>
-  </div>
-</div>
-
-<%= render partial: 'shared/sync_modal' %>

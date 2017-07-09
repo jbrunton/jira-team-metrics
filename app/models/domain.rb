@@ -9,4 +9,8 @@ class Domain < ApplicationRecord
   def config_hash
     YAML.load(config || '') || {}
   end
+
+  def synced_boards
+    boards.where.not(boards: {last_synced: nil})
+  end
 end
