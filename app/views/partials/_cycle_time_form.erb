@@ -11,25 +11,38 @@
       </div>
     </div>
     <div class="row">
+      <div class="input-field col s6">
+        <textarea class="mono materialize-textarea" id="query" name="query"><%= @board.config_hash['default_query'] %></textarea>
+        <label for="query">Query</label>
+      </div>
       <div class="col s6">
-        <textarea name="query"><%= @board.config_hash['default_query'] %></textarea>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s3">
-        <p>Filters:</p>
-        <ul>
-        <% @board.filters.each do |filter| %>
-          <li><%= filter.name %></li>
-        <% end %>
-        </ul>
-      </div>
-      <div class="col s3">
-        <p>Issue Types:</p>
-        <ul>
-        <% @board.issue_types.each do |issue_type| %>
-          <li><%= issue_type%></li>
-        <% end %>
+        <ul class="collapsible popout" data-collapsible="expandable">
+          <li>
+            <div class="collapsible-header">
+              <i class="material-icons">info_outline</i>
+              Help with query language
+            </div>
+            <div class="collapsible-body">
+              <p>Select by field:
+                <br><span class="mono">key = 'ISSUE-101'</span>
+                <br><span class="mono">issue_type = 'Story'</span>
+              </p>
+              <p>Applying filters:
+                <br><span class="mono">filter = 'MyFilter'</span>
+              </p>
+              <p>Set operations:
+                <br><span class="mono">not filter = 'MyFilter'</span>
+                <br><span class="mono">key = 'ISSUE-101' or key = 'ISSUE-102'</span>
+                <br><span class="mono">not (filter = 'MyFilter' or issue_type = 'Bug')</span>
+              </p>
+              <p>Filters for this board:
+                <br><span class="mono"><%= @board.filters.map{ |filter| filter.name }.join(', ') %></span>
+              </p>
+              <p>Issue types for this board:
+                <br><span class="mono"><%= @board.issue_types.join(', ') %></span>
+              </p>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
