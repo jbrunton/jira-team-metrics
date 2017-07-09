@@ -30,57 +30,6 @@
       }
     }
   });
-
-  function showSyncModal(bodyHtml) {
-    modal({
-      title: 'Sync from JIRA',
-      body: bodyHtml ? bodyHtml : $('#sync-form-template').html(),
-      confirm: sync,
-      positiveAction: {
-        text: 'Sync'
-      }
-    });
-  }
-
-  function sync() {
-    $.post('<%= domain_path(@domain) %>/sync', $( "#sync-form" ).serialize())
-        .fail(function(data) {
-          if (data.status == 400) {
-            // validation error
-            showSyncModal(data.responseText);
-          } else {
-            alertModal({
-              message: 'Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.'
-            });
-          }
-        });
-  }
-
-  function showConfigModal(bodyHtml) {
-    fixedFooterModal({
-      title: 'Update Config',
-      body: bodyHtml ? bodyHtml : $('#config-form-template').html(),
-      confirm: submitConfig,
-      positiveAction: {
-        text: 'Submit'
-      }
-    });
-  }
-
-  function submitConfig() {
-    $.post('<%= domain_path(@domain) %>', $("#config-form").serialize())
-        .done(function () {
-          location.reload();
-        })
-        .fail(function (data) {
-          if (data.status == 400) {
-            // validation error
-            $('#config-modal-content').html(data.responseText);
-          } else {
-            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
-          }
-        });
-  }
 </script>
 
 <h3>
@@ -111,24 +60,6 @@
       </div>
   </div>
   <div class="col s4">
-    <div class="card">
-      <div class="card-content">
-        <span class="card-title">Domain Status</span>
-        <p>Last synced: <%= pretty_print_date(@domain.last_synced) %></p>
-        <p>Synced boards: <%= @boards.count %> of <%= @domain.boards.count %></p>
-      </div>
-      <div class="card-action">
-        <a href="#" onclick="showSyncModal();">Sync</a>
-        <a href="#" onclick="showConfigModal();">Config</a>
-      </div>
-    </div>
+    <%= render partial: 'shared/status_card', locals: { object: @domain } %>
   </div>
 </div>
-
-<script id="sync-form-template" type="text/x-handlebars-template">
-  <%= render partial: 'shared/sync_form' %>
-</script>
-
-<script id="config-form-template" type="text/x-handlebars-template">
-  <%= render partial: 'config_form' %>
-</script>

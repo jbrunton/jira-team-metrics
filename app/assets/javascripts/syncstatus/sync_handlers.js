@@ -1,7 +1,7 @@
 function statusReceived(data) {
   if (data.in_progress) {
     $('#sync-indicator').show();
-    if (data.progress === 'number') {
+    if (data.progress) {
       $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
     } else {
       $('.progress #indicator').addClass('indeterminate').removeClass('determinate').css('width', '');
