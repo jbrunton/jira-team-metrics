@@ -41,30 +41,6 @@
     });
   });
 
-  function destroy(domainId) {
-//    var target = $(this).attr('href');
-//    $('#confirm-destroy').click(function() {
-//      $.ajax({ url: target, type: 'DELETE' })
-//          .done(function(data) {
-//            window.location = data.target;
-//          })
-//          .fail(function() {
-//            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
-//          });
-//    });
-//    $('#destroy').modal('open');
-    return false;
-  }
-
-  App.cable.subscriptions.create("SyncChannel",
-      {
-        received: function (data) {
-          var row = $('#domain-row-' + data.domain);
-          row.find('.sync-spinner').hide();
-          row.find('.sync-button').show();
-        }
-      });
-
 </script>
 
 <h3>Domains</h3>
@@ -85,23 +61,6 @@
           <a href="<%= domain_path(domain) %>" class="waves-effect waves-light btn">
             View Details
           </a>
-
-          <a href="<%= domain_path(domain) %>/sync" class="sync-button waves-effect waves-light btn">
-            Process
-          </a>
-          <div class="sync-spinner preloader-wrapper small active" style="vertical-align: middle; display: none;">
-            <div class="spinner-layer spinner-green-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
-            </div>
-          </div>
 
           <a class="waves-effect waves-light btn red lighten-2" href="#destroy-modal-<%= domain.id %>">
             <i class="material-icons left">delete</i>
@@ -131,7 +90,7 @@
 </div>
 
 <!-- Modal Structure -->
-<div id="add-domain-modal" class="modal bottom-sheet">
+<div id="add-domain-modal" class="modal">
   <div id='form-content' class="modal-content">
     <%= render 'form' %>
   </div>
