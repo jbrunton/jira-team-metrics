@@ -139,16 +139,16 @@ private
 
   def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
     selected_rows = selected_issues.map do |issue|
-      rank = sorted_issues.count - sorted_issues.index(issue)
-      {c: [{v: rank}, {v: issue.cycle_time}, {v: nil}]}
+      percentile = (sorted_issues.index(issue).to_f / sorted_issues.count) * 100
+      {c: [{v: percentile}, {v: issue.cycle_time}, {v: nil}]}
     end
     other_rows = other_issues.map do |issue|
-      rank = sorted_issues.count - sorted_issues.index(issue)
-      {c: [{v: rank}, {v: nil}, {v: issue.cycle_time}]}
+      percentile = ((sorted_issues.index(issue) + 1).to_f / sorted_issues.count) * 100
+      {c: [{v: percentile}, {v: nil}, {v: issue.cycle_time}]}
     end
     {
       cols: [
-        {id: 'rank', type: 'number', label: 'Rank'},
+        {id: 'percentile', type: 'number', label: 'Percentile'},
         {id: 'ct_selected', type: 'number', label: 'Cycle Time (Selected)'},
         {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
       ],
