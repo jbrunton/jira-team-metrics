@@ -37,7 +37,9 @@ function _modal(opts) {
   var $modal = $(render('dialogs/modal', opts))
       .appendTo('body');
 
-  Materialize.updateTextFields();
+  if (Materialize) {
+    Materialize.updateTextFields();
+  }
   $modal.find('.materialize-textarea').trigger('autoresize');
 
   $modal.find('.modal-ok').click(function() {

@@ -2,7 +2,7 @@ describe('alertModal', function() {
   var title = 'Some title',
       message = 'Some message';
 
-  it("shows a modal", function() {
+  xit("shows a modal", function() {
     var modal = alertModal({
       title: title,
       message: message
@@ -13,7 +13,7 @@ describe('alertModal', function() {
     expect(modal.find('.modal-content p')).toHaveText(message);
   });
 
-  it("is dismissable", function(done) {
+  xit("is dismissable", function(done) {
     var modal = alertModal({
       title: title,
       message: message,
