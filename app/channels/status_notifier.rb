@@ -17,7 +17,7 @@ class StatusNotifier
     )
   end
 
-  def notify_error(error, error_code)
+  def notify_error(error, error_code = nil)
     message = {
       error: error,
       in_progress: false

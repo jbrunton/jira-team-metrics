@@ -1,5 +1,6 @@
 function alertModal(opts) {
-  return modal(Object.assign({
+  return _modal(Object.assign({
+    title: '',
     body: '<p>' + opts.message + '</p>',
     modalClass: 'modal',
     positiveAction: {
@@ -9,7 +10,7 @@ function alertModal(opts) {
 }
 
 function fixedFooterModal(opts) {
-  return modal(Object.assign({
+  return _modal(Object.assign({
     modalClass: 'modal modal-fixed-footer',
     positiveAction: {
       text: 'OK'
@@ -21,49 +22,44 @@ function fixedFooterModal(opts) {
 }
 
 function modal(opts) {
-  var context = {
-    title: opts.title,
-    modalClass: opts.modalClass
-  };
-  if (opts.bodyHtml) {
-    context.body = '<div id="modal-body"></div>';
-  } else {
-    context.body = opts.body;
-  }
+  return _modal(Object.assign({
+    modalClass: 'modal',
+    positiveAction: {
+      text: 'OK'
+    },
+    negativeAction: {
+      text: 'Cancel'
+    }
+  }, opts));
+}
 
-  var modal = $(render('dialogs/modal', opts))
+function _modal(opts) {
+  var $modal = $(render('dialogs/modal', opts))
       .appendTo('body');
 
-  if (opts.render) {
-    opts.render(modal);
-  }
+  Materialize.updateTextFields();
+  $modal.find('.materialize-textarea').trigger('autoresize');
 
-  if (opts.bodyHtml) {
-    modal.find('#modal-body').html(opts.bodyHtml);
-  }
-
-  modal.find('.modal-ok').click(function() {
+  $modal.find('.modal-ok').click(function() {
     if (opts.confirm) {
-      opts.confirm();
+      opts.confirm($modal);
     }
   });
 
-  modal.find('.modal-cancel').click(function() {
+  $modal.find('.modal-cancel').click(function() {
     if (opts.cancel) {
-      opts.cancel();
+      opts.cancel($modal);
     }
   });
 
-  modal.modal({
+  $modal.modal('open', {
     complete: function() {
-      modal.remove();
       if (opts.complete) {
-        opts.complete();
+        opts.complete($modal);
       }
+      $modal.remove();
     }
   });
 
-  modal.modal('open');
-
-  return modal;
+  return $modal;
 }
