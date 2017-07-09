@@ -47,22 +47,34 @@
         $('#search-results').empty();
       }
     }
-
-    $('#update-config').click(function () {
-      $.post('<%= domain_path(@domain) %>', $("#config-form").serialize())
-              .done(function () {
-                location.reload();
-              })
-              .fail(function (data) {
-                if (data.status == 400) {
-                  // validation error
-                  $('#config-modal-content').html(data.responseText);
-                } else {
-                  alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
-                }
-              });
-    });
   });
+
+  function showConfigModal() {
+    fixedFooterModal({
+      title: 'Update Config',
+      body: $('#config-form-template').html(),
+      render: function($modal) {
+        Materialize.updateTextFields();
+        $modal.find('#domain_config').trigger('autoresize');
+      },
+      confirm: submitConfig
+    });
+  }
+
+  function submitConfig() {
+    $.post('<%= domain_path(@domain) %>', $("#config-form").serialize())
+        .done(function () {
+          location.reload();
+        })
+        .fail(function (data) {
+          if (data.status == 400) {
+            // validation error
+            $('#config-modal-content').html(data.responseText);
+          } else {
+            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+          }
+        });
+  }
 </script>
 
 <h3>
@@ -101,7 +113,7 @@
       </div>
       <div class="card-action">
         <a href="#sync-modal">Sync</a>
-        <a href="#config-modal">Config</a>
+        <a href="#" onclick="showConfigModal();">Config</a>
       </div>
     </div>
   </div>
@@ -109,13 +121,6 @@
 
 <%= render partial: 'shared/sync_modal' %>
 
-<div id="config-modal" class="modal bottom-sheet">
-  <div id="config-content" class="modal-content">
-    <%= render partial: 'config_form' %>
-  </div>
-  <div class="modal-footer">
-    <a id="update-config" href="#" class="waves-effect waves-light btn">
-      Update
-    </a>
-  </div>
-</div>
+<script id="config-form-template" type="text/x-handlebars-template">
+  <%= render partial: 'config_form' %>
+</script>
