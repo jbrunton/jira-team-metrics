@@ -80,33 +80,18 @@ class ApiController < ApplicationController
   end
 
   def compare
-    sorted_issues = @board.completed_issues.sort_by { |issue| issue.cycle_time }
+    sorted_issues = IssuesDecorator.new(@board.completed_issues.sort_by { |issue| issue.cycle_time })
     selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues).eval(params[:selection_query]))
     other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
 
     chart_data = data_for_compare_chart(sorted_issues, selected_issues, other_issues)
     histogram_data = data_for_compare_histogram(sorted_issues, selected_issues)
-
-    others_q1 = other_issues.cycle_times.percentile(25)
-    others_q3 = other_issues.cycle_times.percentile(75)
-
-    selected_lt_q3 = selected_issues.select{ |issue| issue.cycle_time <= others_q3 }
+    quartiles_data = data_for_compare_quartiles(sorted_issues, selected_issues)
 
     render json: {
       chartData: chart_data,
       histogramData: histogram_data,
-      quartiles: {
-        dev: {
-          q1: selected_issues.cycle_times.percentile(25),
-          q3: selected_issues.cycle_times.percentile(75),
-          percentLtQ3: selected_lt_q3.count.to_f / selected_issues.count * 100,
-          percentGtQ3: (selected_issues.count - selected_lt_q3.count).to_f / selected_issues.count * 100
-        },
-        others: {
-          q1: others_q1,
-          q3: others_q3
-        }
-      }
+      quartiles: quartiles_data
     }
   end
 
@@ -169,6 +154,36 @@ private
         {id: 'percentile', type: 'number', label: 'Percentile'},
       ],
       rows: selected_rows
+    }
+  end
+
+  def data_for_compare_quartiles(sorted_issues, selected_issues)
+    q1 = sorted_issues.cycle_times.percentile(25)
+    q2 = sorted_issues.cycle_times.percentile(50)
+    q3 = sorted_issues.cycle_times.percentile(75)
+
+    total_q1 = selected_issues.select{ |issue| issue.cycle_time <= q1 }.count
+    total_q2 = selected_issues.select{ |issue| q1 < issue.cycle_time && issue.cycle_time <= q2 }.count
+    total_q3 = selected_issues.select{ |issue| q2 < issue.cycle_time && issue.cycle_time <= q3 }.count
+    total_q4 = selected_issues.select{ |issue| q3 < issue.cycle_time }.count
+
+    {
+      q1: {
+        total: total_q1,
+        percent: total_q1.to_f / selected_issues.count * 100
+      },
+      q2: {
+        total: total_q2,
+        percent: total_q2.to_f / selected_issues.count * 100
+      },
+      q3: {
+        total: total_q3,
+        percent: total_q3.to_f / selected_issues.count * 100
+      },
+      q4: {
+        total: total_q4,
+        percent: total_q4.to_f / selected_issues.count * 100
+      }
     }
   end
 

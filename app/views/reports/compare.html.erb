@@ -12,36 +12,37 @@
 <div id="chart_div"></div>
 
 <div class="row">
-  <div class="col s6">
+  <div class="col s8">
     <div id="histogram_div"></div>
   </div>
-  <div class="col s6">
-    <table>
+  <div class="col s4">
+    <table class="">
+      <thead>
+        <tr>
+          <th>Quartile</th>
+          <th>Total</th>
+          <th>%</th>
+        </tr>
+      </thead>
       <tr>
-        <th></th>
-        <th>Dev</th>
-        <th>Others</th>
+        <td>Q1</td>
+        <td id="q1-total"></td>
+        <td id="q1-percent"></td>
       </tr>
       <tr>
-        <th>Q1</th>
-        <td id="dev-q1"></td>
-        <td id="others-q1"></td>
+        <td>Q2</td>
+        <td id="q2-total"></td>
+        <td id="q2-percent"></td>
       </tr>
       <tr>
-        <th>Q3</th>
-        <td id="dev-q3"></td>
-        <td id="others-q3"></td>
-      </tr>
-    </table>
-
-    <table>
-      <tr>
-        <th>% in IQR</th>
-        <td id="dev-lt-q3"></td>
+        <td>Q3</td>
+        <td id="q3-total"></td>
+        <td id="q3-percent"></td>
       </tr>
       <tr>
-        <th>% > Q3</th>
-        <td id="dev-gt-q3"></td>
+        <td>Q4</td>
+        <td id="q4-total"></td>
+        <td id="q4-percent"></td>
       </tr>
     </table>
   </div>
@@ -76,12 +77,10 @@
     $('#histogram_div').animate({ opacity: 1 })
     var data = new google.visualization.DataTable(jsonData.chartData);
 
-    $('#dev-q1').text(jsonData.quartiles.dev.q1);
-    $('#dev-q3').text(jsonData.quartiles.dev.q3);
-    $('#dev-lt-q3').text(jsonData.quartiles.dev.percentLtQ3);
-    $('#dev-gt-q3').text(jsonData.quartiles.dev.percentGtQ3);
-    $('#others-q1').text(jsonData.quartiles.others.q1);
-    $('#others-q3').text(jsonData.quartiles.others.q3);
+    ['q1', 'q2', 'q3', 'q4'].map(function(quartile) {
+      $('#' + quartile + '-total').text(jsonData.quartiles[quartile].total);
+      $('#' + quartile + '-percent').text(jsonData.quartiles[quartile].percent);
+    });
 
     var options = {
       chartArea: {
