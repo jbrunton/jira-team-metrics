@@ -207,6 +207,10 @@ class BoardDecorator < Draper::Decorator
       @select_issues.count
     end
 
+    def total_time
+      @select_issues.cycle_times.reduce(:+)
+    end
+
     def issue_type_label
       "#{issue_type} (#{count})"
     end

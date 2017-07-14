@@ -8,7 +8,6 @@
 <h3>Issues By Type</h3>
 
 <script>
-  google.charts.load('current', {'packages':['corechart']});
 
   function drawChart() {
     var url = '<%= board_api_path(@domain, @board) %>/count_summary.json';
@@ -36,3 +35,12 @@
 </script>
 
 <div id="count_summary_chart"></div>
+
+<div class="row">
+  <div class="col s6 card">
+    <%= render partial: 'charts/issue_count_summary' %>
+  </div>
+  <div class="col s6 card">
+    <%= render partial: 'charts/issue_effort_summary' %>
+  </div>
+</div>

@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module ApplicationHelper
   include FormattingHelper
 
@@ -100,5 +102,9 @@ module ApplicationHelper
     else
       field_value
     end
+  end
+
+  def generate_id
+    SecureRandom.urlsafe_base64(10)
   end
 end

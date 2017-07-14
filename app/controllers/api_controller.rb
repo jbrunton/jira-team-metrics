@@ -16,6 +16,16 @@ class ApiController < ApplicationController
     render json: builder.build
   end
 
+  def effort_summary
+    summary_table = @board.summarize
+
+    builder = DataTableBuilder.new
+      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
+
+    render json: builder.build
+  end
+
   def cycle_time_summary
     series = (params[:series] || '').split(',')
     summary_table = @board.summarize

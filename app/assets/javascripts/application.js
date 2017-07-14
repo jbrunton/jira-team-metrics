@@ -22,3 +22,5 @@ $.ajaxSetup({
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   }
 });
+
+google.charts.load('current', {'packages':['corechart']});
