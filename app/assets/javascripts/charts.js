@@ -1,6 +1,7 @@
-function piechart(url, chartId) {
+function piechart(chartUrl, chartId) {
   (function() {
     function updateChart() {
+      var url = buildComponentUrl(chartUrl);
       $.get(url, drawChart);
     }
 
@@ -22,6 +23,8 @@ function piechart(url, chartId) {
 
     $(function () {
       google.charts.setOnLoadCallback(updateChart);
+      $('#ct-states input').change(updateChart);
+      $('#ct-states textarea').change(updateChart);
     });
   })();
 }
