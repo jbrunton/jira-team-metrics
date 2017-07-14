@@ -1,6 +1,7 @@
 function piechart(chartUrl, chartId) {
   (function() {
     function updateChart() {
+      $('#' + chartId).animate({ opacity: 0 })
       var url = buildComponentUrl(chartUrl);
       $.get(url, drawChart);
     }
@@ -19,6 +20,7 @@ function piechart(chartUrl, chartId) {
 
       var chart = new google.visualization.PieChart(document.getElementById(chartId));
       chart.draw(data, options);
+      $('#' + chartId).animate({ opacity: 1 })
     }
 
     $(function () {
