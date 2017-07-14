@@ -16,6 +16,14 @@
         <label for="query">Query</label>
       </div>
     </div>
+    <% if defined?(subquery) && subquery %>
+      <div class="row">
+        <div class="input-field col s12">
+          <input name="selection_query" id="selection_query" type="text" class="validate" autocomplete="off">
+          <label for="selection_query">Subquery</label>
+        </div>
+      </div>
+    <% end %>
   </form>
   <div class="col s6">
     <ul class="collapsible popout" data-collapsible="expandable">
