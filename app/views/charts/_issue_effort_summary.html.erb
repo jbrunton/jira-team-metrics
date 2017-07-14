@@ -1,9 +1,12 @@
-<h4>Effort By Type</h4>
-
 <% chart_id = generate_id %>
 
 <script>
-  piechart('<%= board_api_path(@domain, @board) %>/effort_summary.json', '<%= chart_id %>');
+  piechart({
+    id: '<%= chart_id %>',
+    title: 'Effort (Days) By Type',
+    url: '<%= board_api_path(@domain, @board) %>/effort_summary.json'
+  });
 </script>
 
-<div id="<%= chart_id %>"></div>
+<div id="<%= chart_id %>">
+</div>
