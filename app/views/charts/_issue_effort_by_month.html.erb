@@ -1,0 +1,12 @@
+<% chart_id = generate_id %>
+
+<script>
+  stackedColumnChart({
+    id: '<%= chart_id %>',
+    title: 'Effort By Month',
+    url: '<%= board_api_path(@domain, @board) %>/effort_summary_by_month.json'
+  });
+</script>
+
+<div id="<%= chart_id %>">
+</div>

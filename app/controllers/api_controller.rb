@@ -37,6 +37,27 @@ class ApiController < ApplicationController
     render json: builder.build
   end
 
+  def effort_summary_by_month
+    summary_table = @board.summarize('month').to_h
+
+    builder = DataTableBuilder.new
+      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
+
+    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+      values = summary_table.values.map do |summary_rows|
+        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
+        if summary_row_for_type.nil?
+          0
+        else
+          summary_row_for_type.total_time
+        end
+      end
+      builder.number({label: issue_type}, values)
+    end
+
+    render json: builder.build
+  end
+
   def effort_summary
     summary_table = @board.summarize
 
