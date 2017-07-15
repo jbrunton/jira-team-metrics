@@ -16,6 +16,27 @@ class ApiController < ApplicationController
     render json: builder.build
   end
 
+  def count_summary_by_month
+    summary_table = @board.summarize('month').to_h
+
+    builder = DataTableBuilder.new
+      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
+
+    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+      values = summary_table.values.map do |summary_rows|
+        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
+        if summary_row_for_type.nil?
+          0
+        else
+          summary_row_for_type.count
+        end
+      end
+      builder.number({label: issue_type}, values)
+    end
+
+    render json: builder.build
+  end
+
   def effort_summary
     summary_table = @board.summarize
 
@@ -130,6 +151,14 @@ private
     builder.interval({id: 'i:p25'}, summary_table.map(&:ct_p25))
     builder.interval({id: 'i:median'}, summary_table.map(&:ct_median))
     builder.interval({id: 'i:p75'}, summary_table.map(&:ct_p75))
+
+    builder.build
+  end
+
+  def build_count_table(summary_table, series)
+    builder = DataTableBuilder.new
+      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
+      .number({label: 'Count', id: 'count'}, summary_table.map(&:count))
 
     builder.build
   end

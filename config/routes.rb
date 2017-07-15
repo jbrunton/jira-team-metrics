@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get '/reports/:domain_name/boards/:board_id/compare', to: 'reports#compare'
 
   get '/api/:domain_name/boards/:board_id/count_summary.json', to: 'api#count_summary'
+  get '/api/:domain_name/boards/:board_id/count_summary_by_month.json', to: 'api#count_summary_by_month'
   get '/api/:domain_name/boards/:board_id/effort_summary.json', to: 'api#effort_summary'
   get '/api/:domain_name/boards/:board_id/cycle_time_summary.json', to: 'api#cycle_time_summary'
   get '/api/:domain_name/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'
