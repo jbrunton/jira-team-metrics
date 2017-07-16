@@ -1,7 +1,9 @@
-function piechart(opts) {
+function defineChart(opts) {
   var chartId = opts.id;
   var chartUrl = opts.url;
-  var title = opts.title;
+  var chartOpts = opts.chartOpts;
+  var chartType = opts.chartType;
+  var relativeHeight = opts.relativeHeight || 0.7;
 
   function chartDiv() {
     return $('#' + chartId);
@@ -22,21 +24,11 @@ function piechart(opts) {
   function drawChart(jsonData) {
     var data = new google.visualization.DataTable(jsonData);
 
-    var options = {
-      title: title,
-      chartArea: {
-        width: '70%'
-      },
-      legend: {
-        alignment: 'center'
-      }
-    };
-
     $chartDiv = chartDiv();
-    $chartDiv.css('height', $chartDiv.width() * 0.7);
+    $chartDiv.css('height', $chartDiv.width() * relativeHeight);
 
-    var chart = new google.visualization.PieChart(document.getElementById(chartId));
-    chart.draw(data, options);
+    var chart = new google.visualization[chartType](document.getElementById(chartId));
+    chart.draw(data, chartOpts);
     $chartDiv.animate({ opacity: 1 })
   }
 
@@ -47,46 +39,33 @@ function piechart(opts) {
   });
 }
 
+function piechart(opts) {
+  opts = Object.assign({
+    chartType: 'PieChart',
+    relativeHeight: opts.relativeHeight || 0.7
+  }, opts);
+
+  opts.chartOpts = Object.assign({
+    chartArea: {
+      width: '70%'
+    },
+    legend: {
+      alignment: 'center'
+    }
+  }, opts.chartOpts);
+
+  defineChart(opts);
+}
+
 function stackedColumnChart(opts) {
-  var chartId = opts.id;
-  var chartUrl = opts.url;
-  var title = opts.title;
+  opts = Object.assign({
+    chartType: 'ColumnChart',
+    relativeHeight: opts.relativeHeight || 0.5
+  }, opts);
 
-  function chartDiv() {
-    return $('#' + chartId);
-  }
+  opts.chartOpts = Object.assign({
+    isStacked: true,
+  }, opts.chartOpts);
 
-  function updateChart() {
-    chartDiv().animate({ opacity: 0 }, {
-      complete: function() {
-        $chartDiv = chartDiv();
-        $chartDiv.html(render('spinner'));
-        $chartDiv.animate({ opacity: 1 });
-      }
-    });
-    var url = buildComponentUrl(chartUrl);
-    $.get(url, drawChart);
-  }
-
-  function drawChart(jsonData) {
-    var data = new google.visualization.DataTable(jsonData);
-
-    var options = {
-      title: title,
-      isStacked: true
-    };
-
-    $chartDiv = chartDiv();
-    $chartDiv.css('height', $chartDiv.width() * 0.5);
-
-    var chart = new google.visualization.ColumnChart(document.getElementById(chartId));
-    chart.draw(data, options);
-    $chartDiv.animate({ opacity: 1 })
-  }
-
-  $(function () {
-    google.charts.setOnLoadCallback(updateChart);
-    $('#ct-states input').change(updateChart);
-    $('#ct-states textarea').change(updateChart);
-  });
+  defineChart(opts);
 }
