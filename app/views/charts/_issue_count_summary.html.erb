@@ -1,11 +1,18 @@
 <% chart_id = generate_id %>
 
 <script>
-  piechart({
-    id: '<%= chart_id %>',
-    title: 'Count By Type',
-    url: '<%= board_api_path(@domain, @board) %>/count_summary.json'
-  });
+  (function() {
+    var chart = new ChartBuilder('<%= chart_id %>')
+        .chartOpts({
+          title: 'Count By Type'
+        })
+        .url('<%= board_api_path(@domain, @board) %>/count_summary.json')
+        .chartType('PieChart')
+        .build();
+
+    google.charts.setOnLoadCallback(chart.refresh);
+    $('#ct-states input, #ct-states textarea').change(chart.refresh);
+  })();
 </script>
 
 <div id="<%= chart_id %>">

@@ -1,35 +1,37 @@
-function defineChart(opts) {
+function drawChart(opts, jsonData) {
   var chartId = opts.id;
-  var chartUrl = opts.url;
   var chartOpts = opts.chartOpts;
   var chartType = opts.chartType;
   var relativeHeight = opts.relativeHeight || 0.7;
+  var data = new google.visualization.DataTable(jsonData);
 
-  function chartDiv() {
-    return $('#' + chartId);
-  }
+  var $chartDiv = $('#' + chartId);
+  $chartDiv.css('height', $chartDiv.width() * relativeHeight);
+
+  var chart = new google.visualization[chartType](document.getElementById(chartId));
+  chart.draw(data, chartOpts);
+  $chartDiv.animate({ opacity: 1 })
+}
+
+function defineChart(opts) {
+  var chartId = opts.id;
+  var chartUrl = opts.url;
 
   function updateChart() {
-    chartDiv().animate({ opacity: 0 }, {
+    var $chartDiv = $('#' + chartId)
+    $chartDiv.animate({ opacity: 0 }, {
       complete: function() {
-        $chartDiv = chartDiv();
         $chartDiv.html(render('spinner'));
         $chartDiv.animate({ opacity: 1 });
       }
     });
+
+    function _drawChart(jsonData) {
+      drawChart(opts, jsonData);
+    }
+
     var url = buildComponentUrl(chartUrl);
-    $.get(url, drawChart);
-  }
-
-  function drawChart(jsonData) {
-    var data = new google.visualization.DataTable(jsonData);
-
-    $chartDiv = chartDiv();
-    $chartDiv.css('height', $chartDiv.width() * relativeHeight);
-
-    var chart = new google.visualization[chartType](document.getElementById(chartId));
-    chart.draw(data, chartOpts);
-    $chartDiv.animate({ opacity: 1 })
+    $.get(url, _drawChart);
   }
 
   $(function () {

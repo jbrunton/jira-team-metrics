@@ -103,27 +103,6 @@
     google.visualization.events.addListener(chart, 'select', selectHandler);
     chart.draw(data, options);
 
-    function selectHandler() {
-      var selection = chart.getSelection()[0];
-      if (selection.column == 1) {
-        // completed issues column
-        var key = data.getValue(selection.row, 2);
-        $('#selected_content').load( '<%= board_path(@domain, @board) %>/issues/' + key + '?fragment=true', function() {
-          $('.collapsible').collapsible();
-        });
-      } else if (selection.column == 3) {
-        // WIP column
-        var date = data.getValue(selection.row, 0);
-        var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        var url = buildComponentUrl('<%= board_components_path(@domain, @board) %>/wip/' + dateStr);
-        $('#selected_content').load(url, function() {
-          $('.collapsible').collapsible();
-        });
-      } else {
-        $('#selected_content').empty();
-      }
-    }
-
     var histogramData = new google.visualization.DataTable(jsonData.histogramData);
     var histogram = new google.visualization.Histogram(document.getElementById('histogram_div'));
     histogram.draw(histogramData, {
