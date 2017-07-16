@@ -1,5 +1,5 @@
 <li>
-  <div class="collapsible-header<%= ' active' if expand %>">Cycle Time</div>
+  <div class="collapsible-header<%= ' active' if expand %>">Cycle Time and Churn</div>
   <div class="collapsible-body">
     <table class="issue-details">
       <tr>
@@ -13,6 +13,18 @@
       <tr>
         <th>Days</th>
         <td><%= pretty_print_number(issue.cycle_time) %></td>
+      </tr>
+      <tr>
+        <th>Churn</th>
+        <td><%= pretty_print_number(issue.churn_metrics[:score]) %>%</td>
+      </tr>
+      <tr>
+        <th>Review Time</th>
+        <td><%= pretty_print_number(issue.churn_metrics[:review_time]) %>%</td>
+      </tr>
+      <tr>
+        <th>Test Time</th>
+        <td><%= pretty_print_number(issue.churn_metrics[:test_time]) %>%</td>
       </tr>
     </table>
   </div>

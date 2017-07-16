@@ -17,6 +17,15 @@ class Board < ApplicationRecord
     YAML.load(config || '') || {}
   end
 
+  def config_property(property)
+    *scopes, property_name = property.split('.')
+    config = config_hash
+    while !scopes.empty?
+      config = config[scopes.shift] || {}
+    end
+    config[property_name]
+  end
+
   DEFAULT_CONFIG = <<~CONFIG
     ---
     exclude:
