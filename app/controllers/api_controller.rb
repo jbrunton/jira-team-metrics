@@ -17,45 +17,11 @@ class ApiController < ApplicationController
   end
 
   def count_summary_by_month
-    summary_table = @board.summarize('month').to_h
-
-    builder = DataTableBuilder.new
-      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
-
-    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
-      values = summary_table.values.map do |summary_rows|
-        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
-        if summary_row_for_type.nil?
-          0
-        else
-          summary_row_for_type.count
-        end
-      end
-      builder.number({label: issue_type}, values)
-    end
-
-    render json: builder.build
+    render json: summarize_field_by_month(:count)
   end
 
   def effort_summary_by_month
-    summary_table = @board.summarize('month').to_h
-
-    builder = DataTableBuilder.new
-      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
-
-    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
-      values = summary_table.values.map do |summary_rows|
-        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
-        if summary_row_for_type.nil?
-          0
-        else
-          summary_row_for_type.total_time
-        end
-      end
-      builder.number({label: issue_type}, values)
-    end
-
-    render json: builder.build
+    render json: summarize_field_by_month(:total_time)
   end
 
   def effort_summary
@@ -245,6 +211,27 @@ private
         percent: total_q4.to_f / selected_issues.count * 100
       }
     }
+  end
+
+  def summarize_field_by_month(field)
+    summary_table = @board.summarize('month').to_h
+
+    builder = DataTableBuilder.new
+      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
+
+    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+      values = summary_table.values.map do |summary_rows|
+        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
+        if summary_row_for_type.nil?
+          0
+        else
+          summary_row_for_type.send(field)
+        end
+      end
+      builder.number({label: issue_type}, values)
+    end
+
+    builder.build
   end
 
   CT_TREND_BUILDER = TrendBuilder.new.
