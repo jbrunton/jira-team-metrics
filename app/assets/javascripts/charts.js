@@ -77,7 +77,7 @@ function stackedColumnChart(opts) {
     };
 
     $chartDiv = chartDiv();
-    $chartDiv.css('height', $chartDiv.width() * 0.7);
+    $chartDiv.css('height', $chartDiv.width() * 0.5);
 
     var chart = new google.visualization.ColumnChart(document.getElementById(chartId));
     chart.draw(data, options);
