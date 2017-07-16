@@ -219,7 +219,7 @@ private
     builder = DataTableBuilder.new
       .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
 
-    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+    @board.issue_types.each do |issue_type|
       values = summary_table.values.map do |summary_rows|
         summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
         if summary_row_for_type.nil?
