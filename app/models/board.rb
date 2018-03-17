@@ -17,9 +17,32 @@ class Board < ApplicationRecord
     YAML.load(config || '') || {}
   end
 
-  DEFAULT_CONFIG = <<~CONFIG
-    ---
-    exclude:
-    filters:
-  CONFIG
+  def config_property(property)
+    *scopes, property_name = property.split('.')
+    config = config_hash
+    while !scopes.empty?
+      config = config[scopes.shift] || {}
+    end
+    config[property_name]
+  end
+
+  DEFAULT_CONFIG = <<CONFIG
+---
+cycle_times:
+  in_test:
+    from: In Test
+    to: Done
+  in_review:
+    from: In Review
+    to: In Test
+  in_progress:
+    from: In Progress
+    to: Done
+default_query: not filter = 'Outliers'
+filters:
+  - name: Outliers
+    issues:
+      - key: ENG-101
+      - reason: blocked in test
+CONFIG
 end

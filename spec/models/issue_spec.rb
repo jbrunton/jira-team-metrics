@@ -17,9 +17,17 @@ RSpec.describe Issue do
     }
   }
 
+  let(:in_review_transition) {
+    {
+      'date' => '2017-01-03T12:00:00.000-0000',
+      'toStatus' => 'In Review',
+      'toStatusCategory' => 'In Progress'
+    }
+  }
+
   let(:in_test_transition) {
     {
-      'date' => '2017-01-02T18:00:00.000-0000',
+      'date' => '2017-01-03T15:00:00.000-0000',
       'toStatus' => 'In Test',
       'toStatusCategory' => 'In Progress'
     }
@@ -33,27 +41,28 @@ RSpec.describe Issue do
     }
   }
 
+  let(:board) { create(:board) }
+
   let(:issue) {
-    Issue.new({
-      'key' => 'ABC-101',
-      'summary' => 'Some Issue',
-      'issue_type' => 'Story',
-      'transitions' => [
+    create(:issue,
+      issue_type: 'Story',
+      transitions: [
         analysis_transition,
         in_progress_transition,
+        in_review_transition,
         in_test_transition,
         done_transition
-      ]
-    })
+      ])
   }
 
   it "initializes the instance" do
-    expect(issue.key).to eq('ABC-101')
+    expect(issue.key).to eq('ISSUE-101')
     expect(issue.summary).to eq('Some Issue')
     expect(issue.issue_type).to eq('Story')
     expect(issue.transitions).to eq([
       analysis_transition,
       in_progress_transition,
+      in_review_transition,
       in_test_transition,
       done_transition
     ])
@@ -68,7 +77,7 @@ RSpec.describe Issue do
 
     context "when passed a status name" do
       it "returns the time of the first transition to that status" do
-        expect(issue.started_time('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
+        expect(issue.started_time('In Test')).to eq(Time.parse('2017-01-03T15:00:00.000-0000'))
       end
     end
 
@@ -86,7 +95,7 @@ RSpec.describe Issue do
 
     context "when passed a status name" do
       it "returns the time of the last transition to that status" do
-        expect(issue.completed_time('In Test')).to eq(Time.parse('2017-01-02T18:00:00.000-0000'))
+        expect(issue.completed_time('In Test')).to eq(Time.parse('2017-01-03T15:00:00.000-0000'))
       end
     end
 
@@ -103,7 +112,17 @@ RSpec.describe Issue do
 
   describe "#cycle_time_between" do
     it "returns the time in days the issue was between the given states" do
-      expect(issue.cycle_time_between('In Progress', 'In Test')).to eq(0.25)
+      expect(issue.cycle_time_between('In Progress', 'In Test')).to eq(1.125)
+    end
+  end
+
+  describe "#churn_metrics" do
+    it "returns churn metrics" do
+      expect(issue.churn_metrics).to eq({
+        review_time: 10.0,
+        test_time: 10.0,
+        score: 20.0
+      })
     end
   end
 end

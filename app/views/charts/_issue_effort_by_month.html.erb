@@ -1,11 +1,19 @@
 <% chart_id = generate_id %>
 
 <script>
-  stackedColumnChart({
-    id: '<%= chart_id %>',
-    title: 'Effort By Month',
-    url: '<%= board_api_path(@domain, @board) %>/effort_summary_by_month.json'
-  });
+  (function() {
+    var chart = new ChartBuilder('<%= chart_id %>')
+        .chartOpts({
+          title: 'Effort By Month',
+          isStacked: true
+        })
+        .url('<%= board_api_path(@domain, @board) %>/effort_summary_by_month.json')
+        .chartType('ColumnChart')
+        .build();
+
+    google.charts.setOnLoadCallback(chart.refresh);
+    $('#ct-states input, #ct-states textarea').change(chart.refresh);
+  })();
 </script>
 
 <div id="<%= chart_id %>">

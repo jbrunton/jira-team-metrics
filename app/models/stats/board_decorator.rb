@@ -256,6 +256,10 @@ class BoardDecorator < Draper::Decorator
       @select_issues.cycle_times.max
     end
 
+    def churn_score
+      @select_issues.map{ |issue| churn_metrics_for(issue)[:score] }
+    end
+
     def with_new_label(label)
       SummaryRow.new(label, @select_issues, @all_issues)
     end

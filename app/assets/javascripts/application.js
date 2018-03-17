@@ -14,6 +14,7 @@
 //= require jquery
 //= require materialize
 //= require handlebars.runtime
+//= require lodash
 //= require_tree ./templates
 //= require_tree .
 
