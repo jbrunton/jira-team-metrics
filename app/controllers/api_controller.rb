@@ -6,6 +6,24 @@ class ApiController < ApplicationController
   before_action :set_domain
   before_action :set_board
 
+  CONTROL_CHART_COLUMNS = [
+    {id: 'date', type: 'date', label: 'Completed'},
+    {id: 'completed_issues', type: 'number', label: 'Completed Issues'},
+    {id: 'completed_issues_tooltip', type: 'string', role: 'tooltip'},
+    {id: 'wip', type: 'number', label: 'WIP'},
+    {id: 'ct_avg', type: 'number', label: 'Rolling Avg CT'},
+    {id: 'ct_interval_min', type: 'number', role: 'interval'},
+    {id: 'ct_interval_max', type: 'number', role: 'interval'},
+    {id: 'wip_avg', type: 'number', label: 'Rolling Avg WIP'},
+    {id: 'wip_interval_min', type: 'number', role: 'interval'},
+    {id: 'wip_interval_max', type: 'number', role: 'interval'},
+    {id: 'completed_issues_key', type: 'string', role: 'annotation'}
+  ]
+
+  COMPLETED_ISSUES_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'completed_issues' }
+  COMPLETED_ISSUES_KEY_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'completed_issues_key' }
+  WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
+
   def count_summary
     summary_table = @board.summarize
 
@@ -71,28 +89,27 @@ class ApiController < ApplicationController
     wip_trends = WIP_TREND_BUILDER.analyze(wip_history)
 
     render json: {
-      cols: [
-        {id: 'date', type: 'date', label: 'Completed'},
-        {id: 'completed_issues', type: 'number', label: 'Completed Issues'},
-        {id: 'completed_issues_key', type: 'string', role: 'tooltip'},
-        {id: 'wip', type: 'number', label: 'WIP'},
-        {id: 'ct_avg', type: 'number', label: 'Rolling Avg CT'},
-        {id: 'ct_interval_min', type: 'number', role: 'interval'},
-        {id: 'ct_interval_max', type: 'number', role: 'interval'},
-        {id: 'wip_avg', type: 'number', label: 'Rolling Avg WIP'},
-        {id: 'wip_interval_min', type: 'number', role: 'interval'},
-        {id: 'wip_interval_max', type: 'number', role: 'interval'}
-      ],
+      cols: CONTROL_CHART_COLUMNS,
       rows: sorted_issues.map.with_index do |issue, index|
         mean = ct_trends[index][:mean]
         stddev = ct_trends[index][:stddev]
-        {c: [{v: date_as_string(issue.completed)}, {v: issue.cycle_time}, {v: issue.key}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev}, {v: nil}, {v: nil}, {v: nil}]}
+        {c: [
+          {v: date_as_string(issue.completed)},
+          {v: issue.cycle_time},
+          {v: "#{issue.key} - #{issue.summary.truncate(40)}"},
+          {v: nil},
+          {v: mean},
+          {v: mean - stddev},
+          {v: mean + stddev},
+          {v: nil}, {v: nil}, {v: nil}, # wip
+          {v: issue.key }
+        ]}
       end + wip_history.map.with_index do |x, index|
         #byebug
         date, wip = x
         mean = wip_trends[index][:mean]
         stddev = wip_trends[index][:stddev]
-        {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: wip}, {v: nil}, {v: nil}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev},]}
+        {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: wip}, {v: nil}, {v: nil}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev}, {v: nil}]}
       end
     }
   end

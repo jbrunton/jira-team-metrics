@@ -44,24 +44,19 @@ class Issue < ApplicationRecord
 
   def churn_metrics
     @churn_metrics ||= begin
-      progress_cycle_time = cycle_time_between(
-        board.config_property('cycle_times.in_progress.from'),
-        board.config_property('cycle_times.in_progress.to'))
+      progress_cycle_time = cycle_time_between_properties('in_progress')
 
-      return nil if progress_cycle_time.nil?
+      return {
+        review_time: 0,
+        test_time: 0,
+        score: 0
+      } if progress_cycle_time.nil?
 
-      review_cycle_time = cycle_time_between(
-        board.config_property('cycle_times.in_review.from'),
-        board.config_property('cycle_times.in_review.to')) || 0
-
-      test_cycle_time = cycle_time_between(
-        board.config_property('cycle_times.in_test.from'),
-        board.config_property('cycle_times.in_test.to')) || 0
+      review_cycle_time = cycle_time_between_properties('in_review') || 0
+      test_cycle_time = cycle_time_between_properties('in_test') || 0
 
       # i.e. downstream processes from development
-      downstream_cycle_time = cycle_time_between(
-        board.config_property('cycle_times.in_review.from'),
-        board.config_property('cycle_times.in_test.to')) || 0
+      downstream_cycle_time = cycle_time_between_properties('in_review', 'in_test') || 0
 
       review_time = review_cycle_time / progress_cycle_time
       test_time = test_cycle_time / progress_cycle_time
@@ -73,5 +68,16 @@ class Issue < ApplicationRecord
         score: score * 100
       }
     end
+  end
+
+private
+  def cycle_time_between_properties(start_property_name, end_property_name = nil)
+    end_property_name = start_property_name if end_property_name.nil?
+    start_property_name = "cycle_times.#{start_property_name}.from"
+    end_property_name = "cycle_times.#{end_property_name}.to"
+
+    cycle_time_between(
+      board.config_property(start_property_name),
+      board.config_property(end_property_name))
   end
 end
