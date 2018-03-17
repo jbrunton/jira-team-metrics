@@ -48,7 +48,11 @@ class Issue < ApplicationRecord
         board.config_property('cycle_times.in_progress.from'),
         board.config_property('cycle_times.in_progress.to'))
 
-      return nil if progress_cycle_time.nil?
+      return {
+        review_time: 0,
+        test_time: 0,
+        score: 0
+      } if progress_cycle_time.nil?
 
       review_cycle_time = cycle_time_between(
         board.config_property('cycle_times.in_review.from'),
