@@ -10,7 +10,7 @@ class Board < ApplicationRecord
   end
 
   def config_filters
-    config_hash['filters'] || []
+    (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
   end
 
   def config_hash
@@ -23,7 +23,7 @@ class Board < ApplicationRecord
     while !scopes.empty?
       config = config[scopes.shift] || {}
     end
-    config[property_name]
+    config[property_name].deep_symbolize_keys
   end
 
   DEFAULT_CONFIG = <<CONFIG
@@ -43,6 +43,6 @@ filters:
   - name: Outliers
     issues:
       - key: ENG-101
-      - reason: blocked in test
+        reason: blocked in test
 CONFIG
 end
