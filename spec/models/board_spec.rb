@@ -29,5 +29,10 @@ RSpec.describe Board do
         ]
       }])
     end
+
+    it "specifies an default query" do
+      default_query = board.config_property('default_query')
+      expect(default_query).to eq("not filter = 'Outliers'")
+    end
   end
 end
