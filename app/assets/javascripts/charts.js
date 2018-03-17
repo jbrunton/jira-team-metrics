@@ -12,7 +12,7 @@ function defineChart(opts) {
   function updateChart() {
     chartDiv().animate({ opacity: 0 }, {
       complete: function() {
-        $chartDiv = chartDiv();
+        var $chartDiv = chartDiv();
         $chartDiv.html(render('spinner'));
         $chartDiv.animate({ opacity: 1 });
       }
@@ -24,7 +24,7 @@ function defineChart(opts) {
   function drawChart(jsonData) {
     var data = new google.visualization.DataTable(jsonData);
 
-    $chartDiv = chartDiv();
+    var $chartDiv = chartDiv();
     $chartDiv.css('height', $chartDiv.width() * relativeHeight);
 
     var chart = new google.visualization[chartType](document.getElementById(chartId));
@@ -64,7 +64,7 @@ function stackedColumnChart(opts) {
   }, opts);
 
   opts.chartOpts = Object.assign({
-    isStacked: true,
+    isStacked: true
   }, opts.chartOpts);
 
   defineChart(opts);
