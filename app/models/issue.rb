@@ -48,18 +48,24 @@ class Issue < ApplicationRecord
         board.config_property('cycle_times.in_progress.from'),
         board.config_property('cycle_times.in_progress.to'))
 
+      return nil if progress_cycle_time.nil?
+
       review_cycle_time = cycle_time_between(
         board.config_property('cycle_times.in_review.from'),
-        board.config_property('cycle_times.in_review.to'))
+        board.config_property('cycle_times.in_review.to')) || 0
 
       test_cycle_time = cycle_time_between(
         board.config_property('cycle_times.in_test.from'),
-        board.config_property('cycle_times.in_test.to'))
+        board.config_property('cycle_times.in_test.to')) || 0
+
+      # i.e. downstream processes from development
+      downstream_cycle_time = cycle_time_between(
+        board.config_property('cycle_times.in_review.from'),
+        board.config_property('cycle_times.in_test.to')) || 0
 
       review_time = review_cycle_time / progress_cycle_time
       test_time = test_cycle_time / progress_cycle_time
-
-      score = (review_time + test_time) / 2
+      score = downstream_cycle_time / progress_cycle_time
 
       {
         review_time: review_time * 100,
