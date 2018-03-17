@@ -12,10 +12,12 @@
       </tr>
 
       <% issue.fields.keys.each do |field_name| %>
+          <% unless field_name == 'Epic Link' %>
           <tr>
             <th><%= field_name %></th>
             <td><%= issue_field(issue, field_name) %></td>
           </tr>
+          <% end %>
       <% end %>
     </table>
   </div>

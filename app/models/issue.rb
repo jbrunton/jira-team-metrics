@@ -4,6 +4,10 @@ class Issue < ApplicationRecord
   serialize :fields
   belongs_to :board
 
+  def epic
+    board.issues.where(key: fields['Epic Link']).first
+  end
+
   def short_summary
     summary.truncate(50, separator: /\s/)
   end
