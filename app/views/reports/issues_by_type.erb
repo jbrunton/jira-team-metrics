@@ -7,32 +7,29 @@
 
 <h3>Issues By Type</h3>
 
-<script>
-  google.charts.load('current', {'packages':['corechart']});
+<%= render partial: 'partials/cycle_time_form' %>
 
-  function drawChart() {
-    var url = '<%= board_api_path(@domain, @board) %>/count_summary.json';
+<div class="row">
+  <div class="col s6 card">
+    <h3>Issue Types by Count</h3>
+    <%= render partial: 'charts/issue_count_summary' %>
+  </div>
+  <div class="col s6 card">
+    <h3>Issue Types by Effort</h3>
+    <%= render partial: 'charts/issue_effort_summary' %>
+  </div>
+</div>
 
-    var jsonData = $.ajax({
-      url: url,
-      dataType: "json",
-      async: false
-    }).responseText;
+<div class="row">
+  <div class="col s12 card">
+    <h3>Issue Types by Count by Month</h3>
+    <%= render partial: 'charts/issue_count_by_month' %>
+  </div>
+</div>
 
-    var data = new google.visualization.DataTable(jsonData);
-
-    var options = {};
-
-    var chartDiv = $('#count_summary_chart');
-    chartDiv.css('height', chartDiv.width() * 0.5);
-
-    var chart = new google.visualization.PieChart(document.getElementById('count_summary_chart'));
-    chart.draw(data, options);
-  }
-
-  $(function() {
-    google.charts.setOnLoadCallback(drawChart);
-  });
-</script>
-
-<div id="count_summary_chart"></div>
+<div class="row">
+  <div class="col s12 card">
+    <h3>Issue Types by Effort by Month</h3>
+    <%= render partial: 'charts/issue_effort_by_month' %>
+  </div>
+</div>

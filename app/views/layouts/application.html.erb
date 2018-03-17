@@ -4,10 +4,13 @@
     <title>JiraTeamMetrics</title>
     <%= csrf_meta_tags %>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      google.charts.load('current', {'packages':['corechart']});
+    </script>
+
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>

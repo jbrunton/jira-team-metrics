@@ -16,6 +16,24 @@ class ApiController < ApplicationController
     render json: builder.build
   end
 
+  def count_summary_by_month
+    render json: summarize_field_by_month(:count)
+  end
+
+  def effort_summary_by_month
+    render json: summarize_field_by_month(:total_time)
+  end
+
+  def effort_summary
+    summary_table = @board.summarize
+
+    builder = DataTableBuilder.new
+      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
+      .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
+
+    render json: builder.build
+  end
+
   def cycle_time_summary
     series = (params[:series] || '').split(',')
     summary_table = @board.summarize
@@ -124,6 +142,14 @@ private
     builder.build
   end
 
+  def build_count_table(summary_table, series)
+    builder = DataTableBuilder.new
+      .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
+      .number({label: 'Count', id: 'count'}, summary_table.map(&:count))
+
+    builder.build
+  end
+
   def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
     selected_rows = selected_issues.map do |issue|
       percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
@@ -185,6 +211,27 @@ private
         percent: total_q4.to_f / selected_issues.count * 100
       }
     }
+  end
+
+  def summarize_field_by_month(field)
+    summary_table = @board.summarize('month').to_h
+
+    builder = DataTableBuilder.new
+      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
+
+    @board.issue_types.each do |issue_type|
+      values = summary_table.values.map do |summary_rows|
+        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
+        if summary_row_for_type.nil?
+          0
+        else
+          summary_row_for_type.send(field)
+        end
+      end
+      builder.number({label: issue_type}, values)
+    end
+
+    builder.build
   end
 
   CT_TREND_BUILDER = TrendBuilder.new.

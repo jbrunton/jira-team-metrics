@@ -61,6 +61,7 @@ class BoardDecorator < Draper::Decorator
     @issues_by_type ||= completed_issues
       .group_by{ |i| i.issue_type }
       .map{ |issue_type, issues| [issue_type, IssuesDecorator.new(issues)] }
+      .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .to_h
   end
 
@@ -205,6 +206,10 @@ class BoardDecorator < Draper::Decorator
 
     def count
       @select_issues.count
+    end
+
+    def total_time
+      @select_issues.cycle_times.reduce(:+)
     end
 
     def issue_type_label

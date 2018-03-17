@@ -1,0 +1,12 @@
+<% chart_id = generate_id %>
+
+<script>
+  piechart({
+    id: '<%= chart_id %>',
+    title: 'Count By Type',
+    url: '<%= board_api_path(@domain, @board) %>/count_summary.json'
+  });
+</script>
+
+<div id="<%= chart_id %>">
+</div>
