@@ -8,7 +8,7 @@ class SyncDomainJob < ApplicationJob
     boards, statuses, fields = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses, fields)
 
-    domain.config_hash['boards'].each do |board_details|
+    (domain.config_hash['boards'] || []).each do |board_details|
       board = domain.boards.find_by(jira_id: board_details['jira_id'])
       board.config = board_details['config'].to_yaml(line_width: -1)
       board.save
@@ -35,7 +35,7 @@ private
 
       @notifier.notify_status('fetching fields from JIRA')
       fields = client.get_fields.select do |field|
-        (domain.config_hash['fields'] || []).include?(field['name'])
+        (['Epic Link'] + (domain.config_hash['fields'] || [])).include?(field['name'])
       end
 
       [boards, statuses, fields]
