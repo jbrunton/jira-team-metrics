@@ -45,6 +45,7 @@ RSpec.describe Issue do
 
   let(:issue) {
     create(:issue,
+      board: board,
       issue_type: 'Story',
       transitions: [
         analysis_transition,
@@ -124,5 +125,21 @@ RSpec.describe Issue do
         score: 20.0
       })
     end
+  end
+
+  describe "#epic" do
+    let(:epic) { create(:issue, board: board, issue_type: 'Epic') }
+
+    before(:each) {
+      issue.fields = {
+        'Epic Link' => epic.key
+      }
+      issue.save
+    }
+
+    it "returns the epic given by the Epic Link field" do
+      expect(issue.epic).to eq(epic)
+    end
+
   end
 end
