@@ -9,6 +9,19 @@ class Issue < ApplicationRecord
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def increment
+    incr = links.find do |link|
+      board.domain.increments.any? do |increment|
+        link['inward_link_type'] == increment['inward_link_type'] &&
+          link['issue']['issue_type'] == increment['issue_type']
+      end
+    end
+    if incr.nil?
+      incr = epic.try(:increment)
+    end
+    incr
+  end
+
   def short_summary
     summary.truncate(50, separator: /\s/)
   end

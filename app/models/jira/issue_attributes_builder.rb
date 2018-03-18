@@ -89,6 +89,7 @@ private
             inward_link_type: link['type']['inward'],
             issue: {
               key: link['inwardIssue']['key'],
+              issue_type: link['inwardIssue']['fields']['issuetype']['name'],
               summary: link['inwardIssue']['fields']['summary']
             }
           }

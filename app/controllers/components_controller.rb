@@ -16,10 +16,15 @@ class ComponentsController < ApplicationController
   end
 
   def timesheets
-    issues_by_epic = @board.issues
-      .group_by{ |issue| issue.epic }
-      .sort_by{|epic, _| epic.nil? ? 1 : 0 }
-      .to_h
-    render 'partials/timesheets', locals: {issues_by_epic: issues_by_epic}, layout: false
+    epics_by_increment = @board.issues
+      .group_by{ |issue| issue.increment }
+      .sort_by{|increment, _| increment.nil? ? 1 : 0 }
+      .map do |increment, issues_for_increment|
+        [increment, issues_for_increment.group_by{ |issue| issue.epic }
+          .sort_by{|epic, _| epic.nil? ? 1 : 0 }
+          .to_h]
+      end.to_h
+
+    render 'partials/timesheets', locals: {board: @board, epics_by_increment: epics_by_increment}, layout: false
   end
 end
