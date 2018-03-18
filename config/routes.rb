@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get '/reports/:domain_name/boards/:board_id/control_chart', to: 'reports#control_chart'
   get '/reports/:domain_name/boards/:board_id/issues', to: 'reports#issues'
   get '/reports/:domain_name/boards/:board_id/compare', to: 'reports#compare'
+  get '/reports/:domain_name/boards/:board_id/timesheets', to: 'reports#timesheets'
 
   get '/api/:domain_name/boards/:board_id/count_summary.json', to: 'api#count_summary'
   get '/api/:domain_name/boards/:board_id/count_summary_by_month.json', to: 'api#count_summary_by_month'
@@ -35,4 +36,5 @@ Rails.application.routes.draw do
 
   get '/components/:domain_name/boards/:board_id/wip/:date', to: 'components#wip'
   get '/components/:domain_name/boards/:board_id/issues_list', to: 'components#issues_list'
+  get '/components/:domain_name/boards/:board_id/timesheets', to: 'components#timesheets'
 end

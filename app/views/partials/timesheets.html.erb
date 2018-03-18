@@ -1,0 +1,20 @@
+<table class="issue-details">
+  <tr>
+    <th>Epic</th>
+    <th>Issues</th>
+  </tr>
+  <% issues_by_epic.each do |epic, issues| %>
+  <tr>
+    <td><%= epic.nil? ? 'None' : epic.display_name %></td>
+    <td>
+      <ul>
+      <% issues.each do |issue| %>
+        <li>
+          <%= issue.short_display_name %>
+        </li>
+      <% end %>
+      </ul>
+    </td>
+  </tr>
+  <% end %>
+</table>

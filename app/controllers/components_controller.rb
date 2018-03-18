@@ -14,4 +14,9 @@ class ComponentsController < ApplicationController
     issues = @board.wip_on_date(date)
     render 'partials/wip', locals: {date: date, issues: issues}, layout: false
   end
+
+  def timesheets
+    issues_by_epic = @board.issues.group_by{ |issue| issue.epic }
+    render 'partials/timesheets', locals: {issues_by_epic: issues_by_epic}, layout: false
+  end
 end

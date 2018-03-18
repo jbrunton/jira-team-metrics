@@ -12,6 +12,14 @@ class Issue < ApplicationRecord
     summary.truncate(50, separator: /\s/)
   end
 
+  def display_name
+    "#{key} - #{summary}"
+  end
+
+  def short_display_name
+    display_name.truncate(50, separator: /\s/)
+  end
+
   def started_time(status = nil)
     first_transition = transitions.find do |t|
       if status
