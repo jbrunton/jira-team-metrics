@@ -1,28 +1,40 @@
-<table class="bordered issue-details">
+<table>
   <thead>
     <tr>
       <th style="width: 40%;">Epic</th>
-      <th style="width: 10%;">Days</th>
       <th style="width: 40%;">Issues</th>
       <th style="width: 10%;">Days</th>
+      <th style="width: 10%;">%</th>
     </tr>
   </thead>
+
+  <% total_duration = issues_by_epic.values.flatten.map{|i| i.duration_in_range}.sum %>
+
   <% issues_by_epic.each do |epic, issues| %>
+      <% epic_duration = issues.map{|i| i.duration_in_range}.sum %>
+      <tr class="major-row">
+        <td>
+          <%= epic.nil? ? 'None' : epic.display_name %>
+        </td>
+        <th></th>
+        <th class="right-align">
+          <%= pretty_print_number(epic_duration) %>
+        </th>
+        <th class="right-align">
+          <%= pretty_print_number(epic_duration / total_duration * 100) %>
+        </th>
+      </tr>
       <% issues.each_with_index do |issue, index| %>
           <tr>
-            <% if index == 0 %>
-                <td rowspan="<%= issues.length %>">
-                  <%= epic.nil? ? 'None' : epic.display_name %>
-                </td>
-                <td rowspan="<%= issues.length %>">
-                  <%= epic.nil? ? 'N/A' : pretty_print_number(issues.map{|i| i.duration_in_range}.reduce(:+)) %>
-                </td>
-            <% end %>
-            <td>
+            <td></td>
+            <td class="minor-row">
               <%= issue.display_name %>
             </td>
-            <td class="right-align">
+            <td class="minor-row right-align">
               <%= pretty_print_number issue.duration_in_range %>
+            </td>
+            <td class="minor-row right-align">
+              <%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>
             </td>
           </tr>
       <% end %>

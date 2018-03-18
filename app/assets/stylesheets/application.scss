@@ -17,12 +17,18 @@
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 @import "materialize";
 
-table.issue-details {
-  th {
+table {
+  &.issue-details th {
     width: 25%;
   }
   td,th {
     vertical-align: top;
+  }
+  tr.major-row {
+    border-top: 1px solid $table-border-color;
+  }
+  td.minor-row {
+    border-top: 1px solid $table-border-color;
   }
 }
 
