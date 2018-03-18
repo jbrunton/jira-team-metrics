@@ -23,3 +23,9 @@ $.ajaxSetup({
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   }
 });
+
+$(function() {
+  $('.datepicker').on('change', function(){
+    $(this).next().find('.picker__close').click();
+  });
+});

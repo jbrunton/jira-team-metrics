@@ -2,14 +2,36 @@ class Issue < ApplicationRecord
   serialize :labels
   serialize :transitions
   serialize :fields
+  serialize :links
   belongs_to :board
 
   def epic
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def increment
+    incr = links.find do |link|
+      board.domain.increments.any? do |increment|
+        link['inward_link_type'] == increment['inward_link_type'] &&
+          link['issue']['issue_type'] == increment['issue_type']
+      end
+    end
+    if incr.nil?
+      incr = epic.try(:increment)
+    end
+    incr
+  end
+
   def short_summary
     summary.truncate(50, separator: /\s/)
+  end
+
+  def display_name
+    "#{key} - #{summary}"
+  end
+
+  def short_display_name
+    display_name.truncate(50, separator: /\s/)
   end
 
   def started_time(status = nil)

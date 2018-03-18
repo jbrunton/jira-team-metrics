@@ -11,6 +11,16 @@
       </div>
     </div>
     <div class="row">
+      <div class="input-field col s6">
+        <input name="from_date" id="from_date" type="text" class="datepicker" data-value="<%= @board.synced_from.strftime('%Y-%m-%d') %>">
+        <label for="from_date">From Date</label>
+      </div>
+      <div class="input-field col s6">
+        <input name="to_date" id="to_date" type="text" class="datepicker" data-value="<%= Time.now.strftime('%Y-%m-%d') %>">
+        <label for="to_date">To Date</label>
+      </div>
+    </div>
+    <div class="row">
       <div class="input-field col s12">
         <textarea class="mono materialize-textarea" id="query" name="query"><%= @board.config_property('default_query') %></textarea>
         <label for="query">Query</label>
@@ -45,6 +55,9 @@
             <br><span class="mono">filter = 'MyFilter' and issue_type = 'Bug'</span>
             <br><span class="mono">not (filter = 'MyFilter' or issue_type = 'Bug')</span>
           </p>
+          <p>Date ranges (end-exclusive):
+            <br><span class="mono">between ('2018-01-01', '2018-06-01')</span>
+          </p>
           <p>Filters for this board:
             <br><span class="mono"><%= @board.filters.map{ |filter| filter.name }.join(', ') %></span>
           </p>
@@ -65,6 +78,17 @@
         "<%= status.html_safe %>": null,
         <% end %>
       }
+    });
+
+    $('.datepicker').pickadate({
+      selectMonths: true, // Creates a dropdown to control month
+      selectYears: 15, // Creates a dropdown of 15 years to control year,
+      today: 'Today',
+      clear: 'Clear',
+      close: 'Ok',
+      formatSubmit: 'yyyy-mm-dd',
+      hiddenName: true,
+      max: true
     });
   });
 

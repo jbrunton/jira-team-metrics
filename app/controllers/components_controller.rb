@@ -14,4 +14,17 @@ class ComponentsController < ApplicationController
     issues = @board.wip_on_date(date)
     render 'partials/wip', locals: {date: date, issues: issues}, layout: false
   end
+
+  def timesheets
+    epics_by_increment = @board.issues
+      .group_by{ |issue| issue.increment }
+      .sort_by{|increment, _| increment.nil? ? 1 : 0 }
+      .map do |increment, issues_for_increment|
+        [increment, issues_for_increment.group_by{ |issue| issue.epic }
+          .sort_by{|epic, _| epic.nil? ? 1 : 0 }
+          .to_h]
+      end.to_h
+
+    render 'partials/timesheets', locals: {board: @board, epics_by_increment: epics_by_increment}, layout: false
+  end
 end

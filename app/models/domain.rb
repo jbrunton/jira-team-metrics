@@ -10,6 +10,14 @@ class Domain < ApplicationRecord
     YAML.load(config || '') || {}
   end
 
+  def link_types
+    config_hash['link_types']
+  end
+
+  def increments
+    config_hash['increments']
+  end
+
   def synced_boards
     boards.where.not(boards: {last_synced: nil})
   end

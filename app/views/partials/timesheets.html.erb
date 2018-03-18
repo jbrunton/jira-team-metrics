@@ -1,0 +1,57 @@
+<% total_duration = board.issues.map{ |i| i.duration_in_range }.sum %>
+
+<table class="bordered jira-tree">
+  <thead>
+    <tr>
+      <th style="width: 90%">Issue</th>
+      <th colspan="2" style="width: 10%">Developer Days</th>
+    </tr>
+  </thead>
+
+  <% epics_by_increment.each do |increment, issues_by_epic| %>
+      <% increment_duration = issues_by_epic.values.flatten.map{|i| i.duration_in_range}.sum %>
+      <tr class="delivery">
+        <td>
+          <%= increment.nil? ? 'None' : "#{increment['issue']['key']} - #{increment['issue']['summary']}" %>
+        </td>
+        <td class="effort-stats">
+          <%= pretty_print_number(increment_duration) %>
+        </td>
+        <td class="effort-stats">
+          (<%= pretty_print_number(increment_duration / total_duration * 100) %>%)</span>
+        </td>
+      </tr>
+
+      <% issues_by_epic.each do |epic, issues| %>
+          <% unless increment.nil? %>
+              <% epic_duration = issues.map{|i| i.duration_in_range}.sum %>
+              <tr class="epic">
+                <td>
+                  <%= epic.nil? ? 'None' : epic.display_name %>
+                </td>
+                <td class="effort-stats">
+                  <%= pretty_print_number(epic_duration) %>
+                </td>
+                <td class="effort-stats">
+                  (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)</span>
+                </td>
+              </tr>
+          <% end %>
+
+          <% issues.each_with_index do |issue, index| %>
+              <tr class="story">
+                <td>
+                  <%= issue.nil? ? 'None' : issue.display_name %>
+                </td>
+                <td class="effort-stats">
+                  <%= pretty_print_number(issue.duration_in_range) %>
+                </td>
+                <td class="effort-stats">
+                  (<%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>%)</span>
+                </td>
+              </tr>
+          <% end %>
+      <% end %>
+  <% end %>
+
+</table>

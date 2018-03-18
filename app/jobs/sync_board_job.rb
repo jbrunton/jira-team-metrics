@@ -30,9 +30,11 @@ class SyncBoardJob < ApplicationJob
       .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
       .map{ |issue| issue.fields['Epic Link'] }
 
-    epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
-    epics.each do |i|
-      board.issues.create(i)
+    if epic_keys.length > 0
+      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
+      epics.each do |i|
+        board.issues.create(i)
+      end
     end
 
     create_filters(board, credentials)
@@ -53,11 +55,9 @@ class SyncBoardJob < ApplicationJob
         .and(subquery)
         .query
     end
-    statuses = board.domain.statuses
-    fields = board.domain.fields
     client = JiraClient.new(board.domain.url, credentials)
     HttpErrorHandler.new(@notifier).invoke do
-      client.search_issues(query: query, statuses: statuses, fields: fields) do |progress|
+      client.search_issues(board.domain, query: query) do |progress|
         @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
       end
     end

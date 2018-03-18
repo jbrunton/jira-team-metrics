@@ -17,12 +17,47 @@
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 @import "materialize";
 
-table.issue-details {
-  th {
+table {
+  &.issue-details th {
     width: 25%;
   }
   td,th {
     vertical-align: top;
+  }
+}
+
+table.jira-tree {
+  td.indent {
+    width: 50px;
+  }
+
+  tr.delivery {
+    td {
+      font-weight: bold;
+    }
+  }
+
+  tr.epic {
+    td {
+      font-weight: bold;
+    }
+
+    td:first-child {
+      padding-left: 50px;
+    }
+  }
+
+  tr.story {
+    td:first-child {
+      padding-left: 90px;
+    }
+  }
+
+  td {
+    &.effort-stats {
+      @extend .right-align;
+      width: 5%;
+    }
   }
 }
 

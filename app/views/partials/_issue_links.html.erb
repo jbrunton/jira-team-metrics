@@ -1,0 +1,17 @@
+<li>
+  <div class="collapsible-header<%= ' active' if expand %>">Links</div>
+  <div class="collapsible-body">
+    <% if issue.links.any? %>
+        <table class="issue-details">
+          <% issue.links.each do |link| %>
+              <tr>
+                <th><%= link['inward_link_type'] %></th>
+                <td><%= link['issue']['key'] %> - <%= link['issue']['summary'] %></td>
+              </tr>
+          <% end %>
+        </table>
+    <% else %>
+        <span>None</span>
+    <% end %>
+  </div>
+</li>

@@ -39,4 +39,7 @@ class ReportsController < ApplicationController
   #
   def cycle_times_by_type
   end
+
+  def timesheets
+  end
 end
