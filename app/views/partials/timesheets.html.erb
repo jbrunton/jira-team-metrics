@@ -1,10 +1,9 @@
 <table>
   <thead>
     <tr>
-      <th style="width: 40%;">Epic</th>
-      <th style="width: 40%;">Issues</th>
-      <th style="width: 10%;">Days</th>
-      <th style="width: 10%;">%</th>
+      <th style="width: 45%;">Epic</th>
+      <th style="width: 45%;">Issues</th>
+      <th colspan="2" style="width: 10%;">Days Effort</th>
     </tr>
   </thead>
 
@@ -21,7 +20,7 @@
           <%= pretty_print_number(epic_duration) %>
         </th>
         <th class="right-align">
-          <%= pretty_print_number(epic_duration / total_duration * 100) %>
+          (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)
         </th>
       </tr>
       <% issues.each_with_index do |issue, index| %>
@@ -34,7 +33,7 @@
               <%= pretty_print_number issue.duration_in_range %>
             </td>
             <td class="minor-row right-align">
-              <%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>
+              (<%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>%)
             </td>
           </tr>
       <% end %>

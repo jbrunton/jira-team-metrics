@@ -55,6 +55,9 @@
             <br><span class="mono">filter = 'MyFilter' and issue_type = 'Bug'</span>
             <br><span class="mono">not (filter = 'MyFilter' or issue_type = 'Bug')</span>
           </p>
+          <p>Date ranges (end-exclusive):
+            <br><span class="mono">between ('2018-01-01', '2018-06-01')</span>
+          </p>
           <p>Filters for this board:
             <br><span class="mono"><%= @board.filters.map{ |filter| filter.name }.join(', ') %></span>
           </p>
