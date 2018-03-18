@@ -12,11 +12,11 @@
     </div>
     <div class="row">
       <div class="input-field col s6">
-        <input name="from_date" id="from_date" type="text" class="datepicker">
+        <input name="from_date" id="from_date" type="text" class="datepicker" data-value="<%= @board.synced_from.strftime('%Y-%m-%d') %>">
         <label for="from_date">From Date</label>
       </div>
       <div class="input-field col s6">
-        <input name="to_date" id="to_date" type="text" class="datepicker">
+        <input name="to_date" id="to_date" type="text" class="datepicker" data-value="<%= Time.now.strftime('%Y-%m-%d') %>">
         <label for="to_date">To Date</label>
       </div>
     </div>
