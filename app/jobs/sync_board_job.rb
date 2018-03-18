@@ -26,6 +26,15 @@ class SyncBoardJob < ApplicationJob
     board.synced_from = sync_from
     board.save
 
+    epic_keys = board.issues
+      .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
+      .map{ |issue| issue.fields['Epic Link'] }
+
+    epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
+    epics.each do |i|
+      board.issues.create(i)
+    end
+
     create_filters(board, credentials)
 
     @notifier.notify_complete if notify_complete
@@ -36,10 +45,14 @@ class SyncBoardJob < ApplicationJob
     fetch_issues_for_query(board, query, credentials, 'fetching issues from JIRA')
   end
 
-  def fetch_issues_for_query(board, subquery, credentials, status)
-    query = QueryBuilder.new(board.query)
-      .and(subquery)
-      .query
+  def fetch_issues_for_query(board, subquery, credentials, status, ignore_board_query = false)
+    if ignore_board_query
+      query = subquery
+    else
+      query = QueryBuilder.new(board.query)
+        .and(subquery)
+        .query
+    end
     statuses = board.domain.statuses
     fields = board.domain.fields
     client = JiraClient.new(board.domain.url, credentials)
