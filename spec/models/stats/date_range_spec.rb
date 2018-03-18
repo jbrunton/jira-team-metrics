@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe DateRange do
-  let(:start_date) { Date.new(2001, 1, 1) }
+  let(:start_date) { Time.new(2001, 1, 1) }
 
   describe "#to_a" do
     context "if the range is empty" do
@@ -95,6 +95,13 @@ RSpec.describe DateRange do
       range = DateRange.new(start_date, nil)
       other = DateRange.new(start_date + 1.day, start_date + 2.days)
       expect(range.overlap_with(other)).to eq(DateRange.new(start_date + 1.day, start_date + 2.days))
+    end
+  end
+
+  describe "#duration" do
+    it "returns the duration in days" do
+      range = DateRange.new(start_date, start_date + 1.5.days)
+      expect(range.duration).to eq(1.5)
     end
   end
 end

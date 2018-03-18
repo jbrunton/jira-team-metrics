@@ -8,11 +8,12 @@ class BoardDecorator < Draper::Decorator
   
   delegate_all
 
-  def initialize(board, from_state, to_state, query = nil)
+  def initialize(board, from_state, to_state, date_range, query = nil)
     super(board)
     @from_state = from_state
     @to_state = to_state
-    @query = query
+    @date_range = date_range
+    @query = date_range.nil? ? query : "(#{query}) and between ('#{date_range.start_date.strftime('%Y-%m-%d')}', '#{date_range.end_date.strftime('%Y-%m-%d')}')"
   end
 
   def issues
@@ -26,7 +27,7 @@ class BoardDecorator < Draper::Decorator
   end
 
   def all_issues
-    @all_issues ||= object.issues.map{ |i| IssueDecorator.new(i, @from_state, @to_state) }
+    @all_issues ||= object.issues.map{ |i| IssueDecorator.new(i, @from_state, @to_state, @date_range) }
   end
 
   def exclusions

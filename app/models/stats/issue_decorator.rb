@@ -5,10 +5,11 @@ class IssueDecorator < Draper::Decorator
 
   delegate_all
 
-  def initialize(issue, from_state, to_state)
+  def initialize(issue, from_state, to_state, date_range)
     super(issue)
     @from_state = from_state
     @to_state = to_state
+    @date_range = date_range
   end
 
   def started
@@ -21,6 +22,10 @@ class IssueDecorator < Draper::Decorator
 
   def cycle_time
     @cycle_time ||= object.cycle_time_between(@from_state, @to_state)
+  end
+
+  def duration_in_range
+    @date_range.nil? ? nil : @date_range.overlap_with(DateRange.new(@started, @completed)).duration
   end
 
   def decorate(_options)

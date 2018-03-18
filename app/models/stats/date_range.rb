@@ -42,4 +42,8 @@ class DateRange
       [end_date, other.end_date].compact.min
     )
   end
+
+  def duration
+    ((end_date - start_date) / 1.day).to_f
+  end
 end
