@@ -14,7 +14,11 @@
       <% issue.fields.keys.each do |field_name| %>
           <tr>
             <th><%= field_name %></th>
-            <td><%= issue_field(issue, field_name) %></td>
+            <% if field_name == 'Epic Link' %>
+                <td><%= issue.epic.key %> - <%= issue.epic.summary %></td>
+            <% else %>
+                <td><%= issue_field(issue, field_name) %></td>
+            <% end %>
           </tr>
       <% end %>
     </table>
