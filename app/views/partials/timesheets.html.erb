@@ -1,8 +1,10 @@
-<table class="issue-details">
-  <tr>
-    <th>Epic</th>
-    <th>Issues</th>
-  </tr>
+<table class="striped issue-details">
+  <thead>
+    <tr>
+      <th style="width: 50%;">Epic</th>
+      <th style="width: 50%;">Issues</th>
+    </tr>
+  </thead>
   <% issues_by_epic.each do |epic, issues| %>
   <tr>
     <td><%= epic.nil? ? 'None' : epic.display_name %></td>
@@ -10,7 +12,7 @@
       <ul>
       <% issues.each do |issue| %>
         <li>
-          <%= issue.short_display_name %>
+          <%= issue.display_name %>
         </li>
       <% end %>
       </ul>

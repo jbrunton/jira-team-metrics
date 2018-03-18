@@ -19,17 +19,19 @@ class MqlInterpreter
     rule(:or_operator)  { str("or")  >> space? }
     rule(:lparen) { str("(") >> space? }
     rule(:rparen) { str(")") >> space? }
+    rule(:comma)  { str(",") >> space? }
 
     rule(:identifier) { match('[a-zA-Z_]').repeat(1).as(:identifier) >> space? }
     rule(:operator)   { (str('=') | str('and')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
+    rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
     rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression }
+    rule(:expression) { filter | comparison | not_expression | between }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -52,7 +54,15 @@ class MqlInterpreter
     rule(:string => subtree(:string)) { StringValue.new(string) }
     rule(
       :filter => subtree(:filter),
-      :op => '=') { FilterExpr.new(filter) }
+      :op => '='
+    ) {
+      FilterExpr.new(filter)
+    }
+    rule(
+      :between => { :left => subtree(:left), :right => subtree(:right) }
+    ) {
+      BetweenExpr.new(left, right)
+    }
     rule(
       :field => subtree(:field),
       :op => '=',
@@ -86,6 +96,16 @@ class MqlInterpreter
       filter = Filter.find_by(name: filter_name[:value].to_s)
       issues.select do |issue|
         filter.include?(issue)
+      end
+    end
+  end
+
+  BetweenExpr = Struct.new(:lhs, :rhs) do
+    def eval(issues)
+      query_date_range = DateRange.new(Time.parse(lhs[:value].to_s), Time.parse(rhs[:value].to_s))
+      issues.select do |issue|
+        issue_date_range = DateRange.new(issue.started, issue.completed)
+        issue_date_range.overlaps?(query_date_range)
       end
     end
   end

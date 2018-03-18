@@ -16,7 +16,10 @@ class ComponentsController < ApplicationController
   end
 
   def timesheets
-    issues_by_epic = @board.issues.group_by{ |issue| issue.epic }
+    issues_by_epic = @board.issues
+      .group_by{ |issue| issue.epic }
+      .sort_by{|epic, _| epic.nil? ? 1 : 0 }
+      .to_h
     render 'partials/timesheets', locals: {issues_by_epic: issues_by_epic}, layout: false
   end
 end
