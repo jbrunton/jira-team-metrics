@@ -7,28 +7,20 @@
     </tr>
   </thead>
   <% issues_by_epic.each do |epic, issues| %>
-      <% first, rest = issues.first, issues[1..issues.length] %>
-      <tr>
-        <td rowspan="<%= issues.length %>">
-          <%= epic.nil? ? 'None' : epic.display_name %>
-        </td>
-        <td>
-          <%= first.display_name %>
-        </td>
-        <td>
-          <%= pretty_print_number first.duration_in_range %>
-        </td>
-      </tr>
-      <% rest.each do |issue| %>
+      <% issues.each_with_index do |issue, index| %>
           <tr>
+            <% if index == 0 %>
+                <td rowspan="<%= issues.length %>">
+                  <%= epic.nil? ? 'None' : epic.display_name %>
+                </td>
+            <% end %>
             <td>
               <%= issue.display_name %>
             </td>
-            <td>
+            <td class="right-align">
               <%= pretty_print_number issue.duration_in_range %>
             </td>
           </tr>
       <% end %>
-
   <% end %>
 </table>
