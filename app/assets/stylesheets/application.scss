@@ -24,11 +24,40 @@ table {
   td,th {
     vertical-align: top;
   }
-  tr.major-row {
-    border-top: 1px solid $table-border-color;
+}
+
+table.jira-tree {
+  td.indent {
+    width: 50px;
   }
-  td.minor-row {
-    border-top: 1px solid $table-border-color;
+
+  tr.delivery {
+    td {
+      font-weight: bold;
+    }
+  }
+
+  tr.epic {
+    td {
+      font-weight: bold;
+    }
+
+    td:first-child {
+      padding-left: 50px;
+    }
+  }
+
+  tr.story {
+    td:first-child {
+      padding-left: 90px;
+    }
+  }
+
+  td {
+    &.effort-stats {
+      @extend .right-align;
+      width: 5%;
+    }
   }
 }
 

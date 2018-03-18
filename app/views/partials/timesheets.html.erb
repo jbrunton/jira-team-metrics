@@ -1,61 +1,57 @@
-<table>
+<% total_duration = board.issues.map{ |i| i.duration_in_range }.sum %>
+
+<table class="bordered jira-tree">
   <thead>
     <tr>
-      <th style="width: 30%;">Increment</th>
-      <th style="width: 30%;">Epic</th>
-      <th style="width: 30%;">Issues</th>
-      <th colspan="2" style="width: 10%;">Days Effort</th>
+      <th style="width: 90%">Issue</th>
+      <th colspan="2" style="width: 10%">Developer Days</th>
     </tr>
   </thead>
 
-  <% total_duration = board.issues.map{ |i| i.duration_in_range }.sum %>
-
   <% epics_by_increment.each do |increment, issues_by_epic| %>
       <% increment_duration = issues_by_epic.values.flatten.map{|i| i.duration_in_range}.sum %>
-      <tr class="major-row">
+      <tr class="delivery">
         <td>
           <%= increment.nil? ? 'None' : "#{increment['issue']['key']} - #{increment['issue']['summary']}" %>
         </td>
-        <th></th>
-        <th></th>
-        <th class="minor-row right-align">
+        <td class="effort-stats">
           <%= pretty_print_number(increment_duration) %>
-        </th>
-        <th class="minor-row right-align">
-          (<%= pretty_print_number(increment_duration / total_duration * 100) %>%)
-        </th>
+        </td>
+        <td class="effort-stats">
+          (<%= pretty_print_number(increment_duration / total_duration * 100) %>%)</span>
+        </td>
       </tr>
 
       <% issues_by_epic.each do |epic, issues| %>
-          <% epic_duration = issues.map{|i| i.duration_in_range}.sum %>
-          <tr>
-            <td></td>
-            <td class="minor-row">
-              <%= epic.nil? ? 'None' : epic.display_name %>
-            </td>
-            <td class="minor-row"></td>
-            <td class="minor-row right-align">
-              <%= pretty_print_number(epic_duration) %>
-            </td>
-            <td class="minor-row right-align">
-              (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)
-            </td>
-          </tr>
+          <% unless increment.nil? %>
+              <% epic_duration = issues.map{|i| i.duration_in_range}.sum %>
+              <tr class="epic">
+                <td>
+                  <%= epic.nil? ? 'None' : epic.display_name %>
+                </td>
+                <td class="effort-stats">
+                  <%= pretty_print_number(epic_duration) %>
+                </td>
+                <td class="effort-stats">
+                  (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)</span>
+                </td>
+              </tr>
+          <% end %>
+
           <% issues.each_with_index do |issue, index| %>
-              <tr>
-                <td></td>
-                <td></td>
-                <td class="minor-row">
-                  <%= issue.display_name %>
+              <tr class="story">
+                <td>
+                  <%= issue.nil? ? 'None' : issue.display_name %>
                 </td>
-                <td class="minor-row right-align">
-                  <%= pretty_print_number issue.duration_in_range %>
+                <td class="effort-stats">
+                  <%= pretty_print_number(issue.duration_in_range) %>
                 </td>
-                <td class="minor-row right-align">
-                  (<%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>%)
+                <td class="effort-stats">
+                  (<%= pretty_print_number(issue.duration_in_range / total_duration * 100) %>%)</span>
                 </td>
               </tr>
           <% end %>
       <% end %>
   <% end %>
+
 </table>
