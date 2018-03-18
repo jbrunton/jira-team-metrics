@@ -4,6 +4,7 @@
     <ul class="collapsible" data-collapsible="expandable">
       <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_fields', locals: { issue: issue, expand: expand } %>
+      <%= render partial: 'partials/issue_links', locals: { issue: issue, expand: expand } %>
     </ul>
   </div>
 

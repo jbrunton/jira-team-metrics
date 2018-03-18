@@ -18,16 +18,15 @@ class JiraClient
     JSON.parse(response.body)
   end
 
-  def search_issues(opts, &block)
+  def search_issues(domain, opts, &block)
     yield(0) if block_given? && opts[:startAt].nil?
 
     url = generate_url(opts.merge(expand: ['changelog']))
-    statuses = opts[:statuses]
 
     response = request(url)
 
     issues = response['issues'].map do |raw_issue|
-      IssueAttributesBuilder.new(raw_issue, statuses, opts[:fields]).build
+      IssueAttributesBuilder.new(raw_issue, domain).build
     end
 
     startAt = response['startAt'] || 0
@@ -35,7 +34,7 @@ class JiraClient
     yield(progress) if block_given?
     if startAt + response['maxResults'] < response['total']
       startAt = startAt + response['maxResults']
-      issues = issues + search_issues(opts.merge({:startAt => startAt}), &block)
+      issues = issues + search_issues(domain, opts.merge({:startAt => startAt}), &block)
     end
 
     issues
@@ -81,6 +80,7 @@ private
   end
 
   def issue_request(uri, request)
+    puts "Issuing request: #{uri.to_s}"
     Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) do |http|
       http.request(request)
     end

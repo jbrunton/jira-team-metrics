@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "labels"
     t.string "transitions"
     t.string "fields"
+    t.string "links"
     t.integer "board_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

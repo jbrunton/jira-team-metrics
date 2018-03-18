@@ -2,6 +2,7 @@ class Issue < ApplicationRecord
   serialize :labels
   serialize :transitions
   serialize :fields
+  serialize :links
   belongs_to :board
 
   def epic

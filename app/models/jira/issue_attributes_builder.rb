@@ -1,9 +1,10 @@
 
 class IssueAttributesBuilder
-  def initialize(json, statuses, field_definitions)
+  def initialize(json, domain)
     @json = json
-    @statuses = statuses
-    @field_definitions = field_definitions
+    @statuses = domain.statuses
+    @field_definitions = domain.fields || []
+    @link_types = domain.link_types || []
   end
 
   def build
@@ -13,7 +14,8 @@ class IssueAttributesBuilder
       'issue_type' => issue_type,
       'transitions' => transitions,
       'fields' => fields,
-      'labels' => labels
+      'labels' => labels,
+      'links' => links
     }
   end
 
@@ -74,6 +76,27 @@ private
           'toStatusCategory' => @statuses[toStatus]
         }
       end
+    end
+  end
+
+  def links
+    @links ||= begin
+      issue_links = @json['fields']['issuelinks'].map do |link|
+        if link['inwardIssue'].nil?
+          nil
+        else
+          {
+            inward_link_type: link['type']['inward'],
+            issue: {
+              key: link['inwardIssue']['key'],
+              summary: link['inwardIssue']['fields']['summary']
+            }
+          }
+        end
+      end
+      issue_links
+        .compact
+        .select{ |link| @link_types.include?(link[:inward_link_type]) }
     end
   end
 end

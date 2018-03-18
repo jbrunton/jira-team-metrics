@@ -7,6 +7,7 @@ class CreateIssues < ActiveRecord::Migration[5.1]
       t.string :labels
       t.string :transitions
       t.string :fields
+      t.string :links
       t.references :board, foreign_key: true
 
       t.timestamps
