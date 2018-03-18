@@ -12,6 +12,10 @@ class IssueDecorator < Draper::Decorator
     @date_range = date_range
   end
 
+  def epic
+    object.epic.nil? ? nil : IssueDecorator.new(object.epic, @from_date, @to_date, @date_range)
+  end
+
   def started
     @started ||= object.started_time(@from_state)
   end
@@ -25,7 +29,11 @@ class IssueDecorator < Draper::Decorator
   end
 
   def duration_in_range
-    @date_range.nil? ? nil : @date_range.overlap_with(DateRange.new(@started, @completed)).duration
+    if issue_type == 'Epic'
+      nil
+    else
+      @date_range.nil? ? nil : @date_range.overlap_with(DateRange.new(@started, @completed)).duration
+    end
   end
 
   def decorate(_options)

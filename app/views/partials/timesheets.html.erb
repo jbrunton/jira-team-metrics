@@ -1,8 +1,9 @@
 <table class="bordered issue-details">
   <thead>
     <tr>
-      <th style="width: 45%;">Epic</th>
-      <th style="width: 45%;">Issues</th>
+      <th style="width: 40%;">Epic</th>
+      <th style="width: 10%;">Days</th>
+      <th style="width: 40%;">Issues</th>
       <th style="width: 10%;">Days</th>
     </tr>
   </thead>
@@ -12,6 +13,9 @@
             <% if index == 0 %>
                 <td rowspan="<%= issues.length %>">
                   <%= epic.nil? ? 'None' : epic.display_name %>
+                </td>
+                <td rowspan="<%= issues.length %>">
+                  <%= epic.nil? ? 'N/A' : pretty_print_number(issues.map{|i| i.duration_in_range}.reduce(:+)) %>
                 </td>
             <% end %>
             <td>
