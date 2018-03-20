@@ -12,7 +12,7 @@ class SyncDomainJob < ApplicationJob
       board = domain.boards.find_by(jira_id: board_details['jira_id'])
       board.config = board_details['config'].to_yaml(line_width: -1)
       board.save
-      SyncBoardJob.perform_now(board, username, password, false)
+      SyncBoardJob.perform_now(board, username, password, 180, false)
     end
 
     @notifier.notify_complete

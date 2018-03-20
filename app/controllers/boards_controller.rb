@@ -27,7 +27,7 @@ class BoardsController < ApplicationController
   def sync
     @credentials = Credentials.new(credentials_params)
     if @credentials.valid?
-      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
+      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password, days_to_sync)
       render json: {}, status: 200
     else
       render partial: 'shared/sync_form', status: 400
@@ -37,6 +37,10 @@ class BoardsController < ApplicationController
 private
   def credentials_params
     params.require(:credential).permit(:username, :password)
+  end
+
+  def days_to_sync
+    params.require(:days_to_sync).to_i
   end
 
   def board_params
