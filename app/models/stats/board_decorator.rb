@@ -53,10 +53,10 @@ class BoardDecorator < Draper::Decorator
     end
   end
 
-  def completed_issues_in_range(date_range)
-    completed_issues
-      .select{ |i| date_range.cover?(i.completed) }
-  end
+  # def completed_issues_in_range(date_range)
+  #   completed_issues
+  #     .select{ |i| date_range.cover?(i.completed) }
+  # end
 
   def issues_by_type
     @issues_by_type ||= completed_issues
@@ -93,37 +93,11 @@ class BoardDecorator < Draper::Decorator
   end
 
   def summarize(group_by = nil, issues = nil)
-    if ['month', 'week'].include?(group_by)
-      results = []
-      from_date = completed_issues.first.completed
+    IssuesAggregator.new(completed_issues, :completed).aggregate(group_by)
+  end
 
-      while from_date < completed_issues.last.completed
-        to_date = next_date(from_date, group_by)
-        date_range = from_date...to_date
-
-        issues = completed_issues_in_range(date_range)
-        series_label = pretty_print_date_range(date_range, group_by == 'week' ? {show_day: true} : {})
-        results << [series_label, summarize(nil, issues)]
-
-        from_date = to_date
-      end
-
-      results
-    else
-      issues ||= completed_issues
-      issues_by_type = issues
-        .group_by{ |i| i.issue_type }
-        .map{ |issue_type, issues_of_type| [issue_type, IssuesDecorator.new(issues_of_type)] }
-        .to_h
-
-      issue_types = issues_by_type.keys.sort_by do |issue_type|
-        -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1)
-      end
-
-      issue_types.map do |issue_type|
-        SummaryRow.new(issue_type, issues_by_type[issue_type], completed_issues)
-      end
-    end
+  def summarize_created(group_by = nil)
+    IssuesAggregator.new(issues, :issue_created).aggregate(group_by)
   end
 
   def summary_rows_for(issues)
@@ -268,12 +242,12 @@ class BoardDecorator < Draper::Decorator
 
 private
 
-  def next_date(from_date, group_by)
-    if group_by == 'month'
-      to_date = from_date.next_month.beginning_of_month
-    else
-      to_date = from_date.next_week.beginning_of_week
-    end
-    [to_date, completed_issues.last.completed].min
-  end
+  # def next_date(from_date, group_by)
+  #   if group_by == 'month'
+  #     to_date = from_date.next_month.beginning_of_month
+  #   else
+  #     to_date = from_date.next_week.beginning_of_week
+  #   end
+  #   [to_date, completed_issues.last.completed].min
+  # end
 end
