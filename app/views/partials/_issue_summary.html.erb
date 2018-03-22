@@ -15,6 +15,10 @@
         <th>Summary</th>
         <td><%= issue.summary %></td>
       </tr>
+      <tr>
+        <th>Created</th>
+        <td><%= pretty_print_date(issue.issue_created) %></td>
+      </tr>
     </table>
   </div>
 </li>

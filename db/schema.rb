@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "key"
     t.string "issue_type"
     t.string "summary"
+    t.datetime "issue_created"
     t.string "labels"
     t.string "transitions"
     t.string "fields"
