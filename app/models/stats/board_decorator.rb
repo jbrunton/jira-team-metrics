@@ -92,7 +92,7 @@ class BoardDecorator < Draper::Decorator
     binding()
   end
 
-  def summarize(group_by = nil, issues = nil)
+  def summarize(group_by = nil)
     IssuesAggregator.new(completed_issues, :completed).aggregate(group_by)
   end
 

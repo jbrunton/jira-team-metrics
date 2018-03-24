@@ -43,7 +43,7 @@ class ApiController < ApplicationController
   end
 
   def created_summary_by_month
-    render json: summarize_field_by_month(:count, :issue_created)
+    render json: summarize_field_by_month(:count)
   end
 
   def effort_summary
@@ -234,7 +234,7 @@ private
     }
   end
 
-  def summarize_field_by_month(field, date_attr = :completed)
+  def summarize_field_by_month(field)
     if field == :issue_created
       summary_table = @board.summarize_created('month').to_h
     else
