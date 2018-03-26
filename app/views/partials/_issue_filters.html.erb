@@ -13,7 +13,7 @@
       <tr>
         <th></th>
         <td>
-          <form class="flag-outlier">
+          <form class="flag-outlier" action="<%= url_for(issue) %>/flag_outlier">
             <input type="checkbox" id="outlier" name="outlier" <%= issue.outlier? ? 'checked' : '' %> />
             <label for="outlier">Outlier</label>
           </form>
@@ -22,20 +22,3 @@
     </table>
   </div>
 </li>
-
-<script>
-  $(function() {
-      $('form.flag-outlier input').change(function(event) {
-          var url = '<%= url_for(issue) %>/flag_outlier';
-          var payload = $(event.target).closest('form.flag-outlier').serialize();
-          $.ajax({
-              url: url,
-              type: 'PUT',
-              data: payload,
-              success: function() {
-                  location.reload();
-              }
-          })
-      });
-  });
-</script>
