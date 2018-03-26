@@ -28,4 +28,18 @@ $(function() {
   $('.datepicker').on('change', function(){
     $(this).next().find('.picker__close').click();
   });
+
+  $(document).on('change', 'form.flag-outlier input', function(event) {
+    var $form = $(event.target).closest('form.flag-outlier');
+    var url = $form.attr('action');
+    var payload = $form.serialize();
+    $.ajax({
+      url: url,
+      type: 'PUT',
+      data: payload,
+      success: function() {
+        location.reload();
+      }
+    })
+  });
 });

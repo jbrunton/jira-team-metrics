@@ -5,6 +5,15 @@ class Issue < ApplicationRecord
   serialize :links
   belongs_to :board
 
+  def filters
+    board.filters
+      .select{ |filter| filter.include?(self) }
+  end
+
+  def outlier?
+    filters.any?{ |filter| filter.name == 'Outliers' && filter.config_filter? }
+  end
+
   def epic
     board.issues.where(key: fields['Epic Link']).first
   end
