@@ -1,0 +1,41 @@
+<li>
+  <div class="collapsible-header<%= ' active' if expand %>">Filters</div>
+  <div class="collapsible-body">
+    <table class="issue-details">
+      <tr>
+        <th>Filters</th>
+        <td>
+          <% issue.filters.each do |filter| %>
+              <div class="chip"><%= filter.name %></div>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td>
+          <form class="flag-outlier">
+            <input type="checkbox" id="outlier" name="outlier" <%= issue.outlier? ? 'checked' : '' %> />
+            <label for="outlier">Outlier</label>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </div>
+</li>
+
+<script>
+  $(function() {
+      $('form.flag-outlier input').change(function(event) {
+          var url = '<%= url_for(issue) %>/flag_outlier';
+          var payload = $(event.target).closest('form.flag-outlier').serialize();
+          $.ajax({
+              url: url,
+              type: 'PUT',
+              data: payload,
+              success: function() {
+                  location.reload();
+              }
+          })
+      });
+  });
+</script>

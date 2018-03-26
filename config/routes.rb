@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   post '/domains/:domain_name/boards/:board_id', to: 'boards#update'
 
   get '/domains/:domain_name/boards/:board_id/issues/:issue_key', to: 'issues#show'
+  put '/domains/:domain_name/boards/:board_id/issues/:issue_key/flag_outlier', to: 'issues#flag_outlier'
 
   get '/reports/:domain_name/boards/:board_id/issues_by_type', to: 'reports#issues_by_type'
   get '/reports/:domain_name/boards/:board_id/cycle_times_by_type', to: 'reports#cycle_times_by_type'
