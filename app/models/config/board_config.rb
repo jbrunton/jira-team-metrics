@@ -9,6 +9,10 @@ class BoardConfig
     config_hash['default_query'] || ''
   end
 
+  def cycle_times
+    config_hash['cycle_times']
+  end
+
   def validate
     rx = Rx.new({ :load_core => true })
     schema = rx.make_schema(YAML.load_file(File.join(__dir__, 'board_config_schema.yml')))
