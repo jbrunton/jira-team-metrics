@@ -12,7 +12,11 @@
       <% increment_duration = issues_by_epic.values.flatten.map{|i| i.duration_in_range}.sum %>
       <tr class="delivery">
         <td>
-          <%= increment.nil? ? 'None' : "#{increment['issue']['key']} - #{increment['issue']['summary']}" %>
+          <% if increment.nil? %>
+              None
+          <% else %>
+              <%= increment['issue']['key'] %> &mdash; <%= increment['issue']['summary'] %>
+          <% end %>
         </td>
         <td class="effort-stats">
           <%= pretty_print_number(increment_duration) %>
@@ -27,7 +31,11 @@
               <% epic_duration = issues.map{|i| i.duration_in_range}.sum %>
               <tr class="epic">
                 <td>
-                  <%= epic.nil? ? 'None' : epic.display_name %>
+                  <% if epic.nil? %>
+                      None
+                  <% else %>
+                      <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
+                  <% end %>
                 </td>
                 <td class="effort-stats">
                   <%= pretty_print_number(epic_duration) %>
@@ -38,10 +46,10 @@
               </tr>
           <% end %>
 
-          <% issues.each_with_index do |issue, index| %>
+          <% issues.each do |issue| %>
               <tr class="story">
                 <td>
-                  <%= issue.nil? ? 'None' : issue.display_name %>
+                  <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
                 </td>
                 <td class="effort-stats">
                   <%= pretty_print_number(issue.duration_in_range) %>
