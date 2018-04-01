@@ -7,17 +7,17 @@ class Domain < ApplicationRecord
   validates :url, presence: true
   validate :validate_config
 
-  def config_hash
-    @config_hash ||= begin
-      domain_config = DomainConfig.new(YAML.load(config_string || '') || {})
-      domain_config.validate
-      domain_config.config_hash
-    end
+  def config
+    DomainConfig.new(config_hash)
   end
 
-  def link_types
-    config_hash['link_types']
+  def config_hash
+    YAML.load(config_string || '') || {}
   end
+
+  # def link_types
+  #   config_hash['link_types']
+  # end
 
   def increments
     config_hash['increments']

@@ -2,9 +2,7 @@
 class IssueAttributesBuilder
   def initialize(json, domain)
     @json = json
-    @statuses = domain.statuses
-    @field_definitions = domain.fields || []
-    @link_types = domain.link_types || []
+    @domain = domain
   end
 
   def build
@@ -44,7 +42,7 @@ private
   def fields
     @fields ||= begin
       fields = {}
-      @field_definitions.each do |field|
+      @domain.config.fields.each do |field|
         field_id = field['id']
         field_value = @json['fields'][field_id]
         fields[field['name']] =
@@ -76,9 +74,9 @@ private
         {
           'date' => history['created'],
           'fromStatus' => fromStatus,
-          'fromStatusCategory' => @statuses[fromStatus],
+          'fromStatusCategory' => @domain.statuses[fromStatus],
           'toStatus' => toStatus,
-          'toStatusCategory' => @statuses[toStatus]
+          'toStatusCategory' => @domain.statuses[toStatus]
         }
       end
     end
@@ -102,7 +100,7 @@ private
       end
       issue_links
         .compact
-        .select{ |link| @link_types.include?(link[:inward_link_type]) }
+        .select{ |link| @domain.config.link_types.include?(link[:inward_link_type]) }
     end
   end
 end

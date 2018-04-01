@@ -10,6 +10,10 @@ class DomainConfig
     config_hash['fields'] || []
   end
 
+  def link_types
+    config_hash['link_types'] || []
+  end
+
   def validate
     rx = Rx.new({ :load_core => true })
     schema = rx.make_schema(YAML.load(SCHEMA))

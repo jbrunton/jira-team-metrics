@@ -2,9 +2,13 @@ require 'rails_helper'
 
 RSpec.describe DomainConfig do
   let(:custom_fields) { ['My Field'] }
+  let(:link_types) { 'blocks' }
 
   let(:config_hash) do
-    {'fields' => custom_fields}
+    {
+      'fields' => custom_fields,
+      'link_types' => link_types
+    }
   end
 
   it "initializes #config_hash" do
@@ -22,6 +26,19 @@ RSpec.describe DomainConfig do
       config_hash.delete('fields')
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.fields).to eq([])
+    end
+  end
+
+  context "#link_types" do
+    it "returns the link types in the config" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.link_types).to eq(link_types)
+    end
+
+    it "returns an empty array if no custom fields are specified" do
+      config_hash.delete('link_types')
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.link_types).to eq([])
     end
   end
 end
