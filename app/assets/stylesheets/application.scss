@@ -17,6 +17,10 @@
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 @import "materialize";
 
+span.error {
+  color: $input-error-color;
+}
+
 table {
   &.issue-details th {
     width: 25%;

@@ -5,9 +5,14 @@ class Domain < ApplicationRecord
 
   validates :name, presence: true
   validates :url, presence: true
+  validate :validate_config
 
   def config_hash
-    YAML.load(config || '') || {}
+    @config_hash ||= begin
+      domain_config = DomainConfig.new(YAML.load(config || '') || {})
+      domain_config.validate
+      domain_config.config_hash
+    end
   end
 
   def link_types
@@ -20,5 +25,14 @@ class Domain < ApplicationRecord
 
   def synced_boards
     boards.where.not(boards: {last_synced: nil})
+  end
+
+  def validate_config
+    domain_config = DomainConfig.new(YAML.load(config || '') || {})
+    begin
+      domain_config.validate
+    rescue Exception => e
+      errors.add(:config, e.message)
+    end
   end
 end

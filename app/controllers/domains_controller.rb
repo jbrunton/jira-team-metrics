@@ -23,12 +23,10 @@ class DomainsController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      if @domain.update(domain_params)
-        format.json { render json: {}, status: :ok }
-      else
-        format.json { render partial: 'config_form', status: 400 }
-      end
+    if @domain.update(domain_params)
+      render json: {}, status: :ok
+    else
+      render partial: 'config_form', status: 400
     end
   end
 

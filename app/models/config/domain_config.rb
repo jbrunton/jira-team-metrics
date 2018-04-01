@@ -2,8 +2,8 @@
 class DomainConfig
   attr_reader :config_hash
 
-  def initialize(domain)
-    @config_hash = YAML.load(domain.config || '') || {}
+  def initialize(config_hash)
+    @config_hash = config_hash
   end
 
   def fields
