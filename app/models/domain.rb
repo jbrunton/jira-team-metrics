@@ -9,7 +9,7 @@ class Domain < ApplicationRecord
 
   def config_hash
     @config_hash ||= begin
-      domain_config = DomainConfig.new(YAML.load(config || '') || {})
+      domain_config = DomainConfig.new(YAML.load(config_string || '') || {})
       domain_config.validate
       domain_config.config_hash
     end
@@ -28,7 +28,7 @@ class Domain < ApplicationRecord
   end
 
   def validate_config
-    domain_config = DomainConfig.new(YAML.load(config || '') || {})
+    domain_config = DomainConfig.new(YAML.load(config_string || '') || {})
     begin
       domain_config.validate
     rescue Exception => e

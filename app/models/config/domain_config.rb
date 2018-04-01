@@ -7,7 +7,7 @@ class DomainConfig
   end
 
   def fields
-    config_hash['fields']
+    config_hash['fields'] || []
   end
 
   def validate

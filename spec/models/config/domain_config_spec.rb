@@ -1,0 +1,27 @@
+require 'rails_helper'
+
+RSpec.describe DomainConfig do
+  let(:custom_fields) { ['My Field'] }
+
+  let(:config_hash) do
+    {'fields' => custom_fields}
+  end
+
+  it "initializes #config_hash" do
+    domain_config = DomainConfig.new(config_hash)
+    expect(domain_config.config_hash).to eq(config_hash)
+  end
+
+  context "#fields" do
+    it "returns the fields in the config" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.fields).to eq(custom_fields)
+    end
+
+    it "returns an empty array if no custom fields are specified" do
+      config_hash.delete('fields')
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.fields).to eq([])
+    end
+  end
+end

@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20170702120106) do
     t.string "url"
     t.string "statuses"
     t.string "fields"
-    t.text "config"
+    t.text "config_string"
     t.datetime "last_synced"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -5,7 +5,7 @@ class CreateDomains < ActiveRecord::Migration[5.1]
       t.string :url
       t.string :statuses
       t.string :fields
-      t.text :config
+      t.text :config_string
       t.datetime :last_synced
 
       t.timestamps

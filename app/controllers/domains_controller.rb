@@ -47,7 +47,7 @@ class DomainsController < ApplicationController
 
 private
   def domain_params
-    params.require(:domain).permit(:name, :url, :config)
+    params.require(:domain).permit(:name, :url, :config_string)
   end
 
   def credentials_params
