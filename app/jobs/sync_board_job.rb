@@ -1,7 +1,7 @@
 class SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, username, password, notify_complete = true)
+  def perform(board, username, password, days_to_sync, notify_complete = true)
     #TODO: do this in a transaction
 
     @notifier = StatusNotifier.new(board, "syncing #{board.name}")
@@ -14,7 +14,7 @@ class SyncBoardJob < ApplicationJob
     @notifier.notify_status('fetching issues from JIRA')
 
     credentials = {username: username, password: password}
-    sync_from = Time.now - (180 * 60 * 60 * 24)
+    sync_from = Time.now - (days_to_sync * 60 * 60 * 24)
     issues = fetch_issues_for(board, sync_from, credentials)
 
     @notifier.notify_status('updating cache')

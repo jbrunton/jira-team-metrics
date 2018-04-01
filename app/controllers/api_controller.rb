@@ -42,6 +42,10 @@ class ApiController < ApplicationController
     render json: summarize_field_by_month(:total_time)
   end
 
+  def created_summary_by_month
+    render json: summarize_field_by_month(:count)
+  end
+
   def effort_summary
     summary_table = @board.summarize
 
@@ -231,7 +235,11 @@ private
   end
 
   def summarize_field_by_month(field)
-    summary_table = @board.summarize('month').to_h
+    if field == :issue_created
+      summary_table = @board.summarize_created('month').to_h
+    else
+      summary_table = @board.summarize('month').to_h
+    end
 
     builder = DataTableBuilder.new
       .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
