@@ -42,7 +42,7 @@ private
   def fields
     @fields ||= begin
       fields = {}
-      @domain.config.fields.each do |field|
+      @domain.fields.each do |field|
         field_id = field['id']
         field_value = @json['fields'][field_id]
         fields[field['name']] =
