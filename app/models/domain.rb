@@ -15,10 +15,6 @@ class Domain < ApplicationRecord
     YAML.load(config_string || '') || {}
   end
 
-  # def link_types
-  #   config_hash['link_types']
-  # end
-
   def increments
     config_hash['increments']
   end

@@ -1,0 +1,5 @@
+---
+type: "//rec"
+optional:
+  default_query:
+    type: "//str"

@@ -1,4 +1,3 @@
-
 class DomainConfig
   attr_reader :config_hash
 
@@ -16,25 +15,7 @@ class DomainConfig
 
   def validate
     rx = Rx.new({ :load_core => true })
-    schema = rx.make_schema(YAML.load(SCHEMA))
+    schema = rx.make_schema(YAML.load_file(File.join(__dir__, 'domain_config_schema.yml')))
     schema.check!(config_hash)
   end
-
-  SCHEMA = <<~END
-    type: "//rec"
-    optional:
-      fields:
-        type: "//arr"
-        contents: "//str"
-      link_types:
-        type: "//arr"
-        contents: "//str"
-      increments:
-        type: "//arr"
-        contents:
-          type: "//rec"
-          required:
-            issue_type: "//str"
-            inward_link_type: "//str"
-  END
 end
