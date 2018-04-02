@@ -8,12 +8,13 @@ class SyncDomainJob < ApplicationJob
     boards, statuses, fields = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses, fields)
 
-    (domain.config_hash['boards'] || []).each do |board_details|
-      board = domain.boards.find_by(jira_id: board_details['jira_id'])
-      board.config = board_details['config'].to_yaml(line_width: -1)
-      board.save
-      SyncBoardJob.perform_now(board, username, password, 180, false)
-    end
+    # TODO: implement this properly
+    # domain.config.boards.each do |board_details|
+    #   board = domain.boards.find_by(jira_id: board_details['jira_id'])
+    #   board.config = board_details['config'].to_yaml(line_width: -1)
+    #   board.save
+    #   SyncBoardJob.perform_now(board, username, password, 180, false)
+    # end
 
     @notifier.notify_complete
   end

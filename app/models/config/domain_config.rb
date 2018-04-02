@@ -3,6 +3,7 @@ class DomainConfig < BaseConfig
     super(config_hash, 'domain_config')
   end
 
+  # TODO: add Epic Link to this
   def fields
     config_hash['fields'] || []
   end
