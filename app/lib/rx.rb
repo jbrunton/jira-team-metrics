@@ -1,3 +1,5 @@
+# From http://rx.codesimply.com/
+
 class Rx
   def self.schema(schema)
     Rx.new(:load_core => true).make_schema(schema)
