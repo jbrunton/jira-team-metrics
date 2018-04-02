@@ -1,0 +1,16 @@
+---
+type: "//rec"
+optional:
+  fields:
+    type: "//arr"
+    contents: "//str"
+  link_types:
+    type: "//arr"
+    contents: "//str"
+  increments:
+    type: "//arr"
+    contents:
+      type: "//rec"
+      required:
+        issue_type: "//str"
+        inward_link_type: "//str"

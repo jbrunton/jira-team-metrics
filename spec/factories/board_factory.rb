@@ -3,6 +3,6 @@ FactoryGirl.define do
     sequence(:jira_id) { |k| k }
     sequence(:name) { |k| "Board #{k}" }
     domain
-    config Board::DEFAULT_CONFIG
+    config_string Board::DEFAULT_CONFIG
   end
 end

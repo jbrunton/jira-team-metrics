@@ -1,6 +1,12 @@
 <form id="config-form">
+  <% if @domain.errors.any? %>
+      <% @domain.errors.full_messages.each do |error| %>
+        <span class="error"><%= error %></span>
+      <% end %>
+  <% end %>
+
   <div class="input-field">
-    <textarea id="domain_config" name="domain[config]" class="materialize-textarea"><%= @domain.config %></textarea>
-    <label for="domain_config">Config (YAML)</label>
+    <textarea id="domain_config" name="domain[config_string]" class="materialize-textarea"><%= @domain.config_string %></textarea>
+    <label for="domain_config_string">Config (YAML)</label>
   </div>
 </form>

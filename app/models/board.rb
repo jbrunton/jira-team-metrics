@@ -1,4 +1,6 @@
 class Board < ApplicationRecord
+  include Configurable
+
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
@@ -11,10 +13,6 @@ class Board < ApplicationRecord
 
   def config_filters
     (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
-  end
-
-  def config_hash
-    YAML.load(config || '') || {}
   end
 
   def config_property(property)

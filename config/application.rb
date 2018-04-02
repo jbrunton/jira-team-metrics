@@ -28,7 +28,9 @@ module JiraTeamMetrics
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    config.autoload_paths << Rails.root.join("lib")
     config.autoload_paths << Rails.root.join("app", "models", "stats")
     config.autoload_paths << Rails.root.join("app", "models", "jira")
+    config.autoload_paths << Rails.root.join("app", "models", "config")
   end
 end
