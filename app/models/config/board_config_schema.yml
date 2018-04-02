@@ -16,7 +16,7 @@ optional:
         required:
           from: "//str"
           to: "//str"
-      in_test:
+      in_progress:
         type: "//rec"
         required:
           from: "//str"

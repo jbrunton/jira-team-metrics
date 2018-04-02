@@ -32,7 +32,12 @@ RSpec.describe BoardConfig do
   end
 
   context "#validate" do
-    it "validates the config" do
+    it "validates a well formed config" do
+      board_config = BoardConfig.new(config_hash)
+      expect { board_config.validate }.not_to raise_error
+    end
+
+    it "validates the top level fields" do
       config_hash['unexpected_field'] = 'foo'
       board_config = BoardConfig.new(config_hash)
       expect { board_config.validate }.to raise_error(Rx::ValidationError, /Hash had extra keys/)

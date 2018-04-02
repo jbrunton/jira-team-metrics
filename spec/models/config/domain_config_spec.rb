@@ -17,10 +17,21 @@ RSpec.describe DomainConfig do
   end
 
   context "#validate" do
-    it "validates the config" do
+    it "validates a well formed config" do
+      domain_config = DomainConfig.new(config_hash)
+      expect { domain_config.validate }.not_to raise_error
+    end
+
+    it "validates the top level fields" do
       config_hash['unexpected_field'] = 'foo'
       domain_config = DomainConfig.new(config_hash)
       expect { domain_config.validate }.to raise_error(Rx::ValidationError, /Hash had extra keys/)
+    end
+
+    it "validates the type of the fields attribute" do
+      config_hash['fields'] = [1, 2]
+      domain_config = DomainConfig.new(config_hash)
+      expect { domain_config.validate }.to raise_error(Rx::ValidationError, /expected String got 1/)
     end
   end
 
