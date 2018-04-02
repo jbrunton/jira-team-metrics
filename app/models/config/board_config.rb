@@ -1,4 +1,8 @@
 class BoardConfig
+
+  QueryFilter = Struct.new(:name, :query)
+  ConfigFilter = Struct.new(:name, :issues)
+
   attr_reader :config_hash
 
   def initialize(config_hash)
@@ -11,6 +15,16 @@ class BoardConfig
 
   def cycle_times
     config_hash['cycle_times']
+  end
+
+  def filters
+    (config_hash['filters'] || []).map do |filter_hash|
+      if filter_hash.key?('query')
+        QueryFilter.new(filter_hash['name'], filter_hash['query'])
+      else
+        ConfigFilter.new(filter_hash['name'], filter_hash['issues'])
+      end
+    end
   end
 
   def validate

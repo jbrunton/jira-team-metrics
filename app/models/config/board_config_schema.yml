@@ -21,3 +21,21 @@ optional:
           required:
             from: "//str"
             to: "//str"
+  filters:
+    type: "//arr"
+    contents:
+      type: "//any"
+      of:
+        - type: "//rec"
+          required:
+            name: "//str"
+            query: "//str"
+        - type: "//rec"
+          required:
+            name: "//str"
+            issues:
+              type: "//arr"
+              contents:
+                type: "//rec"
+                required:
+                  key: "//str"

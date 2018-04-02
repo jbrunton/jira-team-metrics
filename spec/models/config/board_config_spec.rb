@@ -50,4 +50,33 @@ RSpec.describe BoardConfig do
       expect(board_config.cycle_times).to eq(cycle_times)
     end
   end
+
+  context "#filters" do
+    it "returns empty if none are specified" do
+      board_config = BoardConfig.new(config_hash)
+      expect(board_config.filters).to eq([])
+    end
+
+    it "returns query filters if specified" do
+      config_hash['filters'] = [{
+        'name' => 'Releases',
+        'query' => "summary ~ 'Release'"
+      }]
+      board_config = BoardConfig.new(config_hash)
+      expect(board_config.filters).to eq([
+        BoardConfig::QueryFilter.new('Releases', "summary ~ 'Release'")
+      ])
+    end
+
+    it "returns config filters if specified" do
+      config_hash['filters'] = [{
+        'name' => 'Support Tickets',
+        'issues' => ['ENG-101']
+      }]
+      board_config = BoardConfig.new(config_hash)
+      expect(board_config.filters).to eq([
+        BoardConfig::ConfigFilter.new('Support Tickets', ['ENG-101'])
+      ])
+    end
+  end
 end
