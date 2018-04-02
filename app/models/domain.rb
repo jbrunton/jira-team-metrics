@@ -24,9 +24,9 @@ class Domain < ApplicationRecord
   end
 
   def validate_config
-    domain_config = DomainConfig.new(YAML.load(config_string || '') || {})
+    config = DomainConfig.new(config_hash)
     begin
-      domain_config.validate
+      config.validate
     rescue Exception => e
       errors.add(:config, e.message)
     end

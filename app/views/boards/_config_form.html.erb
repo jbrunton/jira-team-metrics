@@ -1,6 +1,12 @@
 <form id="config-form">
+  <% if @board.errors.any? %>
+      <% @board.errors.full_messages.each do |error| %>
+          <span class="error"><%= error %></span>
+      <% end %>
+  <% end %>
+
   <div class="input-field">
-    <textarea id="board_config" name="board[config]" class="materialize-textarea"><%= @board.config || Board::DEFAULT_CONFIG %></textarea>
-    <label for="board_config">Config (YAML)</label>
+    <textarea id="board_config_string" name="board[config_string]" class="materialize-textarea"><%= @board.config_string || Board::DEFAULT_CONFIG %></textarea>
+    <label for="board_config_string">Config (YAML)</label>
   </div>
 </form>
