@@ -31,6 +31,14 @@ RSpec.describe BoardConfig do
     expect(board_config.config_hash).to eq(config_hash)
   end
 
+  context "#validate" do
+    it "validates the config" do
+      config_hash['unexpected_field'] = 'foo'
+      board_config = BoardConfig.new(config_hash)
+      expect { board_config.validate }.to raise_error(Rx::ValidationError, /Hash had extra keys/)
+    end
+  end
+
   context "#default_query" do
     it "returns the default query in the config" do
       board_config = BoardConfig.new(config_hash)
