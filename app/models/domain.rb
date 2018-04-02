@@ -1,19 +1,12 @@
 class Domain < ApplicationRecord
+  include Configurable
+
   serialize :statuses
   serialize :fields
   has_many :boards, :dependent => :delete_all
 
   validates :name, presence: true
   validates :url, presence: true
-  validate :validate_config
-
-  def config
-    DomainConfig.new(config_hash)
-  end
-
-  def config_hash
-    YAML.load(config_string || '') || {}
-  end
 
   def increments
     config_hash['increments']
@@ -21,14 +14,5 @@ class Domain < ApplicationRecord
 
   def synced_boards
     boards.where.not(boards: {last_synced: nil})
-  end
-
-  def validate_config
-    config = DomainConfig.new(config_hash)
-    begin
-      config.validate
-    rescue Rx::ValidationError => e
-      errors.add(:config, e.message)
-    end
   end
 end

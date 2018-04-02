@@ -1,9 +1,9 @@
 class Board < ApplicationRecord
+  include Configurable
+
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
-
-  validate :validate_config
 
   def exclusions
     exclusions_string = config_hash['exclude']
@@ -15,14 +15,6 @@ class Board < ApplicationRecord
     (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
   end
 
-  def config
-    DomainConfig.new(config_hash)
-  end
-
-  def config_hash
-    YAML.load(config_string || '') || {}
-  end
-
   def config_property(property)
     *scopes, property_name = property.split('.')
     config = config_hash
@@ -32,15 +24,6 @@ class Board < ApplicationRecord
     value = config[property_name]
     value.deep_symbolize_keys! if value.is_a?(Hash)
     value
-  end
-
-  def validate_config
-    config = BoardConfig.new(config_hash)
-    begin
-      config.validate
-    rescue Rx::ValidationError => e
-      errors.add(:config, e.message)
-    end
   end
 
   DEFAULT_CONFIG = <<~CONFIG
