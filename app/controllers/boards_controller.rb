@@ -44,6 +44,6 @@ private
   end
 
   def board_params
-    params.require(:board).permit(:config)
+    params.require(:board).permit(:config_string)
   end
 end

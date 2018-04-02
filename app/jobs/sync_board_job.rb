@@ -71,7 +71,7 @@ class SyncBoardJob < ApplicationJob
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :query_filter)
         when BoardConfig::ConfigFilter
-          issue_keys = filter.issues.map{ |issue| issue[:key] }.join(' ')
+          issue_keys = filter.issues.map{ |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :config_filter)
         else
           raise "Unexpected filter type: #{filter}"
