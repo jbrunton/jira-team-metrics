@@ -38,7 +38,7 @@ class Board < ApplicationRecord
     config = BoardConfig.new(config_hash)
     begin
       config.validate
-    rescue Exception => e
+    rescue Rx::ValidationError => e
       errors.add(:config, e.message)
     end
   end
