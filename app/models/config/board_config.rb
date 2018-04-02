@@ -1,12 +1,10 @@
-class BoardConfig
+class BoardConfig < BaseConfig
 
   QueryFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)
 
-  attr_reader :config_hash
-
   def initialize(config_hash)
-    @config_hash = config_hash
+    super(config_hash, 'board_config')
   end
 
   def default_query
@@ -25,11 +23,5 @@ class BoardConfig
         ConfigFilter.new(filter_hash['name'], filter_hash['issues'])
       end
     end
-  end
-
-  def validate
-    rx = Rx.new({ :load_core => true })
-    schema = rx.make_schema(YAML.load_file(File.join(__dir__, 'board_config_schema.yml')))
-    schema.check!(config_hash)
   end
 end

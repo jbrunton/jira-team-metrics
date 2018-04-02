@@ -1,8 +1,6 @@
-class DomainConfig
-  attr_reader :config_hash
-
+class DomainConfig < BaseConfig
   def initialize(config_hash)
-    @config_hash = config_hash
+    super(config_hash, 'domain_config')
   end
 
   def fields
@@ -11,11 +9,5 @@ class DomainConfig
 
   def link_types
     config_hash['link_types'] || []
-  end
-
-  def validate
-    rx = Rx.new({ :load_core => true })
-    schema = rx.make_schema(YAML.load_file(File.join(__dir__, 'domain_config_schema.yml')))
-    schema.check!(config_hash)
   end
 end
