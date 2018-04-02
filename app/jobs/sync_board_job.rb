@@ -64,14 +64,17 @@ class SyncBoardJob < ApplicationJob
   end
 
   def create_filters(board, credentials)
-    board.config_filters.each do |filter|
-      if filter[:query]
-        issues = fetch_issues_for_query(board, filter[:query], credentials, 'syncing ' + filter[:name] + ' filter')
-        issue_keys = issues.map { |issue| issue['key'] }.join(' ')
-        board.filters.create(name: filter[:name], issue_keys: issue_keys, filter_type: :query_filter)
-      else
-        issue_keys = filter[:issues].map{ |issue| issue[:key] }.join(' ')
-        board.filters.create(name: filter[:name], issue_keys: issue_keys, filter_type: :config_filter)
+    board.config.filters.each do |filter|
+      case filter
+        when BoardConfig::QueryFilter
+          issues = fetch_issues_for_query(board, filter.query, credentials, 'syncing ' + filter.name + ' filter')
+          issue_keys = issues.map { |issue| issue['key'] }.join(' ')
+          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :query_filter)
+        when BoardConfig::ConfigFilter
+          issue_keys = filter.issues.map{ |issue| issue[:key] }.join(' ')
+          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :config_filter)
+        else
+          raise "Unexpected filter type: #{filter}"
       end
     end
   end
