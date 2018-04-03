@@ -74,9 +74,9 @@ private
         {
           'date' => history['created'],
           'fromStatus' => fromStatus,
-          'fromStatusCategory' => @domain.statuses[fromStatus],
+          'fromStatusCategory' => @domain.status_category_for(fromStatus),
           'toStatus' => toStatus,
-          'toStatusCategory' => @domain.statuses[toStatus]
+          'toStatusCategory' => @domain.status_category_for(toStatus)
         }
       end
     end

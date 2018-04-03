@@ -33,4 +33,12 @@ class DomainConfig < BaseConfig
       RemoteBoardConfig.new(config_hash['jira_id'], config_hash['config_url'])
     end
   end
+
+  def status_category_overrides
+    @status_category_overrides ||= begin
+      (config_hash['status_category_overrides'] || []).map do |override_hash|
+        [override_hash['map'], override_hash['to_category']]
+      end.to_h
+    end
+  end
 end

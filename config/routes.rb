@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/domain', to: 'domains#show'
   post '/domain/sync', to: 'domains#sync'
   post '/domain', to: 'domains#update'
+  get'/domain/metadata', to: 'domains#metadata'
 
   get '/domain/boards/search', to: 'boards#search'
   get '/domain/boards/:board_id', to: 'boards#show'

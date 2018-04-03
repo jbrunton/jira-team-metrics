@@ -18,6 +18,13 @@ optional:
         issue_type: "//str"
         inward_link_type: "//str"
         outward_link_type: "//str"
+  status_category_overrides:
+    type: "//arr"
+    contents:
+      type: "//rec"
+      required:
+        map: "//str"
+        to_category: "//str"
   boards:
     type: "//arr"
     contents:
