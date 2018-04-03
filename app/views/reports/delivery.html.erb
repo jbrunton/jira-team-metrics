@@ -4,6 +4,33 @@
     <a href="#!" class="breadcrumb">Delivery</a>
 <% end %>
 
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+
+  $(function() {
+    google.charts.setOnLoadCallback(updateChart);
+  });
+
+  function updateChart() {
+
+    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data(@report.started_date).to_json.html_safe %>);
+
+    var options = {
+      title: 'Delivery CFD',
+      hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0},
+      isStacked: true
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+    chart.draw(data, options);
+  }
+</script>
+
+<div id="chart">
+
+</div>
+
 <%= render partial: 'partials/delivery_report', locals: { report: @report, report_name: params['issue_key'] } %>
 
 <% @team_reports.each do |team, team_report| %>
