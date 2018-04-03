@@ -4,62 +4,15 @@
     <a href="#!" class="breadcrumb">Delivery</a>
 <% end %>
 
-<h3><%= @report.name %></h3>
 <div class="row">
-  <table class="col s6">
-    <thead>
-      <tr>
-        <th colspan="2">Summary</th>
-      </tr>
-    </thead>
-    <tr>
-      <td style="width: 40%;">
-        Scope
-      </td>
-      <td>
-        <%= @report.issues.count %>
-      </td>
-    </tr>
-    <tr>
-      <td style="width: 40%;">
-        Completed
-      </td>
-      <td>
-        <%= @report.completed_issues.count %>
-          (<%= pretty_print_number(100.0 * @report.completed_issues.count / @report.issues.count) %>%)
-      </td>
-    </tr>
-  </table>
-</div>
-<div class="row">
-  <table class="col s6">
-    <thead>
-      <tr>
-        <th>Rolling Timeframe</th>
-        <th>Completion Rate</th>
-        <th>Forecast Completion</th>
-      </tr>
-    </thead>
-    <tr>
-      <td>Last 14</td>
-      <td>
-        <%= pretty_print_number(@report.rolling_completion_rate(14) * 7) %> / week
-        (every <%= pretty_print_number(1.0 / @report.rolling_completion_rate(14)) %> days)
-      </td>
-      <td>
-        <%= pretty_print_date(@report.rolling_forecast_completion_date(14), show_tz: false) %>
-      </td>
-    </tr>
-    <tr>
-      <td>Last 30</td>
-      <td>
-        <%= pretty_print_number(@report.rolling_completion_rate(30) * 7) %> / week
-        (every <%= pretty_print_number(1.0 / @report.rolling_completion_rate(30)) %> days)
-      </td>
-      <td>
-        <%= pretty_print_date(@report.rolling_forecast_completion_date(30), show_tz: false) %>
-      </td>
-    </tr>
-  </table>
-</div>
+  <div class="col s6">
+    <h3><%= params['issue_key'] %></h3>
 
+    <%= render partial: 'partials/delivery_report', locals: { report: @report } %>
+
+    <% @team_reports.each do |team, team_report| %>
+        <h5><%= team %></h5>
+        <%= render partial: 'partials/delivery_report', locals: { report: team_report } %>
+    <% end %>
+  </div>
+</div>

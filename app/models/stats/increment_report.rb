@@ -3,28 +3,14 @@ class IncrementReport
   attr_reader :completed_issues
   attr_reader :remaining_issues
 
-  def initialize(board, increment_key)
-    @board = board
-    @increment_key = increment_key
+  def initialize(issues)
+    @issues = issues
   end
 
   def build
-    @issues = @board.issues.select do |issue|
-      increment = issue.increment
-      !increment.nil? &&
-        increment['issue']['key'] == @increment_key &&
-        issue.issue_type != 'Epic'
-    end
     @completed_issues = @issues.select{ |issue| issue.status_category == 'Done' }
     @remaining_issues = @issues.select{ |issue| issue.status_category != 'Done' }
-    @increment = @issues.last.increment
     self
-  end
-
-  def name
-    unless @increment.nil?
-      "#{@increment['issue']['key']} – #{@increment['issue']['summary']}"
-    end
   end
 
   def started_date
