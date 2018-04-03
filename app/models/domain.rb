@@ -17,6 +17,19 @@ class Domain < ApplicationRecord
     config.status_category_overrides[status] || statuses[status]
   end
 
+  def status_color_for(status)
+    case status_category_for(status)
+      when 'To Do'
+        'blue'
+      when 'In Progress'
+        'yellow'
+      when 'Done'
+        'green'
+      else
+        nil
+    end
+  end
+
   def self.get_instance
     Domain.first_or_create
   end
