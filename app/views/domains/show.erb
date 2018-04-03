@@ -32,7 +32,7 @@
 </script>
 
 <h3>
-  <%= @domain['name'] %>
+  <%= @domain.config.name %>
 </h3>
 
 <%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncDomainChannel', model_id: @domain.id } %>
