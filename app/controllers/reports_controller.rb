@@ -46,4 +46,12 @@ class ReportsController < ApplicationController
   def deliveries
     @issues_by_increment = @board.issues.group_by { |issue| issue.increment }
   end
+
+  def delivery
+    @issues = @board.issues.select do |issue|
+      increment = issue.increment
+      !increment.nil? && increment['issue']['key'] == params[:issue_key]
+    end
+    @increment = @issues.last.increment
+  end
 end

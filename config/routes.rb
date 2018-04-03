@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get '/reports/boards/:board_id/compare', to: 'reports#compare'
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/deliveries', to: 'reports#deliveries'
+  get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#delivery'
 
   get '/api/boards/:board_id/count_summary.json', to: 'api#count_summary'
   get '/api/boards/:board_id/count_summary_by_month.json', to: 'api#count_summary_by_month'

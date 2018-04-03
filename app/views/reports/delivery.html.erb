@@ -1,0 +1,28 @@
+<% content_for :nav_content do %>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="#!" class="breadcrumb">Delivery</a>
+<% end %>
+
+<h3><%= @increment['issue']['key'] %> &mdash; <%= @increment['issue']['summary'] %></h3>
+<div class="row">
+  <table class="col s6">
+      <tr>
+        <td style="width: 40%;">
+          Scope
+        </td>
+        <td>
+          <%= @issues.count %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 40%;">
+          Completed
+        </td>
+        <td>
+          <%= @issues.select{ |issue| issue.status_category == 'Done' }.count %>
+        </td>
+      </tr>
+    </table>
+</div>
+
