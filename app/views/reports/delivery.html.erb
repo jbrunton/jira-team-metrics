@@ -4,25 +4,75 @@
     <a href="#!" class="breadcrumb">Delivery</a>
 <% end %>
 
-<h3><%= @increment['issue']['key'] %> &mdash; <%= @increment['issue']['summary'] %></h3>
+<h3><%= @report.name %></h3>
 <div class="row">
   <table class="col s6">
-      <tr>
-        <td style="width: 40%;">
-          Scope
-        </td>
-        <td>
-          <%= @issues.count %>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 40%;">
-          Completed
-        </td>
-        <td>
-          <%= @issues.select{ |issue| issue.status_category == 'Done' }.count %>
-        </td>
-      </tr>
-    </table>
+    <tr>
+      <td style="width: 40%;">
+        Started
+      </td>
+      <td>
+        <%= pretty_print_date(@report.started_date) %>
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Elapsed Time
+      </td>
+      <td>
+        <%= pretty_print_number(@report.elapsed_time) %> days
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Scope
+      </td>
+      <td>
+        <%= @report.issues.count %>
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Completed
+      </td>
+      <td>
+        <%= @report.completed_issues.count %>
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Completion Rate
+      </td>
+      <td>
+        <%= pretty_print_number(@report.completion_rate * 7) %> / week
+        (every <%= pretty_print_number(1.0 / @report.completion_rate) %> days)
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Rolling Completion Rate <br> (last 14 days)
+      </td>
+      <td>
+        <%= pretty_print_number(@report.rolling_completion_rate * 7) %> / week
+        (every <%= pretty_print_number(1.0 / @report.rolling_completion_rate) %> days)
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Forecast Completion Date
+      </td>
+      <td>
+        <%= pretty_print_date(@report.forecast_completion_date, show_tz: false) %>
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 40%;">
+        Rolling Forecast Completion Date
+      </td>
+      <td>
+        <%= pretty_print_date(@report.rolling_forecast_completion_date, show_tz: false) %>
+      </td>
+    </tr>
+  </table>
 </div>
 

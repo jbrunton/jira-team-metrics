@@ -48,10 +48,6 @@ class ReportsController < ApplicationController
   end
 
   def delivery
-    @issues = @board.issues.select do |issue|
-      increment = issue.increment
-      !increment.nil? && increment['issue']['key'] == params[:issue_key]
-    end
-    @increment = @issues.last.increment
+    @report = IncrementReport.new(@board, params[:issue_key]).build
   end
 end
