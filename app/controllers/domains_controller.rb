@@ -1,5 +1,5 @@
 class DomainsController < ApplicationController
-  before_action :set_domain, only: [:show, :sync, :update, :destroy]
+  before_action :set_domain
   include ApplicationHelper
 
   def show
@@ -26,6 +26,10 @@ class DomainsController < ApplicationController
     else
       render partial: 'shared/sync_form', status: 400
     end
+  end
+
+  def metadata
+
   end
 
 private
