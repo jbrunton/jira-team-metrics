@@ -5,6 +5,8 @@ class DomainConfig < BaseConfig
     end
   end
 
+  IncrementType = Struct.new(:issue_type, :inward_link_type, :outward_link_type)
+
   def initialize(config_hash)
     super(config_hash, 'domain_config')
   end

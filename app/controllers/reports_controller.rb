@@ -42,4 +42,8 @@ class ReportsController < ApplicationController
 
   def timesheets
   end
+
+  def delivery
+    @issues_by_increment = @board.issues.group_by { |issue| issue.increment }
+  end
 end

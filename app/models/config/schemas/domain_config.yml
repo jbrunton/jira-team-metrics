@@ -17,6 +17,7 @@ optional:
       required:
         issue_type: "//str"
         inward_link_type: "//str"
+        outward_link_type: "//str"
   boards:
     type: "//arr"
     contents:

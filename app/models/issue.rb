@@ -18,6 +18,10 @@ class Issue < ApplicationRecord
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def status_category
+    transitions.last['toStatusCategory']
+  end
+
   def increment
     incr = links.find do |link|
       board.domain.increments.any? do |increment|
