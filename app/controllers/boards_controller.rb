@@ -15,7 +15,7 @@ class BoardsController < ApplicationController
   end
 
   def update
-    if ENV['READONLY']
+    if readonly?
       render json: {}, status: 401
     elsif @board.update(board_params)
       render json: {}, status: :ok

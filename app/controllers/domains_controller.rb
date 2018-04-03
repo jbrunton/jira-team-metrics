@@ -9,7 +9,7 @@ class DomainsController < ApplicationController
   end
 
   def update
-    if ENV['READONLY']
+    if readonly?
       render json: {}, status: 401
     elsif @domain.update(domain_params)
       render json: {}, status: :ok
