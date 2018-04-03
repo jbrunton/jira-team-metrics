@@ -14,13 +14,6 @@ class Domain < ApplicationRecord
   end
 
   def self.get_instance
-    @instance ||= begin
-      domain = Domain.first_or_create
-      unless ENV['CONFIG_URL'].nil?
-        domain.config_string = open(ENV['CONFIG_URL']).read
-        domain.save
-      end
-      domain
-    end
+    Domain.first_or_create
   end
 end
