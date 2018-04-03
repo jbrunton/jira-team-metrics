@@ -1,5 +1,9 @@
 class DomainConfig < BaseConfig
-  RemoteBoardConfig = Struct.new(:jira_id, :config_url)
+  RemoteBoardConfig = Struct.new(:jira_id, :config_url) do
+    def fetch_config_string
+      open(config_url).read
+    end
+  end
 
   def initialize(config_hash)
     super(config_hash, 'domain_config')
