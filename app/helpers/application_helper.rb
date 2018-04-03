@@ -3,40 +3,40 @@ require 'securerandom'
 module ApplicationHelper
   include FormattingHelper
 
-  def domain_path(domain)
+  def domain_path
     "/domain"
   end
 
-  def board_path(domain, board)
+  def board_path(board)
     "/domain/boards/#{board.jira_id}"
   end
 
-  def reports_path(domain, board)
+  def reports_path(board)
     "/reports/boards/#{board.jira_id}"
   end
 
-  def board_issues_path(domain, board)
+  def board_issues_path(board)
     "/reports/boards/#{board.jira_id}/issues"
   end
 
-  def board_components_path(domain, board)
+  def board_components_path(board)
     "/components/boards/#{board.jira_id}"
   end
 
-  def board_component_summary_path(domain, board)
-    "#{board_components_path(domain, board)}/summary"
+  def board_component_summary_path(board)
+    "#{board_components_path(board)}/summary"
   end
 
-  def board_api_path(domain, board)
+  def board_api_path(board)
     "/api/boards/#{board.jira_id}"
   end
 
-  def board_control_chart_path(domain, board)
-    "#{board_path(domain, board)}/control_chart"
+  def board_control_chart_path(board)
+    "#{board_path(board)}/control_chart"
   end
 
   def issue_path(issue)
-    "#{board_path(@domain, @board)}/issues/#{issue.key}"
+    "#{board_path(@board)}/issues/#{issue.key}"
   end
 
   def path_for(object)

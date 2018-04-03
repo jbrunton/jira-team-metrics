@@ -10,7 +10,7 @@
     function performSearch() {
       var query = $('#search').val();
       if (query.length > 0) {
-        var searchUrl = '<%= domain_path(@domain) %>/boards/search.json?query=' + query;
+        var searchUrl = '<%= domain_path %>/boards/search.json?query=' + query;
         $.get(searchUrl)
             .done(function (data) {
               $('#search-results').empty();
@@ -46,7 +46,7 @@
       <div id="synced_boards">
         <ul class="collection">
           <% @boards.each do |board| %>
-              <li class="collection-item"><%= link_to board.name, board_path(@domain, board) %></li>
+              <li class="collection-item"><%= link_to board.name, board_path(board) %></li>
           <% end %>
         </ul>
       </div>

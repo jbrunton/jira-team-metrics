@@ -6,7 +6,7 @@
         .chartOpts({
           title: 'Effort By Type'
         })
-        .url('<%= board_api_path(@domain, @board) %>/effort_summary.json')
+        .url('<%= board_api_path(@board) %>/effort_summary.json')
         .chartType('PieChart')
         .build();
 

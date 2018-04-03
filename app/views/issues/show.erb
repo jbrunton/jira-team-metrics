@@ -1,7 +1,7 @@
 <% content_for :nav_content do %>
-    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="<%= board_issues_path(@domain, @board) %>" class="breadcrumb">Issues</a>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="<%= board_issues_path(@board) %>" class="breadcrumb">Issues</a>
     <a href="#!" class="breadcrumb"><%= @issue.key %></a>
 <% end %>
 
