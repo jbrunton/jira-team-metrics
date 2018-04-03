@@ -11,7 +11,9 @@ class IncrementReport
   def build
     @issues = @board.issues.select do |issue|
       increment = issue.increment
-      !increment.nil? && increment['issue']['key'] == @increment_key
+      !increment.nil? &&
+        increment['issue']['key'] == @increment_key &&
+        issue.issue_type != 'Epic'
     end
     @completed_issues = @issues.select{ |issue| issue.status_category == 'Done' }
     @remaining_issues = @issues.select{ |issue| issue.status_category != 'Done' }
@@ -21,7 +23,7 @@ class IncrementReport
 
   def name
     unless @increment.nil?
-      "#{@increment['issue']['key']} &mdash; #{@increment['issue']['summary']}"
+      "#{@increment['issue']['key']} – #{@increment['issue']['summary']}"
     end
   end
 
@@ -33,20 +35,29 @@ class IncrementReport
     (Time.now - started_date) / (24 * 60 * 60)
   end
 
-  def completion_rate
-    completed_issues.count / elapsed_time
+  def rolling_time_span(days)
+    [days, elapsed_time].min
   end
 
-  def rolling_completion_rate
-    recently_completed_isssues = @completed_issues.select{ |issue| issue.completed >= Time.now - 14.days }
-    recently_completed_isssues.count / 14.0
+  def rolling_completed_issues(days)
+    @completed_issues.select{ |issue|
+      begin
+        issue.completed >= Time.now - days.days
+      rescue Exception => e
+        byebug
+      end}
   end
 
-  def forecast_completion_date
-    Time.now + (remaining_issues.count / completion_rate).days
+  def rolling_completion_rate(days)
+    rolling_completed_issues(days).count / rolling_time_span(days)
   end
 
-  def rolling_forecast_completion_date
-    Time.now + (remaining_issues.count / rolling_completion_rate).days
+  def rolling_forecast_completion_date(days)
+    completion_rate = rolling_completion_rate(days)
+    if completion_rate == 0
+      nil
+    else
+      Time.now + (remaining_issues.count / completion_rate).days
+    end
   end
 end

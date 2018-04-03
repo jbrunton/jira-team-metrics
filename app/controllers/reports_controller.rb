@@ -48,6 +48,7 @@ class ReportsController < ApplicationController
   end
 
   def delivery
+    @board = BoardDecorator.new(Board.find_by(jira_id: @board.jira_id), 'In Progress', 'Done', nil, nil)
     @report = IncrementReport.new(@board, params[:issue_key]).build
   end
 end
