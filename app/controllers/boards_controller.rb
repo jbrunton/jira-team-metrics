@@ -16,7 +16,7 @@ class BoardsController < ApplicationController
 
   def update
     if readonly?
-      render json: {}, status: 401
+      render_unauthorized
     elsif @board.update(board_params)
       render json: {}, status: :ok
     else

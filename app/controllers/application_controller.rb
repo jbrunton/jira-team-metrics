@@ -25,4 +25,8 @@ private
 
     @board = BoardDecorator.new(board, from_state, to_state, date_range, params[:query])
   end
+
+  def render_unauthorized
+    render json: {}, status: 401
+  end
 end

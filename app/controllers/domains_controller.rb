@@ -10,7 +10,7 @@ class DomainsController < ApplicationController
 
   def update
     if readonly?
-      render json: {}, status: 401
+      render_unauthorized
     elsif @domain.update(domain_params)
       render json: {}, status: :ok
     else
