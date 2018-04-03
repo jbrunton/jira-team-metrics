@@ -17,3 +17,10 @@ optional:
       required:
         issue_type: "//str"
         inward_link_type: "//str"
+  boards:
+    type: "//arr"
+    contents:
+      type: "//rec"
+      required:
+        jira_id: "//int"
+        config_url: "//str"

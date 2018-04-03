@@ -6,12 +6,22 @@ RSpec.describe DomainConfig do
   let(:domain_url) { 'https://jira.example.com' }
   let(:domain_name) { 'My Domain' }
 
+  let(:board_jira_id) { 123 }
+  let(:board_config_url) { 'https://example.com/board-config.yml' }
+  let(:boards) do
+    [{
+      'jira_id' => board_jira_id,
+      'config_url' => board_config_url
+    }]
+  end
+
   let(:config_hash) do
     {
       'fields' => custom_fields,
       'link_types' => link_types,
       'url' => domain_url,
-      'name' => domain_name
+      'name' => domain_name,
+      'boards' => boards
     }
   end
 
@@ -94,6 +104,21 @@ RSpec.describe DomainConfig do
       config_hash.delete('link_types')
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.link_types).to eq([])
+    end
+  end
+
+  context "#boards" do
+    it "is optional" do
+      config_hash.delete('boards')
+      domain_config = DomainConfig.new(config_hash)
+      domain_config.validate
+    end
+
+    it "returns the board configs" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.boards).to eq([
+        DomainConfig::RemoteBoardConfig.new(board_jira_id, board_config_url)
+      ])
     end
   end
 end
