@@ -43,16 +43,16 @@ class IncrementReport
   end
 
   def cfd_data(from_date)
-    data = [['Day', 'To Do', 'In Progress', 'Done']]
+    data = [['Day', 'Done', 'In Progress', 'To Do']]
     dates = DateRange.new(from_date, Time.now).to_a
     dates.each_with_index do |date, index|
       row = [index]
 
       states = cfd_states_on(date)
 
-      row << states['To Do']
-      row << states['In Progress']
       row << states['Done']
+      row << states['In Progress']
+      row << states['To Do']
 
       data << row
     end
@@ -70,7 +70,7 @@ class IncrementReport
         states['To Do'] += 1
       elsif issue.started_time && issue.started_time < date && (issue.completed_time.nil? || date < issue.completed_time)
         states['In Progress'] += 1
-      else
+      elsif !issue.completed_time.nil? && issue.completed_time < date
         states['Done'] += 1
       end
     end
