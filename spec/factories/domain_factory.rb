@@ -1,6 +1,5 @@
 FactoryGirl.define do
   factory :domain do
-    sequence(:name) { |k| "Domain #{k}" }
-    url { "http://#{name}.example.com" }
+    config_string "url: https://jira.example.com"
   end
 end
