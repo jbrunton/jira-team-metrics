@@ -28,7 +28,7 @@ class IncrementReport
   end
 
   def started_date
-    @issues.map{ |issue| issue.started }.compact.min
+    @issues.map{ |issue| issue.started_time }.compact.min
   end
 
   def elapsed_time
@@ -40,16 +40,11 @@ class IncrementReport
   end
 
   def rolling_completed_issues(days)
-    @completed_issues.select{ |issue|
-      begin
-        issue.completed >= Time.now - days.days
-      rescue Exception => e
-        byebug
-      end}
+    @completed_issues.select{ |issue| issue.completed_time >= Time.now - days.days }
   end
 
   def rolling_completion_rate(days)
-    rolling_completed_issues(days).count / rolling_time_span(days)
+    rolling_completed_issues(days).count.to_f / rolling_time_span(days)
   end
 
   def rolling_forecast_completion_date(days)

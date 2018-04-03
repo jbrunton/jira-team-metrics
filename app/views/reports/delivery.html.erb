@@ -7,22 +7,11 @@
 <h3><%= @report.name %></h3>
 <div class="row">
   <table class="col s6">
-    <tr>
-      <td style="width: 40%;">
-        Started
-      </td>
-      <td>
-        <%= pretty_print_date(@report.started_date) %>
-      </td>
-    </tr>
-    <tr>
-      <td style="width: 40%;">
-        Elapsed Time
-      </td>
-      <td>
-        <%= pretty_print_number(@report.elapsed_time) %> days
-      </td>
-    </tr>
+    <thead>
+      <tr>
+        <th colspan="2">Summary</th>
+      </tr>
+    </thead>
     <tr>
       <td style="width: 40%;">
         Scope
@@ -41,18 +30,18 @@
       </td>
     </tr>
   </table>
-  <table>
-    <tr>
-      <th>Rolling Timeframe</th>
-      <th>Completed</th>
-      <th>Completion Rate</th>
-      <th>Forecast Completion</th>
-    </tr>
+</div>
+<div class="row">
+  <table class="col s6">
+    <thead>
+      <tr>
+        <th>Rolling Timeframe</th>
+        <th>Completion Rate</th>
+        <th>Forecast Completion</th>
+      </tr>
+    </thead>
     <tr>
       <td>Last 14</td>
-      <td>
-        <%= pretty_print_number(@report.rolling_completed_issues(14).count) %>
-      </td>
       <td>
         <%= pretty_print_number(@report.rolling_completion_rate(14) * 7) %> / week
         (every <%= pretty_print_number(1.0 / @report.rolling_completion_rate(14)) %> days)
@@ -63,9 +52,6 @@
     </tr>
     <tr>
       <td>Last 30</td>
-      <td>
-        <%= pretty_print_number(@report.rolling_completed_issues(30).count) %>
-      </td>
       <td>
         <%= pretty_print_number(@report.rolling_completion_rate(30) * 7) %> / week
         (every <%= pretty_print_number(1.0 / @report.rolling_completion_rate(30)) %> days)

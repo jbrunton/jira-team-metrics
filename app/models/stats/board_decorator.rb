@@ -13,7 +13,16 @@ class BoardDecorator < Draper::Decorator
     @from_state = from_state
     @to_state = to_state
     @date_range = date_range
-    @query = date_range.nil? ? query : "(#{query}) and between ('#{date_range.start_date.strftime('%Y-%m-%d')}', '#{date_range.end_date.strftime('%Y-%m-%d')}')"
+    if date_range.nil?
+      @query = query
+    else
+      range_query = "between ('#{date_range.start_date.strftime('%Y-%m-%d')}', '#{date_range.end_date.strftime('%Y-%m-%d')}')"
+      if query.blank?
+        @query = range_query
+      else
+        @query = "(#{query}) and #{range_query}"
+      end
+    end
   end
 
   def issues
