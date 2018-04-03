@@ -15,12 +15,12 @@ class BoardsController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      if @board.update(board_params)
-        format.json { render json: {}, status: :ok }
-      else
-        format.json { render partial: 'config_form', status: 400 }
-      end
+    if readonly?
+      render_unauthorized
+    elsif @board.update(board_params)
+      render json: {}, status: :ok
+    else
+      render partial: 'config_form', status: 400
     end
   end
 

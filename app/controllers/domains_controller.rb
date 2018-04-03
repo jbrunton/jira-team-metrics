@@ -9,7 +9,9 @@ class DomainsController < ApplicationController
   end
 
   def update
-    if @domain.update(domain_params)
+    if readonly?
+      render_unauthorized
+    elsif @domain.update(domain_params)
       render json: {}, status: :ok
     else
       render partial: 'config_form', status: 400

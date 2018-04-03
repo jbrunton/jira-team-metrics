@@ -16,7 +16,9 @@
   </div>
   <div class="card-action">
     <a href="#" onclick="showSyncModal();">Sync</a>
-    <a href="#" onclick="showConfigModal();">Config</a>
+    <% unless readonly? %>
+      <a href="#" onclick="showConfigModal();">Config</a>
+    <% end %>
   </div>
 </div>
 
@@ -75,6 +77,8 @@
           if (data.status == 400) {
             // validation error
             showConfigModal(data.responseText);
+          } else if (data.status == 401) {
+            alert('You are unauthorized to make this change.');
           } else {
             alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
           }

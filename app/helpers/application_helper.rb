@@ -3,6 +3,10 @@ require 'securerandom'
 module ApplicationHelper
   include FormattingHelper
 
+  def readonly?
+    !!ENV['READONLY']
+  end
+
   def domain_path
     "/domain"
   end
