@@ -4,15 +4,8 @@
     <a href="#!" class="breadcrumb">Delivery</a>
 <% end %>
 
-<div class="row">
-  <div class="col s6">
-    <h3><%= params['issue_key'] %></h3>
+<%= render partial: 'partials/delivery_report', locals: { report: @report, report_name: params['issue_key'] } %>
 
-    <%= render partial: 'partials/delivery_report', locals: { report: @report } %>
-
-    <% @team_reports.each do |team, team_report| %>
-        <h5><%= team %></h5>
-        <%= render partial: 'partials/delivery_report', locals: { report: team_report } %>
-    <% end %>
-  </div>
-</div>
+<% @team_reports.each do |team, team_report| %>
+    <%= render partial: 'partials/delivery_report', locals: { report: team_report, report_name: team } %>
+<% end %>
