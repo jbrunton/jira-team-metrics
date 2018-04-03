@@ -13,6 +13,10 @@ class Domain < ApplicationRecord
     boards.where.not(boards: {last_synced: nil})
   end
 
+  def status_category_for(status)
+    config.status_category_overrides[status] || statuses[status]
+  end
+
   def self.get_instance
     Domain.first_or_create
   end

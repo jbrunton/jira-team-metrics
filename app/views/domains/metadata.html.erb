@@ -1,0 +1,41 @@
+<h3>Domain Metadata</h3>
+
+<div class="row">
+  <div class="col s6">
+    <h5>Statuses</h5>
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Jira Category</th>
+          <th>Override</th>
+        </tr>
+      </thead>
+      <% @domain.statuses.each do |status, status_category| %>
+          <tr>
+            <td><%= status %></td>
+            <td><%= status_category %></td>
+            <td><%= @domain.config.status_category_overrides[status] %></td>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+
+  <div class="col s6">
+    <h5>Fields</h5>
+    <table class="striped">
+      <thead>
+        <tr>
+          <td>Name</td>
+          <td>Type</td>
+        </tr>
+      </thead>
+      <% @domain.fields.each do |field_hash| %>
+          <tr>
+            <td><%= field_hash['name'] %></td>
+            <td><%= field_hash['type'] %></td>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
