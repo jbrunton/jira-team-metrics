@@ -9,7 +9,9 @@ class DomainsController < ApplicationController
   end
 
   def update
-    if @domain.update(domain_params)
+    if ENV['READONLY']
+      render json: {}, status: 401
+    elsif @domain.update(domain_params)
       render json: {}, status: :ok
     else
       render partial: 'config_form', status: 400
