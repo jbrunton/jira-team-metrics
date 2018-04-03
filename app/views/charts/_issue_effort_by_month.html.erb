@@ -7,7 +7,7 @@
           title: 'Effort By Month',
           isStacked: true
         })
-        .url('<%= board_api_path(@domain, @board) %>/effort_summary_by_month.json')
+        .url('<%= board_api_path(@board) %>/effort_summary_by_month.json')
         .chartType('ColumnChart')
         .build();
 

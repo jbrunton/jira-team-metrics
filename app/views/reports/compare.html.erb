@@ -1,7 +1,6 @@
 <% content_for :nav_content do %>
-    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
-    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
-    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
     <a href="#!" class="breadcrumb">Compare</a>
 <% end %>
 
@@ -66,7 +65,7 @@
     var histogram = $('#histogram_div');
     histogram.css('height', histogram.width() * 0.5);
 
-    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/compare.json')
+    var url = buildComponentUrl('<%= board_api_path(@board) %>/compare.json')
         + '&selection_query=' + $('#selection_query').val();
 
     $.get(url, drawChart);

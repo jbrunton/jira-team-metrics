@@ -3,11 +3,25 @@ require 'rails_helper'
 RSpec.describe DomainConfig do
   let(:custom_fields) { ['My Field'] }
   let(:link_types) { ['blocks'] }
+  let(:domain_url) { 'https://jira.example.com' }
+  let(:domain_name) { 'My Domain' }
+
+  let(:board_jira_id) { 123 }
+  let(:board_config_url) { 'https://example.com/board-config.yml' }
+  let(:boards) do
+    [{
+      'jira_id' => board_jira_id,
+      'config_url' => board_config_url
+    }]
+  end
 
   let(:config_hash) do
     {
       'fields' => custom_fields,
-      'link_types' => link_types
+      'link_types' => link_types,
+      'url' => domain_url,
+      'name' => domain_name,
+      'boards' => boards
     }
   end
 
@@ -32,6 +46,38 @@ RSpec.describe DomainConfig do
       config_hash['fields'] = [1, 2]
       domain_config = DomainConfig.new(config_hash)
       expect { domain_config.validate }.to raise_error(Rx::ValidationError, /expected String got 1/)
+    end
+
+    it "requires a url" do
+      config_hash.delete('url')
+      domain_config = DomainConfig.new(config_hash)
+      expect { domain_config.validate }.to raise_error(Rx::ValidationError, /expected Hash to have key: 'url'/)
+    end
+  end
+
+  context "#url" do
+    it "returns the url" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.url).to eq(domain_url)
+    end
+
+    it "returns <Unconfigured Domain> if no url is specified" do
+      config_hash.delete('url')
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.url).to eq('<Unconfigured Domain>')
+    end
+  end
+
+  context "#name" do
+    it "returns the specified name" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.name).to eq(domain_name)
+    end
+
+    it "returns the url if no name is given" do
+      config_hash.delete('name')
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.name).to eq(domain_url)
     end
   end
 
@@ -58,6 +104,21 @@ RSpec.describe DomainConfig do
       config_hash.delete('link_types')
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.link_types).to eq([])
+    end
+  end
+
+  context "#boards" do
+    it "is optional" do
+      config_hash.delete('boards')
+      domain_config = DomainConfig.new(config_hash)
+      domain_config.validate
+    end
+
+    it "returns the board configs" do
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.boards).to eq([
+        DomainConfig::RemoteBoardConfig.new(board_jira_id, board_config_url)
+      ])
     end
   end
 end

@@ -10,7 +10,7 @@ class BoardsController < ApplicationController
   def search
     @boards = Board.where('name LIKE ?', "%#{params[:query]}%")
     respond_to do |format|
-      format.json { render json: @boards.map{ |board| board.as_json.merge(link: board_path(@domain, board)) } }
+      format.json { render json: @boards.map{ |board| board.as_json.merge(link: board_path( board)) } }
     end
   end
 

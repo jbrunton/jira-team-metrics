@@ -3,44 +3,40 @@ require 'securerandom'
 module ApplicationHelper
   include FormattingHelper
 
-  def domains_path
-    '/domains'
+  def domain_path
+    "/domain"
   end
 
-  def domain_path(domain)
-    "#{domains_path}/#{domain.name}"
+  def board_path(board)
+    "/domain/boards/#{board.jira_id}"
   end
 
-  def board_path(domain, board)
-    "/domains/#{domain['name']}/boards/#{board.jira_id}"
+  def reports_path(board)
+    "/reports/boards/#{board.jira_id}"
   end
 
-  def reports_path(domain, board)
-    "/reports/#{domain['name']}/boards/#{board.jira_id}"
+  def board_issues_path(board)
+    "/reports/boards/#{board.jira_id}/issues"
   end
 
-  def board_issues_path(domain, board)
-    "/reports/#{domain['name']}/boards/#{board.jira_id}/issues"
+  def board_components_path(board)
+    "/components/boards/#{board.jira_id}"
   end
 
-  def board_components_path(domain, board)
-    "/components/#{domain['name']}/boards/#{board.jira_id}"
+  def board_component_summary_path(board)
+    "#{board_components_path(board)}/summary"
   end
 
-  def board_component_summary_path(domain, board)
-    "#{board_components_path(domain, board)}/summary"
+  def board_api_path(board)
+    "/api/boards/#{board.jira_id}"
   end
 
-  def board_api_path(domain, board)
-    "/api/#{domain['name']}/boards/#{board.jira_id}"
-  end
-
-  def board_control_chart_path(domain, board)
-    "#{board_path(domain, board)}/control_chart"
+  def board_control_chart_path(board)
+    "#{board_path(board)}/control_chart"
   end
 
   def issue_path(issue)
-    "#{board_path(@domain, @board)}/issues/#{issue.key}"
+    "#{board_path(@board)}/issues/#{issue.key}"
   end
 
   def path_for(object)

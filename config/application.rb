@@ -32,5 +32,17 @@ module JiraTeamMetrics
     config.autoload_paths << Rails.root.join("app", "models", "stats")
     config.autoload_paths << Rails.root.join("app", "models", "jira")
     config.autoload_paths << Rails.root.join("app", "models", "config")
+
+    config.after_initialize do
+      unless ENV['CONFIG_URL'].nil?
+        log_message = "CONFIG_URL defined. Setting config from #{ENV['CONFIG_URL']}"
+        Rails.logger.info log_message
+        puts log_message # Rails doesn't print to stdout during boot
+
+        domain = Domain.get_instance
+        domain.config_string = open(ENV['CONFIG_URL']).read
+        domain.save
+      end
+    end
   end
 end

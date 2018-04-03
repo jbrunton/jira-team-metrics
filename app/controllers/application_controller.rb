@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 private
 
   def set_domain
-    @domain = Domain.find_by(name: params[:domain_name])
+    @domain = Domain.get_instance
   end
 
   def set_board

@@ -1,7 +1,6 @@
 <% content_for :nav_content do %>
-    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
-    <a href="<%= domain_path(@domain) %>" class="breadcrumb"><%= @domain['name'] %></a>
-    <a href="<%= board_path(@domain, @board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
     <a href="#!" class="breadcrumb">Control Chart</a>
 <% end %>
 
@@ -66,7 +65,7 @@
       if (selection.column == <%= ApiController::COMPLETED_ISSUES_COL %>) {
         // completed issues column
         var key = data.getValue(selection.row, <%= ApiController::COMPLETED_ISSUES_KEY_COL %>);
-        $('#selected_content').animate({ opacity: 0 }).load( '<%= board_path(@domain, @board) %>/issues/' + key + '?fragment=true', function() {
+        $('#selected_content').animate({ opacity: 0 }).load( '<%= board_path(@board) %>/issues/' + key + '?fragment=true', function() {
           $(this).animate({ opacity: 1 });
           $('.collapsible').collapsible();
         });
@@ -74,7 +73,7 @@
         // WIP column
         var date = data.getValue(selection.row, 0);
         var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        var url = buildComponentUrl('<%= board_components_path(@domain, @board) %>/wip/' + dateStr);
+        var url = buildComponentUrl('<%= board_components_path(@board) %>/wip/' + dateStr);
         $('#selected_content').animate({ opacity: 0 }).load(url, function() {
           $(this).animate({ opacity: 1 })
           $('.collapsible').collapsible();
@@ -92,7 +91,7 @@
     var chart = $('#chart_div');
     chart.css('height', chart.width() * 0.5);
 
-    var url = buildComponentUrl('<%= board_api_path(@domain, @board) %>/control_chart.json');
+    var url = buildComponentUrl('<%= board_api_path(@board) %>/control_chart.json');
 
     $.get(url, drawChart);
   }

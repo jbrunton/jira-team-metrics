@@ -1,6 +1,5 @@
 <% content_for :nav_content do %>
-    <a href="<%= domains_path %>" class="breadcrumb">Domains</a>
-    <a href="#!" class="breadcrumb"><%= @domain['name'] %></a>
+    <a href="#!" class="breadcrumb"><%= @domain.config.name %></a>
 <% end %>
 
 <script>
@@ -11,7 +10,7 @@
     function performSearch() {
       var query = $('#search').val();
       if (query.length > 0) {
-        var searchUrl = '<%= domain_path(@domain) %>/boards/search.json?query=' + query;
+        var searchUrl = '<%= domain_path %>/boards/search.json?query=' + query;
         $.get(searchUrl)
             .done(function (data) {
               $('#search-results').empty();
@@ -33,7 +32,7 @@
 </script>
 
 <h3>
-  <%= @domain['name'] %>
+  <%= @domain.config.name %>
 </h3>
 
 <%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncDomainChannel', model_id: @domain.id } %>
@@ -47,7 +46,7 @@
       <div id="synced_boards">
         <ul class="collection">
           <% @boards.each do |board| %>
-              <li class="collection-item"><%= link_to board.name, board_path(@domain, board) %></li>
+              <li class="collection-item"><%= link_to board.name, board_path(board) %></li>
           <% end %>
         </ul>
       </div>
