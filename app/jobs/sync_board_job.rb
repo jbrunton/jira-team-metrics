@@ -55,7 +55,7 @@ class SyncBoardJob < ApplicationJob
         .and(subquery)
         .query
     end
-    client = JiraClient.new(board.domain.url, credentials)
+    client = JiraClient.new(board.domain.config.url, credentials)
     HttpErrorHandler.new(@notifier).invoke do
       client.search_issues(board.domain, query: query) do |progress|
         @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)

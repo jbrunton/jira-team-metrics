@@ -3,28 +3,24 @@ require 'securerandom'
 module ApplicationHelper
   include FormattingHelper
 
-  def domains_path
-    '/domains'
-  end
-
   def domain_path(domain)
-    "#{domains_path}/#{domain.name}"
+    "/domain"
   end
 
   def board_path(domain, board)
-    "/domains/#{domain['name']}/boards/#{board.jira_id}"
+    "/domain/boards/#{board.jira_id}"
   end
 
   def reports_path(domain, board)
-    "/reports/#{domain['name']}/boards/#{board.jira_id}"
+    "/reports/boards/#{board.jira_id}"
   end
 
   def board_issues_path(domain, board)
-    "/reports/#{domain['name']}/boards/#{board.jira_id}/issues"
+    "/reports/boards/#{board.jira_id}/issues"
   end
 
   def board_components_path(domain, board)
-    "/components/#{domain['name']}/boards/#{board.jira_id}"
+    "/components/boards/#{board.jira_id}"
   end
 
   def board_component_summary_path(domain, board)
@@ -32,7 +28,7 @@ module ApplicationHelper
   end
 
   def board_api_path(domain, board)
-    "/api/#{domain['name']}/boards/#{board.jira_id}"
+    "/api/boards/#{board.jira_id}"
   end
 
   def board_control_chart_path(domain, board)

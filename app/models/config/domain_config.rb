@@ -4,7 +4,7 @@ class DomainConfig < BaseConfig
   end
 
   def url
-    config_hash['url']
+    config_hash['url'] || '<Unconfigured Domain>'
   end
 
   def name

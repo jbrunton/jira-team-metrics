@@ -74,7 +74,7 @@ class Issue < ApplicationRecord
   end
 
   def domain_url
-    "#{board.domain.url}/browse/#{key}"
+    "#{board.domain.config.url}/browse/#{key}"
   end
 
   def churn_metrics

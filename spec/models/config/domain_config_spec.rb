@@ -50,6 +50,12 @@ RSpec.describe DomainConfig do
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.url).to eq(domain_url)
     end
+
+    it "returns <Unconfigured Domain> if no url is specified" do
+      config_hash.delete('url')
+      domain_config = DomainConfig.new(config_hash)
+      expect(domain_config.url).to eq('<Unconfigured Domain>')
+    end
   end
 
   context "#name" do

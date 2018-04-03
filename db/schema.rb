@@ -26,8 +26,6 @@ ActiveRecord::Schema.define(version: 20170702120106) do
   end
 
   create_table "domains", force: :cascade do |t|
-    t.string "name"
-    t.string "url"
     t.string "statuses"
     t.string "fields"
     t.text "config_string"

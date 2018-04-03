@@ -3,7 +3,7 @@ class SyncDomainJob < ApplicationJob
 
   def perform(domain, username, password)
     #TODO: do this in a transaction
-    @notifier = StatusNotifier.new(domain, "syncing #{domain.name}")
+    @notifier = StatusNotifier.new(domain, "syncing #{domain.config.name}")
     clear_cache(domain)
     boards, statuses, fields = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses, fields)
@@ -26,7 +26,7 @@ private
   end
 
   def fetch_data(domain, credentials)
-    client = JiraClient.new(domain.url, credentials)
+    client = JiraClient.new(domain.config.url, credentials)
     HttpErrorHandler.new(@notifier).invoke do
       @notifier.notify_status('fetching boards from JIRA')
       boards = client.get_rapid_boards
