@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  get '/' do
-    redirect to(domains_path)
+  def index
+    redirect_to '/domain'
   end
 end

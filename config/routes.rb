@@ -2,14 +2,11 @@ Rails.application.routes.draw do
   mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  root 'domains#index'
+  root 'home#index'
 
-  get '/domains', to: 'domains#index'
-  get '/domains/:domain_name', to: 'domains#show'
-  post '/domains', to: 'domains#create'
-  delete '/domains/:domain_name', to: 'domains#destroy'
-  post '/domains/:domain_name/sync', to: 'domains#sync'
-  post '/domains/:domain_name', to: 'domains#update'
+  get '/domain', to: 'domains#show'
+  post '/domain/sync', to: 'domains#sync'
+  post '/domain', to: 'domains#update'
 
   get '/domains/:domain_name/boards/search', to: 'boards#search'
   get '/domains/:domain_name/boards/:board_id', to: 'boards#show'

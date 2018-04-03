@@ -1,6 +1,9 @@
 ---
 type: "//rec"
+required:
+  url: "//str"
 optional:
+  name: "//str"
   fields:
     type: "//arr"
     contents: "//str"

@@ -3,6 +3,14 @@ class DomainConfig < BaseConfig
     super(config_hash, 'domain_config')
   end
 
+  def url
+    config_hash['url']
+  end
+
+  def name
+    config_hash['name'] || url
+  end
+
   # TODO: add Epic Link to this
   def fields
     config_hash['fields'] || []
