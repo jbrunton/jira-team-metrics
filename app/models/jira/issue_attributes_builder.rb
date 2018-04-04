@@ -106,7 +106,6 @@ private
     end
   end
 
-private
   def link_hash_for(issue_hash)
     {
       key: issue_hash['key'],
