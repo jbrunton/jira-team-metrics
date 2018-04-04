@@ -19,13 +19,7 @@ class Issue < ApplicationRecord
   end
 
   def status_category
-    # TODO: can this be retrieved directly from Jira?
-    last_transition = transitions.last
-    if last_transition.nil?
-      'To Do'
-    else
-      last_transition['toStatusCategory']
-    end
+    board.domain.status_category_for(status)
   end
 
   def increment
