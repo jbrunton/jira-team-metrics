@@ -13,6 +13,10 @@ module LinkHelper
     end
   end
 
+  def issue_summary(issue)
+    "<a href='#{url_for(issue)}'>#{issue.key}</a> – #{issue.summary}".html_safe
+  end
+
   def external_link_url(link, domain)
     "#{domain.config.url}/browse/#{link['issue']['key']}"
   end
