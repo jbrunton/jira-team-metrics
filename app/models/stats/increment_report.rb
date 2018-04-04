@@ -41,4 +41,44 @@ class IncrementReport
       Time.now + (remaining_issues.count / completion_rate).days
     end
   end
+
+  def cfd_data(from_date)
+    data = [['Day', 'Done', 'In Progress', 'To Do']]
+    dates = DateRange.new(from_date, Time.now).to_a
+    dates.each_with_index do |date, index|
+      row = [index]
+
+      states = cfd_states_on(date)
+
+      row << states['Done']
+      row << states['In Progress']
+      row << states['To Do']
+
+      data << row
+    end
+    data
+  end
+
+  def cfd_states_on(date)
+    to_do = 0
+    in_progress = 0
+    done = 0
+
+    @issues.each do |issue|
+      case issue.status_category_on(date)
+        when 'To Do'
+          to_do += 1
+        when 'In Progress'
+          in_progress += 1
+        when 'Done'
+          done += 1
+      end
+    end
+
+    {
+      'To Do' => to_do,
+      'In Progress' => in_progress,
+      'Done' => done
+    }
+  end
 end
