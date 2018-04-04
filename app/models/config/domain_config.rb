@@ -24,10 +24,6 @@ class DomainConfig < BaseConfig
     config_hash['fields'] || []
   end
 
-  def link_types
-    config_hash['link_types'] || []
-  end
-
   def boards
     (config_hash['boards'] || []).map do |config_hash|
       RemoteBoardConfig.new(config_hash['jira_id'], config_hash['config_url'])

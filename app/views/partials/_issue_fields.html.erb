@@ -15,7 +15,12 @@
           <tr>
             <th><%= field_name %></th>
             <% if field_name == 'Epic Link' %>
-                <td><%= issue.epic.key %> - <%= issue.epic.summary %></td>
+                <td>
+                  <a class="right" href="<%= issue.epic.domain_url %>" target="_blank">
+                    <i class="material-icons" style="margin: 0;">launch</i>
+                  </a>
+                  <%= issue_summary(issue.epic) %>
+                </td>
             <% else %>
                 <td><%= issue_field(issue, field_name) %></td>
             <% end %>

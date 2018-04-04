@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe DomainConfig do
   let(:custom_fields) { ['My Field'] }
-  let(:link_types) { ['blocks'] }
   let(:domain_url) { 'https://jira.example.com' }
   let(:domain_name) { 'My Domain' }
 
@@ -18,7 +17,6 @@ RSpec.describe DomainConfig do
   let(:config_hash) do
     {
       'fields' => custom_fields,
-      'link_types' => link_types,
       'url' => domain_url,
       'name' => domain_name,
       'boards' => boards
@@ -91,19 +89,6 @@ RSpec.describe DomainConfig do
       config_hash.delete('fields')
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.fields).to eq([])
-    end
-  end
-
-  context "#link_types" do
-    it "returns the link types in the config" do
-      domain_config = DomainConfig.new(config_hash)
-      expect(domain_config.link_types).to eq(link_types)
-    end
-
-    it "returns an empty array if no custom fields are specified" do
-      config_hash.delete('link_types')
-      domain_config = DomainConfig.new(config_hash)
-      expect(domain_config.link_types).to eq([])
     end
   end
 
