@@ -60,20 +60,25 @@ class IncrementReport
   end
 
   def cfd_states_on(date)
-    states = {
-      'To Do' => 0,
-      'In Progress' => 0,
-      'Done' => 0
-    }
+    to_do = 0
+    in_progress = 0
+    done = 0
+
     @issues.each do |issue|
-      if issue.issue_created < date && (issue.started_time.nil? || date < issue.started_time)
-        states['To Do'] += 1
-      elsif issue.started_time && issue.started_time < date && (issue.completed_time.nil? || date < issue.completed_time)
-        states['In Progress'] += 1
-      elsif !issue.completed_time.nil? && issue.completed_time < date
-        states['Done'] += 1
+      case issue.status_category_on(date)
+        when 'To Do'
+          to_do += 1
+        when 'In Progress'
+          in_progress += 1
+        when 'Done'
+          done += 1
       end
     end
-    states
+
+    {
+      'To Do' => to_do,
+      'In Progress' => in_progress,
+      'Done' => done
+    }
   end
 end

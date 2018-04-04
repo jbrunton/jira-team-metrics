@@ -115,6 +115,16 @@ class Issue < ApplicationRecord
     end
   end
 
+  def status_category_on(date)
+    if issue_created < date && (started_time.nil? || date < started_time)
+      'To Do'
+    elsif started_time && started_time < date && (completed_time.nil? || date < completed_time)
+      'In Progress'
+    elsif !completed_time.nil? && completed_time < date
+      'Done'
+    end
+  end
+
 private
   def cycle_time_between_properties(start_property_name, end_property_name = nil)
     end_property_name = start_property_name if end_property_name.nil?
