@@ -90,9 +90,7 @@ private
   def links
     @links ||= begin
       issue_links = @json['fields']['issuelinks'].map do |link|
-        if link['inwardIssue'].nil?
-          nil
-        else
+        if link['inwardIssue']
           {
             inward_link_type: link['type']['inward'],
             issue: {
@@ -101,11 +99,18 @@ private
               summary: link['inwardIssue']['fields']['summary']
             }
           }
+        elsif link['outwardIssue']
+          {
+            outward_link_type: link['type']['outward'],
+            issue: {
+              key: link['outwardIssue']['key'],
+              issue_type: link['outwardIssue']['fields']['issuetype']['name'],
+              summary: link['outwardIssue']['fields']['summary']
+            }
+          }
         end
       end
-      issue_links
-        .compact
-        .select{ |link| @domain.config.link_types.include?(link[:inward_link_type]) }
+      issue_links.compact
     end
   end
 end

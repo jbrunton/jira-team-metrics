@@ -5,8 +5,13 @@
         <table class="issue-details">
           <% issue.links.each do |link| %>
               <tr>
-                <th><%= link['inward_link_type'] %></th>
-                <td><%= link['issue']['key'] %> - <%= link['issue']['summary'] %></td>
+                <th><%= link_type(link) %></th>
+                <td>
+                  <a class="right" href="<%= external_link_url(link, @domain) %>" target="_blank">
+                    <i class="material-icons" style="margin: 0;">launch</i>
+                  </a>
+                  <%= link_summary(link, @board) %>
+                </td>
               </tr>
           <% end %>
         </table>

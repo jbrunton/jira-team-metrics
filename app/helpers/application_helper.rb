@@ -2,6 +2,7 @@ require 'securerandom'
 
 module ApplicationHelper
   include FormattingHelper
+  include LinkHelper
 
   def readonly?
     !!ENV['READONLY']
