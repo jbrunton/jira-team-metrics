@@ -41,7 +41,9 @@ module JiraTeamMetrics
 
         domain = Domain.get_instance
         domain.config_string = open(ENV['CONFIG_URL']).read
-        domain.save
+        unless domain.save
+          raise 'Invalid config: ' + domain.errors.full_messages.join(',')
+        end
       end
     end
   end

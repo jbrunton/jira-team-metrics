@@ -14,7 +14,8 @@ class IssueAttributesBuilder
       'fields' => fields,
       'issue_created' => issue_created,
       'labels' => labels,
-      'links' => links
+      'links' => links,
+      'status' => status
     }
   end
 
@@ -33,6 +34,10 @@ private
 
   def issue_created
     @json['fields']['created']
+  end
+
+  def status
+    @json['fields']['status']['name']
   end
 
   def labels
