@@ -8,8 +8,9 @@ class IncrementReport
   end
 
   def build
-    @completed_issues = @issues.select{ |issue| issue.status_category == 'Done' }
-    @remaining_issues = @issues.select{ |issue| issue.status_category != 'Done' }
+    issues_by_status_category = @issues.group_by{ |issue| issue.status_category }
+    @completed_issues = issues_by_status_category['Done']
+    @remaining_issues = issues_by_status_category['To Do'] + issues_by_status_category['In Progress']
     self
   end
 
