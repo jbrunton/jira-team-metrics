@@ -7,9 +7,6 @@ optional:
   fields:
     type: "//arr"
     contents: "//str"
-  link_types:
-    type: "//arr"
-    contents: "//str"
   increments:
     type: "//arr"
     contents:
