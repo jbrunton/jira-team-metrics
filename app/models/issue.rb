@@ -18,6 +18,16 @@ class Issue < ApplicationRecord
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def status_category
+    # TODO: can this be retrieved directly from Jira?
+    last_transition = transitions.last
+    if last_transition.nil?
+      'To Do'
+    else
+      last_transition['toStatusCategory']
+    end
+  end
+
   def increment
     incr = links.find do |link|
       board.domain.increments.any? do |increment|

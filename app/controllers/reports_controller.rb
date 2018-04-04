@@ -42,4 +42,31 @@ class ReportsController < ApplicationController
 
   def timesheets
   end
+
+  def deliveries
+    @issues_by_increment = @board.issues.group_by { |issue| issue.increment }
+  end
+
+  def delivery
+    @board = Board.find_by(jira_id: @board.jira_id)
+
+    issues = @board.issues.select do |issue|
+      increment = issue.increment
+      !increment.nil? &&
+        increment['issue']['key'] == params[:issue_key] &&
+        issue.issue_type != 'Epic'
+    end
+
+    @report = IncrementReport.new(issues).build
+
+    @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
+
+    @team_reports = @teams.map do |team|
+      issues_for_team = issues.select do |issue|
+        (issue.fields['Teams'] || []).include?(team)
+      end
+      [team, IncrementReport.new(issues_for_team).build]
+    end.to_h
+    @team_reports['None'] = IncrementReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+  end
 end
