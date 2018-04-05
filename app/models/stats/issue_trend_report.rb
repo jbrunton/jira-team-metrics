@@ -1,4 +1,4 @@
-class IncrementReport
+class IssueTrendReport
   attr_reader :issues
   attr_reader :completed_issues
   attr_reader :remaining_issues
@@ -19,6 +19,7 @@ class IncrementReport
   end
 
   def elapsed_time
+    # TODO: should be taken to be the start time of the increment, not the team
     (Time.now - started_date) / (24 * 60 * 60)
   end
 

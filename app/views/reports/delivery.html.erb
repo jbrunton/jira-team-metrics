@@ -31,8 +31,6 @@
 
 </div>
 
-<%= render partial: 'partials/delivery_report', locals: { report: @report, report_name: params['issue_key'] } %>
-
 <% @team_reports.each do |team, team_report| %>
     <%= render partial: 'partials/delivery_report', locals: { report: team_report, report_name: team } %>
 <% end %>

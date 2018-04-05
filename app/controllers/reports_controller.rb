@@ -57,7 +57,7 @@ class ReportsController < ApplicationController
         issue.issue_type != 'Epic'
     end
 
-    @report = IncrementReport.new(issues).build
+    @report = IssueTrendReport.new(issues).build
 
     @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
 
@@ -65,8 +65,17 @@ class ReportsController < ApplicationController
       issues_for_team = issues.select do |issue|
         (issue.fields['Teams'] || []).include?(team)
       end
-      [team, IncrementReport.new(issues_for_team).build]
+      [team, IssueTrendReport.new(issues_for_team).build]
     end.to_h
-    @team_reports['None'] = IncrementReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+    @team_reports['None'] = IssueTrendReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+  end
+
+  def delivery_scope
+    @team = params[:team]
+    @increment = @board.object.issues.find_by(key: params[:issue_key])
+    issues_for_team = @increment.issues(recursive: true).select do |issue|
+      (issue.fields['Teams'] || []).include?(@team)
+    end
+    @issues_by_epic = issues_for_team.group_by{ |issue| issue.epic }
   end
 end

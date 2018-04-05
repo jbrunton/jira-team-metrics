@@ -1,0 +1,27 @@
+<table class="bordered jira-tree">
+  <thead>
+    <tr>
+      <th style="width: 90%">Issue</th>
+    </tr>
+  </thead>
+
+  <% @issues_by_epic.each do |epic, issues| %>
+      <tr class="epic">
+        <td>
+          <% if epic.nil? %>
+          None
+          <% else %>
+          <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
+          <% end %>
+        </td>
+      </tr>
+
+      <% issues.each do |issue| %>
+          <tr class="story">
+            <td>
+              <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+            </td>
+          </tr>
+      <% end %>
+  <% end %>
+</table>
