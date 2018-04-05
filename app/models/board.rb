@@ -15,6 +15,12 @@ class Board < ApplicationRecord
     (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
   end
 
+  def increments
+    issues.select do |issue|
+      domain.config.increments.any?{ |increment| issue.issue_type == increment.issue_type }
+    end
+  end
+
   def config_property(property)
     *scopes, property_name = property.split('.')
     config = config_hash
