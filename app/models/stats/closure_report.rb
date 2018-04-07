@@ -12,10 +12,14 @@ class ClosureReport
   def build
     @epics = issues.select{ |issue| issue.issue_type == 'Epic' }
     @scope = issues.select{ |issue| issue.issue_type != 'Epic' }
-    issues_by_status_category = @issues.group_by{ |issue| issue.status_category }
+    issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
     @completed_scope = issues_by_status_category['Done'] || []
     @remaining_scope = (issues_by_status_category['To Do'] || []) + (issues_by_status_category['In Progress'] || [])
     self
+  end
+
+  def percent_completed
+    (100.0 * completed_scope.count) / scope.count
   end
 
   def started_date

@@ -76,6 +76,7 @@ class ReportsController < ApplicationController
     issues_for_team = @increment.issues(recursive: true).select do |issue|
       (issue.fields['Teams'] || []).include?(@team)
     end
+    @report = ClosureReport.new(@increment.issues(recursive: true)).build
     @issues_by_epic = issues_for_team
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
