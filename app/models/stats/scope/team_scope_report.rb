@@ -17,15 +17,16 @@ class TeamScopeReport
     @scope = @issues.select{ |issue| issue.is_scope? }
 
     @training_scope_report = @training_issues.any? ? TeamScopeReport.new(@training_issues).build : nil
-    @predicted_scope = []
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end
 
     issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
     @completed_scope = issues_by_status_category['Done'] || []
+    @predicted_scope = issues_by_status_category['Predicted'] || []
     @remaining_scope = (issues_by_status_category['To Do'] || []) +
-      (issues_by_status_category['In Progress'] || [])
+      (issues_by_status_category['In Progress'] || []) +
+      @predicted_scope
     self
   end
 
@@ -45,7 +46,7 @@ private
   def build_predicted_scope_for(epic)
     if epic.issues(recursive: false).empty? && @training_scope_report
       @training_scope_report.issues_per_epic.round.times do |k|
-        predicted_issue = Issue.new({
+        @scope << Issue.new({
           issue_type: 'Story',
           board: epic.board,
           summary: "Predicted scope #{k + 1}",
@@ -54,8 +55,6 @@ private
           issue_created: Time.now.to_date,
           status: 'Predicted'
         })
-        @scope << predicted_issue
-        @predicted_scope << predicted_issue
       end
     end
   end

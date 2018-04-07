@@ -11,7 +11,7 @@ class Domain < ApplicationRecord
 
   def status_category_for(status)
     if status == 'Predicted'
-      'To Do'
+      'Predicted'
     else
       config.status_category_overrides[status] || statuses[status]
     end
@@ -20,6 +20,8 @@ class Domain < ApplicationRecord
   def status_color_for(status)
     case status_category_for(status)
       when 'To Do'
+        'red'
+      when 'Predicted'
         'red'
       when 'In Progress'
         'green'
