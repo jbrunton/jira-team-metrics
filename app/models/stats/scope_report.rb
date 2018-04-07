@@ -24,7 +24,9 @@ class ScopeReport
           @scope << Issue.new({
             board: epic.board,
             summary: "Predicted scope #{k + 1}",
-            fields: { 'Epic Link' => epic.key }
+            fields: { 'Epic Link' => epic.key },
+            transitions: [],
+            issue_created: Time.now
           })
         end
       end
@@ -71,7 +73,7 @@ class ScopeReport
   end
 
   def cfd_data(from_date)
-    data = [['Day', 'Done', 'In Progress', 'To Do']]
+    data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(from_date, Time.now).to_a
     dates.each_with_index do |date, index|
       data << cfd_row_for(date).to_array(index)
@@ -80,7 +82,7 @@ class ScopeReport
   end
 
   def cfd_row_for(date)
-    row = CfdRow.new(0, 0, 0)
+    row = CfdRow.new(0, 0, 0, 0)
 
     issues.each do |issue|
       case issue.status_category_on(date)
@@ -90,15 +92,17 @@ class ScopeReport
           row.in_progress += 1
         when 'Done'
           row.done += 1
+        else
+          row.predicted += 1 if !issue.persisted? # predicted scope
       end
     end
 
     row
   end
 
-  CfdRow = Struct.new(:to_do, :in_progress, :done) do
+  CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
     def to_array(index)
-      [index, done, in_progress, to_do]
+      [index, done, in_progress, to_do, predicted]
     end
   end
 end

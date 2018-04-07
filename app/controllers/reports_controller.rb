@@ -58,14 +58,15 @@ class ReportsController < ApplicationController
         issue.issue_type != 'Epic'
     end
 
-    @report = ScopeReport.new(issues).build
-
     @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
 
     @team_reports = @teams.map do |team|
       [team, report_for_team(team)]
     end.to_h
     @team_reports['None'] = ScopeReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+
+
+    @report = ScopeReport.new(@team_reports.values.map{ |team_report| team_report.scope }.flatten).build
   end
 
   def delivery_scope
