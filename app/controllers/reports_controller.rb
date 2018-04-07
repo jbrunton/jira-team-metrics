@@ -57,7 +57,7 @@ class ReportsController < ApplicationController
         issue.issue_type != 'Epic'
     end
 
-    @report = IssueTrendReport.new(issues).build
+    @report = ClosureReport.new(issues).build
 
     @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
 
@@ -65,9 +65,9 @@ class ReportsController < ApplicationController
       issues_for_team = issues.select do |issue|
         (issue.fields['Teams'] || []).include?(team)
       end
-      [team, IssueTrendReport.new(issues_for_team).build]
+      [team, ClosureReport.new(issues_for_team).build]
     end.to_h
-    @team_reports['None'] = IssueTrendReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+    @team_reports['None'] = ClosureReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
   end
 
   def delivery_scope
