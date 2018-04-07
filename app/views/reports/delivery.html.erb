@@ -21,8 +21,14 @@
       hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
       vAxis: {minValue: 0},
       isStacked: true,
-      lineWidth: 0,
-      areaOpacity: 1
+      lineWidth: 1,
+      areaOpacity: 0.4,
+      series: {
+        0: { color: 'blue' },
+        1: { color: 'green' },
+        2: { color: 'red' },
+        3: { color: 'red' }
+      }
     };
 
     var chart = new google.visualization.AreaChart(document.getElementById('chart'));
