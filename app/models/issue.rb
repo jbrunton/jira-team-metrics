@@ -135,7 +135,7 @@ class Issue < ApplicationRecord
     if date < issue_created
       nil
     elsif status == 'Predicted'
-      'Predicted'
+      'To Do'
     elsif completed_by?(date)
       'Done'
     elsif started_by?(date)

@@ -36,7 +36,7 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data
-    data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
+    data = [['Day', 'Done', 'In Progress', 'To Do']]
     dates = DateRange.new(started_date, rolling_forecast_completion_date(7) || Time.now + 90.days).to_a
     dates.each_with_index do |date, index|
       data << cfd_row_for(date).to_array(index)
@@ -44,15 +44,15 @@ class IncrementScopeReport < TeamScopeReport
     data
   end
 
-  CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
+  CfdRow = Struct.new(:to_do, :in_progress, :done) do
     def to_array(index)
-      [index, done, in_progress, to_do, predicted]
+      [index, done, in_progress, to_do]
     end
   end
 
 private
   def cfd_row_for(date)
-    row = CfdRow.new(0, 0, 0, 0)
+    row = CfdRow.new(0, 0, 0)
 
     scope.each do |issue|
       case issue.status_category_on(date)
@@ -62,8 +62,6 @@ private
           row.in_progress += 1
         when 'Done'
           row.done += 1
-        when 'Predicted'
-          row.predicted += 1
       end
     end
 
@@ -80,13 +78,7 @@ private
     change = completion_rate * (date - Time.now) / 1.day
     row.done += change
 
-    if row.predicted > 0
-      predicted_change = [row.predicted, change].min
-      row.predicted -= predicted_change
-      change -= predicted_change
-    end
-
-    if row.to_do > 0 && change > 0
+    if row.to_do > 0
       to_do_change = [row.to_do, change].min
       row.to_do -= to_do_change
       change -= to_do_change
