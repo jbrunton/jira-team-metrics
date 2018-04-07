@@ -50,46 +50,17 @@ class ReportsController < ApplicationController
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-
-    issues = @board.issues.select do |issue|
-      increment = issue.increment
-      !increment.nil? &&
-        increment['issue']['key'] == params[:issue_key] &&
-        issue.issue_type != 'Epic'
-    end
-
-    @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
-
-    @team_reports = @teams.map do |team|
-      [team, report_for_team(team)]
-    end.to_h
-    @team_reports['None'] = ScopeReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
-
-
-    @report = ScopeReport.new(@team_reports.values.map{ |team_report| team_report.scope }.flatten).build
+    @report = IncrementScopeReport.new(@increment).build
   end
 
   def delivery_scope
     @team = params[:team]
     @increment = @board.object.issues.find_by(key: params[:issue_key])
 
-    @report = report_for_team(@team)
+    @report = TeamScopeReport.for(@increment, @team)
     @issues_by_epic = @report.scope
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
-  end
-
-private
-  def report_for_team(team)
-    issues_for_team = @increment.issues(recursive: true).select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
-    end
-
-    training_issues_for_team = @board.training_issues.select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
-    end
-
-    ScopeReport.new(issues_for_team, training_issues_for_team).build
   end
 end

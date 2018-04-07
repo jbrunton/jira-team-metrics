@@ -14,13 +14,21 @@
 
   function updateChart() {
 
-    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data(@report.started_date).to_json.html_safe %>);
+    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data.to_json.html_safe %>);
 
     var options = {
       title: 'Delivery CFD',
       hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
       vAxis: {minValue: 0},
-      isStacked: true
+      isStacked: true,
+      lineWidth: 1,
+      areaOpacity: 0.4,
+      series: {
+        0: { color: 'blue' },
+        1: { color: 'green' },
+        2: { color: 'red' }
+      },
+      legend: { position: 'bottom' }
     };
 
     var chart = new google.visualization.AreaChart(document.getElementById('chart'));
@@ -44,7 +52,8 @@
     </tr>
   </thead>
 
-<% @team_reports.each do |team, team_report| %>
+<% @report.teams.each do |team| %>
+    <% team_report = @report.team_report_for(team) %>
     <tr>
       <td></td>
       <td>
