@@ -32,7 +32,36 @@
 
 </div>
 
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Team</th>
+      <th>Scope</th>
+      <th>Completion Rate</th>
+      <th>Forecast Completion</th>
+      <th></th>
+    </tr>
+  </thead>
+
 <% @team_reports.each do |team, team_report| %>
-    <%= render partial: 'partials/delivery_report', locals: { report: team_report, report_name: team } %>
-    <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Scope Details</a>
+    <tr>
+      <td></td>
+      <td>
+        <%= team %>
+      </td>
+      <td><%= team_report.scope.count %>
+      </td>
+      <td>
+        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
+        (every <%= pretty_print_number(1.0 / team_report.rolling_completion_rate(7)) %> days)
+      </td>
+      <td>
+        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
+      </td>
+      <td>
+        <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
+      </td>
+    </tr>
 <% end %>
+</table>

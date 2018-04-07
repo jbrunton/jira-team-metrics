@@ -18,7 +18,6 @@ RSpec.describe BoardConfig do
       }
     }
   }
-
   let(:config_hash) do
     {
       'default_query' => default_query,
@@ -90,6 +89,22 @@ RSpec.describe BoardConfig do
       expect(board_config.filters).to eq([
         BoardConfig::ConfigFilter.new('Support Tickets', ['ENG-101'])
       ])
+    end
+
+    context "#predictive_scope" do
+      it "returns returns nil if no details are given" do
+        board_config = BoardConfig.new(config_hash)
+        expect(board_config.predictive_scope).to eq(nil)
+      end
+
+      it "returns predictive scope details when specified" do
+        config_hash['predictive_scope'] = {
+          'board_id' => 123,
+          'adjustments_field' => 'Predictive Adjustments'
+        }
+        board_config = BoardConfig.new(config_hash)
+        expect(board_config.predictive_scope).to eq(BoardConfig::PredictiveScope.new(123, 'Predictive Adjustments'))
+      end
     end
   end
 end

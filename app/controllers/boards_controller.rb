@@ -27,7 +27,7 @@ class BoardsController < ApplicationController
   def sync
     @credentials = Credentials.new(credentials_params)
     if @credentials.valid?
-      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password, days_to_sync)
+      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
       render json: {}, status: 200
     else
       render partial: 'shared/sync_form', status: 400

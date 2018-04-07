@@ -20,7 +20,7 @@
   <tr>
     <th>Issues / Epic</th>
     <td>
-      (<%= pretty_print_number(@report.scope.count.to_f / @report.epics.count) %> issues / epic)
+      (<%= pretty_print_number(@report.issues_per_epic) %> issues / epic)
     </td>
   </tr>
 </table>
@@ -54,7 +54,11 @@
       <% issues.each do |issue| %>
           <tr class="story">
             <td>
-              <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+              <% if issue.persisted? %>
+                  <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+              <% else %>
+                  <%= issue.summary %>
+              <% end %>
             </td>
             <td></td>
             <td class="<%= @domain.status_color_for(issue.status) %> lighten-4">

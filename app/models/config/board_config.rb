@@ -2,6 +2,7 @@ class BoardConfig < BaseConfig
 
   QueryFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)
+  PredictiveScope = Struct.new(:board_id, :adjustments_field)
 
   def initialize(config_hash)
     super(config_hash, 'board_config')
@@ -13,6 +14,17 @@ class BoardConfig < BaseConfig
 
   def cycle_times
     config_hash['cycle_times']
+  end
+
+  def predictive_scope
+    if config_hash['predictive_scope'].nil?
+      nil
+    else
+      PredictiveScope.new(
+        config_hash['predictive_scope']['board_id'],
+        config_hash['predictive_scope']['adjustments_field']
+      )
+    end
   end
 
   def filters

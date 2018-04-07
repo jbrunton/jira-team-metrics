@@ -41,3 +41,9 @@ optional:
                   key: "//str"
                 optional:
                   reason: "//str"
+  predictive_scope:
+    type: "//rec"
+    required:
+      board_id: "//int"
+      adjustments_field: "//str"
+

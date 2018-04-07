@@ -32,6 +32,10 @@ class Issue < ApplicationRecord
     end
   end
 
+  def is_scope?
+    !is_epic? && !is_increment?
+  end
+
   def is_epic?
     issue_type == 'Epic'
   end
@@ -130,9 +134,11 @@ class Issue < ApplicationRecord
   def status_category_on(date)
     if date < issue_created
       nil
-    elsif completed_time && completed_time < date
+    elsif status == 'Predicted'
+      'Predicted'
+    elsif completed_by?(date)
       'Done'
-    elsif started_time && started_time < date
+    elsif started_by?(date)
       'In Progress'
     else
       'To Do'
@@ -148,5 +154,13 @@ private
     cycle_time_between(
       board.config_property(start_property_name),
       board.config_property(end_property_name))
+  end
+
+  def completed_by?(date)
+    completed_time && completed_time < date
+  end
+
+  def started_by?(date)
+    started_time && started_time < date
   end
 end

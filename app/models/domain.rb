@@ -10,7 +10,11 @@ class Domain < ApplicationRecord
   end
 
   def status_category_for(status)
-    config.status_category_overrides[status] || statuses[status]
+    if status == 'Predicted'
+      'Predicted'
+    else
+      config.status_category_overrides[status] || statuses[status]
+    end
   end
 
   def status_color_for(status)
