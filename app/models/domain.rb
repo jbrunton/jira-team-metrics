@@ -20,13 +20,13 @@ class Domain < ApplicationRecord
   def status_color_for(status)
     case status_category_for(status)
       when 'To Do'
-        'blue'
+        'red'
       when 'Predicted'
-        'blue'
+        'red'
       when 'In Progress'
-        'yellow'
-      when 'Done'
         'green'
+      when 'Done'
+        'blue'
       else
         nil
     end
