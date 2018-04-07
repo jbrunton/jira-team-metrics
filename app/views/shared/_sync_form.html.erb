@@ -8,12 +8,4 @@
       <%= form_input(@credentials, :password, type: :password) %>
     </div>
   </div>
-  <% unless @board.nil? %>
-      <div class="row">
-        <div class="input-field col s6">
-          <input id="days_to_sync" name="days_to_sync" type="text" class="validate" value="180">
-          <label for="days_to_sync">Days to sync</label>
-        </div>
-      </div>
-  <% end %>
 </form>
