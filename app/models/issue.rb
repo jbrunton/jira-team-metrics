@@ -134,14 +134,14 @@ class Issue < ApplicationRecord
   def status_category_on(date)
     if date < issue_created
       nil
+    elsif status == 'Predicted'
+        'Predicted'
     elsif completed_time && completed_time < date
       'Done'
     elsif started_time && started_time < date
       'In Progress'
-    elsif persisted?
-      'To Do'
     else
-      'Predicted'
+      'To Do'
     end
   end
 
