@@ -67,6 +67,29 @@ private
       end
     end
 
+    if date > Time.now
+      completion_rate = rolling_completion_rate(7)
+
+      change = completion_rate * (date - Time.now) / 1.day
+      row.done += change
+
+      if row.predicted > 0
+        predicted_change = [row.predicted, change].min
+        row.predicted -= predicted_change
+        change -= predicted_change
+      end
+
+      if row.to_do > 0 && change > 0
+        to_do_change = [row.to_do, change].min
+        row.to_do -= to_do_change
+        change -= to_do_change
+      end
+
+      if row.in_progress > 0 && change > 0
+        row.in_progress -= change
+      end
+    end
+
     row
   end
 end

@@ -12,11 +12,15 @@ module DescriptiveScopeStatistics
   end
 
   def rolling_completed_issues(days)
-    completed_scope.select{ |issue| issue.completed_time >= Time.now - days.days }
+    @rolling_completed_issues ||= {}
+    @rolling_completed_issues[days] ||=
+      completed_scope.select{ |issue| issue.completed_time >= Time.now - days.days }
   end
 
   def rolling_completion_rate(days)
-    rolling_completed_issues(days).count.to_f / days
+    @rolling_completion_date ||= {}
+    @rolling_completion_date[days] ||=
+      rolling_completed_issues(days).count.to_f / days
   end
 
   def rolling_forecast_completion_date(days)
