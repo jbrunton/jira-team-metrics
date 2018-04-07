@@ -1,7 +1,8 @@
 <% content_for :nav_content do %>
     <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
     <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="#!" class="breadcrumb">Delivery</a>
+    <a href="<%= reports_path(@board) %>/deliveries" class="breadcrumb">Deliveries</a>
+    <a href="#!" class="breadcrumb"><%= @increment.key %></a>
 <% end %>
 
 <script>
@@ -33,4 +34,5 @@
 
 <% @team_reports.each do |team, team_report| %>
     <%= render partial: 'partials/delivery_report', locals: { report: team_report, report_name: team } %>
+    <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Scope Details</a>
 <% end %>

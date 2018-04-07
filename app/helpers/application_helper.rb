@@ -20,6 +20,18 @@ module ApplicationHelper
     "/reports/boards/#{board.jira_id}"
   end
 
+  def deliveries_report_path(board)
+    "#{reports_path(board)}/deliveries"
+  end
+
+  def delivery_report_path(board, issue)
+    "#{deliveries_report_path(board)}/#{issue.key}"
+  end
+
+  def delivery_scope_report_path(board, issue, team)
+    "#{delivery_report_path(board, issue)}/scope/#{team}"
+  end
+
   def board_issues_path(board)
     "/reports/boards/#{board.jira_id}/issues"
   end
