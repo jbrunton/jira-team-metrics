@@ -17,19 +17,7 @@ class ScopeReport
 
     @training_scope_report = @training_issues.any? ? ScopeReport.new(@training_issues).build : nil
     @epics.each do |epic|
-      if epic.issues(recursive: false).empty? && @training_scope_report
-        @training_scope_report.issues_per_epic.round.times do |k|
-          @scope << Issue.new({
-            issue_type: 'Story',
-            board: epic.board,
-            summary: "Predicted scope #{k + 1}",
-            fields: { 'Epic Link' => epic.key },
-            transitions: [],
-            issue_created: Time.now.to_date,
-            status: 'Predicted'
-          })
-        end
-      end
+      build_predicted_scope_for(epic)
     end
 
     issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
@@ -110,6 +98,23 @@ class ScopeReport
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
     def to_array(index)
       [index, done, in_progress, to_do, predicted]
+    end
+  end
+
+private
+  def build_predicted_scope_for(epic)
+    if epic.issues(recursive: false).empty? && @training_scope_report
+      @training_scope_report.issues_per_epic.round.times do |k|
+        @scope << Issue.new({
+          issue_type: 'Story',
+          board: epic.board,
+          summary: "Predicted scope #{k + 1}",
+          fields: { 'Epic Link' => epic.key },
+          transitions: [],
+          issue_created: Time.now.to_date,
+          status: 'Predicted'
+        })
+      end
     end
   end
 end
