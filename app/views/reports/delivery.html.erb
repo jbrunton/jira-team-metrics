@@ -52,15 +52,17 @@
   </div>
 </div>
 
-<div class="row">
+
 <table>
   <thead>
     <tr>
       <th>Status</th>
       <th>Team</th>
       <th colspan="2">Scope</th>
-      <th>Completion Rate</th>
-      <th>Forecast Completion</th>
+      <th>Raw Rate</th>
+      <th>Raw Forecast</th>
+      <th>Trained Rate</th>
+      <th>Trained Forecast</th>
       <th></th>
     </tr>
   </thead>
@@ -82,7 +84,12 @@
       </td>
       <td>
         <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
-        (every <%= pretty_print_number(1.0 / team_report.rolling_completion_rate(7)) %> days)
+      </td>
+      <td>
+        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
+      </td>
+      <td>
+        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
       </td>
       <td>
         <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
@@ -93,4 +100,3 @@
     </tr>
 <% end %>
 </table>
-</div>
