@@ -27,5 +27,6 @@ optional:
     contents:
       type: "//rec"
       required:
-        jira_id: "//int"
+        board_id: "//int"
+      optional:
         config_url: "//str"
