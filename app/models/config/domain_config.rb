@@ -24,7 +24,7 @@ class DomainConfig < BaseConfig
     config_hash['fields'] || []
   end
 
-  def increments
+  def increment_types
     (config_hash['increments'] || []).map do |increment_hash|
       IncrementType.new(increment_hash['issue_type'], increment_hash['outward_link_type'], increment_hash['inward_link_type'])
     end

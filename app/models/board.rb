@@ -17,7 +17,26 @@ class Board < ApplicationRecord
 
   def increments
     issues.select do |issue|
-      domain.config.increments.any?{ |increment| issue.issue_type == increment.issue_type }
+      domain.config.increment_types.any?{ |increment| issue.issue_type == increment.issue_type }
+    end
+  end
+
+  def issues_in_epic(epic)
+    issues.select{ |issue| issue.fields['Epic Link'] == epic.key }
+  end
+
+  def issues_in_increment(increment, opts)
+    included_issues = increment.links.map do |link|
+      if domain.config.increment_types.any? { |increment_type| increment_type.outward_link_type == link['outward_link_type'] }
+        issues.find_by(key: link['issue']['key'])
+      else
+        nil
+      end
+    end.compact
+    if opts[:recursive]
+      included_issues.map{ |issue| [issue] + issue.issues(recursive: false) }.flatten.compact.uniq
+    else
+      included_issues
     end
   end
 

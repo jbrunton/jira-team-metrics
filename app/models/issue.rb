@@ -24,20 +24,9 @@ class Issue < ApplicationRecord
 
   def issues(opts)
     if is_epic?
-      board.issues.select{ |issue| issue.fields['Epic Link'] == key }
+      board.issues_in_epic(self)
     elsif is_increment?
-      included_issues = links.map do |link|
-        if board.domain.config.increments.any? { |increment| increment.outward_link_type == link['outward_link_type'] }
-          board.issues.find_by(key: link['issue']['key'])
-        else
-          nil
-        end
-      end.compact
-      if opts[:recursive]
-        included_issues.map{ |issue| [issue] + issue.issues(recursive: false) }.flatten.compact.uniq
-      else
-        included_issues
-      end
+      board.issues_in_increment(self, opts)
     else
       []
     end
@@ -48,12 +37,12 @@ class Issue < ApplicationRecord
   end
 
   def is_increment?
-    board.domain.config.increments.any?{ |increment| issue_type == increment.issue_type }
+    board.domain.config.increment_types.any?{ |increment| issue_type == increment.issue_type }
   end
 
   def increment
     incr = links.find do |link|
-      board.domain.config.increments.any? do |increment|
+      board.domain.config.increment_types.any? do |increment|
         link['inward_link_type'] == increment.inward_link_type &&
           link['issue']['issue_type'] == increment.issue_type
       end
