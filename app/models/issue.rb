@@ -32,6 +32,10 @@ class Issue < ApplicationRecord
     end
   end
 
+  def is_scope?
+    !is_epic? && !is_increment?
+  end
+
   def is_epic?
     issue_type == 'Epic'
   end

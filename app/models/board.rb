@@ -51,6 +51,15 @@ class Board < ApplicationRecord
     value
   end
 
+  def training_issues
+    if config.predictive_scope
+      training_board = Board.find_by(jira_id: config.predictive_scope.board_id)
+      training_board.issues
+    else
+      []
+    end
+  end
+
   DEFAULT_CONFIG = <<~CONFIG
     ---
     cycle_times:

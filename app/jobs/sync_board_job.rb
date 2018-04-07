@@ -43,17 +43,19 @@ class SyncBoardJob < ApplicationJob
   end
 
   def fetch_issues_for(board, since_date, credentials)
-    query = "status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'"
-    fetch_issues_for_query(board, query, credentials, 'fetching issues from JIRA')
+    #query = "status changed AFTER '#{since_date.strftime('%Y-%m-%d')}'"
+    fetch_issues_for_query(board, nil, credentials, 'fetching issues from JIRA')
   end
 
   def fetch_issues_for_query(board, subquery, credentials, status, ignore_board_query = false)
     if ignore_board_query
       query = subquery
-    else
+    elsif subquery
       query = QueryBuilder.new(board.query)
         .and(subquery)
         .query
+    else
+      query = board.query
     end
     client = JiraClient.new(board.domain.config.url, credentials)
     HttpErrorHandler.new(@notifier).invoke do

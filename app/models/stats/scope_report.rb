@@ -1,21 +1,39 @@
-class ClosureReport
+class ScopeReport
   attr_reader :issues
   attr_reader :epics
   attr_reader :scope
   attr_reader :completed_scope
   attr_reader :remaining_scope
 
-  def initialize(issues)
+  def initialize(issues, training_issues = [])
     @issues = issues
+    @training_issues = training_issues
   end
 
   def build
-    @epics = issues.select{ |issue| issue.issue_type == 'Epic' }
-    @scope = issues.select{ |issue| issue.issue_type != 'Epic' }
+    @epics = issues.select{ |issue| issue.is_epic? }
+    @scope = issues.select{ |issue| issue.is_scope? }
     issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
     @completed_scope = issues_by_status_category['Done'] || []
     @remaining_scope = (issues_by_status_category['To Do'] || []) + (issues_by_status_category['In Progress'] || [])
+    @training_scope_report = @training_issues.any? ? ScopeReport.new(@training_issues).build : nil
+
+    @epics.each do |epic|
+      if epic.issues(recursive: false).empty? && @training_scope_report
+        @training_scope_report.issues_per_epic.round.times do |k|
+          @scope << Issue.new({
+            board: epic.board,
+            summary: "Predicted scope #{k + 1}",
+            fields: { 'Epic Link' => epic.key }
+          })
+        end
+      end
+    end
     self
+  end
+
+  def issues_per_epic
+    scope.count.to_f / epics.count
   end
 
   def percent_completed
@@ -28,11 +46,11 @@ class ClosureReport
 
   def elapsed_time
     # TODO: should be taken to be the start time of the increment, not the team
-    (Time.now - started_date) / (24 * 60 * 60)
+    (Time.now - started_date) / (24 * 60 * 60) if started_date
   end
 
   def rolling_time_span(days)
-    [days, elapsed_time].min
+    [days, elapsed_time].compact.min
   end
 
   def rolling_completed_issues(days)
