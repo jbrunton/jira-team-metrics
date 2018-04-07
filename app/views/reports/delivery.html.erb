@@ -29,24 +29,36 @@
         1: { color: 'green' },
         2: { color: 'red' },
         3: { color: 'orange' }
+      },
+      chartArea: {
+        width: '90%'
       }
     };
 
-    var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+    var chart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+    chart.draw(data, options);
+
+    var chart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
     chart.draw(data, options);
   }
 </script>
 
-<div id="chart">
+<div class="row">
+  <div id="raw-cfd" class="col s6" style="height: 350px; margin-top: 20px;">
 
+  </div>
+  <div id="trained-cfd" class="col s6" style="height: 350px; margin-top: 20px;">
+
+  </div>
 </div>
 
+<div class="row">
 <table>
   <thead>
     <tr>
       <th>Status</th>
       <th>Team</th>
-      <th>Scope</th>
+      <th colspan="2">Scope</th>
       <th>Completion Rate</th>
       <th>Forecast Completion</th>
       <th></th>
@@ -60,7 +72,13 @@
       <td>
         <%= team %>
       </td>
-      <td><%= team_report.scope.count %>
+      <td>
+        <span class="right">
+          <%= team_report.scope.count %>
+        </span>
+      </td>
+      <td>
+          [<%= team_report.predicted_scope.count %>]
       </td>
       <td>
         <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
@@ -75,3 +93,4 @@
     </tr>
 <% end %>
 </table>
+</div>
