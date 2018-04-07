@@ -5,11 +5,11 @@ RSpec.describe DomainConfig do
   let(:domain_url) { 'https://jira.example.com' }
   let(:domain_name) { 'My Domain' }
 
-  let(:board_jira_id) { 123 }
+  let(:board_id) { 123 }
   let(:board_config_url) { 'https://example.com/board-config.yml' }
   let(:boards) do
     [{
-      'jira_id' => board_jira_id,
+      'jira_id' => board_id,
       'config_url' => board_config_url
     }]
   end
@@ -102,7 +102,7 @@ RSpec.describe DomainConfig do
     it "returns the board configs" do
       domain_config = DomainConfig.new(config_hash)
       expect(domain_config.boards).to eq([
-        DomainConfig::RemoteBoardConfig.new(board_jira_id, board_config_url)
+        DomainConfig::BoardDetails.new(board_jira_id, board_config_url)
       ])
     end
   end

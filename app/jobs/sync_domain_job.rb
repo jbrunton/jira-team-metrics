@@ -9,7 +9,7 @@ class SyncDomainJob < ApplicationJob
     update_cache(domain, boards, statuses, fields)
 
     domain.config.boards.each do |board_details|
-      board = domain.boards.find_or_create_by(jira_id: board_details.jira_id)
+      board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
       board.config_string = board_details.fetch_config_string
       board.save
       SyncBoardJob.perform_now(board, username, password, 180, false)

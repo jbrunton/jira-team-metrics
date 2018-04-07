@@ -1,7 +1,11 @@
 class DomainConfig < BaseConfig
-  RemoteBoardConfig = Struct.new(:jira_id, :config_url) do
+  BoardDetails = Struct.new(:board_id, :config_url) do
     def fetch_config_string
-      open(config_url).read
+      if config_url.nil?
+        Board::DEFAULT_CONFIG
+        else
+          open(config_url).read
+      end
     end
   end
 
@@ -32,7 +36,7 @@ class DomainConfig < BaseConfig
 
   def boards
     (config_hash['boards'] || []).map do |config_hash|
-      RemoteBoardConfig.new(config_hash['jira_id'], config_hash['config_url'])
+      BoardDetails.new(config_hash['board_id'], config_hash['config_url'])
     end
   end
 
