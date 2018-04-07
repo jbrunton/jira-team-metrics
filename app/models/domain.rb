@@ -22,7 +22,7 @@ class Domain < ApplicationRecord
       when 'To Do'
         'red'
       when 'Predicted'
-        'red'
+        'orange'
       when 'In Progress'
         'green'
       when 'Done'
