@@ -8,7 +8,7 @@ module DescriptiveScopeStatistics
   end
 
   def started_date
-    issues.map{ |issue| issue.started_time }.compact.min
+    scope.map{ |issue| issue.started_time }.compact.min
   end
 
   def rolling_completed_issues(days)

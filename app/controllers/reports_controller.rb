@@ -50,23 +50,7 @@ class ReportsController < ApplicationController
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-
-    issues = @board.issues.select do |issue|
-      increment = issue.increment
-      !increment.nil? &&
-        increment['issue']['key'] == params[:issue_key] &&
-        issue.issue_type != 'Epic'
-    end
-
-    @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
-
-    @team_reports = @teams.map do |team|
-      [team, TeamScopeReport.for(@increment, team)]
-    end.to_h
-    @team_reports['None'] = TeamScopeReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
-
-
-    @report = TeamScopeReport.new(@team_reports.values.map{ |team_report| team_report.scope }.flatten).build
+    @report = IncrementScopeReport.new(@increment).build
   end
 
   def delivery_scope

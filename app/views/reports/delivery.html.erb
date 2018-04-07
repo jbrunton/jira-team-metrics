@@ -14,7 +14,7 @@
 
   function updateChart() {
 
-    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data(@report.started_date).to_json.html_safe %>);
+    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data.to_json.html_safe %>);
 
     var options = {
       title: 'Delivery CFD',
@@ -44,7 +44,8 @@
     </tr>
   </thead>
 
-<% @team_reports.each do |team, team_report| %>
+<% @report.teams.each do |team| %>
+    <% team_report = @report.team_report_for(team) %>
     <tr>
       <td></td>
       <td>

@@ -1,7 +1,6 @@
 class TeamScopeReport
   include DescriptiveScopeStatistics
 
-  attr_reader :issues
   attr_reader :epics
   attr_reader :scope
   attr_reader :completed_scope
@@ -14,8 +13,8 @@ class TeamScopeReport
   end
 
   def build
-    @epics = issues.select{ |issue| issue.is_epic? }
-    @scope = issues.select{ |issue| issue.is_scope? }
+    @epics = @issues.select{ |issue| issue.is_epic? }
+    @scope = @issues.select{ |issue| issue.is_scope? }
 
     @training_scope_report = @training_issues.any? ? TeamScopeReport.new(@training_issues).build : nil
     @epics.each do |epic|
@@ -29,40 +28,6 @@ class TeamScopeReport
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
     self
-  end
-
-  def cfd_data(from_date)
-    data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(from_date, Time.now.to_date + 1.day).to_a
-    dates.each_with_index do |date, index|
-      data << cfd_row_for(date).to_array(index)
-    end
-    data
-  end
-
-  def cfd_row_for(date)
-    row = CfdRow.new(0, 0, 0, 0)
-
-    issues.each do |issue|
-      case issue.status_category_on(date)
-        when 'To Do'
-          row.to_do += 1
-        when 'In Progress'
-          row.in_progress += 1
-        when 'Done'
-          row.done += 1
-        when 'Predicted'
-          row.predicted += 1
-      end
-    end
-
-    row
-  end
-
-  CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(index)
-      [index, done, in_progress, to_do, predicted]
-    end
   end
 
   def self.for(increment, team)
