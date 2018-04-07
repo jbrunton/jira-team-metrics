@@ -21,6 +21,8 @@ class Domain < ApplicationRecord
     case status_category_for(status)
       when 'To Do'
         'blue'
+      when 'Predicted'
+        'blue'
       when 'In Progress'
         'yellow'
       when 'Done'

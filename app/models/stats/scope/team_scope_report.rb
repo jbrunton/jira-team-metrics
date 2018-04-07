@@ -1,4 +1,6 @@
-class ScopeReport
+class TeamScopeReport
+  include DescriptiveScopeStatistics
+
   attr_reader :issues
   attr_reader :epics
   attr_reader :scope
@@ -15,7 +17,7 @@ class ScopeReport
     @epics = issues.select{ |issue| issue.is_epic? }
     @scope = issues.select{ |issue| issue.is_scope? }
 
-    @training_scope_report = @training_issues.any? ? ScopeReport.new(@training_issues).build : nil
+    @training_scope_report = @training_issues.any? ? TeamScopeReport.new(@training_issues).build : nil
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end
@@ -27,44 +29,6 @@ class ScopeReport
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
     self
-  end
-
-  def issues_per_epic
-    scope.count.to_f / epics.count
-  end
-
-  def percent_completed
-    (100.0 * completed_scope.count) / scope.count
-  end
-
-  def started_date
-    issues.map{ |issue| issue.started_time }.compact.min
-  end
-
-  def elapsed_time
-    # TODO: should be taken to be the start time of the increment, not the team
-    (Time.now - started_date) / (24 * 60 * 60) if started_date
-  end
-
-  def rolling_time_span(days)
-    [days, elapsed_time].compact.min
-  end
-
-  def rolling_completed_issues(days)
-    completed_scope.select{ |issue| issue.completed_time >= Time.now - days.days }
-  end
-
-  def rolling_completion_rate(days)
-    rolling_completed_issues(days).count.to_f / rolling_time_span(days)
-  end
-
-  def rolling_forecast_completion_date(days)
-    completion_rate = rolling_completion_rate(days)
-    if completion_rate == 0
-      nil
-    else
-      Time.now + (remaining_scope.count / completion_rate).days
-    end
   end
 
   def cfd_data(from_date)
@@ -99,6 +63,18 @@ class ScopeReport
     def to_array(index)
       [index, done, in_progress, to_do, predicted]
     end
+  end
+
+  def self.for(increment, team)
+    issues_for_team = increment.issues(recursive: true).select do |issue|
+      (issue.fields['Teams'] || []).include?(team)
+    end
+
+    training_issues_for_team = increment.board.training_issues.select do |issue|
+      (issue.fields['Teams'] || []).include?(team)
+    end
+
+    TeamScopeReport.new(issues_for_team, training_issues_for_team).build
   end
 
 private

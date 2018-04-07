@@ -61,35 +61,22 @@ class ReportsController < ApplicationController
     @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
 
     @team_reports = @teams.map do |team|
-      [team, report_for_team(team)]
+      [team, TeamScopeReport.for(@increment, team)]
     end.to_h
-    @team_reports['None'] = ScopeReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+    @team_reports['None'] = TeamScopeReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
 
 
-    @report = ScopeReport.new(@team_reports.values.map{ |team_report| team_report.scope }.flatten).build
+    @report = TeamScopeReport.new(@team_reports.values.map{ |team_report| team_report.scope }.flatten).build
   end
 
   def delivery_scope
     @team = params[:team]
     @increment = @board.object.issues.find_by(key: params[:issue_key])
 
-    @report = report_for_team(@team)
+    @report = TeamScopeReport.for(@increment, @team)
     @issues_by_epic = @report.scope
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
-  end
-
-private
-  def report_for_team(team)
-    issues_for_team = @increment.issues(recursive: true).select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
-    end
-
-    training_issues_for_team = @board.training_issues.select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
-    end
-
-    ScopeReport.new(issues_for_team, training_issues_for_team).build
   end
 end
