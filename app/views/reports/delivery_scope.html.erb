@@ -2,6 +2,8 @@
   <thead>
     <tr>
       <th style="width: 90%">Issue</th>
+      <th>Scope</th>
+      <th>Status</th>
     </tr>
   </thead>
 
@@ -14,12 +16,20 @@
           <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
           <% end %>
         </td>
+        <td>
+          <%= issues.count %>
+        </td>
+        <td></td>
       </tr>
 
       <% issues.each do |issue| %>
           <tr class="story">
             <td>
               <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+            </td>
+            <td></td>
+            <td class="<%= @domain.status_color_for(issue.status) %> lighten-4">
+              <%= issue.status %>
             </td>
           </tr>
       <% end %>
