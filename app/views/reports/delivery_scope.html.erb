@@ -1,0 +1,66 @@
+<h5>Summary Figures</h5>
+
+<table class="bordered col s6" style="width: 50%">
+  <tr>
+    <th>Progress</th>
+    <td>
+      <%= pretty_print_number(@report.percent_completed) %>%
+    </td>
+  </tr>
+  <tr>
+    <th>Scope</th>
+    <td><%= @report.completed_scope.count %> / <%= @report.scope.count %></td>
+  </tr>
+  <tr>
+    <th>Epics</th>
+    <td>
+      <%= @report.epics.count %>
+    </td>
+  </tr>
+  <tr>
+    <th>Issues / Epic</th>
+    <td>
+      (<%= pretty_print_number(@report.scope.count.to_f / @report.epics.count) %> issues / epic)
+    </td>
+  </tr>
+</table>
+
+<h5>Details</h5>
+
+<table class="bordered jira-tree">
+  <thead>
+    <tr>
+      <th style="width: 90%">Issue</th>
+      <th>Scope</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <% @issues_by_epic.each do |epic, issues| %>
+      <tr class="epic">
+        <td>
+          <% if epic.nil? %>
+          None
+          <% else %>
+          <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
+          <% end %>
+        </td>
+        <td>
+          <%= issues.count %>
+        </td>
+        <td></td>
+      </tr>
+
+      <% issues.each do |issue| %>
+          <tr class="story">
+            <td>
+              <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+            </td>
+            <td></td>
+            <td class="<%= @domain.status_color_for(issue.status) %> lighten-4">
+              <%= issue.status %>
+            </td>
+          </tr>
+      <% end %>
+  <% end %>
+</table>

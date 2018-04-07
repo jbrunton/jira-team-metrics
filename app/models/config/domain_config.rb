@@ -5,7 +5,7 @@ class DomainConfig < BaseConfig
     end
   end
 
-  IncrementType = Struct.new(:issue_type, :inward_link_type)
+  IncrementType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
   def initialize(config_hash)
     super(config_hash, 'domain_config')
@@ -22,6 +22,12 @@ class DomainConfig < BaseConfig
   # TODO: add Epic Link to this
   def fields
     config_hash['fields'] || []
+  end
+
+  def increment_types
+    (config_hash['increments'] || []).map do |increment_hash|
+      IncrementType.new(increment_hash['issue_type'], increment_hash['outward_link_type'], increment_hash['inward_link_type'])
+    end
   end
 
   def boards

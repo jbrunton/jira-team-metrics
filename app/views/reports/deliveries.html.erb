@@ -1,14 +1,20 @@
 <% content_for :nav_content do %>
     <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
     <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="#!" class="breadcrumb">Delivery</a>
+    <a href="#!" class="breadcrumb">Deliveries</a>
 <% end %>
 
 <h3>Deliveries</h3>
 
 <% @issues_by_increment.each do |increment, issues| %>
     <% unless increment.nil? %>
-        <h5><%= increment['issue']['key'] %> &mdash; <%= increment['issue']['summary'] %></h5>
+        <h5>
+          <a href="<%= "#{reports_path(@board)}/deliveries/#{increment['issue']['key']}" %>">
+            <%= increment['issue']['key'] %>
+          </a>
+          &mdash;
+          <%= increment['issue']['summary'] %>
+        </h5>
         <div class="row">
           <table class="col s6">
             <tr>

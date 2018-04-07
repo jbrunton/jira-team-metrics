@@ -22,11 +22,29 @@ class Issue < ApplicationRecord
     board.domain.status_category_for(status)
   end
 
+  def issues(opts)
+    if is_epic?
+      board.issues_in_epic(self)
+    elsif is_increment?
+      board.issues_in_increment(self, opts)
+    else
+      []
+    end
+  end
+
+  def is_epic?
+    issue_type == 'Epic'
+  end
+
+  def is_increment?
+    board.domain.config.increment_types.any?{ |increment| issue_type == increment.issue_type }
+  end
+
   def increment
     incr = links.find do |link|
-      board.domain.increments.any? do |increment|
-        link['inward_link_type'] == increment['inward_link_type'] &&
-          link['issue']['issue_type'] == increment['issue_type']
+      board.domain.config.increment_types.any? do |increment|
+        link['inward_link_type'] == increment.inward_link_type &&
+          link['issue']['issue_type'] == increment.issue_type
       end
     end
     if incr.nil?

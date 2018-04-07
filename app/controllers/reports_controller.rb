@@ -49,6 +49,7 @@ class ReportsController < ApplicationController
 
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
+    @increment = @board.issues.find_by(key: params[:issue_key])
 
     issues = @board.issues.select do |issue|
       increment = issue.increment
@@ -57,7 +58,7 @@ class ReportsController < ApplicationController
         issue.issue_type != 'Epic'
     end
 
-    @report = IncrementReport.new(issues).build
+    @report = ClosureReport.new(issues).build
 
     @teams = issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
 
@@ -65,8 +66,21 @@ class ReportsController < ApplicationController
       issues_for_team = issues.select do |issue|
         (issue.fields['Teams'] || []).include?(team)
       end
-      [team, IncrementReport.new(issues_for_team).build]
+      [team, ClosureReport.new(issues_for_team).build]
     end.to_h
-    @team_reports['None'] = IncrementReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+    @team_reports['None'] = ClosureReport.new(issues.select { |issue| issue.fields['Teams'].nil? }).build
+  end
+
+  def delivery_scope
+    @team = params[:team]
+    @increment = @board.object.issues.find_by(key: params[:issue_key])
+    issues_for_team = @increment.issues(recursive: true).select do |issue|
+      (issue.fields['Teams'] || []).include?(@team)
+    end
+    @report = ClosureReport.new(@increment.issues(recursive: true)).build
+    @issues_by_epic = issues_for_team
+      .group_by{ |issue| issue.epic }
+      .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
+      .to_h
   end
 end

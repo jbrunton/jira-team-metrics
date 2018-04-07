@@ -19,8 +19,8 @@
         Completed
       </td>
       <td>
-        <%= report.completed_issues.count %>
-        (<%= pretty_print_number(100.0 * report.completed_issues.count / report.issues.count) %>%)
+        <%= report.completed_scope.count %>
+        (<%= pretty_print_number(100.0 * report.completed_scope.count / report.scope.count) %>%)
       </td>
     </tr>
   </table>

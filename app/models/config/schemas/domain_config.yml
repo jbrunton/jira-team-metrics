@@ -14,6 +14,7 @@ optional:
       required:
         issue_type: "//str"
         inward_link_type: "//str"
+        outward_link_type: "//str"
   status_category_overrides:
     type: "//arr"
     contents:
