@@ -138,8 +138,10 @@ class Issue < ApplicationRecord
       'Done'
     elsif started_time && started_time < date
       'In Progress'
-    else
+    elsif persisted?
       'To Do'
+    else
+      'Predicted'
     end
   end
 
