@@ -26,6 +26,7 @@ class IncrementScopeReport < TeamScopeReport
     @scope = @team_reports.values.map{ |team_report| team_report.scope }.flatten.uniq
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq
+    @remaining_scope = @team_reports.values.map{ |team_report| team_report.remaining_scope }.flatten.uniq
 
     self
   end
@@ -36,7 +37,7 @@ class IncrementScopeReport < TeamScopeReport
 
   def cfd_data
     data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(started_date, Time.now.to_date + 1.day).to_a
+    dates = DateRange.new(started_date, rolling_forecast_completion_date(7) || Time.now + 90.days).to_a
     dates.each_with_index do |date, index|
       data << cfd_row_for(date).to_array(index)
     end
