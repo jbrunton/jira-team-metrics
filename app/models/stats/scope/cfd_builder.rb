@@ -3,8 +3,8 @@ class CfdBuilder
   include FormattingHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(date_string, annotations)
-      [date_string, done, annotations, in_progress, to_do, predicted]
+    def to_array(date_string, annotation)
+      [date_string, done, annotation, in_progress, to_do, predicted]
     end
   end
 
@@ -16,24 +16,12 @@ class CfdBuilder
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
-      annotations = []
-
-      {'Overall' => completion_date}.merge(team_completion_dates).each do |team, team_completion_date|
-        unless team_completion_date.nil?
-          if date <= team_completion_date && team_completion_date < date + 1.day
-            annotations << "#{team}: #{pretty_print_date(team_completion_date, show_tz: false, hide_year: true)}"
-          end
-        end
-      end
-
-      if annotations.empty?
-        annotations = nil
-      else
-        annotations = annotations.join(' ')
+      if date <= completion_date && completion_date < date + 1.day
+        annotation = "Overall: #{pretty_print_date(completion_date, show_tz: false, hide_year: true)}"
       end
 
       date_string = date_as_string(date)
-      data << cfd_row_for(date, completion_rate).to_array(date_string, annotations)
+      data << cfd_row_for(date, completion_rate).to_array(date_string, annotation)
     end
 
     data
