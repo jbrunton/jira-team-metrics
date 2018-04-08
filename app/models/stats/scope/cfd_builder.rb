@@ -13,7 +13,7 @@ class CfdBuilder
 
   def build(started_date, completion_rate, completion_date)
     data = [[{'label' => 'Date', 'type' => 'date'}, 'Done', 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(started_date, completion_date).to_a
+    dates = DateRange.new(started_date, completion_date + 1.day).to_a
     dates.each do |date|
       date_string = date_as_string(date)
       data << cfd_row_for(date, completion_rate).to_array(date_string)

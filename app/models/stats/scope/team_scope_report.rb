@@ -19,14 +19,7 @@ class TeamScopeReport
     @scope = @issues.select{ |issue| issue.is_scope? }
 
     build_training_report if @training_issues.any?
-
-    issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
-    @completed_scope = issues_by_status_category['Done'] || []
-    @predicted_scope = issues_by_status_category['Predicted'] || []
-    @remaining_scope = (issues_by_status_category['To Do'] || []) +
-      (issues_by_status_category['In Progress'] || []) +
-      @predicted_scope
-
+    analyze_scope
     build_trained_forecasts if @training_issues.any?
 
     self
@@ -45,6 +38,16 @@ class TeamScopeReport
   end
 
 private
+
+  def analyze_scope
+    issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
+    @completed_scope = issues_by_status_category['Done'] || []
+    @predicted_scope = issues_by_status_category['Predicted'] || []
+    @remaining_scope = (issues_by_status_category['To Do'] || []) +
+      (issues_by_status_category['In Progress'] || []) +
+      @predicted_scope
+  end
+
   def build_training_report
     @training_scope_report = TeamScopeReport.new(@training_issues).build
     @epics.each do |epic|
