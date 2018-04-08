@@ -8,11 +8,11 @@ module DescriptiveScopeStatistics
   end
 
   def started_date
-    @started_date ||= scope.map{ |issue| issue.started_time }.compact.min
+    @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || Time.now
   end
 
   def completed_date
-    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max
+    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || Time.now + 90.days
   end
 
   def completed_scope_between(from_date, to_date)
