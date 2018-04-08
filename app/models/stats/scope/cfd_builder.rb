@@ -12,16 +12,21 @@ class CfdBuilder
     @scope = scope
   end
 
-  def build(started_date, completion_rate, completion_date)
+  def build(started_date, completion_rate, completion_date, team_completion_dates)
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
       date_string = date_as_string(date)
-      if date <= completion_date && completion_date < date + 1.day
-        annotations = "Overall: #{pretty_print_date(date, show_tz: false, hide_year: true)}"
-      end
-      data << cfd_row_for(date, completion_rate).to_array(date_string, annotations)
+      data << cfd_row_for(date, completion_rate).to_array(date_string, nil)
     end
+
+    {'Overall' => completion_date}.merge(team_completion_dates).each do |team, team_completion_date|
+      unless team_completion_date.nil?
+        annotation = "#{team}: #{pretty_print_date(team_completion_date, show_tz: false, hide_year: true)}"
+        data << [date_as_string(team_completion_date), annotation, 0, 0, 0, 0]
+      end
+    end
+
     data
   end
 

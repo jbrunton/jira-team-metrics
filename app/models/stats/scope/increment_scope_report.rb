@@ -46,13 +46,17 @@ class IncrementScopeReport < TeamScopeReport
       when :raw
         completion_rate = rolling_completion_rate(7)
         completion_date = rolling_forecast_completion_date(7)
+        team_completion_dates = @team_reports.map do |team, team_report|
+          [team, team_report.rolling_forecast_completion_date(7)]
+        end.to_h
       when :trained
         completion_rate = trained_completion_rate
         completion_date = trained_completion_date
+        team_completion_dates = {}
       else
         raise "Unexpected cfd_type: #{cfd_type}"
     end
 
-    CfdBuilder.new(@scope).build(started_date, completion_rate, completion_date)
+    CfdBuilder.new(@scope).build(started_date, completion_rate, completion_date, team_completion_dates)
   end
 end
