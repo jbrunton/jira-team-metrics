@@ -12,7 +12,7 @@ class CfdBuilder
     @scope = scope
   end
 
-  def build(started_date, completion_rate, completion_date, team_completion_dates)
+  def build(started_date, completion_rate, completion_date)
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
