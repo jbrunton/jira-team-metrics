@@ -89,7 +89,7 @@
         <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
       </td>
       <td>
-        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
+        <%= pretty_print_number(team_report.trained_completion_rate * 7) %> / week
       </td>
       <td>
         <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>

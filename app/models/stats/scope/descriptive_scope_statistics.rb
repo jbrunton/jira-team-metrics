@@ -8,19 +8,36 @@ module DescriptiveScopeStatistics
   end
 
   def started_date
-    scope.map{ |issue| issue.started_time }.compact.min
+    @started_date ||= scope.map{ |issue| issue.started_time }.compact.min
+  end
+
+  def completed_date
+    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max
+  end
+
+  def completed_scope_between(from_date, to_date)
+    completed_scope.select{ |issue| from_date <= issue.completed_time && issue.completed_time <= to_date }
+  end
+
+  def completion_rate_between(from_date, to_date)
+    completed_scope_between(from_date, to_date).count.to_f / ((to_date - from_date) / 1.day)
   end
 
   def rolling_completed_issues(days)
     @rolling_completed_issues ||= {}
-    @rolling_completed_issues[days] ||=
-      completed_scope.select{ |issue| issue.completed_time >= Time.now - days.days }
+    @rolling_completed_issues[days] ||= completed_scope_between(Time.now - days.days, Time.now)
   end
 
   def rolling_completion_rate(days)
     @rolling_completion_date ||= {}
     @rolling_completion_date[days] ||=
       rolling_completed_issues(days).count.to_f / days
+  end
+
+  def completion_rate
+    return 0 if completed_scope.empty?
+    @completion_rate ||= completed_scope_between(started_date, completed_date).count.to_f /
+      ((completed_date - started_date) / 1.day)
   end
 
   def rolling_forecast_completion_date(days)

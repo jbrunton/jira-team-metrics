@@ -6,6 +6,7 @@ class TeamScopeReport
   attr_reader :completed_scope
   attr_reader :remaining_scope
   attr_reader :predicted_scope
+  attr_reader :trained_completion_rate
 
   def initialize(issues, training_issues = [])
     @issues = issues
@@ -16,9 +17,12 @@ class TeamScopeReport
     @epics = @issues.select{ |issue| issue.is_epic? }
     @scope = @issues.select{ |issue| issue.is_scope? }
 
-    @training_scope_report = @training_issues.any? ? TeamScopeReport.new(@training_issues).build : nil
-    @epics.each do |epic|
-      build_predicted_scope_for(epic)
+    if @training_issues.any?
+      @training_scope_report = TeamScopeReport.new(@training_issues).build
+      @epics.each do |epic|
+        build_predicted_scope_for(epic)
+      end
+      @trained_completion_rate = @training_scope_report.completion_rate
     end
 
     issues_by_status_category = @scope.group_by{ |issue| issue.status_category }

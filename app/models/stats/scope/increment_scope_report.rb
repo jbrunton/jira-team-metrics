@@ -6,6 +6,7 @@ class IncrementScopeReport < TeamScopeReport
   attr_reader :completed_scope
   attr_reader :remaining_scope
   attr_reader :predicted_scope
+  attr_reader :trained_completion_rate
 
   attr_reader :teams
 
@@ -27,6 +28,8 @@ class IncrementScopeReport < TeamScopeReport
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq
     @remaining_scope = @team_reports.values.map{ |team_report| team_report.remaining_scope }.flatten.uniq
+    @trained_completion_rate = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.sum /
+      @team_reports.count
 
     self
   end
