@@ -23,6 +23,7 @@ class TeamScopeReport
 
     build_training_report if @training_issues.any?
     analyze_scope
+    analyze_status
     build_trained_forecasts if @training_issues.any?
 
     self
@@ -49,7 +50,9 @@ private
     @remaining_scope = (issues_by_status_category['To Do'] || []) +
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
+  end
 
+  def analyze_status
     if @increment.target_date && @remaining_scope.any?
       forecast_completion_date = rolling_forecast_completion_date(7)
       if forecast_completion_date
