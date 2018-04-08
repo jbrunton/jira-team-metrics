@@ -113,7 +113,12 @@
 <% @report.teams.each do |team| %>
     <% team_report = @report.team_report_for(team) %>
     <tr>
-      <td></td>
+      <td>
+        <span
+          class="new badge <%= team_report.status_color %>"
+          data-badge-caption="<%= team_report.status %>"
+          style="width: 100%;"></span>
+      </td>
       <td>
         <%= team %>
       </td>

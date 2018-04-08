@@ -8,6 +8,8 @@ class TeamScopeReport
   attr_reader :predicted_scope
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
+  attr_reader :status
+  attr_reader :status_color
 
   def initialize(issues, training_issues = [])
     @issues = issues
@@ -46,6 +48,16 @@ private
     @remaining_scope = (issues_by_status_category['To Do'] || []) +
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
+
+    @status = 'OK'
+    @status_color = case @status
+      when 'OK'
+        'green'
+      when 'AT RISK'
+        'yellow'
+      else
+        'red'
+    end
   end
 
   def build_training_report
