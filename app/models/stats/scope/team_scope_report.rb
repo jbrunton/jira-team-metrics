@@ -23,7 +23,7 @@ class TeamScopeReport
 
     build_training_report if @training_issues.any?
     analyze_scope
-    analyze_status
+    analyze_status if @increment.target_date && @remaining_scope.any?
     build_trained_forecasts if @training_issues.any?
 
     self
@@ -53,24 +53,27 @@ private
   end
 
   def analyze_status
-    if @increment.target_date && @remaining_scope.any?
-      forecast_completion_date = rolling_forecast_completion_date(7)
-      if forecast_completion_date
-        if forecast_completion_date <= @increment.target_date
-          @status = 'OK TRACK'
-          @status_color = 'green'
-        elsif (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
-          @status = 'AT RISK'
-          @status_color = 'yellow'
-        else
-          @status = 'HIGH RISK'
-          @status_color = 'red'
-        end
-      else
-        @status = 'HIGH RISK'
-        @status_color = 'red'
-      end
+    forecast_completion_date = rolling_forecast_completion_date(7)
+    if on_track?(forecast_completion_date)
+      @status = 'OK TRACK'
+      @status_color = 'green'
+    elsif at_risk?(forecast_completion_date)
+      @status = 'AT RISK'
+      @status_color = 'yellow'
+    else
+      @status = 'HIGH RISK'
+      @status_color = 'red'
     end
+  end
+
+  def on_track?(forecast_completion_date)
+    forecast_completion_date &&
+      forecast_completion_date <= @increment.target_date
+  end
+
+  def at_risk?(forecast_completion_date)
+    forecast_completion_date &&
+      (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
   end
 
   def build_training_report
