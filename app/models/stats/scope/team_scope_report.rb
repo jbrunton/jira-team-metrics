@@ -6,6 +6,8 @@ class TeamScopeReport
   attr_reader :completed_scope
   attr_reader :remaining_scope
   attr_reader :predicted_scope
+  attr_reader :trained_completion_rate
+  attr_reader :trained_completion_date
 
   def initialize(issues, training_issues = [])
     @issues = issues
@@ -16,17 +18,10 @@ class TeamScopeReport
     @epics = @issues.select{ |issue| issue.is_epic? }
     @scope = @issues.select{ |issue| issue.is_scope? }
 
-    @training_scope_report = @training_issues.any? ? TeamScopeReport.new(@training_issues).build : nil
-    @epics.each do |epic|
-      build_predicted_scope_for(epic)
-    end
+    build_training_report if @training_issues.any?
+    analyze_scope
+    build_trained_forecasts if @training_issues.any?
 
-    issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
-    @completed_scope = issues_by_status_category['Done'] || []
-    @predicted_scope = issues_by_status_category['Predicted'] || []
-    @remaining_scope = (issues_by_status_category['To Do'] || []) +
-      (issues_by_status_category['In Progress'] || []) +
-      @predicted_scope
     self
   end
 
@@ -43,6 +38,30 @@ class TeamScopeReport
   end
 
 private
+
+  def analyze_scope
+    issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
+    @completed_scope = issues_by_status_category['Done'] || []
+    @predicted_scope = issues_by_status_category['Predicted'] || []
+    @remaining_scope = (issues_by_status_category['To Do'] || []) +
+      (issues_by_status_category['In Progress'] || []) +
+      @predicted_scope
+  end
+
+  def build_training_report
+    @training_scope_report = TeamScopeReport.new(@training_issues).build
+    @epics.each do |epic|
+      build_predicted_scope_for(epic)
+    end
+  end
+
+  def build_trained_forecasts
+    @trained_completion_rate = @training_scope_report.completion_rate
+    if @trained_completion_rate > 0
+      @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
+    end
+  end
+
   def build_predicted_scope_for(epic)
     if epic.issues(recursive: false).empty? && @training_scope_report
       @training_scope_report.issues_per_epic.round.times do |k|

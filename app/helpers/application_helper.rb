@@ -3,6 +3,7 @@ require 'securerandom'
 module ApplicationHelper
   include FormattingHelper
   include LinkHelper
+  include ChartsHelper
 
   def readonly?
     !!ENV['READONLY']
@@ -66,11 +67,6 @@ module ApplicationHelper
   def render_table_options(object)
     path = path_for(object)
     "<a href='#{path}'>Details</a>".html_safe
-  end
-
-  # TODO: move this
-  def date_as_string(date)
-    "Date(#{date.year}, #{date.month - 1}, #{date.day})"
   end
 
   def form_input(object, method, options = {})
