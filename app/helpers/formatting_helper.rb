@@ -1,9 +1,6 @@
 module FormattingHelper
   def pretty_print_date(date, opts = {show_tz: true, hide_year: false})
-    opts ||= {}
-    strfm = opts[:hide_year] ? '%d %b' : '%d %b %Y'
-    strfm = ('%a ' + strfm) if opts[:show_day]
-    strfm += ' %z' if opts[:show_tz]
+    strfm = date_format_for(opts)
     date.nil? ? '-' : date.strftime(strfm)
   end
 
@@ -24,5 +21,15 @@ module FormattingHelper
     else
       '%.2f' % number
     end
+  end
+
+private
+  def date_format_for(opts)
+    opts ||= {}
+    strfm = '%d %b'
+    strfm += ' %Y' unless opts[:hide_year]
+    strfm = ('%a ' + strfm) if opts[:show_day]
+    strfm += ' %z' if opts[:show_tz]
+    strfm
   end
 end
