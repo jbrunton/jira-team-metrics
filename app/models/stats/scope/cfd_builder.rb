@@ -4,7 +4,7 @@ class CfdBuilder
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
     def to_array(date_string, annotations)
-      [date_string, annotations, done, in_progress, to_do, predicted]
+      [date_string, done, annotations, in_progress, to_do, predicted]
     end
   end
 
@@ -13,18 +13,27 @@ class CfdBuilder
   end
 
   def build(started_date, completion_rate, completion_date, team_completion_dates)
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', 'In Progress', 'To Do', 'Predicted']]
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
-      date_string = date_as_string(date)
-      data << cfd_row_for(date, completion_rate).to_array(date_string, nil)
-    end
+      annotations = []
 
-    {'Overall' => completion_date}.merge(team_completion_dates).each do |team, team_completion_date|
-      unless team_completion_date.nil?
-        annotation = "#{team}: #{pretty_print_date(team_completion_date, show_tz: false, hide_year: true)}"
-        data << [date_as_string(team_completion_date), annotation, 0, 0, 0, 0]
+      {'Overall' => completion_date}.merge(team_completion_dates).each do |team, team_completion_date|
+        unless team_completion_date.nil?
+          if date <= team_completion_date && team_completion_date < date + 1.day
+            annotations << "#{team}: #{pretty_print_date(team_completion_date, show_tz: false, hide_year: true)}"
+          end
+        end
       end
+
+      if annotations.empty?
+        annotations = nil
+      else
+        annotations = annotations.join(' ')
+      end
+
+      date_string = date_as_string(date)
+      data << cfd_row_for(date, completion_rate).to_array(date_string, annotations)
     end
 
     data
