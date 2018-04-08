@@ -1,7 +1,7 @@
 module FormattingHelper
-  def pretty_print_date(date, opts = {show_tz: true})
+  def pretty_print_date(date, opts = {show_tz: true, hide_year: false})
     opts ||= {}
-    strfm = '%d %b %Y';
+    strfm = opts[:hide_year] ? '%d %b' : '%d %b %Y'
     strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %z' if opts[:show_tz]
     date.nil? ? '-' : date.strftime(strfm)

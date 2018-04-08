@@ -8,10 +8,12 @@ module DescriptiveScopeStatistics
   end
 
   def started_date
+    # TODO: trunc to date
     @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || Time.now
   end
 
   def completed_date
+    # TODO: trunc to date
     @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || Time.now + 90.days
   end
 
