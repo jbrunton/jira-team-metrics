@@ -114,10 +114,12 @@
     <% team_report = @report.team_report_for(team) %>
     <tr>
       <td>
-        <span
-          class="new badge <%= team_report.status_color %>"
-          data-badge-caption="<%= team_report.status %>"
-          style="width: 100%;"></span>
+        <% if @increment.target_date %>
+            <span
+              class="new badge <%= team_report.status_color %>"
+              data-badge-caption="<%= team_report.status %>"
+              style="width: 100%;"></span>
+        <% end %>
       </td>
       <td>
         <%= team %>

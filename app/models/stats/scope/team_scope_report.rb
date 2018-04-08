@@ -11,7 +11,8 @@ class TeamScopeReport
   attr_reader :status
   attr_reader :status_color
 
-  def initialize(issues, training_issues = [])
+  def initialize(increment, issues, training_issues = [])
+    @increment = increment
     @issues = issues
     @training_issues = training_issues
   end
@@ -36,7 +37,7 @@ class TeamScopeReport
       (issue.fields['Teams'] || []).include?(team)
     end
 
-    TeamScopeReport.new(issues_for_team, training_issues_for_team).build
+    TeamScopeReport.new(increment, issues_for_team, training_issues_for_team).build
   end
 
 private
@@ -49,19 +50,25 @@ private
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
 
-    @status = 'OK'
-    @status_color = case @status
-      when 'OK'
-        'green'
-      when 'AT RISK'
-        'yellow'
-      else
-        'red'
+    if @increment.target_date
+      forecast_completion_date = rolling_forecast_completion_date(7)
+      if forecast_completion_date
+        if forecast_completion_date <= @increment.target_date
+          @status = 'OK TRACK'
+          @status_color = 'green'
+        elsif (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+          @status = 'AT RISK'
+          @status_color = 'yellow'
+        else
+          @status = 'HIGH RISK'
+          @status_color = 'red'
+        end
+      end
     end
   end
 
   def build_training_report
-    @training_scope_report = TeamScopeReport.new(@training_issues).build
+    @training_scope_report = TeamScopeReport.new(@increment, @training_issues).build
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end

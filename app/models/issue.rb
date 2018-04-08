@@ -32,6 +32,13 @@ class Issue < ApplicationRecord
     end
   end
 
+  def target_date
+    if is_increment?
+      # TODO: get this field name from config
+      fields['Target Date'] ? Time.parse(fields['Target Date']) : nil
+    end
+  end
+
   def is_scope?
     !is_epic? && !is_increment?
   end
