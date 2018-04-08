@@ -73,7 +73,8 @@
     <tr>
       <th>Status</th>
       <th>Team</th>
-      <th colspan="2">Scope</th>
+      <th colspan="2">Remaining Scope</th>
+      <th>Progress</th>
       <th>Raw Rate</th>
       <th>Raw Forecast</th>
       <th>Trained Rate</th>
@@ -89,11 +90,14 @@
     </th>
     <th>
         <span class="right">
-          <%= @report.scope.count %>
+          <%= @report.remaining_scope.count %>
         </span>
     </th>
     <th>
       [<%= @report.predicted_scope.count %>]
+    </th>
+    <th>
+      <%= pretty_print_number(100.0 * @report.completed_scope.count / @report.scope.count, round: true) %>%
     </th>
     <th>
       <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %> / week
@@ -114,9 +118,9 @@
     <% team_report = @report.team_report_for(team) %>
     <tr>
       <td>
-        <% if @increment.target_date %>
+        <% if @increment.target_date && team_report.status %>
             <span
-              class="new badge <%= team_report.status_color %>"
+              class="new badge <%= team_report.status_color %> black-text"
               data-badge-caption="<%= team_report.status %>"
               style="width: 100%;"></span>
         <% end %>
@@ -126,11 +130,14 @@
       </td>
       <td>
         <span class="right">
-          <%= team_report.scope.count %>
+          <%= team_report.remaining_scope.count %>
         </span>
       </td>
       <td>
           [<%= team_report.predicted_scope.count %>]
+      </td>
+      <td>
+        <%= pretty_print_number(100.0 * team_report.completed_scope.count / team_report.scope.count, round: true) %>%
       </td>
       <td>
         <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week

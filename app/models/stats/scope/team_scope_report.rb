@@ -50,7 +50,7 @@ private
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
 
-    if @increment.target_date
+    if @increment.target_date && @remaining_scope.any?
       forecast_completion_date = rolling_forecast_completion_date(7)
       if forecast_completion_date
         if forecast_completion_date <= @increment.target_date
@@ -63,6 +63,9 @@ private
           @status = 'HIGH RISK'
           @status_color = 'red'
         end
+      else
+        @status = 'HIGH RISK'
+        @status_color = 'red'
       end
     end
   end

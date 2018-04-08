@@ -16,7 +16,13 @@ module FormattingHelper
     time.nil? ? '-' : time.strftime('%d %b %Y %H:%M %z')
   end
 
-  def pretty_print_number(number)
-    number.nil? ? '-' : '%.2f' % number
+  def pretty_print_number(number, opts = {})
+    if number.nil?
+      '-'
+    elsif opts[:round]
+      '%.0f' % number
+    else
+      '%.2f' % number
+    end
   end
 end
