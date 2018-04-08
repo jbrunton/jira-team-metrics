@@ -91,7 +91,7 @@
       <%= pretty_print_number(@report.trained_completion_rate * 7) %> / week
     </th>
     <th>
-      <%= pretty_print_date(@report.rolling_forecast_completion_date(7), show_tz: false) %>
+      <%= pretty_print_date(@report.trained_completion_date, show_tz: false) %>
     </th>
     <th></th>
   </tr>
@@ -121,7 +121,7 @@
         <%= pretty_print_number(team_report.trained_completion_rate * 7) %> / week
       </td>
       <td>
-        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
+        <%= pretty_print_date(team_report.trained_completion_date, show_tz: false) %>
       </td>
       <td>
         <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>

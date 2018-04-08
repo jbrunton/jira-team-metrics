@@ -7,6 +7,7 @@ class TeamScopeReport
   attr_reader :remaining_scope
   attr_reader :predicted_scope
   attr_reader :trained_completion_rate
+  attr_reader :trained_completion_date
 
   def initialize(issues, training_issues = [])
     @issues = issues
@@ -31,6 +32,13 @@ class TeamScopeReport
     @remaining_scope = (issues_by_status_category['To Do'] || []) +
       (issues_by_status_category['In Progress'] || []) +
       @predicted_scope
+
+    if @training_issues.any?
+      if @trained_completion_rate > 0
+        @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
+      end
+    end
+
     self
   end
 

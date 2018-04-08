@@ -45,7 +45,7 @@ module DescriptiveScopeStatistics
     if completion_rate == 0
       nil
     else
-      Time.now + (remaining_scope.count / completion_rate).days
+      Time.now + (remaining_scope.count.to_f / completion_rate).days
     end
   end
 end
