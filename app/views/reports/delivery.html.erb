@@ -18,7 +18,6 @@
     var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
 
     var options = {
-      title: 'Delivery CFD',
       hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
       vAxis: {minValue: 0},
       isStacked: true,
@@ -32,13 +31,28 @@
         3: { color: 'orange' }
       },
       chartArea: {
-        width: '90%'
+        width: '80%'
+      },
+      annotations: {
+        textStyle: {
+          color: 'black'
+        },
+        style: 'point',
+        datum: {
+          stem: {
+            color: 'black',
+            style: 'point',
+            length: '12'
+          }
+        }
       }
     };
 
+    options.title = 'Raw CFD';
     var rawChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
     rawChart.draw(rawData, options);
 
+    options.title = 'Trained CFD';
     var trainedChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
     trainedChart.draw(trainedData, options);
   }

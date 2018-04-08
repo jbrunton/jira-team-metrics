@@ -1,9 +1,10 @@
 class CfdBuilder
   include ChartsHelper
+  include FormattingHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(date_string)
-      [date_string, done, in_progress, to_do, predicted]
+    def to_array(date_string, annotation)
+      [date_string, done, annotation, in_progress, to_do, predicted]
     end
   end
 
@@ -12,12 +13,17 @@ class CfdBuilder
   end
 
   def build(started_date, completion_rate, completion_date)
-    data = [[{'label' => 'Date', 'type' => 'date'}, 'Done', 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(started_date, completion_date + 1.day).to_a
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, 'In Progress', 'To Do', 'Predicted']]
+    dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
+      if date <= completion_date && completion_date < date + 1.day
+        annotation = "Overall: #{pretty_print_date(completion_date, show_tz: false, hide_year: true)}"
+      end
+
       date_string = date_as_string(date)
-      data << cfd_row_for(date, completion_rate).to_array(date_string)
+      data << cfd_row_for(date, completion_rate).to_array(date_string, annotation)
     end
+
     data
   end
 
