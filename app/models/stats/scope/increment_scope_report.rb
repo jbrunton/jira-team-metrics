@@ -28,8 +28,7 @@ class IncrementScopeReport < TeamScopeReport
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq
     @remaining_scope = @team_reports.values.map{ |team_report| team_report.remaining_scope }.flatten.uniq
-    @trained_completion_rate = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.sum /
-      @team_reports.count
+    @trained_completion_rate = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.sum
 
     self
   end
@@ -38,11 +37,11 @@ class IncrementScopeReport < TeamScopeReport
     @team_reports[team]
   end
 
-  def cfd_data
+  def cfd_data(cfd_type)
     data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, rolling_forecast_completion_date(7) || Time.now + 90.days).to_a
     dates.each_with_index do |date, index|
-      data << cfd_row_for(date).to_array(index)
+      data << cfd_row_for(date, cfd_type).to_array(index)
     end
     data
   end
@@ -54,7 +53,7 @@ class IncrementScopeReport < TeamScopeReport
   end
 
 private
-  def cfd_row_for(date)
+  def cfd_row_for(date, cfd_type)
     row = CfdRow.new(0, 0, 0, 0)
 
     scope.each do |issue|
@@ -71,14 +70,21 @@ private
     end
 
     if date > Time.now
-      adjust_row_with_predictions(row, date)
+      adjust_row_with_predictions(row, date, cfd_type)
     end
 
     row
   end
 
-  def adjust_row_with_predictions(row, date)
-    completion_rate = rolling_completion_rate(7)
+  def adjust_row_with_predictions(row, date, cfd_type)
+    completion_rate = case cfd_type
+      when :raw
+        rolling_completion_rate(7)
+      when :trained
+        trained_completion_rate
+      else
+        raise "Unexpected cfd_type: #{cfd_type}"
+    end
 
     change = completion_rate * (date - Time.now) / 1.day
     row.done += change

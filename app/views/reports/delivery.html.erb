@@ -14,7 +14,8 @@
 
   function updateChart() {
 
-    var data = google.visualization.arrayToDataTable(<%= @report.cfd_data.to_json.html_safe %>);
+    var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
+    var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
 
     var options = {
       title: 'Delivery CFD',
@@ -35,11 +36,11 @@
       }
     };
 
-    var chart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
-    chart.draw(data, options);
+    var rawChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+    rawChart.draw(rawData, options);
 
-    var chart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
-    chart.draw(data, options);
+    var trainedChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
+    trainedChart.draw(trainedData, options);
   }
 </script>
 
@@ -66,6 +67,34 @@
       <th></th>
     </tr>
   </thead>
+
+  <tr>
+    <th></th>
+    <th>
+      Overall
+    </th>
+    <th>
+        <span class="right">
+          <%= @report.scope.count %>
+        </span>
+    </th>
+    <th>
+      [<%= @report.predicted_scope.count %>]
+    </th>
+    <th>
+      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %> / week
+    </th>
+    <th>
+      <%= pretty_print_date(@report.rolling_forecast_completion_date(7), show_tz: false) %>
+    </th>
+    <th>
+      <%= pretty_print_number(@report.trained_completion_rate * 7) %> / week
+    </th>
+    <th>
+      <%= pretty_print_date(@report.rolling_forecast_completion_date(7), show_tz: false) %>
+    </th>
+    <th></th>
+  </tr>
 
 <% @report.teams.each do |team| %>
     <% team_report = @report.team_report_for(team) %>
