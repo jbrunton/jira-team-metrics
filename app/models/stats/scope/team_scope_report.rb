@@ -8,8 +8,11 @@ class TeamScopeReport
   attr_reader :predicted_scope
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
+  attr_reader :status
+  attr_reader :status_color
 
-  def initialize(issues, training_issues = [])
+  def initialize(increment, issues, training_issues = [])
+    @increment = increment
     @issues = issues
     @training_issues = training_issues
   end
@@ -20,6 +23,7 @@ class TeamScopeReport
 
     build_training_report if @training_issues.any?
     analyze_scope
+    analyze_status if @increment.target_date && @remaining_scope.any?
     build_trained_forecasts if @training_issues.any?
 
     self
@@ -34,7 +38,7 @@ class TeamScopeReport
       (issue.fields['Teams'] || []).include?(team)
     end
 
-    TeamScopeReport.new(issues_for_team, training_issues_for_team).build
+    TeamScopeReport.new(increment, issues_for_team, training_issues_for_team).build
   end
 
 private
@@ -48,8 +52,32 @@ private
       @predicted_scope
   end
 
+  def analyze_status
+    forecast_completion_date = rolling_forecast_completion_date(7)
+    if on_track?(forecast_completion_date)
+      @status = 'OK TRACK'
+      @status_color = 'green'
+    elsif at_risk?(forecast_completion_date)
+      @status = 'AT RISK'
+      @status_color = 'yellow'
+    else
+      @status = 'HIGH RISK'
+      @status_color = 'red'
+    end
+  end
+
+  def on_track?(forecast_completion_date)
+    forecast_completion_date &&
+      forecast_completion_date <= @increment.target_date
+  end
+
+  def at_risk?(forecast_completion_date)
+    forecast_completion_date &&
+      (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+  end
+
   def build_training_report
-    @training_scope_report = TeamScopeReport.new(@training_issues).build
+    @training_scope_report = TeamScopeReport.new(@increment, @training_issues).build
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end

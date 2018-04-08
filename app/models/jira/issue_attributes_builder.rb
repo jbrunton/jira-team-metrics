@@ -52,7 +52,7 @@ private
         field_value = @json['fields'][field_id]
         fields[field['name']] =
           case field['type']
-            when 'string', 'any'
+            when 'string', 'any', 'date'
               field_value
             when 'array'
               field_value.map{ |x| x['value'] }
