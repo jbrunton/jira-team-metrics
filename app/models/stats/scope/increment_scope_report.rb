@@ -1,5 +1,6 @@
 class IncrementScopeReport < TeamScopeReport
   include DescriptiveScopeStatistics
+  include ChartsHelper
 
   attr_reader :epics
   attr_reader :scope
@@ -41,17 +42,18 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data(cfd_type)
-    data = [['Day', 'Done', 'In Progress', 'To Do', 'Predicted']]
+    data = [[{'label' => 'Date', 'type' => 'date'}, 'Done', 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, rolling_forecast_completion_date(7) || Time.now + 90.days).to_a
-    dates.each_with_index do |date, index|
-      data << cfd_row_for(date, cfd_type).to_array(index)
+    dates.each do |date|
+      date_string = date_as_string(date)
+      data << cfd_row_for(date, cfd_type).to_array(date_string)
     end
     data
   end
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(index)
-      [index, done, in_progress, to_do, predicted]
+    def to_array(date_string)
+      [date_string, done, in_progress, to_do, predicted]
     end
   end
 
