@@ -21,12 +21,25 @@ span.error {
   color: $input-error-color;
 }
 
+.status-indicator {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 table {
   &.issue-details th {
     width: 25%;
   }
   td,th {
     vertical-align: top;
+  }
+}
+
+table.team-dashboard {
+  td {
+    padding: 5px 5px;
   }
 }
 

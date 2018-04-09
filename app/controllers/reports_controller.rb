@@ -50,7 +50,9 @@ class ReportsController < ApplicationController
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-    @report = IncrementScopeReport.new(@increment).build
+    @report = Rails.cache.fetch("increment_report/#{@increment.key}", expires_in: 1.hour) do
+      IncrementScopeReport.new(@increment).build
+    end
   end
 
   def delivery_scope

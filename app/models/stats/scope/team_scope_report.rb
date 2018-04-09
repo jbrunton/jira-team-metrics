@@ -8,7 +8,6 @@ class TeamScopeReport
   attr_reader :predicted_scope
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
-  attr_reader :status
   attr_reader :status_color
 
   def initialize(increment, issues, training_issues = [])
@@ -23,7 +22,7 @@ class TeamScopeReport
 
     build_training_report if @training_issues.any?
     analyze_scope
-    analyze_status if @increment.target_date && @remaining_scope.any?
+    analyze_status if @increment.target_date
     build_trained_forecasts if @training_issues.any?
 
     self
@@ -55,20 +54,17 @@ private
   def analyze_status
     forecast_completion_date = rolling_forecast_completion_date(7)
     if on_track?(forecast_completion_date)
-      @status = 'OK TRACK'
-      @status_color = 'green'
+      @status_color = 'light-blue'
     elsif at_risk?(forecast_completion_date)
-      @status = 'AT RISK'
       @status_color = 'yellow'
     else
-      @status = 'HIGH RISK'
       @status_color = 'red'
     end
   end
 
   def on_track?(forecast_completion_date)
-    forecast_completion_date &&
-      forecast_completion_date <= @increment.target_date
+    @remaining_scope.empty? || (forecast_completion_date &&
+      forecast_completion_date <= @increment.target_date)
   end
 
   def at_risk?(forecast_completion_date)

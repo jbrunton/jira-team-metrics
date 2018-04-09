@@ -14,8 +14,10 @@
 
   function updateChart() {
 
-    var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
-    var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+    <% cache "cfd_data/#{@increment.key}" do %>
+      var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
+      var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+    <% end %>
 
     var options = {
       hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
@@ -67,8 +69,9 @@
   </div>
 </div>
 
+<% cache "team_dashboard/#{@increment.key}" do %>
 
-<table>
+<table class="team-dashboard">
   <thead>
     <tr>
       <th>Status</th>
@@ -117,13 +120,10 @@
 
 <% @report.teams.each do |team| %>
     <% team_report = @report.team_report_for(team) %>
-    <tr>
+    <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
       <td>
-        <% if @increment.target_date && team_report.status %>
-            <span
-              class="new badge <%= team_report.status_color %> black-text"
-              data-badge-caption="<%= team_report.status %>"
-              style="width: 100%;"></span>
+        <% if @increment.target_date %>
+            <span class="status-indicator <%= team_report.status_color %>"></span>
         <% end %>
       </td>
       <td>
@@ -159,3 +159,25 @@
     </tr>
 <% end %>
 </table>
+
+<% end %>
+
+<form action="#">
+  <p class="center-align">
+    <input type="checkbox" id="hide_complete" name="hide_completed" checked />
+    <label for="hide_complete">Hide teams with no remaining scope</label>
+  </p>
+</form>
+
+<script>
+  $(function() {
+    $('tr.complete').hide();
+    $('#hide_complete').click(function(event) {
+      if (event.currentTarget.checked) {
+        $('tr.complete').hide();
+      } else {
+        $('tr.complete').show();
+      }
+    });
+  });
+</script>
