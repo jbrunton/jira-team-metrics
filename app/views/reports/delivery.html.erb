@@ -19,9 +19,6 @@
       var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
     <% end %>
 
-    var rawTimelineData = google.visualization.arrayToDataTable(<%= @report.timeline_data(:raw).to_json.html_safe %>);
-    var trainedTimelineData = google.visualization.arrayToDataTable(<%= @report.timeline_data(:trained).to_json.html_safe %>);
-
     var options = {
       hAxis: {titleTextStyle: {color: '#333'}},
       vAxis: {minValue: 0, textPosition: 'none'},
@@ -61,49 +58,6 @@
     options.title = 'Trained CFD';
     var trainedCfdChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
     trainedCfdChart.draw(trainedData, options);
-
-    var timelineOptions = {
-      fontSize: 6,
-      timeline: {
-        rowLabelStyle: {
-          fontSize: 0
-        },
-        barLabelStyle: {
-          fontSize: 7
-        },
-        showRowLabels: false
-      },
-      tooltip: {
-        trigger: 'none'
-      }
-    };
-
-    var rawTimelineHeight = null;
-    var trainedTimelineHeight = null;
-
-    var rawTimelineChart = new google.visualization.Timeline(document.getElementById('raw-timeline'));
-    google.visualization.events.addListener(rawTimelineChart, 'ready', rawTimelineReady);
-    rawTimelineChart.draw(rawTimelineData, timelineOptions);
-
-    var trainedTimelineChart = new google.visualization.Timeline(document.getElementById('trained-timeline'));
-    google.visualization.events.addListener(trainedTimelineChart, 'ready', trainedTimelineReady);
-    trainedTimelineChart.draw(trainedTimelineData, timelineOptions);
-
-    function rawTimelineReady() {
-      var svgHeights = $('#raw-timeline svg').map(function(i, j) { return j.getBBox().height; }).toArray();
-      rawTimelineHeight = Math.max(...svgHeights);
-      if (rawTimelineHeight && trainedTimelineHeight) {
-        $('#timeline-row').height(Math.max(rawTimelineHeight, trainedTimelineHeight));
-      }
-    }
-
-    function trainedTimelineReady() {
-      var svgHeights = $('#trained-timeline svg').map(function(i, j) { return j.getBBox().height; }).toArray();
-      trainedTimelineHeight = Math.max(...svgHeights);
-      if (rawTimelineHeight && trainedTimelineHeight) {
-        $('#timeline-row').height(Math.max(rawTimelineHeight, trainedTimelineHeight));
-      }
-    }
   }
 </script>
 
@@ -113,14 +67,6 @@
   </div>
   <div id="trained-cfd" class="col s6" style="height: 300px; margin-top: 20px;">
 
-  </div>
-</div>
-
-<div class="row" id="timeline-row">
-  <div class="col s6" id="raw-timeline">
-  </div>
-
-  <div class="col s6" id="trained-timeline">
   </div>
 </div>
 
