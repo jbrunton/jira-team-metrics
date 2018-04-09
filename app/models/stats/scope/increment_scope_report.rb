@@ -1,5 +1,8 @@
 class IncrementScopeReport < TeamScopeReport
   include DescriptiveScopeStatistics
+  include ChartsHelper
+
+
 
   attr_reader :epics
   attr_reader :scope
@@ -52,7 +55,20 @@ class IncrementScopeReport < TeamScopeReport
       else
         raise "Unexpected cfd_type: #{cfd_type}"
     end
-
     CfdBuilder.new(@scope).build(started_date, completion_rate, completion_date)
+  end
+
+  def timeline_data(cfd_type)
+    data = [[{ 'type' => 'string', 'id' => 'Index' }, { 'type' => 'string', 'id' => 'Team' }, { 'type' => 'date', 'id' => 'Start' }, { 'type' => 'date', 'id' => 'End' }]]
+    index = 1
+    @team_reports.each do |team, team_report|
+      started_date = team_report.started_date || Time.now
+      forecast_date = team_report.rolling_forecast_completion_date(7)
+      unless forecast_date.nil?
+        data << [index, team.upcase, date_as_string(started_date), date_as_string(forecast_date)]
+        index = index + 1
+      end
+    end
+    data
   end
 end
