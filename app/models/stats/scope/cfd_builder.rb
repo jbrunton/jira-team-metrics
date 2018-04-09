@@ -3,8 +3,8 @@ class CfdBuilder
   include FormattingHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(date_string, annotation)
-      [date_string, done, annotation, in_progress, to_do, predicted]
+    def to_array(date_string, annotation, annotation_text)
+      [date_string, done, annotation, annotation_text, in_progress, to_do, predicted]
     end
   end
 
@@ -12,16 +12,24 @@ class CfdBuilder
     @scope = scope
   end
 
-  def build(started_date, completion_rate, completion_date)
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, 'In Progress', 'To Do', 'Predicted']]
+  def build(started_date, completion_rate, completion_date, team_completion_dates)
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(started_date, completion_date).to_a
     dates.each do |date|
-      if date <= completion_date && completion_date < date + 1.day
-        annotation = "Overall: #{pretty_print_date(completion_date, show_tz: false, hide_year: true)}"
+      annotations = []
+
+      team_completion_dates.each do |team, team_completion_date|
+        if date <= team_completion_date && team_completion_date < date + 1.day
+          annotations << Domain::SHORT_TEAM_NAMES[team]
+        end
       end
 
       date_string = date_as_string(date)
-      data << cfd_row_for(date, completion_rate).to_array(date_string, annotation)
+      if annotations.any?
+        annotation = annotations.join(',')
+        annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
+      end
+      data << cfd_row_for(date, completion_rate).to_array(date_string, annotation, annotation_text)
     end
 
     data
