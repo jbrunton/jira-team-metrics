@@ -21,7 +21,7 @@ class Domain < ApplicationRecord
     'Android' => 'and',
     'iOS' => 'ios',
     'OpsTools' => 'ops',
-    'Core' => 'core',
+    'Core' => 'cor',
     'Jarvis' => 'jar',
     'BridgeAPI' => 'bri',
     'Billing' => 'bil',
