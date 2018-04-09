@@ -21,6 +21,13 @@ span.error {
   color: $input-error-color;
 }
 
+.status-indicator {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 table {
   &.issue-details th {
     width: 25%;

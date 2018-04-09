@@ -120,10 +120,7 @@
     <tr>
       <td>
         <% if @increment.target_date && team_report.status %>
-            <span
-              class="new badge <%= team_report.status_color %> black-text"
-              data-badge-caption="<%= team_report.status %>"
-              style="width: 100%;"></span>
+            <span class="status-indicator <%= team_report.status_color %>"></span>
         <% end %>
       </td>
       <td>
