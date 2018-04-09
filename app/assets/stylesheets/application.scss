@@ -37,6 +37,12 @@ table {
   }
 }
 
+table.team-dashboard {
+  td {
+    padding: 5px 5px;
+  }
+}
+
 table.jira-tree {
   td.indent {
     width: 50px;

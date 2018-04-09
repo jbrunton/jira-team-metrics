@@ -68,7 +68,7 @@
 </div>
 
 
-<table>
+<table class="team-dashboard">
   <thead>
     <tr>
       <th>Status</th>
@@ -119,7 +119,7 @@
     <% team_report = @report.team_report_for(team) %>
     <tr>
       <td>
-        <% if @increment.target_date && team_report.status %>
+        <% if @increment.target_date %>
             <span class="status-indicator <%= team_report.status_color %>"></span>
         <% end %>
       </td>
