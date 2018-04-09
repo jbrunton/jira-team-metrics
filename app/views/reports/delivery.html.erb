@@ -117,7 +117,7 @@
 
 <% @report.teams.each do |team| %>
     <% team_report = @report.team_report_for(team) %>
-    <tr>
+    <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
       <td>
         <% if @increment.target_date %>
             <span class="status-indicator <%= team_report.status_color %>"></span>
@@ -156,3 +156,23 @@
     </tr>
 <% end %>
 </table>
+
+<form action="#">
+  <p class="center-align">
+    <input type="checkbox" id="hide_complete" name="hide_completed" checked />
+    <label for="hide_complete">Hide teams with no remaining scope</label>
+  </p>
+</form>
+
+<script>
+  $(function() {
+    $('tr.complete').hide();
+    $('#hide_complete').click(function(event) {
+      if (event.currentTarget.checked) {
+        $('tr.complete').hide();
+      } else {
+        $('tr.complete').show();
+      }
+    });
+  });
+</script>
