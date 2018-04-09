@@ -14,8 +14,10 @@
 
   function updateChart() {
 
-    var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
-    var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+    <% cache "cfd_data/#{@increment.key}" do %>
+      var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
+      var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+    <% end %>
 
     var options = {
       hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
@@ -67,6 +69,7 @@
   </div>
 </div>
 
+<% cache "team_dashboard/#{@increment.key}" do %>
 
 <table class="team-dashboard">
   <thead>
@@ -156,6 +159,8 @@
     </tr>
 <% end %>
 </table>
+
+<% end %>
 
 <form action="#">
   <p class="center-align">
