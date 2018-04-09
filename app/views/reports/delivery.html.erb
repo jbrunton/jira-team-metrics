@@ -19,7 +19,8 @@
       var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
     <% end %>
 
-    var timelineData = google.visualization.arrayToDataTable(<%= @report.timeline_data(:raw).to_json.html_safe %>);
+    var rawTimelineData = google.visualization.arrayToDataTable(<%= @report.timeline_data(:raw).to_json.html_safe %>);
+    var trainedTimelineData = google.visualization.arrayToDataTable(<%= @report.timeline_data(:trained).to_json.html_safe %>);
 
     var options = {
       hAxis: {titleTextStyle: {color: '#333'}},
@@ -54,15 +55,14 @@
     };
 
     options.title = 'Raw CFD';
-    var rawChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
-    rawChart.draw(rawData, options);
+    var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+    rawCfdChart.draw(rawData, options);
 
     options.title = 'Trained CFD';
-    var trainedChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
-    trainedChart.draw(trainedData, options);
+    var trainedCfdChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
+    trainedCfdChart.draw(trainedData, options);
 
-    var timelineChart = new google.visualization.Timeline(document.getElementById('timeline'));
-    timelineChart.draw(timelineData, {
+    var timelineOptions = {
       fontSize: 6,
       timeline: {
         rowLabelStyle: {
@@ -76,7 +76,13 @@
       tooltip: {
         trigger: 'none'
       }
-    });
+    };
+
+    var rawTimelineChart = new google.visualization.Timeline(document.getElementById('raw-timeline'));
+    rawTimelineChart.draw(rawTimelineData, timelineOptions);
+
+    var trainedTimelineChart = new google.visualization.Timeline(document.getElementById('trained-timeline'));
+    trainedTimelineChart.draw(trainedTimelineData, timelineOptions);
   }
 </script>
 
@@ -90,11 +96,13 @@
 </div>
 
 <div class="row">
-  <div id="timeline" class="col s6" style="height: 180px; margin-top: 20px;">
-
+  <div class="col s6">
+    <div id="raw-timeline"></div>
   </div>
 
-  <div class="col s6"></div>
+  <div class="col s6">
+    <div id="trained-timeline" style="height: 400px;"></div>
+  </div>
 </div>
 
 <% cache "team_dashboard/#{@increment.key}" do %>
