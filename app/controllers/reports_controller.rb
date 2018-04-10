@@ -44,7 +44,7 @@ class ReportsController < ApplicationController
   end
 
   def deliveries
-    @issues_by_increment = @board.issues.group_by { |issue| issue.increment }
+    @increments = @board.increments
   end
 
   def delivery
