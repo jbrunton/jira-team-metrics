@@ -1,3 +1,12 @@
+<% content_for :nav_content do %>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="<%= reports_path(@board) %>/deliveries" class="breadcrumb">Deliveries</a>
+    <a href="<%= delivery_report_path(@board, @increment) %>" class="breadcrumb"><%= @increment.key %></a>
+    <a href="#!" class="breadcrumb">Scope Details</a>
+<% end %>
+
+
 <h5>Summary Figures</h5>
 
 <table class="bordered col s6" style="width: 50%">
