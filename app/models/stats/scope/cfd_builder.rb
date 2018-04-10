@@ -17,43 +17,44 @@ class CfdBuilder
   end
 
   def build(increment_report, cfd_type)
+    @increment_report = increment_report
+
     case cfd_type
       when :raw
-        completion_rate = increment_report.rolling_completion_rate(7)
-        completion_date = increment_report.rolling_forecast_completion_date(7)
-        team_completion_dates = increment_report.teams.map do |team|
+        @team_completion_dates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          team_completion_date = team_report.rolling_forecast_completion_date(7)
-          if team_completion_date
-            [team, team_completion_date]
-          else
-            nil
-          end
-        end.compact.to_h
+          [team, team_report.rolling_forecast_completion_date(7)]
+        end.to_h
+        @team_completion_rates = increment_report.teams.map do |team|
+          team_report = increment_report.team_report_for(team)
+          [team, team_report.rolling_completion_rate(7)]
+        end.to_h
       when :trained
-        completion_rate = increment_report.trained_completion_rate
-        completion_date = increment_report.trained_completion_date
-        team_completion_dates = increment_report.teams.map do |team|
+        @team_completion_dates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          team_completion_date = team_report.trained_completion_date
-          if team_completion_date
-            [team, team_completion_date]
-          else
-            nil
-          end
-        end.compact.to_h
+          [team, team_report.trained_completion_date]
+        end.to_h
+        @team_completion_rates = increment_report.teams.map do |team|
+          team_report = increment_report.team_report_for(team)
+          [team, team_report.trained_completion_rate]
+        end.to_h
       else
         raise "Unexpected cfd_type: #{cfd_type}"
     end
+
+    completion_date = @team_completion_dates.values.compact.max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(increment_report.started_date, completion_date).to_a
     dates.each do |date|
       annotations = []
 
-      team_completion_dates.each do |team, team_completion_date|
-        if date <= team_completion_date && team_completion_date < date + 1.day
-          annotations << Domain::SHORT_TEAM_NAMES[team]
+      increment_report.teams.each do |team|
+        team_completion_date = @team_completion_dates[team]
+        unless team_completion_date.nil?
+          if date <= team_completion_date && team_completion_date < date + 1.day
+            annotations << Domain::SHORT_TEAM_NAMES[team]
+          end
         end
       end
 
@@ -62,14 +63,14 @@ class CfdBuilder
         annotation = annotations.join(',')
         annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
       end
-      data << cfd_row_for(date, completion_rate).to_array(date_string, annotation, annotation_text)
+      data << cfd_row_for(date).to_array(date_string, annotation, annotation_text)
     end
 
     data
   end
 
 private
-  def cfd_row_for(date, completion_rate)
+  def cfd_row_for(date)
     row = CfdRow.new(0, 0, 0, 0)
 
     @scope.each do |issue|
@@ -86,14 +87,31 @@ private
     end
 
     if date > Time.now
-      adjust_row_with_predictions(row, date, completion_rate)
+      adjust_row_with_predictions(row, date)
     end
 
     row
   end
 
-  def adjust_row_with_predictions(row, date, completion_rate)
-    change = completion_rate * (date - Time.now) / 1.day
+  def adjust_row_with_predictions(row, date)
+    #completion_rate = 0
+    change = 0
+    @increment_report.teams.each do |team|
+      team_completion_rate = @team_completion_rates[team]
+      team_completion_date = @team_completion_dates[team]
+
+      unless team_completion_date.nil?
+        team_report = @increment_report.team_report_for(team)
+        team_started_date = team_report.started_date ||= Time.now
+        if date < team_completion_date
+          change = change + team_completion_rate * (date - Time.now) / 1.day
+        else
+          change = change + team_report.remaining_scope.count
+        end
+      end
+    end
+    #change = completion_rate * (date - Time.now) / 1.day
+
     row.done += change
 
     if row.predicted > 0

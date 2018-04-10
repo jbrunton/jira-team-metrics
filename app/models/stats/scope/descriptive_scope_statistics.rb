@@ -12,6 +12,7 @@ module DescriptiveScopeStatistics
     @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || Time.now
   end
 
+  # TODO: rename this to last_completed_issue_date or something
   def completed_date
     # TODO: trunc to date
     @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || Time.now + 90.days

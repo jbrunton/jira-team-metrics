@@ -45,6 +45,7 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data(cfd_type)
+
     CfdBuilder.new(@scope).build(self, cfd_type)
   end
 
