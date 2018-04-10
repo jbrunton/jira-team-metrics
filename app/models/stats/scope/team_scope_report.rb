@@ -30,11 +30,19 @@ class TeamScopeReport
 
   def self.for(increment, team)
     issues_for_team = increment.issues(recursive: true).select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
+      if team == 'None'
+        (issue.fields['Teams'] || []).empty?
+      else
+        (issue.fields['Teams'] || []).include?(team)
+      end
     end
 
     training_issues_for_team = increment.board.training_issues.select do |issue|
-      (issue.fields['Teams'] || []).include?(team)
+      if team == 'None'
+        (issue.fields['Teams'] || []).empty?
+      else
+        (issue.fields['Teams'] || []).include?(team)
+      end
     end
 
     TeamScopeReport.new(increment, issues_for_team, training_issues_for_team).build

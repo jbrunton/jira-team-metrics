@@ -21,11 +21,11 @@ class IncrementScopeReport < TeamScopeReport
   def build
     increment_issues = @increment.issues(recursive: true)
 
-    @teams = increment_issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq
+    @teams = increment_issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq + ['None']
     @team_reports = @teams.map do |team|
       [team, TeamScopeReport.for(@increment, team)]
     end.to_h
-    @team_reports['None'] = TeamScopeReport.new(@increment, increment_issues.select { |issue| issue.fields['Teams'].nil? }).build
+    @team_reports['None'] = TeamScopeReport.for(@increment, 'None').build
 
     @epics = increment_issues.select{ |issue| issue.is_epic? }
     @scope = @team_reports.values.map{ |team_report| team_report.scope }.flatten.uniq
