@@ -45,7 +45,7 @@ class CfdBuilder
     completion_date = @team_completion_dates.values.compact.max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(increment_report.started_date, completion_date).to_a
+    dates = DateRange.new(increment_report.second_percentile_started_date, completion_date).to_a
     dates.each do |date|
       annotations = []
 

@@ -12,6 +12,16 @@ module DescriptiveScopeStatistics
     @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || Time.now
   end
 
+  def second_percentile_started_date
+    return started_date if completed_scope.count < 10
+
+    @second_percentile_started_date ||= begin
+      completion_times = completed_scope.map{ |issue| issue.completed_time }.sort
+      percentile_index = (completed_scope.count.to_f / 100.0).round + 1
+      completion_times[percentile_index]
+    end
+  end
+
   # TODO: rename this to last_completed_issue_date or something
   def completed_date
     # TODO: trunc to date
