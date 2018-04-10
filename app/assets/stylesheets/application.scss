@@ -41,6 +41,12 @@ table.team-dashboard {
   td {
     padding: 5px 5px;
   }
+
+  td, th {
+    &.highlight {
+      @extend .grey, .lighten-4;
+    }
+  }
 }
 
 table.jira-tree {
