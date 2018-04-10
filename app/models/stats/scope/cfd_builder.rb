@@ -1,3 +1,7 @@
+# TODO:
+# 1. simulate based on team closure rates
+# 2. for teams with zero closure rate, don't add scope
+
 class CfdBuilder
   include ChartsHelper
   include FormattingHelper
@@ -12,9 +16,38 @@ class CfdBuilder
     @scope = scope
   end
 
-  def build(started_date, completion_rate, completion_date, team_completion_dates)
+  def build(increment_report, cfd_type)
+    case cfd_type
+      when :raw
+        completion_rate = increment_report.rolling_completion_rate(7)
+        completion_date = increment_report.rolling_forecast_completion_date(7)
+        team_completion_dates = increment_report.teams.map do |team|
+          team_report = increment_report.team_report_for(team)
+          team_completion_date = team_report.rolling_forecast_completion_date(7)
+          if team_completion_date
+            [team, team_completion_date]
+          else
+            nil
+          end
+        end.compact.to_h
+      when :trained
+        completion_rate = increment_report.trained_completion_rate
+        completion_date = increment_report.trained_completion_date
+        team_completion_dates = increment_report.teams.map do |team|
+          team_report = increment_report.team_report_for(team)
+          team_completion_date = team_report.trained_completion_date
+          if team_completion_date
+            [team, team_completion_date]
+          else
+            nil
+          end
+        end.compact.to_h
+      else
+        raise "Unexpected cfd_type: #{cfd_type}"
+    end
+
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(started_date, completion_date).to_a
+    dates = DateRange.new(increment_report.started_date, completion_date).to_a
     dates.each do |date|
       annotations = []
 

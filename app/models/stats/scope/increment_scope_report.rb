@@ -45,33 +45,7 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data(cfd_type)
-    case cfd_type
-      when :raw
-        completion_rate = rolling_completion_rate(7)
-        completion_date = rolling_forecast_completion_date(7)
-        team_completion_dates = @team_reports.map do |team, team_report|
-          team_completion_date = team_report.rolling_forecast_completion_date(7)
-          if team_completion_date
-            [team, team_completion_date]
-          else
-            nil
-          end
-        end.compact.to_h
-      when :trained
-        completion_rate = trained_completion_rate
-        completion_date = trained_completion_date
-        team_completion_dates = @team_reports.map do |team, team_report|
-          team_completion_date = team_report.trained_completion_date
-          if team_completion_date
-            [team, team_completion_date]
-          else
-            nil
-          end
-        end.compact.to_h
-      else
-        raise "Unexpected cfd_type: #{cfd_type}"
-    end
-    CfdBuilder.new(@scope).build(started_date, completion_rate, completion_date, team_completion_dates)
+    CfdBuilder.new(@scope).build(self, cfd_type)
   end
 
   def timeline_data(cfd_type)
