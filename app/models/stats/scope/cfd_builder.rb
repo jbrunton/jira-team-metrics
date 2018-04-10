@@ -102,7 +102,6 @@ private
 
       unless team_completion_date.nil?
         team_report = @increment_report.team_report_for(team)
-        team_started_date = team_report.started_date ||= Time.now
         if date < team_completion_date
           change = change + team_completion_rate * (date - Time.now) / 1.day
         else

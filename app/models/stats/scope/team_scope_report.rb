@@ -10,7 +10,7 @@ class TeamScopeReport
   attr_reader :trained_completion_date
   attr_reader :status_color
 
-  def initialize(increment, issues, training_issues = [])
+  def initialize(increment, issues, training_issues = nil)
     @increment = increment
     @issues = issues
     @training_issues = training_issues
@@ -20,10 +20,10 @@ class TeamScopeReport
     @epics = @issues.select{ |issue| issue.is_epic? }
     @scope = @issues.select{ |issue| issue.is_scope? }
 
-    build_training_report if @training_issues.any?
+    build_training_report unless @training_issues.nil?
     analyze_scope
     analyze_status if @increment.target_date
-    build_trained_forecasts if @training_issues.any?
+    build_trained_forecasts unless @training_issues.nil?
 
     self
   end
@@ -95,7 +95,7 @@ private
   end
 
   def build_predicted_scope_for(epic)
-    if epic.issues(recursive: false).empty? && @training_scope_report
+    if epic.issues(recursive: false).empty? && @training_scope_report.scope.any?
       @training_scope_report.issues_per_epic.round.times do |k|
         @scope << Issue.new({
           issue_type: 'Story',
