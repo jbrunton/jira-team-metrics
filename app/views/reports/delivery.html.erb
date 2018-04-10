@@ -25,7 +25,7 @@
       isStacked: true,
       lineWidth: 1,
       areaOpacity: 0.4,
-      legend: { position: 'top' },
+      legend: { position: 'bottom' },
       series: {
         0: { color: 'blue' },
         1: { color: 'green' },
@@ -51,11 +51,11 @@
       }
     };
 
-    options.title = 'Raw CFD';
+    options.title = 'Rolling Forecast';
     var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
     rawCfdChart.draw(rawData, options);
 
-    options.title = 'Trained CFD';
+    options.title = 'Trained Forecast';
     var trainedCfdChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
     trainedCfdChart.draw(trainedData, options);
   }
