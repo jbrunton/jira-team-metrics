@@ -29,23 +29,21 @@ class TeamScopeReport
     self
   end
 
-  def self.for(increment, team)
-    issues_for_team = increment.issues(recursive: true).select do |issue|
+  def self.issues_for_team(issues, team)
+    issues.select do |issue|
       if team == 'None'
         (issue.fields['Teams'] || []).empty?
       else
         (issue.fields['Teams'] || []).include?(team)
       end
     end
+  end
+
+  def self.for(increment, team)
+    issues_for_team = self.issues_for_team(increment.issues(recursive: true), team)
 
     training_team_reports = increment.board.training_increments.map do |training_increment|
-      training_issues_for_team = training_increment.issues(recursive: true).select do |issue|
-        if team == 'None'
-          (issue.fields['Teams'] || []).empty?
-        else
-          (issue.fields['Teams'] || []).include?(team)
-        end
-      end
+      training_issues_for_team = self.issues_for_team(training_increment.issues(recursive: true), team)
       TeamScopeReport.new(training_increment, training_issues_for_team).build
     end
 
