@@ -1,6 +1,7 @@
 class TeamScopeReport
   include DescriptiveScopeStatistics
 
+  attr_reader :team
   attr_reader :epics
   attr_reader :scope
   attr_reader :completed_scope
@@ -11,14 +12,24 @@ class TeamScopeReport
   attr_reader :trained_issues_per_epic
   attr_reader :status_color
 
-  def initialize(increment, issues, training_team_reports = nil)
+  def initialize(team, increment, issues, training_team_reports = nil)
+    @team = team
     @increment = increment
     @issues = issues
     @training_team_reports = training_team_reports
   end
 
   def build
-    @epics = @issues.select{ |issue| issue.is_epic? }
+    # TODO: we could probably combine both types of epic lookup in all cases but there's a bug I haven't figured out
+    # in doing so whereby teams with no actual scope don't have predicted issues show up
+    if @training_team_reports.nil?
+      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
+      @epics = @issues.map{ |issue| issue.epic }.compact.uniq
+    else
+      # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
+      @epics = @issues.select{ |issue| issue.is_epic? }
+    end
+
     @scope = @issues.select{ |issue| issue.is_scope? }
 
     build_predicted_scope unless @training_team_reports.nil?
@@ -44,10 +55,10 @@ class TeamScopeReport
 
     training_team_reports = increment.board.training_increments.map do |training_increment|
       training_issues_for_team = self.issues_for_team(training_increment.issues(recursive: true), team)
-      TeamScopeReport.new(training_increment, training_issues_for_team).build
+      TeamScopeReport.new(team, training_increment, training_issues_for_team).build
     end
 
-    TeamScopeReport.new(increment, issues_for_team, training_team_reports).build
+    TeamScopeReport.new(team, increment, issues_for_team, training_team_reports).build
   end
 
 private

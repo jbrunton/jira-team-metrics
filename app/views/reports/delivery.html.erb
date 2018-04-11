@@ -97,41 +97,6 @@
     </tr>
   </thead>
 
-  <tr>
-    <th></th>
-    <th>
-      Overall
-    </th>
-    <th>
-      <%= pretty_print_date(@increment.target_date, show_tz: false) %>
-    </th>
-    <th class="right-align">
-      <%= @report.remaining_scope.count %>
-    </th>
-    <th>
-      [<%= @report.predicted_scope.count %>]
-    </th>
-    <th class="right-align">
-      <%= @report.completed_scope.count %>
-    </th>
-    <th>
-      (<%= pretty_print_number(100.0 * @report.completed_scope.count / @report.scope.count, round: true) %>%)
-    </th>
-    <th class="right-align highlight">
-      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %>
-    </th>
-    <th class="highlight">
-      <%= pretty_print_date(@report.rolling_forecast_completion_date(7), show_tz: false) %>
-    </th>
-    <th class="right-align">
-      <%= pretty_print_number(@report.trained_completion_rate * 7) %>
-    </th>
-    <th>
-      <%= pretty_print_date(@report.trained_completion_date, show_tz: false) %>
-    </th>
-    <th></th>
-  </tr>
-
 <% @report.teams.each do |team| %>
     <% team_report = @report.team_report_for(team) %>
     <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
@@ -175,6 +140,40 @@
       </td>
     </tr>
 <% end %>
+
+  <tr>
+    <th></th>
+    <th>
+      Totals
+    </th>
+    <th>
+      <%= pretty_print_date(@increment.target_date, show_tz: false) %>
+    </th>
+    <th class="right-align">
+      <%= @report.remaining_scope.count %>
+    </th>
+    <th>
+      [<%= @report.predicted_scope.count %>]
+    </th>
+    <th class="right-align">
+      <%= @report.completed_scope.count %>
+    </th>
+    <th>
+      (<%= pretty_print_number(100.0 * @report.completed_scope.count / @report.scope.count, round: true) %>%)
+    </th>
+    <th class="right-align highlight">
+      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %>
+    </th>
+    <th class="highlight">
+    </th>
+    <th class="right-align">
+      <%= pretty_print_number(@report.trained_completion_rate * 7) %>
+    </th>
+    <th>
+    </th>
+    <th></th>
+  </tr>
+
 </table>
 
 <% end %>
