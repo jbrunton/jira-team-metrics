@@ -98,7 +98,7 @@ private
 
     if reports_with_completed_scope.any?
       total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
-      total_worked_time = reports_with_completed_scope.map { |team_report| (team_report.completed_date - team_report.started_date) / 1.day }.sum
+      total_worked_time = reports_with_completed_scope.map { |team_report| team_report.duration_excl_outliers }.sum
       @trained_completion_rate = total_completed_scope / total_worked_time
     else
       @trained_completion_rate = 0
