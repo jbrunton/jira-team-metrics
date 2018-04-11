@@ -94,8 +94,16 @@ private
   end
 
   def build_trained_forecasts
-    @trained_completion_rate = @training_team_reports.map { |team_report| team_report.completed_scope.count }.sum.to_f /
-      @training_team_reports.map { |team_report| (team_report.completed_date - team_report.started_date) / 1.day }.sum
+    reports_with_completed_scope = @training_team_reports.select { |team_report| team_report.completed_scope.any? }
+
+    if reports_with_completed_scope.any?
+      total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
+      total_worked_time = reports_with_completed_scope.map { |team_report| (team_report.completed_date - team_report.started_date) / 1.day }.sum
+      @trained_completion_rate = total_completed_scope / total_worked_time
+    else
+      @trained_completion_rate = 0
+    end
+
     if @trained_completion_rate > 0
       @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
     end
