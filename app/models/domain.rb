@@ -26,7 +26,8 @@ class Domain < ApplicationRecord
     'BridgeAPI' => 'bri',
     'Billing' => 'bil',
     'Data & Analytics' => 'dat',
-    'Member Web' => 'mem'
+    'Member Web' => 'mem',
+    'None' => 'non'
   }
 
   def short_team_name(full_team_name)

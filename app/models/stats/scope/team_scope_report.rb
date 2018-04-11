@@ -8,22 +8,23 @@ class TeamScopeReport
   attr_reader :predicted_scope
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
+  attr_reader :trained_issues_per_epic
   attr_reader :status_color
 
-  def initialize(increment, issues, training_issues = nil)
+  def initialize(increment, issues, training_team_reports = nil)
     @increment = increment
     @issues = issues
-    @training_issues = training_issues
+    @training_team_reports = training_team_reports
   end
 
   def build
     @epics = @issues.select{ |issue| issue.is_epic? }
     @scope = @issues.select{ |issue| issue.is_scope? }
 
-    build_training_report unless @training_issues.nil?
+    build_predicted_scope unless @training_team_reports.nil?
     analyze_scope
     analyze_status if @increment.target_date
-    build_trained_forecasts unless @training_issues.nil?
+    build_trained_forecasts unless @training_team_reports.nil?
 
     self
   end
@@ -37,15 +38,18 @@ class TeamScopeReport
       end
     end
 
-    training_issues_for_team = increment.board.training_issues.select do |issue|
-      if team == 'None'
-        (issue.fields['Teams'] || []).empty?
-      else
-        (issue.fields['Teams'] || []).include?(team)
+    training_team_reports = increment.board.training_increments.map do |training_increment|
+      training_issues_for_team = training_increment.issues(recursive: true).select do |issue|
+        if team == 'None'
+          (issue.fields['Teams'] || []).empty?
+        else
+          (issue.fields['Teams'] || []).include?(team)
+        end
       end
+      TeamScopeReport.new(training_increment, training_issues_for_team).build
     end
 
-    TeamScopeReport.new(increment, issues_for_team, training_issues_for_team).build
+    TeamScopeReport.new(increment, issues_for_team, training_team_reports).build
   end
 
 private
@@ -80,23 +84,28 @@ private
       (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
   end
 
-  def build_training_report
-    @training_scope_report = TeamScopeReport.new(@increment, @training_issues).build
+  def build_predicted_scope
+    training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
+    training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
+    return if training_epic_count == 0
+
+    @trained_issues_per_epic = training_scope / training_epic_count
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end
   end
 
   def build_trained_forecasts
-    @trained_completion_rate = @training_scope_report.completion_rate
+    @trained_completion_rate = @training_team_reports.map { |team_report| team_report.completed_scope.count }.sum.to_f /
+      @training_team_reports.map { |team_report| (team_report.completed_date - team_report.started_date) / 1.day }.sum
     if @trained_completion_rate > 0
       @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
     end
   end
 
   def build_predicted_scope_for(epic)
-    if epic.issues(recursive: false).empty? && @training_scope_report.scope.any?
-      @training_scope_report.issues_per_epic.round.times do |k|
+    if epic.issues(recursive: false).empty? && !@trained_issues_per_epic.nil?
+      @trained_issues_per_epic.round.times do |k|
         @scope << Issue.new({
           issue_type: 'Story',
           board: epic.board,
