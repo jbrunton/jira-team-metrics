@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/jbrunton/jira-team-metrics.svg?branch=master)](https://travis-ci.org/jbrunton/jira-team-metrics)
 [![Code Climate](https://codeclimate.com/github/jbrunton/jira-team-metrics/badges/gpa.svg)](https://codeclimate.com/github/jbrunton/jira-team-metrics)
 
-A command line tool for generating flow metrics from JIRA.
+A reporting tool for visualising flow metrics for JIRA projects.
 
 ## Getting Started
 
