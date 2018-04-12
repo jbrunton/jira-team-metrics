@@ -6,34 +6,12 @@
 
 <h3>Deliveries</h3>
 
-<% @issues_by_increment.each do |increment, issues| %>
-    <% unless increment.nil? %>
-        <h5>
-          <a href="<%= "#{reports_path(@board)}/deliveries/#{increment['issue']['key']}" %>">
-            <%= increment['issue']['key'] %>
-          </a>
-          &mdash;
-          <%= increment['issue']['summary'] %>
-        </h5>
-        <div class="row">
-          <table class="col s6">
-            <tr>
-              <td style="width: 40%;">
-                Scope
-              </td>
-              <td>
-                <%= issues.count %>
-              </td>
-            </tr>
-            <tr>
-              <td style="width: 40%;">
-                Completed
-              </td>
-              <td>
-                <%= issues.select{ |issue| issue.status_category == 'Done' }.count %>
-              </td>
-            </tr>
-          </table>
-        </div>
-    <% end %>
+<% @increments.each do |increment| %>
+    <h5>
+      <a href="<%= "#{reports_path(@board)}/deliveries/#{increment.key}" %>">
+        <%= increment.key %>
+      </a>
+      &mdash;
+      <%= increment.summary %>
+    </h5>
 <% end %>

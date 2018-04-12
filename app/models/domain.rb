@@ -17,6 +17,23 @@ class Domain < ApplicationRecord
     end
   end
 
+  SHORT_TEAM_NAMES = {
+    'Android' => 'and',
+    'iOS' => 'ios',
+    'OpsTools' => 'ops',
+    'Core' => 'cor',
+    'Jarvis' => 'jar',
+    'BridgeAPI' => 'bri',
+    'Billing' => 'bil',
+    'Data & Analytics' => 'dat',
+    'Member Web' => 'mem',
+    'None' => 'non'
+  }
+
+  def short_team_name(full_team_name)
+    SHORT_TEAM_NAMES[full_team_name]
+  end
+
   def status_color_for(status)
     case status_category_for(status)
       when 'To Do'

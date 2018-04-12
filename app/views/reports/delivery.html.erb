@@ -6,7 +6,7 @@
 <% end %>
 
 <script>
-  google.charts.load('current', {'packages':['corechart']});
+  google.charts.load('current', {'packages':['corechart', 'timeline']});
 
   $(function() {
     google.charts.setOnLoadCallback(updateChart);
@@ -20,8 +20,8 @@
     <% end %>
 
     var options = {
-      hAxis: {title: 'Day', titleTextStyle: {color: '#333'}},
-      vAxis: {minValue: 0},
+      hAxis: {titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0, textPosition: 'none'},
       isStacked: true,
       lineWidth: 1,
       areaOpacity: 0.4,
@@ -33,7 +33,8 @@
         3: { color: 'orange' }
       },
       chartArea: {
-        width: '80%'
+        width: '95%',
+        height: '80%'
       },
       annotations: {
         textStyle: {
@@ -50,21 +51,21 @@
       }
     };
 
-    options.title = 'Raw CFD';
-    var rawChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
-    rawChart.draw(rawData, options);
+    options.title = 'Rolling Forecast';
+    var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+    rawCfdChart.draw(rawData, options);
 
-    options.title = 'Trained CFD';
-    var trainedChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
-    trainedChart.draw(trainedData, options);
+    options.title = 'Trained Forecast';
+    var trainedCfdChart = new google.visualization.AreaChart(document.getElementById('trained-cfd'));
+    trainedCfdChart.draw(trainedData, options);
   }
 </script>
 
 <div class="row">
-  <div id="raw-cfd" class="col s6" style="height: 350px; margin-top: 20px;">
+  <div id="raw-cfd" class="col s6" style="height: 300px; margin-top: 20px;">
 
   </div>
-  <div id="trained-cfd" class="col s6" style="height: 350px; margin-top: 20px;">
+  <div id="trained-cfd" class="col s6" style="height: 300px; margin-top: 20px;">
 
   </div>
 </div>
@@ -74,22 +75,79 @@
 <table class="team-dashboard">
   <thead>
     <tr>
-      <th>Status</th>
-      <th>Team</th>
-      <th colspan="2">Remaining Scope</th>
-      <th colspan="2">Completed</th>
-      <th>Raw Rate</th>
-      <th>Raw Forecast</th>
-      <th>Trained Rate</th>
-      <th>Trained Forecast</th>
+      <th class="center-align">Status</th>
+      <th class="center-align">Team</th>
+      <th class="center-align">Target</th>
+      <th class="center-align" colspan="2">Remaining</th>
+      <th class="center-align" colspan="2">Completed</th>
+      <th class="center-align highlight" colspan="2">Rolling Metrics</th>
+      <th class="center-align" colspan="2">Trained Metrics</th>
       <th></th>
     </tr>
+    <tr>
+      <td colspan="3"></td>
+      <td>Total</td>
+      <td>[Predicted]</td>
+      <td colspan="2"></td>
+      <td class="highlight">Throughput</td>
+      <td class="highlight">Forecast</td>
+      <td>Throughput</td>
+      <td>Forecast</td>
+      <td></td>
+    </tr>
   </thead>
+
+<% @report.teams.each do |team| %>
+    <% team_report = @report.team_report_for(team) %>
+    <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
+      <td>
+        <% if @increment.target_date %>
+            <span class="status-indicator <%= team_report.status_color %>"></span>
+        <% end %>
+      </td>
+      <td>
+        <%= team %>
+      </td>
+      <td>
+        <%= pretty_print_date(@increment.target_date, show_tz: false) %>
+      </td>
+      <td class="right-align">
+        <%= team_report.remaining_scope.count %>
+      </td>
+      <td>
+        [<%= team_report.predicted_scope.count %>, <%= team_report.trained_issues_per_epic.round %> / epic]
+      </td>
+      <td class="right-align">
+        <%= team_report.completed_scope.count %>
+      </td>
+      <td>
+        (<%= pretty_print_number(100.0 * team_report.completed_scope.count / team_report.scope.count, round: true) %>%)
+      </td>
+      <td class="right-align highlight">
+        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %>
+      </td>
+      <td class="highlight">
+        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
+      </td>
+      <td class="right-align">
+        <%= pretty_print_number(team_report.trained_completion_rate * 7) %>
+      </td>
+      <td>
+        <%= pretty_print_date(team_report.trained_completion_date, show_tz: false) %>
+      </td>
+      <td>
+        <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
+      </td>
+    </tr>
+<% end %>
 
   <tr>
     <th></th>
     <th>
-      Overall
+      Totals
+    </th>
+    <th>
+      <%= pretty_print_date(@increment.target_date, show_tz: false) %>
     </th>
     <th class="right-align">
       <%= @report.remaining_scope.count %>
@@ -103,66 +161,27 @@
     <th>
       (<%= pretty_print_number(100.0 * @report.completed_scope.count / @report.scope.count, round: true) %>%)
     </th>
-    <th>
-      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %> / week
+    <th class="right-align highlight">
+      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %>
+    </th>
+    <th class="highlight">
+    </th>
+    <th class="right-align">
+      <%= pretty_print_number(@report.trained_completion_rate * 7) %>
     </th>
     <th>
-      <%= pretty_print_date(@report.rolling_forecast_completion_date(7), show_tz: false) %>
-    </th>
-    <th>
-      <%= pretty_print_number(@report.trained_completion_rate * 7) %> / week
-    </th>
-    <th>
-      <%= pretty_print_date(@report.trained_completion_date, show_tz: false) %>
     </th>
     <th></th>
   </tr>
 
-<% @report.teams.each do |team| %>
-    <% team_report = @report.team_report_for(team) %>
-    <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
-      <td>
-        <% if @increment.target_date %>
-            <span class="status-indicator <%= team_report.status_color %>"></span>
-        <% end %>
-      </td>
-      <td>
-        <%= team %>
-      </td>
-      <td class="right-align">
-        <%= team_report.remaining_scope.count %>
-      </td>
-      <td>
-        [<%= team_report.predicted_scope.count %>]
-      </td>
-      <td class="right-align">
-        <%= team_report.completed_scope.count %>
-      </td>
-      <td>
-        (<%= pretty_print_number(100.0 * team_report.completed_scope.count / team_report.scope.count, round: true) %>%)
-      </td>
-      <td>
-        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %> / week
-      </td>
-      <td>
-        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
-      </td>
-      <td>
-        <%= pretty_print_number(team_report.trained_completion_rate * 7) %> / week
-      </td>
-      <td>
-        <%= pretty_print_date(team_report.trained_completion_date, show_tz: false) %>
-      </td>
-      <td>
-        <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
-      </td>
-    </tr>
-<% end %>
 </table>
 
 <% end %>
 
 <form action="#">
+  <p class="center-align">
+    Rolling metrics measured across previous 7 day window. Throughput is closed issues per week.
+  </p>
   <p class="center-align">
     <input type="checkbox" id="hide_complete" name="hide_completed" checked />
     <label for="hide_complete">Hide teams with no remaining scope</label>
