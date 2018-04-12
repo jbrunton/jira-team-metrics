@@ -94,7 +94,28 @@ private
   end
 
   def adjust_row_with_predictions(row, date)
-    #completion_rate = 0
+    predicted_completion_rate = compute_predicted_completion_rate(date)
+
+    row.done += predicted_completion_rate
+
+    if row.predicted > 0
+      predicted_change = [row.predicted, predicted_completion_rate].min
+      row.predicted -= predicted_change
+      predicted_completion_rate -= predicted_change
+    end
+
+    if row.to_do > 0 && predicted_completion_rate > 0
+      to_do_change = [row.to_do, predicted_completion_rate].min
+      row.to_do -= to_do_change
+      predicted_completion_rate -= to_do_change
+    end
+
+    if row.in_progress > 0 && predicted_completion_rate > 0
+      row.in_progress -= predicted_completion_rate
+    end
+  end
+
+  def compute_predicted_completion_rate(date)
     change = 0
     @increment_report.teams.each do |team|
       team_completion_rate = @team_completion_rates[team]
@@ -109,24 +130,6 @@ private
         end
       end
     end
-    #change = completion_rate * (date - Time.now) / 1.day
-
-    row.done += change
-
-    if row.predicted > 0
-      predicted_change = [row.predicted, change].min
-      row.predicted -= predicted_change
-      change -= predicted_change
-    end
-
-    if row.to_do > 0 && change > 0
-      to_do_change = [row.to_do, change].min
-      row.to_do -= to_do_change
-      change -= to_do_change
-    end
-
-    if row.in_progress > 0 && change > 0
-      row.in_progress -= change
-    end
+    change
   end
 end

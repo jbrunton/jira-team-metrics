@@ -115,7 +115,7 @@
         <%= team_report.remaining_scope.count %>
       </td>
       <td>
-        [<%= team_report.predicted_scope.count %>]
+        [<%= team_report.predicted_scope.count %>, <%= team_report.trained_issues_per_epic.round %> / epic]
       </td>
       <td class="right-align">
         <%= team_report.completed_scope.count %>
