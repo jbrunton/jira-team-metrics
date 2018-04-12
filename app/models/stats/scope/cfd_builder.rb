@@ -12,13 +12,41 @@ class CfdBuilder
     end
   end
 
-  def initialize(scope)
-    @scope = scope
+  def initialize(increment_report)
+    @increment_report = increment_report
   end
 
-  def build(increment_report, cfd_type)
-    @increment_report = increment_report
+  def build(cfd_type)
+    lookup_team_completion_rates(cfd_type, @increment_report)
 
+    completion_date = @team_completion_dates.values.compact.max
+
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
+    dates = DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
+    dates.each do |date|
+      annotations = []
+
+      @increment_report.teams.each do |team|
+        team_completion_date = @team_completion_dates[team]
+        unless team_completion_date.nil?
+          if date <= team_completion_date && team_completion_date < date + 1.day
+            annotations << Domain::SHORT_TEAM_NAMES[team]
+          end
+        end
+      end
+
+      date_string = date_as_string(date)
+      if annotations.any?
+        annotation = annotations.join(',')
+        annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
+      end
+      data << cfd_row_for(date).to_array(date_string, annotation, annotation_text)
+    end
+
+    data
+  end
+
+  def lookup_team_completion_rates(cfd_type, increment_report)
     case cfd_type
       when :raw
         @team_completion_dates = increment_report.teams.map do |team|
@@ -41,39 +69,13 @@ class CfdBuilder
       else
         raise "Unexpected cfd_type: #{cfd_type}"
     end
-
-    completion_date = @team_completion_dates.values.compact.max
-
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(increment_report.second_percentile_started_date, completion_date).to_a
-    dates.each do |date|
-      annotations = []
-
-      increment_report.teams.each do |team|
-        team_completion_date = @team_completion_dates[team]
-        unless team_completion_date.nil?
-          if date <= team_completion_date && team_completion_date < date + 1.day
-            annotations << Domain::SHORT_TEAM_NAMES[team]
-          end
-        end
-      end
-
-      date_string = date_as_string(date)
-      if annotations.any?
-        annotation = annotations.join(',')
-        annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
-      end
-      data << cfd_row_for(date).to_array(date_string, annotation, annotation_text)
-    end
-
-    data
   end
 
-private
+  private
   def cfd_row_for(date)
     row = CfdRow.new(0, 0, 0, 0)
 
-    @scope.each do |issue|
+    @increment_report.scope.each do |issue|
       case issue.status_category_on(date)
         when 'To Do'
           row.to_do += 1
