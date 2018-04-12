@@ -4,6 +4,7 @@ class Board < ApplicationRecord
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
+  has_many :report_fragments, :dependent => :delete_all
 
   def exclusions
     exclusions_string = config_hash['exclude']
