@@ -13,6 +13,10 @@ module ApplicationHelper
     "/domain"
   end
 
+  def domain_metadata_path
+    "#{domain_path}/metadata"
+  end
+
   def board_path(board)
     "/domain/boards/#{board.jira_id}"
   end

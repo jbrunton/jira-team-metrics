@@ -19,6 +19,9 @@
     <% unless readonly? %>
       <a href="#" onclick="showConfigModal();">Config</a>
     <% end %>
+    <% if object.class == Domain %>
+        <a href="<%= domain_metadata_path %>">Metadata</a>
+  <% end %>
   </div>
 </div>
 
