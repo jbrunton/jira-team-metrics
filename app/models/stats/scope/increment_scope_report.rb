@@ -54,19 +54,23 @@ class IncrementScopeReport < TeamScopeReport
     index = 1
     @team_reports.each do |team, team_report|
       started_date = team_report.started_date || Time.now
-      case cfd_type
-        when :raw
-          forecast_date = team_report.rolling_forecast_completion_date(7)
-        when :trained
-          forecast_date = team_report.trained_completion_date
-        else
-          raise "Unexpected cfd_type: #{cfd_type}"
-      end
+      forecast_date = forecast_date_for_team(team_report)
       unless forecast_date.nil?
         data << [index, team.upcase, date_as_string(started_date), date_as_string(forecast_date)]
         index = index + 1
       end
     end
     data
+  end
+
+  def forecast_date_for_team(team_report)
+    case cfd_type
+      when :raw
+        team_report.rolling_forecast_completion_date(7)
+      when :trained
+        team_report.trained_completion_date
+      else
+        raise "Unexpected cfd_type: #{cfd_type}"
+    end
   end
 end
