@@ -96,7 +96,7 @@ class CfdBuilder
   end
 
   def adjust_row_with_predictions(row, date)
-    predicted_completion_rate = compute_predicted_completion_rate(date)
+    predicted_completion_rate = predicted_rate_on_date(date)
 
     row.done += predicted_completion_rate
 
@@ -117,21 +117,27 @@ class CfdBuilder
     end
   end
 
-  def compute_predicted_completion_rate(date)
-    change = 0
-    @increment_report.teams.each do |team|
-      team_completion_rate = @team_completion_rates[team]
-      team_completion_date = @team_completion_dates[team]
+  def predicted_rate_on_date(date)
+    @increment_report.teams
+      .map { |team| predicted_rate_for_team(date, team) }
+      .sum
+  end
 
-      unless team_completion_date.nil?
-        team_report = @increment_report.team_report_for(team)
-        if date < team_completion_date
-          change = change + team_completion_rate * (date - Time.now) / 1.day
-        else
-          change = change + team_report.remaining_scope.count
-        end
+  def predicted_rate_for_team(date, team)
+    team_rate = 0
+
+    team_completion_rate = @team_completion_rates[team]
+    team_completion_date = @team_completion_dates[team]
+
+    unless team_completion_date.nil?
+      team_report = @increment_report.team_report_for(team)
+      if date < team_completion_date
+        team_rate = team_completion_rate * (date - Time.now) / 1.day
+      else
+        team_rate = team_report.remaining_scope.count
       end
     end
-    change
+
+    team_rate
   end
 end
