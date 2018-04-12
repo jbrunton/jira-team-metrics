@@ -50,9 +50,7 @@ class ReportsController < ApplicationController
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-    @report = Rails.cache.fetch("increment_report/#{@increment.key}", expires_in: 1.hour) do
-      IncrementScopeReport.new(@increment).build
-    end
+    @report = IncrementScopeReport.new(@increment).build
   end
 
   def delivery_scope
@@ -64,5 +62,14 @@ class ReportsController < ApplicationController
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
+  end
+
+  helper_method :cfd_data
+
+  def cfd_data(cfd_type)
+    ReportFragment.fetch(@increment.board, "delivery/#{@increment.key}", "cfd:#{cfd_type}") do
+      #report = IncrementScopeReport.new(@increment).build
+      @report.cfd_data(cfd_type)
+    end.contents
   end
 end

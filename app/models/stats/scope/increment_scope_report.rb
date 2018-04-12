@@ -45,8 +45,6 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data(cfd_type)
-    ReportFragment.fetch(@increment.board, "delivery", "cfd:#{cfd_type}") do
-      CfdBuilder.new(self).build(cfd_type)
-    end.contents
+    CfdBuilder.new(self).build(cfd_type)
   end
 end

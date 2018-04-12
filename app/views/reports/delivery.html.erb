@@ -15,8 +15,8 @@
   function updateChart() {
 
     <% cache "cfd_data/#{@increment.key}" do %>
-      var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
-      var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+      var rawData = google.visualization.arrayToDataTable(<%= cfd_data(:raw).to_json.html_safe %>);
+      var trainedData = google.visualization.arrayToDataTable(<%= cfd_data(:trained).to_json.html_safe %>);
     <% end %>
 
     var options = {
