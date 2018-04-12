@@ -20,21 +20,12 @@ class TeamScopeReport
   end
 
   def build
-    # TODO: we could probably combine both types of epic lookup in all cases but there's a bug I haven't figured out
-    # in doing so whereby teams with no actual scope don't have predicted issues show up
-    if @training_team_reports.nil?
-      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
-      @epics = @issues.map{ |issue| issue.epic }.compact.uniq
-    else
-      # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
-      @epics = @issues.select{ |issue| issue.is_epic? }
-    end
-
-    @scope = @issues.select{ |issue| issue.is_scope? }
-
+    build_scope
     build_predicted_scope unless @training_team_reports.nil?
+
     analyze_scope
     analyze_status if @increment.target_date
+
     build_trained_forecasts unless @training_team_reports.nil?
 
     self
@@ -62,6 +53,17 @@ class TeamScopeReport
   end
 
 private
+  def build_scope
+    if @training_team_reports.nil?
+      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
+      @epics = @issues.map { |issue| issue.epic }.compact.uniq
+    else
+      # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
+      @epics = @issues.select { |issue| issue.is_epic? }
+    end
+
+    @scope = @issues.select { |issue| issue.is_scope? }
+  end
 
   def analyze_scope
     issues_by_status_category = @scope.group_by{ |issue| issue.status_category }
