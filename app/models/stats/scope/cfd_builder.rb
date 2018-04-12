@@ -24,23 +24,8 @@ class CfdBuilder
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
     dates.each do |date|
-      annotations = []
-
-      @increment_report.teams.each do |team|
-        team_completion_date = @team_completion_dates[team]
-        unless team_completion_date.nil?
-          if date <= team_completion_date && team_completion_date < date + 1.day
-            annotations << Domain::SHORT_TEAM_NAMES[team]
-          end
-        end
-      end
-
-      date_string = date_as_string(date)
-      if annotations.any?
-        annotation = annotations.join(',')
-        annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
-      end
-      data << cfd_row_for(date).to_array(date_string, annotation, annotation_text)
+      annotation, annotation_text = annotation_for(date)
+      data << cfd_row_for(date).to_array(date_as_string(date), annotation, annotation_text)
     end
 
     data
@@ -93,6 +78,27 @@ class CfdBuilder
     end
 
     row
+  end
+
+  def annotation_for(date)
+    annotation = annotation_text = nil
+    annotations = []
+
+    @increment_report.teams.each do |team|
+      team_completion_date = @team_completion_dates[team]
+      unless team_completion_date.nil?
+        if date <= team_completion_date && team_completion_date < date + 1.day
+          annotations << Domain::SHORT_TEAM_NAMES[team]
+        end
+      end
+    end
+
+    if annotations.any?
+      annotation = annotations.join(',')
+      annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
+    end
+
+    [annotation, annotation_text]
   end
 
   def adjust_row_with_predictions(row, date)
