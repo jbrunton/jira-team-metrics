@@ -19,6 +19,15 @@ class DeliveryReport < BaseReport
     end
   end
 
+  def self.for(board, report_key)
+    match = /delivery\/([\w-]+)/.match(report_key)
+    if match
+      increment_key = match[1]
+      increment = board.issues.find_by(key: increment_key)
+      DeliveryReport.new(increment)
+    end
+  end
+
 private
   def increment_report
     @increment_report ||= IncrementScopeReport.new(@increment).build
