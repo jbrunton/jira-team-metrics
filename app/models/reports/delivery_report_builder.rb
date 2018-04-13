@@ -1,4 +1,4 @@
-class DeliveryReport < BaseReport
+class DeliveryReportBuilder < ReportBuilder
   def initialize(increment)
     super(increment.board,
       "delivery/#{increment.key}",
@@ -24,7 +24,7 @@ class DeliveryReport < BaseReport
     if match
       increment_key = match[1]
       increment = board.issues.find_by(key: increment_key)
-      DeliveryReport.new(increment)
+      DeliveryReportBuilder.new(increment)
     end
   end
 

@@ -8,7 +8,7 @@ namespace :reports do
     rescue
       board = Board.search(args.board)
     end
-    report = DeliveryReport.for(board, args.report_key)
+    report = DeliveryReportBuilder.for(board, args.report_key)
     puts "Building report #{args.report_key} for board #{board.name}"
     report.build
   end
@@ -21,7 +21,7 @@ namespace :reports do
     rescue
       board = Board.search(args.board)
     end
-    report = DeliveryReport.for(board, args.report_key)
+    report = DeliveryReportBuilder.for(board, args.report_key)
     puts "Building report fragment #{args.report_key}:#{args.fragment_key} for board #{board.name}"
     report.build_fragment(args.fragment_key)
   end
