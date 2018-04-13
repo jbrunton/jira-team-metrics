@@ -17,7 +17,7 @@ class Board < ApplicationRecord
   end
 
   def increments
-    issues.select do |issue|
+    @increments ||= issues.select do |issue|
       domain.config.increment_types.any?{ |increment| issue.issue_type == increment.issue_type }
     end
   end

@@ -72,41 +72,14 @@ class ReportsController < ApplicationController
   helper_method :increment_report
 
   def cfd_data(cfd_type)
-    ReportFragment.fetch(@increment.board, report_key, "cfd:#{cfd_type}") do
-      increment_report.cfd_data(cfd_type)
-    end.contents
+    ReportFragment.fetch_contents(@increment.board, report_key, "cfd:#{cfd_type}")
   end
 
   def team_dashboard_data
-    @team_dashboard_data ||= ReportFragment.fetch(@increment.board, report_key, "team_dashboard") do
-      {
-        totals: team_dashboard_row_data(increment_report),
-        teams: increment_report.teams.map do |team|
-          team_report = @increment_report.team_report_for(team)
-          [team, team_dashboard_row_data(team_report).merge({
-            status_color: @increment.target_date ? team_report.status_color : nil,
-            rolling_completion_date: team_report.rolling_forecast_completion_date(7),
-            trained_completion_date: team_report.trained_completion_date
-          })]
-        end.to_h
-      }
-    end.contents
+    ReportFragment.fetch_contents(@increment.board, report_key, "team_dashboard")
   end
 
   def report_key
     "delivery/#{@increment.key}"
-  end
-
-private
-  def team_dashboard_row_data(report)
-    {
-      scope: report.scope.count,
-      remaining_scope: report.remaining_scope.count,
-      predicted_scope: report.predicted_scope.count,
-      completed_scope: report.completed_scope.count,
-      progress_percent: 100.0 * report.completed_scope.count / report.scope.count,
-      rolling_completion_rate: report.rolling_completion_rate(7),
-      trained_completion_rate: report.trained_completion_rate
-    }
   end
 end
