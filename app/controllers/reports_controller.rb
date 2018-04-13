@@ -50,7 +50,6 @@ class ReportsController < ApplicationController
   def delivery
     @board = Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-    @report = IncrementScopeReport.new(@increment).build
   end
 
   def delivery_scope
@@ -64,12 +63,51 @@ class ReportsController < ApplicationController
       .to_h
   end
 
+  def report
+    @report ||= IncrementScopeReport.new(@increment).build
+  end
+
   helper_method :cfd_data
+  helper_method :team_dashboard_data
 
   def cfd_data(cfd_type)
-    ReportFragment.fetch(@increment.board, "delivery/#{@increment.key}", "cfd:#{cfd_type}") do
-      #report = IncrementScopeReport.new(@increment).build
-      @report.cfd_data(cfd_type)
+    ReportFragment.fetch(@increment.board, report_key, "cfd:#{cfd_type}") do
+      report.cfd_data(cfd_type)
     end.contents
+  end
+
+  def team_dashboard_data
+    @team_dashboard_data ||= ReportFragment.fetch(@increment.board, report_key, "team_dashboard") do
+      {
+        totals: {
+          scope: report.scope.count,
+          remaining_scope: report.remaining_scope.count,
+          predicted_scope: report.predicted_scope.count,
+          completed_scope: report.completed_scope.count,
+          progress_percent: 100.0 * report.completed_scope.count / report.scope.count,
+          rolling_completion_rate: report.rolling_completion_rate(7),
+          trained_completion_rate: report.trained_completion_rate
+        },
+        teams: @report.teams.map do |team|
+          team_report = @report.team_report_for(team)
+          [team, {
+            status_color: @increment.target_date ? team_report.status_color : nil,
+            scope: team_report.scope.count,
+            remaining_scope: team_report.remaining_scope.count,
+            predicted_scope: team_report.predicted_scope.count,
+            completed_scope: team_report.completed_scope.count,
+            progress_percent: 100.0 * team_report.completed_scope.count / team_report.scope.count,
+            rolling_completion_rate: team_report.rolling_completion_rate(7),
+            rolling_completion_date: team_report.rolling_forecast_completion_date(7),
+            trained_completion_rate: team_report.trained_completion_rate,
+            trained_completion_date: team_report.trained_completion_date
+          }]
+        end.to_h
+      }
+    end.contents
+  end
+
+  def report_key
+    "delivery/#{@increment.key}"
   end
 end
