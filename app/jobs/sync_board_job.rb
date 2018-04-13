@@ -2,42 +2,19 @@ class SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(board, username, password, notify_complete = true)
-    #TODO: do this in a transaction
-
     @notifier = StatusNotifier.new(board, "syncing #{board.name}")
 
-    @notifier.notify_status('clearing cache')
-
-    board.issues.destroy_all
-    board.filters.destroy_all
-    board.report_fragments.destroy_all
-
-    @notifier.notify_status('fetching issues from JIRA')
-
     credentials = {username: username, password: password}
-    issues = fetch_issues_for(board, credentials)
 
-    @notifier.notify_status('updating cache')
-
-    issues.each do |i|
-      board.issues.create(i)
-    end
-    board.last_synced = DateTime.now
-    board.save
-
-    epic_keys = board.issues
-      .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
-      .map{ |issue| issue.fields['Epic Link'] }
-
-    if epic_keys.length > 0
-      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
-      epics.each do |i|
-        board.issues.create(i)
-      end
-    end
-
+    clear_cache(board)
+    sync_issues(board, credentials)
     create_filters(board, credentials)
+    build_reports(board)
 
+    @notifier.notify_complete if notify_complete
+  end
+
+  def build_reports(board)
     board.increments.each_with_index do |increment, index|
       progress = (100.0 * (index + 1) / board.increments.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
@@ -51,8 +28,38 @@ class SyncBoardJob < ApplicationJob
         ].join("\n")
       end
     end
+  end
 
-    @notifier.notify_complete if notify_complete
+  def sync_issues(board, credentials)
+    @notifier.notify_status('fetching issues from JIRA')
+    issues = fetch_issues_for(board, credentials)
+
+    @notifier.notify_status('updating cache')
+    issues.each do |i|
+      board.issues.create(i)
+    end
+
+    epic_keys = board.issues
+      .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
+      .map { |issue| issue.fields['Epic Link'] }
+
+    if epic_keys.length > 0
+      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
+      epics.each do |i|
+        board.issues.create(i)
+      end
+    end
+
+    board.last_synced = DateTime.now
+    board.save
+  end
+
+  def clear_cache(board)
+    @notifier.notify_status('clearing cache')
+
+    board.issues.destroy_all
+    board.filters.destroy_all
+    board.report_fragments.destroy_all
   end
 
   def fetch_issues_for(board, credentials)
