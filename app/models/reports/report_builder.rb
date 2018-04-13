@@ -3,7 +3,7 @@ class ReportBuilder
   attr_reader :report_key
   attr_reader :fragment_keys
 
-  def initialize(board)
+  def initialize(board, report_key, fragment_keys)
     @board = board
     @report_key = report_key
     @fragment_keys = fragment_keys

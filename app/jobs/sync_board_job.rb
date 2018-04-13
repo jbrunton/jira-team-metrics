@@ -38,6 +38,20 @@ class SyncBoardJob < ApplicationJob
 
     create_filters(board, credentials)
 
+    board.increments.each_with_index do |increment, index|
+      progress = (100.0 * (index + 1) / board.increments.count).to_i
+      @notifier.notify_progress("updating reports (#{progress}%)", progress)
+      begin
+        DeliveryReportBuilder.new(increment).build
+      rescue StandardError => e
+        logger.error [
+          "Error building reports for #{increment.key}:",
+          e.message,
+          e.backtrace
+        ].join("\n")
+      end
+    end
+
     @notifier.notify_complete if notify_complete
   end
 
