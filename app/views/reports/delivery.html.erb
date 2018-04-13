@@ -120,7 +120,7 @@
         <%= team_data[:completed_scope] %>
       </td>
       <td>
-        (<%= pretty_print_number(100.0 * team_data[:progress_percent], round: true) %>%)
+        (<%= pretty_print_number(team_data[:progress_percent], round: true) %>%)
       </td>
       <td class="right-align highlight">
         <%= pretty_print_number(team_data[:rolling_completion_rate] * 7) %>
