@@ -13,23 +13,24 @@
   <tr>
     <th>Progress</th>
     <td>
-      <%= pretty_print_number(@report.percent_completed) %>%
+      <%= pretty_print_number(increment_report.percent_completed) %>%
     </td>
   </tr>
   <tr>
     <th>Scope</th>
-    <td><%= @report.completed_scope.count %> / <%= @report.scope.count %></td>
+    <td><%= increment_report.completed_scope.count %> / <%= increment_report.scope.count %></td>
   </tr>
   <tr>
     <th>Epics</th>
     <td>
-      <%= @report.epics.count %>
+      <%= increment_report.epics.count %>
+      <%= increment_report.epics.count %>
     </td>
   </tr>
   <tr>
     <th>Issues / Epic</th>
     <td>
-      (<%= pretty_print_number(@report.issues_per_epic) %> issues / epic)
+      (<%= pretty_print_number(increment_report.issues_per_epic) %> issues / epic)
     </td>
   </tr>
 </table>

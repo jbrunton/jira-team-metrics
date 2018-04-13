@@ -15,8 +15,8 @@
   function updateChart() {
 
     <% cache "cfd_data/#{@increment.key}" do %>
-      var rawData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:raw).to_json.html_safe %>);
-      var trainedData = google.visualization.arrayToDataTable(<%= @report.cfd_data(:trained).to_json.html_safe %>);
+      var rawData = google.visualization.arrayToDataTable(<%= cfd_data(:raw).to_json.html_safe %>);
+      var trainedData = google.visualization.arrayToDataTable(<%= cfd_data(:trained).to_json.html_safe %>);
     <% end %>
 
     var options = {
@@ -97,12 +97,11 @@
     </tr>
   </thead>
 
-<% @report.teams.each do |team| %>
-    <% team_report = @report.team_report_for(team) %>
-    <tr class="<%= team_report.remaining_scope.empty? ? 'complete' : '' %>">
+<% team_dashboard_data[:teams].each do |team, team_data| %>
+    <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
       <td>
         <% if @increment.target_date %>
-            <span class="status-indicator <%= team_report.status_color %>"></span>
+            <span class="status-indicator <%= team_data[:status_color] %>"></span>
         <% end %>
       </td>
       <td>
@@ -112,28 +111,28 @@
         <%= pretty_print_date(@increment.target_date, show_tz: false) %>
       </td>
       <td class="right-align">
-        <%= team_report.remaining_scope.count %>
+        <%= team_data[:remaining_scope] %>
       </td>
       <td>
-        [<%= team_report.predicted_scope.count %>, <%= team_report.trained_issues_per_epic.round %> / epic]
+        [<%= team_data[:predicted_scope] %>]
       </td>
       <td class="right-align">
-        <%= team_report.completed_scope.count %>
+        <%= team_data[:completed_scope] %>
       </td>
       <td>
-        (<%= pretty_print_number(100.0 * team_report.completed_scope.count / team_report.scope.count, round: true) %>%)
+        (<%= pretty_print_number(team_data[:progress_percent], round: true) %>%)
       </td>
       <td class="right-align highlight">
-        <%= pretty_print_number(team_report.rolling_completion_rate(7) * 7) %>
+        <%= pretty_print_number(team_data[:rolling_completion_rate] * 7) %>
       </td>
       <td class="highlight">
-        <%= pretty_print_date(team_report.rolling_forecast_completion_date(7), show_tz: false) %>
+        <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
       </td>
       <td class="right-align">
-        <%= pretty_print_number(team_report.trained_completion_rate * 7) %>
+        <%= pretty_print_number(team_data[:trained_completion_rate] * 7) %>
       </td>
       <td>
-        <%= pretty_print_date(team_report.trained_completion_date, show_tz: false) %>
+        <%= pretty_print_date(team_data[:trained_completion_date], show_tz: false) %>
       </td>
       <td>
         <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
@@ -150,24 +149,24 @@
       <%= pretty_print_date(@increment.target_date, show_tz: false) %>
     </th>
     <th class="right-align">
-      <%= @report.remaining_scope.count %>
+      <%= team_dashboard_data[:totals][:remaining_scope] %>
     </th>
     <th>
-      [<%= @report.predicted_scope.count %>]
+      [<%= team_dashboard_data[:totals][:predicted_scope] %>]
     </th>
     <th class="right-align">
-      <%= @report.completed_scope.count %>
+      <%= team_dashboard_data[:totals][:completed_scope] %>
     </th>
     <th>
-      (<%= pretty_print_number(100.0 * @report.completed_scope.count / @report.scope.count, round: true) %>%)
+      (<%= pretty_print_number(team_dashboard_data[:totals][:progress_percent], round: true) %>%)
     </th>
     <th class="right-align highlight">
-      <%= pretty_print_number(@report.rolling_completion_rate(7) * 7) %>
+      <%= pretty_print_number(team_dashboard_data[:totals][:rolling_completion_rate] * 7) %>
     </th>
     <th class="highlight">
     </th>
     <th class="right-align">
-      <%= pretty_print_number(@report.trained_completion_rate * 7) %>
+      <%= pretty_print_number(team_dashboard_data[:totals][:trained_completion_rate] * 7) %>
     </th>
     <th>
     </th>

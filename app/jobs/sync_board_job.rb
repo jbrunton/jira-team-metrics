@@ -10,6 +10,7 @@ class SyncBoardJob < ApplicationJob
 
     board.issues.destroy_all
     board.filters.destroy_all
+    board.report_fragments.destroy_all
 
     @notifier.notify_status('fetching issues from JIRA')
 
