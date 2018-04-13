@@ -3,12 +3,10 @@ class ReportFragment < ApplicationRecord
   belongs_to :board
 
   def self.fetch(board, report_key, fragment_key)
-    report_fragment = board.report_fragments.find_by(report_key: report_key, fragment_key: fragment_key)
-    if report_fragment.nil?
-      report_fragment = board.report_fragments.build(report_key: report_key, fragment_key: fragment_key)
-      report_fragment.contents = yield
-      report_fragment.save
-    end
-    report_fragment
+    board.report_fragments.find_by(report_key: report_key, fragment_key: fragment_key)
+  end
+
+  def self.fetch_contents(board, report_key, fragment_key)
+    fetch(board, report_key, fragment_key).contents
   end
 end

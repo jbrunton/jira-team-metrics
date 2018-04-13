@@ -30,6 +30,7 @@ module JiraTeamMetrics
 
     config.autoload_paths << Rails.root.join("lib")
     config.autoload_paths << Rails.root.join("app", "models", "stats")
+    config.autoload_paths << Rails.root.join("app", "models", "reports")
     config.autoload_paths << Rails.root.join("app", "models", "stats", "scope")
     config.autoload_paths << Rails.root.join("app", "models", "jira")
     config.autoload_paths << Rails.root.join("app", "models", "config")
