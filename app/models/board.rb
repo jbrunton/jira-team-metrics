@@ -61,18 +61,6 @@ class Board < ApplicationRecord
     end
   end
 
-  def self.search(name)
-    results = Board.where('name LIKE ?', "%#{name}%")
-    if results.empty?
-      raise "Could not find board with name like #{name}"
-    elsif results.size > 1
-      raise "Found multiple boards with name like #{name}:\n" +
-        results.map{ |board| "  #{board.name}\n" }.join
-    else
-      results.first
-    end
-  end
-
   DEFAULT_CONFIG = <<~CONFIG
     ---
     cycle_times:
