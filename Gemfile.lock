@@ -92,6 +92,7 @@ GEM
     nio4r (2.3.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
+    puma (3.11.4)
     rack (2.0.4)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
@@ -150,6 +151,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   jira_team_metrics!
+  puma
   sqlite3
 
 BUNDLED WITH
