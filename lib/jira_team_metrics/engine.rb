@@ -1,5 +1,5 @@
 module JiraTeamMetrics
   class Engine < ::Rails::Engine
-    #isolate_namespace Flowmetrics
+    #isolate_namespace JiraTeamMetrics
   end
 end
