@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "jquery-rails"
   s.add_dependency "handlebars_assets"
-  s.add_dependency "materialize-sass"
+  s.add_dependency "materialize-sass", "~> 0.99.0"
   s.add_dependency "lodash-rails"
   s.add_dependency "coffee-rails"
 
