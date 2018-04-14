@@ -1,4 +1,4 @@
-class Issue < ApplicationRecord
+class JiraTeamMetrics::Issue < ApplicationRecord
   serialize :labels
   serialize :transitions
   serialize :fields

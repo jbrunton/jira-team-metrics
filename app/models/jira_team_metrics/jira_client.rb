@@ -44,7 +44,7 @@ class JiraTeamMetrics::JiraClient
     url = "/rest/greenhopper/1.0/rapidviews/list"
     response = request(url)
     response['views'].map do |raw_view|
-      BoardAttributesBuilder.new(raw_view).build
+      JiraTeamMetrics::BoardAttributesBuilder.new(raw_view).build
     end
   end
 
