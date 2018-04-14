@@ -1,4 +1,4 @@
-class Credentials
+class JiraTeamMetrics::Credentials
   include ActiveModel::Model
 
   attr_accessor :username, :password

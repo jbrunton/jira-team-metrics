@@ -1,9 +1,9 @@
 require 'securerandom'
 
-module ApplicationHelper
-  include FormattingHelper
-  include LinkHelper
-  include ChartsHelper
+module JiraTeamMetrics::ApplicationHelper
+  include JiraTeamMetrics::FormattingHelper
+  include JiraTeamMetrics::LinkHelper
+  include JiraTeamMetrics::ChartsHelper
 
   def readonly?
     !!ENV['READONLY']

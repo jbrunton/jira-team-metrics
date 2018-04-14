@@ -1,4 +1,4 @@
-module FormattingHelper
+module JiraTeamMetrics::FormattingHelper
   def pretty_print_date(date, opts = {show_tz: true, hide_year: false})
     strfm = date_format_for(opts)
     date.nil? ? '-' : date.strftime(strfm)

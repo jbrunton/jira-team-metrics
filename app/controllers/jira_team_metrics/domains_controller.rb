@@ -1,6 +1,6 @@
-class DomainsController < ApplicationController
+class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationController
   before_action :set_domain
-  include ApplicationHelper
+  include JiraTeamMetrics::ApplicationHelper
 
   def show
     @boards = @domain.boards.select do |board|

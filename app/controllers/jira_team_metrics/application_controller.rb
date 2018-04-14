@@ -1,10 +1,10 @@
-class ApplicationController < ActionController::Base
+class JiraTeamMetrics::ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
 private
 
   def set_domain
-    @domain = Domain.get_instance
+    @domain = JiraTeamMetrics::Domain.get_instance
   end
 
   def set_board

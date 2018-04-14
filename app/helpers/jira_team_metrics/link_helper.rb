@@ -1,4 +1,4 @@
-module LinkHelper
+module JiraTeamMetrics::LinkHelper
   def link_type(link)
     link['inward_link_type'] || link['outward_link_type']
   end

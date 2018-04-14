@@ -1,4 +1,4 @@
-class BoardConfig < BaseConfig
+class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
 
   QueryFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)

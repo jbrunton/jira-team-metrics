@@ -1,6 +1,6 @@
 class CreateFilters < ActiveRecord::Migration[5.1]
   def change
-    create_table :filters do |t|
+    create_table :jira_team_metrics_filters do |t|
       t.string :name
       t.string :issue_keys
       t.integer :filter_type

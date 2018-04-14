@@ -1,5 +1,5 @@
-class Domain < ApplicationRecord
-  include Configurable
+class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
+  include JiraTeamMetrics::Configurable
 
   serialize :statuses
   serialize :fields
@@ -50,6 +50,6 @@ class Domain < ApplicationRecord
   end
 
   def self.get_instance
-    Domain.first_or_create
+    JiraTeamMetrics::Domain.first_or_create
   end
 end

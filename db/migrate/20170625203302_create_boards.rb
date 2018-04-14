@@ -1,6 +1,6 @@
 class CreateBoards < ActiveRecord::Migration[5.1]
   def change
-    create_table :boards do |t|
+    create_table :jira_team_metrics_boards do |t|
       t.string :jira_id
       t.string :name
       t.string :query

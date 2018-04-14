@@ -1,16 +1,16 @@
 <div class="card">
   <div class="card-content">
     <span class="card-title">
-    <% if object.class == Domain %>
+    <% if object.class == JiraTeamMetrics::Domain %>
         Domain Status
-    <% elsif object.class == BoardDecorator %>
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
         Board Status
     <% end %>
     </span>
     <p>Last synced: <%= pretty_print_date(object.last_synced) %></p>
-    <% if object.class == Domain %>
+    <% if object.class == JiraTeamMetrics::Domain %>
         <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
-    <% elsif object.class == BoardDecorator %>
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
         <p>Synced from: <%= pretty_print_date(object.synced_from) %></p>
     <% end %>
   </div>
@@ -19,14 +19,14 @@
     <% unless readonly? %>
       <a href="#" onclick="showConfigModal();">Config</a>
     <% end %>
-    <% if object.class == Domain %>
+    <% if object.class == JiraTeamMetrics::Domain %>
         <a href="<%= domain_metadata_path %>">Metadata</a>
   <% end %>
   </div>
 </div>
 
 <script id="sync-form-template" type="text/x-handlebars-template">
-  <%= render partial: 'shared/sync_form' %>
+  <%= render partial: 'partials/sync_form' %>
 </script>
 
 <script id="config-form-template" type="text/x-handlebars-template">

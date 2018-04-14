@@ -35,7 +35,7 @@
   <%= @domain.config.name %>
 </h3>
 
-<%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncDomainChannel', model_id: @domain.id } %>
+<%= render partial: 'partials/sync_status_indicator', locals: { channel: 'SyncDomainChannel', model_id: @domain.id } %>
 
 <div class="row">
   <div class="col s7">
@@ -59,6 +59,6 @@
       </div>
   </div>
   <div class="col s5">
-    <%= render partial: 'shared/status_card', locals: { object: @domain } %>
+    <%= render partial: 'partials/status_card', locals: { object: @domain } %>
   </div>
 </div>

@@ -1,5 +1,5 @@
-class Board < ApplicationRecord
-  include Configurable
+class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
+  include JiraTeamMetrics::Configurable
 
   belongs_to :domain
   has_many :issues, :dependent => :delete_all

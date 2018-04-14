@@ -1,4 +1,4 @@
-class BaseConfig
+class JiraTeamMetrics::BaseConfig
   attr_reader :config_hash
 
   def initialize(config_hash, schema_name)
