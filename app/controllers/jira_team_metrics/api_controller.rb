@@ -1,7 +1,7 @@
 require './app/models/data_table_builder'
 
-class ApiController < ApplicationController
-  include ApplicationHelper
+class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
+  include JiraTeamMetrics::ApplicationHelper
 
   before_action :set_domain
   before_action :set_board

@@ -1,4 +1,4 @@
-class ReportsController < ApplicationController
+class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationController
   before_action :set_domain
   before_action :set_board
 

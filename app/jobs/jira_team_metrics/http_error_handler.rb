@@ -1,4 +1,4 @@
-class HttpErrorHandler
+class JiraTeamMetrics::HttpErrorHandler
   def initialize(notifier)
     @notifier = notifier
   end

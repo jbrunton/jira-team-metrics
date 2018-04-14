@@ -6,7 +6,7 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   has_many :boards, :dependent => :delete_all
 
   def synced_boards
-    boards.where.not(boards: {last_synced: nil})
+    boards.where.not(jira_team_metrics_boards: {last_synced: nil})
   end
 
   def status_category_for(status)

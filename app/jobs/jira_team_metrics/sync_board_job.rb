@@ -1,4 +1,4 @@
-class SyncBoardJob < ApplicationJob
+class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(board, username, password, notify_complete = true)

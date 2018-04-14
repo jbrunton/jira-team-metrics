@@ -1,5 +1,5 @@
-class BoardsController < ApplicationController
-  include ApplicationHelper
+class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
+  include JiraTeamMetrics::ApplicationHelper
 
   before_action :set_domain
   before_action :set_board, only: [:show, :update, :sync]

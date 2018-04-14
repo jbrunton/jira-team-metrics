@@ -1,4 +1,4 @@
-class SyncDomainJob < ApplicationJob
+class JiraTeamMetrics::SyncDomainJob < ApplicationJob
   queue_as :default
 
   def perform(domain, username, password)

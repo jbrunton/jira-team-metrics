@@ -1,4 +1,4 @@
-class ComponentsController < ApplicationController
+class JiraTeamMetrics::ComponentsController < ApplicationController
   before_action :set_domain
   before_action :set_board
   # get '/:domain/boards/:board_id/summary' do

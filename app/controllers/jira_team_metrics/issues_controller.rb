@@ -1,4 +1,4 @@
-class IssuesController < ApplicationController
+class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
   before_action :set_domain
   before_action :set_board
   before_action :set_issue
