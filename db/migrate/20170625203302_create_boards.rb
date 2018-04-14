@@ -7,7 +7,8 @@ class CreateBoards < ActiveRecord::Migration[5.1]
       t.text :config_string
       t.datetime :synced_from
       t.datetime :last_synced
-      t.references :domain, foreign_key: false
+      # TODO: add foreign key for this column
+      t.references :domain, index: true, foreign_key: false
 
       t.timestamps
     end
