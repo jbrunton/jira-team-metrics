@@ -1,4 +1,4 @@
-class QueryBuilder
+class JiraTeamMetrics::QueryBuilder
   attr_reader :query
 
   def initialize(query)

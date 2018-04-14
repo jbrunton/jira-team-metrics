@@ -3,7 +3,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
 
   def perform(domain, username, password)
     #TODO: do this in a transaction
-    @notifier = StatusNotifier.new(domain, "syncing #{domain.config.name}")
+    @notifier = JiraTeamMetrics::StatusNotifier.new(domain, "syncing #{domain.config.name}")
     clear_cache(domain)
     boards, statuses, fields = fetch_data(domain, {username: username, password: password})
     update_cache(domain, boards, statuses, fields)
@@ -12,7 +12,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
       board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
       board.config_string = board_details.fetch_config_string
       board.save
-      SyncBoardJob.perform_now(board, username, password, false)
+      JiraTeamMetrics::SyncBoardJob.perform_now(board, username, password, false)
     end
 
     @notifier.notify_complete
@@ -25,8 +25,8 @@ private
   end
 
   def fetch_data(domain, credentials)
-    client = JiraClient.new(domain.config.url, credentials)
-    HttpErrorHandler.new(@notifier).invoke do
+    client = JiraTeamMetrics::JiraClient.new(domain.config.url, credentials)
+    JiraTeamMetrics::HttpErrorHandler.new(@notifier).invoke do
       @notifier.notify_status('fetching boards from JIRA')
       boards = client.get_rapid_boards
 

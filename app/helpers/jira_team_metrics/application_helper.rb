@@ -105,7 +105,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def object_name_for(object)
-    object.class.name.tableize.singularize # e.g. organization
+    object.class.name.split('::').last.tableize.singularize # e.g. organization
   end
 
   def issue_field(issue, field_name)

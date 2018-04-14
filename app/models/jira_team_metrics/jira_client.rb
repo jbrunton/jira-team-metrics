@@ -2,7 +2,7 @@ require 'net/http'
 require 'net/https'
 require 'json'
 
-class JiraClient
+class JiraTeamMetrics::JiraClient
   MAX_RESULTS = 50
 
   def initialize(url, credentials)

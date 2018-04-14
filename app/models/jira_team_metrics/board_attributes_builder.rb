@@ -1,4 +1,4 @@
-class BoardAttributesBuilder
+class JiraTeamMetrics::BoardAttributesBuilder
   def initialize(json)
     @json = json
   end

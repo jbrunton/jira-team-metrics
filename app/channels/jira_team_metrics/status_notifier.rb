@@ -1,4 +1,4 @@
-class StatusNotifier
+class JiraTeamMetrics::StatusNotifier
   def initialize(model, status_title)
     @model = model
     @status_title = status_title
@@ -38,11 +38,11 @@ private
   def broadcast(message)
     message.merge!(statusTitle: @status_title) unless message[:status].nil?
     case
-    when @model.is_a?(Board)
-      SyncBoardChannel.broadcast_to(@model, message)
-      SyncDomainChannel.broadcast_to(@model.domain, message)
-    when @model.is_a?(Domain)
-      SyncDomainChannel.broadcast_to(@model, message)
+    when @model.is_a?(JiraTeamMetrics::Board)
+      JiraTeamMetrics::SyncBoardChannel.broadcast_to(@model, message)
+      JiraTeamMetrics::SyncDomainChannel.broadcast_to(@model.domain, message)
+    when @model.is_a?(JiraTeamMetrics::Domain)
+      JiraTeamMetrics::SyncDomainChannel.broadcast_to(@model, message)
     else
       raise "Unexpected model type: #{@model.class}"
     end

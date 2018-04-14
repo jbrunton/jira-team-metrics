@@ -1,7 +1,7 @@
-class JiraClientBuilder
+class JiraTeamMetrics::JiraClientBuilder
   def build
     credentials = { username: @username, password: @password }
-    JiraClient.new(@url, credentials)
+    JiraTeamMetrics::JiraClient.new(@url, credentials)
   end
 
   def domains_store(domains_store)

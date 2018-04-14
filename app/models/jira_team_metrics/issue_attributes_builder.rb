@@ -1,5 +1,5 @@
 
-class IssueAttributesBuilder
+class JiraTeamMetrics::IssueAttributesBuilder
   def initialize(json, domain)
     @json = json
     @domain = domain
