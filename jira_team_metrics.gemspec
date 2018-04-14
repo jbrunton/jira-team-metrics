@@ -18,6 +18,12 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 5.1.4"
 
+  s.add_dependency "jquery-rails"
+  s.add_dependency "handlebars_assets"
+  s.add_dependency "materialize-sass"
+  s.add_dependency "lodash-rails"
+  s.add_dependency "coffee-rails"
+
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "byebug"
 end
