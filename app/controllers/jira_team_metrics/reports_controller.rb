@@ -72,11 +72,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   helper_method :increment_report
 
   def cfd_data(cfd_type)
-    ReportFragment.fetch_contents(@increment.board, report_key, "cfd:#{cfd_type}")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@increment.board, report_key, "cfd:#{cfd_type}")
   end
 
   def team_dashboard_data
-    ReportFragment.fetch_contents(@increment.board, report_key, "team_dashboard")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@increment.board, report_key, "team_dashboard")
   end
 
   def report_key
