@@ -1,5 +1,5 @@
-class IncrementScopeReport < TeamScopeReport
-  include DescriptiveScopeStatistics
+class JiraTeamMetrics::IncrementScopeReport < TeamScopeReport
+  include JiraTeamMetrics::DescriptiveScopeStatistics
   include JiraTeamMetrics::ChartsHelper
 
 
@@ -23,9 +23,9 @@ class IncrementScopeReport < TeamScopeReport
 
     @teams = increment_issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq + ['None']
     @team_reports = @teams.map do |team|
-      [team, TeamScopeReport.for(@increment, team)]
+      [team, JiraTeamMetrics::TeamScopeReport.for(@increment, team)]
     end.to_h
-    @team_reports['None'] = TeamScopeReport.for(@increment, 'None').build
+    @team_reports['None'] = JiraTeamMetrics::TeamScopeReport.for(@increment, 'None').build
 
     @epics = increment_issues.select{ |issue| issue.is_epic? }
     @scope = @team_reports.values.map{ |team_report| team_report.scope }.flatten.uniq
@@ -45,6 +45,6 @@ class IncrementScopeReport < TeamScopeReport
   end
 
   def cfd_data(cfd_type)
-    CfdBuilder.new(self).build(cfd_type)
+    JiraTeamMetrics::CfdBuilder.new(self).build(cfd_type)
   end
 end

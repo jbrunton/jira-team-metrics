@@ -2,7 +2,7 @@
 # 1. simulate based on team closure rates
 # 2. for teams with zero closure rate, don't add scope
 
-class CfdBuilder
+class JiraTeamMetrics::CfdBuilder
   include JiraTeamMetrics::ChartsHelper
   include JiraTeamMetrics::FormattingHelper
 
@@ -22,7 +22,7 @@ class CfdBuilder
     completion_date = @team_completion_dates.values.compact.max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
+    dates = JiraTeamMetrics::DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
     dates.each do |date|
       annotation, annotation_text = annotation_for(date)
       data << cfd_row_for(date).to_array(date_as_string(date), annotation, annotation_text)

@@ -3,14 +3,14 @@
     <span class="card-title">
     <% if object.class == JiraTeamMetrics::Domain %>
         Domain Status
-    <% elsif object.class == BoardDecorator %>
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
         Board Status
     <% end %>
     </span>
     <p>Last synced: <%= pretty_print_date(object.last_synced) %></p>
     <% if object.class == JiraTeamMetrics::Domain %>
         <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
-    <% elsif object.class == BoardDecorator %>
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
         <p>Synced from: <%= pretty_print_date(object.synced_from) %></p>
     <% end %>
   </div>

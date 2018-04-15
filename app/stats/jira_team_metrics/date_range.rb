@@ -1,4 +1,4 @@
-class DateRange
+class JiraTeamMetrics::DateRange
   attr_reader :start_date
   attr_reader :end_date
 

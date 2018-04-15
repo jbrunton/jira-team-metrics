@@ -1,4 +1,4 @@
-class DataTable
+class JiraTeamMetrics::DataTable
   attr_reader :rows
 
   def initialize(rows)

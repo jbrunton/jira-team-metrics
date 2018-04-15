@@ -1,5 +1,5 @@
-class TeamScopeReport
-  include DescriptiveScopeStatistics
+class JiraTeamMetrics::TeamScopeReport
+  include JiraTeamMetrics::DescriptiveScopeStatistics
 
   attr_reader :team
   attr_reader :epics
@@ -46,10 +46,10 @@ class TeamScopeReport
 
     training_team_reports = increment.board.training_increments.map do |training_increment|
       training_issues_for_team = self.issues_for_team(training_increment.issues(recursive: true), team)
-      TeamScopeReport.new(team, training_increment, training_issues_for_team).build
+      JiraTeamMetrics::TeamScopeReport.new(team, training_increment, training_issues_for_team).build
     end
 
-    TeamScopeReport.new(team, increment, issues_for_team, training_team_reports).build
+    JiraTeamMetrics::TeamScopeReport.new(team, increment, issues_for_team, training_team_reports).build
   end
 
 private

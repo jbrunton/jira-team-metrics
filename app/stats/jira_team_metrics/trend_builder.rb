@@ -1,4 +1,4 @@
-class TrendBuilder
+class JiraTeamMetrics::TrendBuilder
   def pluck(&pluck_block)
     @pluck_block = pluck_block
     self
@@ -12,7 +12,7 @@ class TrendBuilder
   def analyze(series)
     values = series.map{ |item| @pluck_block.call(item) }
     series.each_with_index.map do |item, index|
-      sample = TrendBuilder.pick_sample(values, index)
+      sample = JiraTeamMetrics::TrendBuilder.pick_sample(values, index)
       @map_block.call(item, sample.mean, sample.standard_deviation)
     end
   end

@@ -20,10 +20,10 @@ private
     unless params[:from_date].blank?
       from_date = Time.parse(params[:from_date])
       to_date = Time.parse(params[:to_date]) unless params[:to_date].blank?
-      date_range = DateRange.new(from_date, to_date)
+      date_range = JiraTeamMetrics::DateRange.new(from_date, to_date)
     end
 
-    @board = BoardDecorator.new(board, from_state, to_state, date_range, params[:query])
+    @board = JiraTeamMetrics::BoardDecorator.new(board, from_state, to_state, date_range, params[:query])
   end
 
   def render_unauthorized

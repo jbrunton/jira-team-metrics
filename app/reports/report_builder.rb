@@ -1,4 +1,4 @@
-class ReportBuilder
+class JiraTeamMetrics::ReportBuilder
   attr_reader :board
   attr_reader :report_key
   attr_reader :fragment_keys

@@ -1,4 +1,4 @@
-module DescriptiveScopeStatistics
+module JiraTeamMetrics::DescriptiveScopeStatistics
   def issues_per_epic
     scope.count.to_f / epics.count
   end

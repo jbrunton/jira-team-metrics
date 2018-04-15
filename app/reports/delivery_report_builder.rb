@@ -1,4 +1,4 @@
-class DeliveryReportBuilder < ReportBuilder
+class JiraTeamMetrics::DeliveryReportBuilder < ReportBuilder
   def initialize(increment)
     super(increment.board,
       "delivery/#{increment.key}",

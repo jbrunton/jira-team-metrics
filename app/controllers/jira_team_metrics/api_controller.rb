@@ -47,7 +47,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   def effort_summary
     summary_table = @board.summarize
 
-    builder = DataTableBuilder.new
+    builder = JiraTeamMetrics::DataTableBuilder.new
       .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
       .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
 
@@ -67,11 +67,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
     results = {}
 
-    BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
+    JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.each do |issue_type|
       issues = summary_table.map do |range, rows|
         row = rows.find{ |r| r.issue_type == issue_type }
         if row.nil?
-          BoardDecorator::SummaryRow.new(range, IssuesDecorator.new([]), IssuesDecorator.new([]))
+          JiraTeamMetrics::BoardDecorator::SummaryRow.new(range, JiraTeamMetrics::IssuesDecorator.new([]), JiraTeamMetrics::IssuesDecorator.new([]))
         else
           row.with_new_label(range)
         end
@@ -257,13 +257,13 @@ private
     builder.build
   end
 
-  CT_TREND_BUILDER = TrendBuilder.new.
+  CT_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.
     pluck{ |issue| issue.cycle_time }.
     map do |issue, mean, stddev|
     { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
   end
 
-  WIP_TREND_BUILDER = TrendBuilder.new.
+  WIP_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.
     pluck{ |item| item[1] }.
     map do |item, mean, stddev|
     {wip: item[1], mean: mean, stddev: stddev }

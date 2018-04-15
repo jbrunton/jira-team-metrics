@@ -1,4 +1,4 @@
-class ReportOptions
+class JiraTeamMetrics::ReportOptions
   attr_reader :from_date
   attr_reader :to_date
   attr_reader :report_type

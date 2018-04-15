@@ -1,4 +1,4 @@
-class BoardDecorator < Draper::Decorator
+class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   include JiraTeamMetrics::FormattingHelper
 
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
@@ -33,7 +33,7 @@ class BoardDecorator < Draper::Decorator
   end
 
   def all_issues
-    @all_issues ||= object.issues.map{ |i| IssueDecorator.new(i, @from_state, @to_state, @date_range) }
+    @all_issues ||= object.issues.map{ |i| JiraTeamMetrics::IssueDecorator.new(i, @from_state, @to_state, @date_range) }
   end
 
   def exclusions
@@ -55,7 +55,7 @@ class BoardDecorator < Draper::Decorator
       issues = self.issues
         .select{ |i| i.completed && i.started }
         .sort_by{ |i| i.completed }
-      IssuesDecorator.new(issues)
+      JiraTeamMetrics::IssuesDecorator.new(issues)
     end
   end
 
@@ -67,7 +67,7 @@ class BoardDecorator < Draper::Decorator
   def issues_by_type
     @issues_by_type ||= completed_issues
       .group_by{ |i| i.issue_type }
-      .map{ |issue_type, issues| [issue_type, IssuesDecorator.new(issues)] }
+      .map{ |issue_type, issues| [issue_type, JiraTeamMetrics::IssuesDecorator.new(issues)] }
       .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .to_h
   end
@@ -81,7 +81,7 @@ class BoardDecorator < Draper::Decorator
     min_date = dates.min.to_date
     max_date = dates.max.to_date
 
-    dates = DateRange.new(min_date, max_date).to_a
+    dates = JiraTeamMetrics::DateRange.new(min_date, max_date).to_a
     dates.map do |date|
       [date, wip_on_date(date)]
     end
@@ -99,16 +99,16 @@ class BoardDecorator < Draper::Decorator
   end
 
   def summarize(group_by = nil)
-    IssuesAggregator.new(completed_issues, :completed).aggregate(group_by)
+    JiraTeamMetrics::IssuesAggregator.new(completed_issues, :completed).aggregate(group_by)
   end
 
   def summarize_created(group_by = nil)
-    IssuesAggregator.new(issues, :issue_created).aggregate(group_by)
+    JiraTeamMetrics::IssuesAggregator.new(issues, :issue_created).aggregate(group_by)
   end
 
   def summary_rows_for(issues)
     summarize(nil, issues).map do |row|
-      DataTable::Row.new([
+      JiraTeamMetrics::DataTable::Row.new([
         row.issue_type,
         row.count,
         pretty_print_number(row.count_percentage),
@@ -121,8 +121,8 @@ class BoardDecorator < Draper::Decorator
 
   def summary_table(group_by = nil)
     rows = [
-      DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
-      DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
+      JiraTeamMetrics::DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
+      JiraTeamMetrics::DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
     ]
 
     if ['month', 'week'].include?(group_by)
@@ -133,7 +133,7 @@ class BoardDecorator < Draper::Decorator
         date_range = from_date...to_date
 
         heading = pretty_print_date_range(date_range, group_by == 'week' ? {show_day: true} : {})
-        rows << DataTable::Header.new([heading, '', '', '', '', ''])
+        rows << JiraTeamMetrics::DataTable::Header.new([heading, '', '', '', '', ''])
 
         issues = completed_issues_in_range(date_range)
         rows.concat(summary_rows_for(issues))
@@ -143,7 +143,7 @@ class BoardDecorator < Draper::Decorator
     else
       rows.concat(summary_rows_for(completed_issues))
 
-      rows << DataTable::Row.new([
+      rows << JiraTeamMetrics::DataTable::Row.new([
         'ALL',
         completed_issues.count,
         '',
@@ -153,17 +153,17 @@ class BoardDecorator < Draper::Decorator
       ], nil)
     end
 
-    DataTable.new(rows)
+    JiraTeamMetrics::DataTable.new(rows)
   end
 
   def issues_table
     @issues_table ||= begin
       headers = [
-        DataTable::Header.new(['Key', 'Issue Type', 'Summary', 'Completed', 'Cycle Time'])
+        JiraTeamMetrics::DataTable::Header.new(['Key', 'Issue Type', 'Summary', 'Completed', 'Cycle Time'])
       ]
 
       rows = completed_issues.map do |issue|
-        DataTable::Row.new([
+        JiraTeamMetrics::DataTable::Row.new([
           issue.key,
           issue.issue_type,
           issue.summary,
@@ -172,7 +172,7 @@ class BoardDecorator < Draper::Decorator
         ], issue)
       end
 
-      DataTable.new(headers + rows)
+      JiraTeamMetrics::DataTable.new(headers + rows)
     end
   end
 
