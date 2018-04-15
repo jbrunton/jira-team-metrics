@@ -6,7 +6,7 @@
   <% end %>
 
   <div class="input-field">
-    <textarea id="board_config_string" name="board[config_string]" class="materialize-textarea"><%= @board.config_string || Board::DEFAULT_CONFIG %></textarea>
+    <textarea id="board_config_string" name="board[config_string]" class="materialize-textarea"><%= @board.config_string %></textarea>
     <label for="board_config_string">Config (YAML)</label>
   </div>
 </form>

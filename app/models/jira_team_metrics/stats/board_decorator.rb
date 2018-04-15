@@ -2,7 +2,7 @@ require 'draper'
 require 'descriptive_statistics'
 
 class BoardDecorator < Draper::Decorator
-  include FormattingHelper
+  include JiraTeamMetrics::FormattingHelper
 
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   

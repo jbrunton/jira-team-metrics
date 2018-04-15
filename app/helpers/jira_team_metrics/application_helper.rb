@@ -22,7 +22,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def reports_path(board)
-    "#{root}/reports/boards/#{board.jira_id}"
+    "#{root_path}/reports/boards/#{board.jira_id}"
   end
 
   def deliveries_report_path(board)

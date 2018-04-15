@@ -5,7 +5,7 @@
 
 <h3><%= @board.name %></h3>
 
-<%= render partial: 'shared/sync_status_indicator', locals: { channel: 'SyncBoardChannel', model_id: @board.jira_id } %>
+<%= render partial: 'partials/sync_status_indicator', locals: { channel: 'SyncBoardChannel', model_id: @board.jira_id } %>
 
 <div class="row">
   <div class="col s7">
@@ -21,6 +21,6 @@
     </ul>
   </div>
   <div class="col s5">
-    <%= render partial: 'shared/status_card', locals: { object: @board } %>
+    <%= render partial: 'partials/status_card', locals: { object: @board } %>
   </div>
 </div>
