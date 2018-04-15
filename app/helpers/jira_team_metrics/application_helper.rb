@@ -62,7 +62,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def path_for(object)
-    if object.kind_of?(Issue)
+    if object.kind_of?(JiraTeamMetrics::Issue)
       issue_path(object)
     end
   end
