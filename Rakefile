@@ -24,13 +24,10 @@ load 'rails/tasks/statistics.rake'
 
 require 'bundler/gem_tasks'
 
-require 'rake/testtask'
+task :default => :spec
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = false
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+  # spec.rspec_opts = ['-cfs --backtrace']
 end
 
-
-task default: :test
