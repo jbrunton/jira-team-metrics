@@ -125,7 +125,7 @@ private
   def build_predicted_scope_for(epic)
     if epic.issues(recursive: false).empty? && !@trained_issues_per_epic.nil?
       @trained_issues_per_epic.round.times do |k|
-        @scope << Issue.new({
+        @scope << JiraTeamMetrics::Issue.new({
           issue_type: 'Story',
           board: epic.board,
           summary: "Predicted scope #{k + 1}",

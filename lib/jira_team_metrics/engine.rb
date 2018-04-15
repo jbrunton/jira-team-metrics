@@ -12,7 +12,7 @@ module JiraTeamMetrics
     require 'open-uri'
 
     config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)
-    puts "config.autoload_paths:"
-    puts config.autoload_paths
+    config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats/scope", __FILE__)
+    config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/reports", __FILE__)
   end
 end

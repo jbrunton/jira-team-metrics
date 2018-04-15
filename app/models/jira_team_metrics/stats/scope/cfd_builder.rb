@@ -3,8 +3,8 @@
 # 2. for teams with zero closure rate, don't add scope
 
 class CfdBuilder
-  include ChartsHelper
-  include FormattingHelper
+  include JiraTeamMetrics::ChartsHelper
+  include JiraTeamMetrics::FormattingHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
     def to_array(date_string, annotation, annotation_text)
@@ -88,7 +88,7 @@ class CfdBuilder
       team_completion_date = @team_completion_dates[team]
       unless team_completion_date.nil?
         if date <= team_completion_date && team_completion_date < date + 1.day
-          annotations << Domain::SHORT_TEAM_NAMES[team]
+          annotations << JiraTeamMetrics::Domain::SHORT_TEAM_NAMES[team]
         end
       end
     end

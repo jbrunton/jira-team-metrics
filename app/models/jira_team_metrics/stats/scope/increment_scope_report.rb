@@ -1,6 +1,6 @@
 class IncrementScopeReport < TeamScopeReport
   include DescriptiveScopeStatistics
-  include ChartsHelper
+  include JiraTeamMetrics::ChartsHelper
 
 
 
