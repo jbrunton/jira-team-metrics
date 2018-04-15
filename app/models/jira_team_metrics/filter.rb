@@ -1,4 +1,4 @@
-class Filter < ApplicationRecord
+class JiraTeamMetrics::Filter < ApplicationRecord
   belongs_to :board
   enum filter_type: [:query_filter, :config_filter]
 

@@ -1,4 +1,4 @@
-class ReportFragment < ApplicationRecord
+class JiraTeamMetrics::ReportFragment < ApplicationRecord
   serialize :contents
   belongs_to :board
 
