@@ -93,7 +93,7 @@ class JiraTeamMetrics::MqlInterpreter
 
   FilterExpr = Struct.new(:filter_name) do
     def eval(issues)
-      filter = Filter.find_by(name: filter_name[:value].to_s)
+      filter = JiraTeamMetrics::Filter.find_by(name: filter_name[:value].to_s)
       issues.select do |issue|
         filter.include?(issue)
       end

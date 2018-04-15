@@ -1,4 +1,4 @@
-class JiraTeamMetrics::IncrementScopeReport < TeamScopeReport
+class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
   include JiraTeamMetrics::DescriptiveScopeStatistics
   include JiraTeamMetrics::ChartsHelper
 

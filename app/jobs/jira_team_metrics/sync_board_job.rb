@@ -19,7 +19,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       progress = (100.0 * (index + 1) / board.increments.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
       begin
-        DeliveryReportBuilder.new(increment).build
+        JiraTeamMetrics::DeliveryReportBuilder.new(increment).build
       rescue StandardError => e
         logger.error [
           "Error building reports for #{increment.key}:",
@@ -70,7 +70,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     if ignore_board_query
       query = subquery
     elsif subquery
-      query = QueryBuilder.new(board.query)
+      query = JiraTeamMetrics::QueryBuilder.new(board.query)
         .and(subquery)
         .query
     else

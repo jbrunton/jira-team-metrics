@@ -1,4 +1,4 @@
-class JiraTeamMetrics::DeliveryReportBuilder < ReportBuilder
+class JiraTeamMetrics::DeliveryReportBuilder < JiraTeamMetrics::ReportBuilder
   def initialize(increment)
     super(increment.board,
       "delivery/#{increment.key}",
@@ -21,7 +21,7 @@ class JiraTeamMetrics::DeliveryReportBuilder < ReportBuilder
 
 private
   def increment_report
-    @increment_report ||= IncrementScopeReport.new(@increment).build
+    @increment_report ||= JiraTeamMetrics::IncrementScopeReport.new(@increment).build
   end
 
   def cfd_data(cfd_type)
