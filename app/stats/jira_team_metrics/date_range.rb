@@ -37,7 +37,7 @@ class JiraTeamMetrics::DateRange
 
   def overlap_with(other)
     return nil if start_date.nil? || other.start_date.nil?
-    return DateRange.new(
+    return JiraTeamMetrics::DateRange.new(
       [start_date, other.start_date].max,
       [end_date, other.end_date].compact.min
     )

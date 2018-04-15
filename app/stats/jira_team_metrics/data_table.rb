@@ -7,7 +7,7 @@ class JiraTeamMetrics::DataTable
 
   def column(index)
     @rows
-      .select{ |row| !row.is_a?(DataTable::Header) }
+      .select{ |row| !row.is_a?(JiraTeamMetrics::DataTable::Header) }
       .map{ |row| row.items[index] }
   end
 
