@@ -26,7 +26,7 @@ class JiraTeamMetrics::JiraClient
     response = request(url)
 
     issues = response['issues'].map do |raw_issue|
-      IssueAttributesBuilder.new(raw_issue, domain).build
+      JiraTeamMetrics::IssueAttributesBuilder.new(raw_issue, domain).build
     end
 
     startAt = response['startAt'] || 0

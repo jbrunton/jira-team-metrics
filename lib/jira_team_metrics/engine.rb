@@ -9,6 +9,7 @@ module JiraTeamMetrics
     require 'coffee-rails'
     require 'draper'
     require 'descriptive_statistics'
+    require 'open-uri'
 
     config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)
     puts "config.autoload_paths:"

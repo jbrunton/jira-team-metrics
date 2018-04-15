@@ -76,8 +76,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     else
       query = board.query
     end
-    client = JiraClient.new(board.domain.config.url, credentials)
-    HttpErrorHandler.new(@notifier).invoke do
+    client = JiraTeamMetrics::JiraClient.new(board.domain.config.url, credentials)
+    JiraTeamMetrics::HttpErrorHandler.new(@notifier).invoke do
       client.search_issues(board.domain, query: query) do |progress|
         @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
       end
@@ -87,11 +87,11 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   def create_filters(board, credentials)
     board.config.filters.each do |filter|
       case filter
-        when BoardConfig::QueryFilter
+        when JiraTeamMetrics::BoardConfig::QueryFilter
           issues = fetch_issues_for_query(board, filter.query, credentials, 'syncing ' + filter.name + ' filter')
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :query_filter)
-        when BoardConfig::ConfigFilter
+        when JiraTeamMetrics::BoardConfig::ConfigFilter
           issue_keys = filter.issues.map{ |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :config_filter)
         else
