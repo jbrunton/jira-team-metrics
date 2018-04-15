@@ -1,4 +1,4 @@
-class DataTableBuilder
+class JiraTeamMetrics::DataTableBuilder
   def initialize
     @cols = []
     @rows = []

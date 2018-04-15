@@ -27,15 +27,15 @@ class IssuesAggregator
       issues ||= @issues
       issues_by_type = issues
         .group_by{ |i| i.issue_type }
-        .map{ |issue_type, issues_of_type| [issue_type, JiraTeamMetrics::IssuesDecorator.new(issues_of_type)] }
+        .map{ |issue_type, issues_of_type| [issue_type, IssuesDecorator.new(issues_of_type)] }
         .to_h
 
       issue_types = issues_by_type.keys.sort_by do |issue_type|
-        -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1)
+        -(BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1)
       end
 
       issue_types.map do |issue_type|
-        JiraTeamMetrics::BoardDecorator::SummaryRow.new(issue_type, issues_by_type[issue_type], @issues)
+        BoardDecorator::SummaryRow.new(issue_type, issues_by_type[issue_type], @issues)
       end
     end
   end
