@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Board do
+RSpec.describe JiraTeamMetrics::Board do
   let(:board) { create(:board) }
 
   describe "::DEFAULT_CONFIG" do
-    before(:each) { board.config_string = Board::DEFAULT_CONFIG }
+    before(:each) { board.config_string = JiraTeamMetrics::Board::DEFAULT_CONFIG }
 
     it "specifies cycle_times properties" do
       expect(board.config_property('cycle_times.in_progress')).to eq({
@@ -23,7 +23,7 @@ RSpec.describe Board do
 
     it "specifies an outliers filter" do
       expect(board.config.filters).to eq([
-        BoardConfig::ConfigFilter.new(
+        JiraTeamMetrics::BoardConfig::ConfigFilter.new(
           'Outliers',
           [{ 'key' => 'ENG-101', 'reason' => 'blocked in test' }])
       ])

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Issue do
+RSpec.describe JiraTeamMetrics::Issue do
   let(:analysis_transition) {
     {
       'date' => '2017-01-01T12:00:00.000-0000',

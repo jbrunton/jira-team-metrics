@@ -1,8 +1,8 @@
 FactoryGirl.define do
-  factory :board do
+  factory :board, class: JiraTeamMetrics::Board do
     sequence(:jira_id) { |k| k }
     sequence(:name) { |k| "Board #{k}" }
     domain
-    config_string Board::DEFAULT_CONFIG
+    config_string JiraTeamMetrics::Board::DEFAULT_CONFIG
   end
 end

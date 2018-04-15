@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe QueryBuilder do
+RSpec.describe JiraTeamMetrics::QueryBuilder do
   let(:some_query) { 'some query'}
-  let(:builder) { QueryBuilder.new(some_query) }
+  let(:builder) { JiraTeamMetrics::QueryBuilder.new(some_query) }
 
   describe "#query" do
     it "returns the query" do
