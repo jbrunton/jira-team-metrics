@@ -22,5 +22,10 @@
 
 .byebug_history
 
+spec/dummy/db/*.sqlite3
+spec/dummy/db/*.sqlite3-journal
+spec/dummy/log/*.log
+spec/dummy/tmp/
+
 /cache
 /.idea

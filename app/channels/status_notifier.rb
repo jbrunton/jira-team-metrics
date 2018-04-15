@@ -38,10 +38,10 @@ private
   def broadcast(message)
     message.merge!(statusTitle: @status_title) unless message[:status].nil?
     case
-    when @model.is_a?(Board)
+    when @model.is_a?(JiraTeamMetrics::Board)
       SyncBoardChannel.broadcast_to(@model, message)
       SyncDomainChannel.broadcast_to(@model.domain, message)
-    when @model.is_a?(Domain)
+    when @model.is_a?(JiraTeamMetrics::Domain)
       SyncDomainChannel.broadcast_to(@model, message)
     else
       raise "Unexpected model type: #{@model.class}"

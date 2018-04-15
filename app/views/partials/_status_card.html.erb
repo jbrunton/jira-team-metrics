@@ -1,0 +1,90 @@
+<div class="card">
+  <div class="card-content">
+    <span class="card-title">
+    <% if object.class == JiraTeamMetrics::Domain %>
+        Domain Status
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
+        Board Status
+    <% end %>
+    </span>
+    <p>Last synced: <%= pretty_print_date(object.last_synced) %></p>
+    <% if object.class == JiraTeamMetrics::Domain %>
+        <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
+    <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
+        <p>Synced from: <%= pretty_print_date(object.synced_from) %></p>
+    <% end %>
+  </div>
+  <div class="card-action">
+    <a href="#" onclick="showSyncModal();">Sync</a>
+    <% unless readonly? %>
+      <a href="#" onclick="showConfigModal();">Config</a>
+    <% end %>
+    <% if object.class == JiraTeamMetrics::Domain %>
+        <a href="<%= domain_metadata_path %>">Metadata</a>
+  <% end %>
+  </div>
+</div>
+
+<script id="sync-form-template" type="text/x-handlebars-template">
+  <%= render partial: 'partials/sync_form' %>
+</script>
+
+<script id="config-form-template" type="text/x-handlebars-template">
+  <%= render partial: 'config_form' %>
+</script>
+
+<script>
+
+  function showSyncModal(bodyHtml) {
+    modal({
+      title: 'Sync from JIRA',
+      body: bodyHtml ? bodyHtml : $('#sync-form-template').html(),
+      confirm: sync,
+      positiveAction: {
+        text: 'Sync'
+      }
+    });
+  }
+
+  function sync() {
+    $.post(window.location.pathname + '/sync', $( "#sync-form" ).serialize())
+        .fail(function(data) {
+          if (data.status == 400) {
+            // validation error
+            showSyncModal(data.responseText);
+          } else {
+            alertModal({
+              message: 'Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.'
+            });
+          }
+        });
+  }
+
+  function showConfigModal(bodyHtml) {
+    fixedFooterModal({
+      title: 'Update Config',
+      body: bodyHtml ? bodyHtml : $('#config-form-template').html(),
+      confirm: submitConfig,
+      positiveAction: {
+        text: 'Submit'
+      }
+    });
+  }
+
+  function submitConfig() {
+    $.post(window.location.pathname, $("#config-form").serialize())
+        .done(function () {
+          location.reload();
+        })
+        .fail(function (data) {
+          if (data.status == 400) {
+            // validation error
+            showConfigModal(data.responseText);
+          } else if (data.status == 401) {
+            alert('You are unauthorized to make this change.');
+          } else {
+            alert('Unexpected error. Please raise a bug at github.com/jbrunton/jira-team-metrics.');
+          }
+        });
+  }
+</script>

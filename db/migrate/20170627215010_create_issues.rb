@@ -1,6 +1,6 @@
 class CreateIssues < ActiveRecord::Migration[5.1]
   def change
-    create_table :issues do |t|
+    create_table :jira_team_metrics_issues do |t|
       t.string :key
       t.string :issue_type
       t.string :summary
@@ -10,7 +10,8 @@ class CreateIssues < ActiveRecord::Migration[5.1]
       t.string :transitions
       t.string :fields
       t.string :links
-      t.references :board, foreign_key: true
+      # TODO: add foreign key for this column
+      t.references :board, index: true, foreign_key: false
 
       t.timestamps
     end
