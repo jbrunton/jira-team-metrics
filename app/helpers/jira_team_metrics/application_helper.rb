@@ -10,7 +10,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def domain_path
-    "/domain"
+    "#{root_path}domain"
   end
 
   def domain_metadata_path
@@ -18,11 +18,11 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def board_path(board)
-    "/domain/boards/#{board.jira_id}"
+    "#{domain_path}/boards/#{board.jira_id}"
   end
 
   def reports_path(board)
-    "/reports/boards/#{board.jira_id}"
+    "#{root}/reports/boards/#{board.jira_id}"
   end
 
   def deliveries_report_path(board)
@@ -38,11 +38,11 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def board_issues_path(board)
-    "/reports/boards/#{board.jira_id}/issues"
+    "#{reports_path(board)}/issues"
   end
 
   def board_components_path(board)
-    "/components/boards/#{board.jira_id}"
+    "#{root_path}/components/boards/#{board.jira_id}"
   end
 
   def board_component_summary_path(board)
@@ -50,7 +50,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def board_api_path(board)
-    "/api/boards/#{board.jira_id}"
+    "#{root_path}/api/boards/#{board.jira_id}"
   end
 
   def board_control_chart_path(board)

@@ -8,7 +8,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def search
-    @boards = Board.where('name LIKE ?', "%#{params[:query]}%")
+    @boards = JiraTeamMetrics::Board.where('name LIKE ?', "%#{params[:query]}%")
     respond_to do |format|
       format.json { render json: @boards.map{ |board| board.as_json.merge(link: board_path( board)) } }
     end
@@ -25,9 +25,9 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def sync
-    @credentials = Credentials.new(credentials_params)
+    @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
     if @credentials.valid?
-      SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
+      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
       render json: {}, status: 200
     else
       render partial: 'shared/sync_form', status: 400
