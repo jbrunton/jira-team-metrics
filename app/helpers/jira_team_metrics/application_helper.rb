@@ -22,7 +22,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def reports_path(board)
-    "#{root_path}/reports/boards/#{board.jira_id}"
+    "#{root_path}reports/boards/#{board.jira_id}"
   end
 
   def deliveries_report_path(board)
@@ -42,7 +42,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def board_components_path(board)
-    "#{root_path}/components/boards/#{board.jira_id}"
+    "#{root_path}components/boards/#{board.jira_id}"
   end
 
   def board_component_summary_path(board)
@@ -50,7 +50,7 @@ module JiraTeamMetrics::ApplicationHelper
   end
 
   def board_api_path(board)
-    "#{root_path}/api/boards/#{board.jira_id}"
+    "#{root_path}api/boards/#{board.jira_id}"
   end
 
   def board_control_chart_path(board)

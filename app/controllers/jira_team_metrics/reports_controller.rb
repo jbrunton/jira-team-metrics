@@ -48,7 +48,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def delivery
-    @board = Board.find_by(jira_id: @board.jira_id)
+    @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
   end
 
