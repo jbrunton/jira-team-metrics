@@ -1,7 +1,7 @@
 require 'draper'
 
 class IssueDecorator < Draper::Decorator
-  include FormattingHelper
+  include JiraTeamMetrics::FormattingHelper
 
   delegate_all
 

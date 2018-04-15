@@ -10,6 +10,7 @@ module JiraTeamMetrics
     require 'draper'
     require 'descriptive_statistics'
     require 'open-uri'
+    require 'parslet'
 
     config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)
     config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats/scope", __FILE__)

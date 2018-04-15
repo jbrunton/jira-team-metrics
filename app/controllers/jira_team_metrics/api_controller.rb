@@ -1,5 +1,3 @@
-require './app/models/data_table_builder'
-
 class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   include JiraTeamMetrics::ApplicationHelper
 

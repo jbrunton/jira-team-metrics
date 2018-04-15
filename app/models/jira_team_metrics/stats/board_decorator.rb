@@ -1,6 +1,3 @@
-require 'draper'
-require 'descriptive_statistics'
-
 class BoardDecorator < Draper::Decorator
   include JiraTeamMetrics::FormattingHelper
 
@@ -30,7 +27,7 @@ class BoardDecorator < Draper::Decorator
       if @query.blank?
         all_issues
       else
-        MqlInterpreter.new(all_issues).eval(@query)
+        JiraTeamMetrics::MqlInterpreter.new(all_issues).eval(@query)
       end
     end
   end
@@ -81,7 +78,7 @@ class BoardDecorator < Draper::Decorator
 
   def wip_history
     dates = object.issues.map{ |issue| [issue.started_time(@from_state), issue.completed_time(@to_state)] }.flatten.compact
-    min_date = [object.synced_from, dates.min.to_date].max
+    min_date = dates.min.to_date
     max_date = dates.max.to_date
 
     dates = DateRange.new(min_date, max_date).to_a

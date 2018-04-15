@@ -62,14 +62,14 @@
 
     function selectHandler() {
       var selection = chart.getSelection()[0];
-      if (selection.column == <%= ApiController::COMPLETED_ISSUES_COL %>) {
+      if (selection.column == <%= JiraTeamMetrics::ApiController::COMPLETED_ISSUES_COL %>) {
         // completed issues column
-        var key = data.getValue(selection.row, <%= ApiController::COMPLETED_ISSUES_KEY_COL %>);
+        var key = data.getValue(selection.row, <%= JiraTeamMetrics::ApiController::COMPLETED_ISSUES_KEY_COL %>);
         $('#selected_content').animate({ opacity: 0 }).load( '<%= board_path(@board) %>/issues/' + key + '?fragment=true', function() {
           $(this).animate({ opacity: 1 });
           $('.collapsible').collapsible();
         });
-      } else if (selection.column == <%= ApiController::WIP_COL %>) {
+      } else if (selection.column == <%= JiraTeamMetrics::ApiController::WIP_COL %>) {
         // WIP column
         var date = data.getValue(selection.row, 0);
         var dateStr = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();

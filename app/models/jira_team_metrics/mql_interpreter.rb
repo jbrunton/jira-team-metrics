@@ -1,4 +1,4 @@
-class MqlInterpreter
+class JiraTeamMetrics::MqlInterpreter
 
   def initialize(issues)
     @issues = issues
