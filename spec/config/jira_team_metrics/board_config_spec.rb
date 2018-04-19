@@ -18,6 +18,13 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       }
     }
   }
+  let(:sync) {
+    {
+      'since' => '-30d',
+      'subquery' => 'and not filter = MyFilter'
+    }
+  }
+
   let(:config_hash) do
     {
       'default_query' => default_query,

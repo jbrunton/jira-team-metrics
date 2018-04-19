@@ -61,6 +61,13 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def sync_query
+    query_builder = JiraTeamMetrics::QueryBuilder.new(query)
+    sync_subquery = build_sync_subquery
+    query_builder.and(sync_subquery) unless sync_subquery.nil?
+    query_builder.query
+  end
+
   DEFAULT_CONFIG = <<~CONFIG
     ---
     cycle_times:
@@ -80,4 +87,22 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
           - key: ENG-101
             reason: blocked in test
     CONFIG
+
+private
+  def build_sync_subquery
+    if config.sync_options.subquery.nil? && config.sync_options.since.nil?
+      nil
+    elsif config.sync_options.since.nil?
+      config.sync_options.subquery
+    else
+      since_subquery = "statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{config.sync_options.since}\""
+      if config.sync_options.subquery.nil?
+        since_subquery
+      else
+        JiraTeamMetrics::QueryBuilder.new(config.sync_options.subquery)
+          .and(since_subquery)
+          .query
+      end
+    end
+  end
 end

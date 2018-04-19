@@ -44,7 +44,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       .map { |issue| issue.fields['Epic Link'] }
 
     if epic_keys.length > 0
-      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
+      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA')
       epics.each do |i|
         board.issues.create(i)
       end
@@ -63,19 +63,10 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def fetch_issues_for(board, credentials)
-    fetch_issues_for_query(board, nil, credentials, 'fetching issues from JIRA')
+    fetch_issues_for_query(board, board.sync_query, credentials, 'fetching issues from JIRA')
   end
 
-  def fetch_issues_for_query(board, subquery, credentials, status, ignore_board_query = false)
-    if ignore_board_query
-      query = subquery
-    elsif subquery
-      query = JiraTeamMetrics::QueryBuilder.new(board.query)
-        .and(subquery)
-        .query
-    else
-      query = board.query
-    end
+  def fetch_issues_for_query(board, query, credentials, status)
     client = JiraTeamMetrics::JiraClient.new(board.domain.config.url, credentials)
     JiraTeamMetrics::HttpErrorHandler.new(@notifier).invoke do
       client.search_issues(board.domain, query: query) do |progress|

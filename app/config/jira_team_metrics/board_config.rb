@@ -3,6 +3,7 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
   QueryFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)
   PredictiveScope = Struct.new(:board_id, :adjustments_field)
+  SyncOptions = Struct.new(:since, :subquery)
 
   def initialize(config_hash)
     super(config_hash, 'board_config')
@@ -34,6 +35,16 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
       else
         ConfigFilter.new(filter_hash['name'], filter_hash['issues'])
       end
+    end
+  end
+
+  def sync_options
+    if config_hash['sync'].nil?
+      SyncOptions.new(nil, nil)
+    else
+      SyncOptions.new(
+        config_hash['sync']['since'],
+        config_hash['sync']['subquery'])
     end
   end
 end
