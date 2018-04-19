@@ -1,13 +1,11 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, username, password, notify_complete = true)
+  def perform(board, credentials, months, notify_complete = true)
     @notifier = StatusNotifier.new(board, "syncing #{board.name}")
 
-    credentials = {username: username, password: password}
-
     clear_cache(board)
-    sync_issues(board, credentials)
+    sync_issues(board, credentials, months)
     create_filters(board, credentials)
     build_reports(board)
 
@@ -30,9 +28,9 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     end
   end
 
-  def sync_issues(board, credentials)
+  def sync_issues(board, credentials, months)
     @notifier.notify_status('fetching issues from JIRA')
-    issues = fetch_issues_for(board, credentials)
+    issues = fetch_issues_for_query(board, board.sync_query(months), credentials, 'fetching issues from JIRA')
 
     @notifier.notify_status('updating cache')
     issues.each do |i|
@@ -44,12 +42,13 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       .map { |issue| issue.fields['Epic Link'] }
 
     if epic_keys.length > 0
-      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA', true)
+      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA')
       epics.each do |i|
         board.issues.create(i)
       end
     end
 
+    board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
     board.save
   end
@@ -62,20 +61,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.report_fragments.destroy_all
   end
 
-  def fetch_issues_for(board, credentials)
-    fetch_issues_for_query(board, nil, credentials, 'fetching issues from JIRA')
-  end
-
-  def fetch_issues_for_query(board, subquery, credentials, status, ignore_board_query = false)
-    if ignore_board_query
-      query = subquery
-    elsif subquery
-      query = JiraTeamMetrics::QueryBuilder.new(board.query)
-        .and(subquery)
-        .query
-    else
-      query = board.query
-    end
+  def fetch_issues_for_query(board, query, credentials, status)
     client = JiraTeamMetrics::JiraClient.new(board.domain.config.url, credentials)
     JiraTeamMetrics::HttpErrorHandler.new(@notifier).invoke do
       client.search_issues(board.domain, query: query) do |progress|

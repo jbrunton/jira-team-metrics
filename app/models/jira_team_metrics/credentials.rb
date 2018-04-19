@@ -5,4 +5,11 @@ class JiraTeamMetrics::Credentials
 
   validates :username, presence: true
   validates :password, presence: true
+
+  def to_serializable_hash
+    {
+      'username' => username,
+      'password' => password
+    }
+  end
 end

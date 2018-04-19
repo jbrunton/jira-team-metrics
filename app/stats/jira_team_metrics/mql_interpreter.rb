@@ -1,6 +1,7 @@
 class JiraTeamMetrics::MqlInterpreter
 
-  def initialize(issues)
+  def initialize(board, issues)
+    @board = board
     @issues = issues
   end
 
@@ -8,7 +9,7 @@ class JiraTeamMetrics::MqlInterpreter
     parser = MqlParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))
-    ast.eval(@issues)
+    ast.eval(@board, @issues)
   end
 
   class MqlParser < Parslet::Parser
@@ -92,8 +93,8 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   FilterExpr = Struct.new(:filter_name) do
-    def eval(issues)
-      filter = JiraTeamMetrics::Filter.find_by(name: filter_name[:value].to_s)
+    def eval(board, issues)
+      filter = board.filters.select{ |f| f.name == filter_name[:value].to_s }.first
       issues.select do |issue|
         filter.include?(issue)
       end
@@ -101,7 +102,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   BetweenExpr = Struct.new(:lhs, :rhs) do
-    def eval(issues)
+    def eval(_, issues)
       query_date_range = JiraTeamMetrics::DateRange.new(Time.parse(lhs[:value].to_s), Time.parse(rhs[:value].to_s))
       issues.select do |issue|
         issue_date_range = JiraTeamMetrics::DateRange.new(issue.started, issue.completed)
@@ -111,30 +112,30 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   OrExpr = Struct.new(:lhs, :rhs) do
-    def eval(issues)
-      lhs_issues = lhs.eval(issues)
-      rhs_issues = rhs.eval(issues)
+    def eval(board, issues)
+      lhs_issues = lhs.eval(board, issues)
+      rhs_issues = rhs.eval(board, issues)
       lhs_issues + rhs_issues
     end
   end
 
   AndExpr = Struct.new(:lhs, :rhs) do
-    def eval(issues)
-      lhs_issues = lhs.eval(issues)
-      rhs_issues = rhs.eval(issues)
+    def eval(board, issues)
+      lhs_issues = lhs.eval(board, issues)
+      rhs_issues = rhs.eval(board, issues)
       lhs_issues.select{ |issue| rhs_issues.include?(issue) }
     end
   end
 
   NotExpr = Struct.new(:expr) do
-    def eval(issues)
-      exclude_issues = expr.eval(issues)
+    def eval(board, issues)
+      exclude_issues = expr.eval(board, issues)
       issues.select{ |issue| !exclude_issues.include?(issue) }
     end
   end
 
   Comparison = Struct.new(:field, :value) do
-    def eval(issues)
+    def eval(_, issues)
       issues.select do |issue|
         field_name = field[:identifier].to_s
         if ['key', 'issue_type', 'summary'].include?(field_name)

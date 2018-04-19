@@ -4,5 +4,6 @@ FactoryBot.define do
     sequence(:name) { |k| "Board #{k}" }
     domain
     config_string JiraTeamMetrics::Board::DEFAULT_CONFIG
+    query 'Project = MyProject'
   end
 end

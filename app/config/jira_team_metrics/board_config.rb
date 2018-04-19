@@ -36,4 +36,12 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
       end
     end
   end
+
+  def sync_months
+    if config_hash['sync'].nil?
+      nil
+    else
+      config_hash['sync']['months'].to_i
+    end
+  end
 end

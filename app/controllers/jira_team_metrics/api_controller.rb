@@ -118,7 +118,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
   def compare
     sorted_issues = IssuesDecorator.new(@board.completed_issues.sort_by { |issue| issue.cycle_time })
-    selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues).eval(params[:selection_query]))
+    selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues, @board).eval(params[:selection_query]))
     other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
 
     chart_data = data_for_compare_chart(sorted_issues, selected_issues, other_issues)

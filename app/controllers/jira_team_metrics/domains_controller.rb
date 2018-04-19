@@ -21,7 +21,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
     if @credentials.valid?
-      JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.username, @credentials.password)
+      JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.to_serializable_hash)
       render json: {}, status: 200
     else
       render partial: 'shared/sync_form', status: 400

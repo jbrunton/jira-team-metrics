@@ -27,10 +27,10 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
     if @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password)
+      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.to_serializable_hash, sync_months)
       render json: {}, status: 200
     else
-      render partial: 'shared/sync_form', status: 400
+      render partial: 'partials/sync_form', status: 400
     end
   end
 
@@ -39,8 +39,13 @@ private
     params.require(:credential).permit(:username, :password)
   end
 
-  def days_to_sync
-    params.require(:days_to_sync).to_i
+  def subquery
+    params.permit(:subquery)[:subquery]
+  end
+
+  def sync_months
+    months = params.permit(:months)[:months]
+    months.nil? ? nil : months.to_i
   end
 
   def board_params

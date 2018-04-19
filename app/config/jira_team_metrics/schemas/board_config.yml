@@ -46,4 +46,8 @@ optional:
     required:
       board_id: "//int"
       adjustments_field: "//str"
+  sync:
+    type: "//rec"
+    required:
+      months: "//int"
 

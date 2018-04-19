@@ -8,4 +8,12 @@
       <%= form_input(@credentials, :password, type: :password) %>
     </div>
   </div>
+  <% unless @board.nil? %>
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="months" name="months" type="text" class="validate" value="<%= @board.config.sync_months %>">
+          <label for="months">Months to sync (Optional)</label>
+        </div>
+      </div>
+  <% end %>
 </form>
