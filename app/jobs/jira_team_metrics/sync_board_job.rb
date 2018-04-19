@@ -50,6 +50,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       end
     end
 
+    board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
     board.save
   end
