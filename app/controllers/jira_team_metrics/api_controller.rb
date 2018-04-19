@@ -134,7 +134,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
 private
   def build_ct_table(summary_table, series)
-    builder = DataTableBuilder.new
+    builder = JiraTeamMetrics::DataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
       .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
@@ -239,7 +239,7 @@ private
       summary_table = @board.summarize('month').to_h
     end
 
-    builder = DataTableBuilder.new
+    builder = JiraTeamMetrics::DataTableBuilder.new
       .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
 
     @board.issue_types.each do |issue_type|
