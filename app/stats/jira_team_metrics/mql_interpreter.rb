@@ -94,7 +94,7 @@ class JiraTeamMetrics::MqlInterpreter
 
   FilterExpr = Struct.new(:filter_name) do
     def eval(board, issues)
-      filter = board.filters.select{ |filter| filter.name == filter_name[:value].to_s }.first
+      filter = board.filters.select{ |f| f.name == filter_name[:value].to_s }.first
       issues.select do |issue|
         filter.include?(issue)
       end
@@ -102,7 +102,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   BetweenExpr = Struct.new(:lhs, :rhs) do
-    def eval(board, issues)
+    def eval(_, issues)
       query_date_range = JiraTeamMetrics::DateRange.new(Time.parse(lhs[:value].to_s), Time.parse(rhs[:value].to_s))
       issues.select do |issue|
         issue_date_range = JiraTeamMetrics::DateRange.new(issue.started, issue.completed)
@@ -135,7 +135,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   Comparison = Struct.new(:field, :value) do
-    def eval(board, issues)
+    def eval(_, issues)
       issues.select do |issue|
         field_name = field[:identifier].to_s
         if ['key', 'issue_type', 'summary'].include?(field_name)
