@@ -72,7 +72,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     if months.nil?
       nil
     else
-      current_time = Time.now
+      current_time = DateTime.now
       years_diff = months / 12
       months_diff = months - years_diff * 12
       new_year = current_time.year - years_diff
@@ -81,7 +81,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
         new_year = new_year - 1
         new_month = new_month + 12
       end
-      Time.new(new_year, new_month)
+      DateTime.new(new_year, new_month)
     end
   end
 
