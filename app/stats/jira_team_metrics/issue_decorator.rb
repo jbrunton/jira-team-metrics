@@ -11,7 +11,7 @@ class JiraTeamMetrics::IssueDecorator < Draper::Decorator
   end
 
   def epic
-    object.epic.nil? ? nil : IssueDecorator.new(object.epic, @from_date, @to_date, @date_range)
+    object.epic.nil? ? nil : JiraTeamMetrics::IssueDecorator.new(object.epic, @from_date, @to_date, @date_range)
   end
 
   def started
@@ -30,34 +30,11 @@ class JiraTeamMetrics::IssueDecorator < Draper::Decorator
     if issue_type == 'Epic'
       nil
     else
-      @date_range.nil? ? nil : @date_range.overlap_with(DateRange.new(@started, @completed)).duration
+      @date_range.nil? ? nil : @date_range.overlap_with(JiraTeamMetrics::DateRange.new(@started, @completed)).duration
     end
   end
 
   def decorate(_options)
     self
-  end
-
-  def overview_table
-    rows = [
-      DataTable::Row.new(['Key', key], nil),
-      DataTable::Row.new(['Summary', summary], nil),
-      DataTable::Row.new(['Issue Type', issue_type], nil),
-      DataTable::Row.new(['Started', pretty_print_time(started)], nil),
-      DataTable::Row.new(['Completed', pretty_print_time(completed)], nil),
-      DataTable::Row.new(['Cycle Time (days)', pretty_print_number(cycle_time)], nil),
-      DataTable::Row.new(['Labels', labels.join(', ')], nil)
-    ]
-    DataTable.new(rows)
-  end
-
-  def transitions_table
-    rows = transitions.map do |t|
-      DataTable::Row.new([
-        pretty_print_time(Time.parse(t['date'])),
-        "#{t['fromStatus']} -> #{t['toStatus']}"
-      ], nil)
-    end
-    DataTable.new(rows)
   end
 end
