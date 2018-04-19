@@ -77,9 +77,8 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   end
 
   def wip_history
-    dates = object.issues.map{ |issue| [issue.started_time(@from_state), issue.completed_time(@to_state)] }.flatten.compact
-    min_date = dates.min.to_date
-    max_date = dates.max.to_date
+    min_date = @date_range.start_date
+    max_date = @date_range.end_date
 
     dates = JiraTeamMetrics::DateRange.new(min_date, max_date).to_a
     dates.map do |date|
