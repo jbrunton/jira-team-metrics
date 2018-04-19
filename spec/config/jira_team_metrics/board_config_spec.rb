@@ -113,5 +113,20 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
         expect(board_config.predictive_scope).to eq(JiraTeamMetrics::BoardConfig::PredictiveScope.new(123, 'Predictive Adjustments'))
       end
     end
+
+    context "#sync_months" do
+      it "returns nil if no sync options are given" do
+        board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+        expect(board_config.sync_months).to eq(nil)
+      end
+
+      it "returns the number of months to sync when specified" do
+        config_hash['sync'] = {
+          'months' => 6
+        }
+        board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+        expect(board_config.sync_months).to eq(6)
+      end
+    end
   end
 end

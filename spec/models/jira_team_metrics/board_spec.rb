@@ -35,37 +35,39 @@ RSpec.describe JiraTeamMetrics::Board do
     end
   end
 
+  describe "#sync_from" do
+    context "when the rounded date is the same year" do
+      it "returns the 1st of the month a given number of months ago" do
+        travel_to Time.new(2018, 4, 12) do
+          expect(board.sync_from(1)).to eq(Time.new(2018, 3, 1))
+        end
+      end
+    end
+
+    context "when the rounded date is the previous year" do
+      it "returns the 1st of the month a given number of months ago" do
+        travel_to Time.new(2018, 1, 12) do
+          expect(board.sync_from(1)).to eq(Time.new(2017, 12, 1))
+        end
+      end
+    end
+  end
+
   describe "#sync_query" do
     context "when no sync options are specified" do
       it "returns the board query" do
-        expect(board.sync_query('', '')).to eq(board.query)
+        expect(board.sync_query(nil)).to eq(board.query)
       end
     end
 
-    context "when a subquery is given" do
-      let(:subquery) { 'issuetype != Bug' }
-
-      it "returns the query with the subquery" do
-        expect(board.sync_query(subquery, '')).to eq("(#{board.query}) AND (#{subquery})")
-      end
-    end
-
-    context "when a since option is given" do
-      let(:since) { '-30d' }
+    context "when a months option is given" do
+      let(:months) { 2 }
 
       it "returns the query with the since option" do
-        expected_query = "(#{board.query}) AND (statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{since}\")"
-        expect(board.sync_query('', since)).to eq(expected_query)
-      end
-    end
-
-    context "when both sync options are given" do
-      let(:subquery) { 'issuetype != Bug' }
-      let(:since) { '-30d' }
-
-      it "returns the query with both sync options" do
-        expected_query = "(#{board.query}) AND ((#{subquery}) AND (statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{since}\"))"
-        expect(board.sync_query(subquery, since)).to eq(expected_query)
+        travel_to Time.new(2018, 4, 12) do
+          expected_query = "(#{board.query}) AND (statusCategory = \"In Progress\" OR status CHANGED AFTER \"2018-02-01\")"
+          expect(board.sync_query(months)).to eq(expected_query)
+        end
       end
     end
   end

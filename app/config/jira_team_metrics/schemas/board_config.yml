@@ -48,7 +48,6 @@ optional:
       adjustments_field: "//str"
   sync:
     type: "//rec"
-    optional:
-      since: "//str"
-      subquery: "//str"
+    required:
+      months: "//int"
 

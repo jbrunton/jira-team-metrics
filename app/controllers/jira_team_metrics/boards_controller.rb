@@ -27,7 +27,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
     if @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password, subquery, since)
+      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password, sync_months)
       render json: {}, status: 200
     else
       render partial: 'partials/sync_form', status: 400
@@ -43,8 +43,9 @@ private
     params.permit(:subquery)[:subquery]
   end
 
-  def since
-    params.permit(:since)[:since]
+  def sync_months
+    months = params.permit(:months)[:months]
+    months.nil? ? nil : months.to_i
   end
 
   def board_params
