@@ -27,7 +27,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
       if @query.blank?
         all_issues
       else
-        JiraTeamMetrics::MqlInterpreter.new(all_issues).eval(@query)
+        JiraTeamMetrics::MqlInterpreter.new(object, all_issues).eval(@query)
       end
     end
   end

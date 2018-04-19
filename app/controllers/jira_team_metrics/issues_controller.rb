@@ -20,6 +20,6 @@ class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
 
 private
   def set_issue
-    @issue = IssueDecorator.new(@board.object.issues.find{ |i| i.key == params[:issue_key] }, nil, nil, nil)
+    @issue = JiraTeamMetrics::IssueDecorator.new(@board.object.issues.find{ |i| i.key == params[:issue_key] }, nil, nil, nil)
   end
 end
