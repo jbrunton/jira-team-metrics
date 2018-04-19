@@ -8,4 +8,18 @@
       <%= form_input(@credentials, :password, type: :password) %>
     </div>
   </div>
+  <% unless @board.nil? %>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="subquery" name="subquery" type="text" class="validate" value="<%= @board.config.sync_options.subquery %>">
+          <label for="subquery">Subquery (Optional)</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="since" name="subquery" type="text" class="validate" value="<%= @board.config.sync_options.since %>">
+          <label for="since">Since (Optional)</label>
+        </div>
+      </div>
+  <% end %>
 </form>

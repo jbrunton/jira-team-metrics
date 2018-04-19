@@ -61,10 +61,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  def sync_query
+  def sync_query(subquery, since)
     query_builder = JiraTeamMetrics::QueryBuilder.new(query)
-    sync_subquery = build_sync_subquery
-    query_builder.and(sync_subquery) unless sync_subquery.nil?
+    sync_subquery = build_sync_subquery(subquery, since)
+    query_builder.and(sync_subquery) unless sync_subquery.blank?
     query_builder.query
   end
 
@@ -89,17 +89,17 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     CONFIG
 
 private
-  def build_sync_subquery
-    if config.sync_options.subquery.nil? && config.sync_options.since.nil?
+  def build_sync_subquery(subquery, since)
+    if subquery.blank? && since.blank?
       nil
-    elsif config.sync_options.since.nil?
-      config.sync_options.subquery
+    elsif since.blank?
+      subquery
     else
-      since_subquery = "statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{config.sync_options.since}\""
-      if config.sync_options.subquery.nil?
+      since_subquery = "statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{since}\""
+      if subquery.blank?
         since_subquery
       else
-        JiraTeamMetrics::QueryBuilder.new(config.sync_options.subquery)
+        JiraTeamMetrics::QueryBuilder.new(subquery)
           .and(since_subquery)
           .query
       end

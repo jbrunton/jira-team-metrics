@@ -38,40 +38,24 @@ RSpec.describe JiraTeamMetrics::Board do
   describe "#sync_query" do
     context "when no sync options are specified" do
       it "returns the board query" do
-        expect(board.sync_query).to eq(board.query)
+        expect(board.sync_query('', '')).to eq(board.query)
       end
     end
 
     context "when a subquery is given" do
       let(:subquery) { 'issuetype != Bug' }
 
-      before(:each) do
-        board.config_string = {
-          'sync' => {
-            'subquery' => subquery
-          }
-        }.to_yaml
-      end
-
       it "returns the query with the subquery" do
-        expect(board.sync_query).to eq("(#{board.query}) AND (#{subquery})")
+        expect(board.sync_query(subquery, '')).to eq("(#{board.query}) AND (#{subquery})")
       end
     end
 
     context "when a since option is given" do
       let(:since) { '-30d' }
 
-      before(:each) do
-        board.config_string = {
-          'sync' => {
-            'since' => since
-          }
-        }.to_yaml
-      end
-
       it "returns the query with the since option" do
         expected_query = "(#{board.query}) AND (statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{since}\")"
-        expect(board.sync_query).to eq(expected_query)
+        expect(board.sync_query('', since)).to eq(expected_query)
       end
     end
 
@@ -79,18 +63,9 @@ RSpec.describe JiraTeamMetrics::Board do
       let(:subquery) { 'issuetype != Bug' }
       let(:since) { '-30d' }
 
-      before(:each) do
-        board.config_string = {
-          'sync' => {
-            'subquery' => subquery,
-            'since' => since
-          }
-        }.to_yaml
-      end
-
       it "returns the query with both sync options" do
         expected_query = "(#{board.query}) AND ((#{subquery}) AND (statusCategory = \"In Progress\" OR status CHANGED AFTER \"#{since}\"))"
-        expect(board.sync_query).to eq(expected_query)
+        expect(board.sync_query(subquery, since)).to eq(expected_query)
       end
     end
   end
