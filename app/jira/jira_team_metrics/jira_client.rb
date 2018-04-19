@@ -75,7 +75,7 @@ class JiraTeamMetrics::JiraClient
 private
   def setup_request(uri)
     request = Net::HTTP::Get.new(uri)
-    request.basic_auth @credentials[:username], @credentials[:password]
+    request.basic_auth @credentials['username'], @credentials['password']
     request
   end
 

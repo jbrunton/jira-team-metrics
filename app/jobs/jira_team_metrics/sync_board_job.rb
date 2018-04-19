@@ -1,10 +1,8 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, username, password, months, notify_complete = true)
+  def perform(board, credentials, months, notify_complete = true)
     @notifier = StatusNotifier.new(board, "syncing #{board.name}")
-
-    credentials = {username: username, password: password}
 
     clear_cache(board)
     sync_issues(board, credentials, months)

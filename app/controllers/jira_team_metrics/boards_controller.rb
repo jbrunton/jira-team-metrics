@@ -27,7 +27,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
     if @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.username, @credentials.password, sync_months)
+      JiraTeamMetrics::SyncBoardJob.perform_later(@board.object, @credentials.to_serializable_hash, sync_months)
       render json: {}, status: 200
     else
       render partial: 'partials/sync_form', status: 400
