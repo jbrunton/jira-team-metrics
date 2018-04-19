@@ -1,13 +1,13 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, username, password, notify_complete = true)
+  def perform(board, username, password, subquery, since, notify_complete = true)
     @notifier = StatusNotifier.new(board, "syncing #{board.name}")
 
     credentials = {username: username, password: password}
 
     clear_cache(board)
-    sync_issues(board, credentials)
+    sync_issues(board, credentials, subquery, since)
     create_filters(board, credentials)
     build_reports(board)
 
@@ -30,9 +30,9 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     end
   end
 
-  def sync_issues(board, credentials)
+  def sync_issues(board, credentials, subquery, since)
     @notifier.notify_status('fetching issues from JIRA')
-    issues = fetch_issues_for(board, credentials)
+    issues = fetch_issues_for_query(board, board.sync_query(subquery, since), credentials, 'fetching issues from JIRA')
 
     @notifier.notify_status('updating cache')
     issues.each do |i|
@@ -60,10 +60,6 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.issues.destroy_all
     board.filters.destroy_all
     board.report_fragments.destroy_all
-  end
-
-  def fetch_issues_for(board, credentials)
-    fetch_issues_for_query(board, board.sync_query, credentials, 'fetching issues from JIRA')
   end
 
   def fetch_issues_for_query(board, query, credentials, status)
