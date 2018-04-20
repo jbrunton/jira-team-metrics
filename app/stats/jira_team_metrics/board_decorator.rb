@@ -1,6 +1,8 @@
 class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   include JiraTeamMetrics::FormattingHelper
 
+  attr_reader :date_range
+
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   
   delegate_all

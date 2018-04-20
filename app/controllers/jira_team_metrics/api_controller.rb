@@ -23,13 +23,18 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
 
   def count_summary
-    summary_table = @board.summarize
+    completed_issues = @board.completed_issues.select do |issue|
+      @board.date_range.start_date <= issue.completed &&
+        issue.completed < @board.date_range.end_date
+    end
 
-    builder = JiraTeamMetrics::JsonDataTableBuilder.new
-      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
-      .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
-
-    render json: builder.build
+    render json: JiraTeamMetrics::DataTableBuilder.new
+      .data(completed_issues)
+      .pick(:issue_type)
+      .build
+      .group_by('issue_type', :count, of: 'issue_type', as: 'Count')
+      .sort_by('Count', :desc)
+      .to_json
   end
 
   def count_summary_by_month

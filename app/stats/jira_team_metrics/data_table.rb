@@ -21,6 +21,15 @@ class JiraTeamMetrics::DataTable
       grouped_data)
   end
 
+  def sort_by(column, sort_order)
+    index = columns.index(column)
+    sort_factor = sort_order == :desc ? -1 : 1
+    JiraTeamMetrics::DataTable.new(
+      columns,
+      rows.sort_by{ |row| row[index] * sort_factor }
+    )
+  end
+
   def to_json
     {
       'cols' => columns.each_with_index.map do |column_name, column_index|
