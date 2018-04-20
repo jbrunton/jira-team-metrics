@@ -18,7 +18,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
   end
 
   describe "#group_by" do
-    it "aggregates rows by the given block" do
+    it "aggregates rows by the given column" do
       data_table = JiraTeamMetrics::DataTable.new(columns, rows)
       grouped_data = data_table.group_by('issue_type', :count, of: 'issue_key', as: 'Count')
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
