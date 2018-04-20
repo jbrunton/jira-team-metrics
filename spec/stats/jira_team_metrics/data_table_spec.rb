@@ -53,10 +53,10 @@ RSpec.describe JiraTeamMetrics::DataTable do
       json = data_table.to_json
       expect(json).to eq({
         'cols' => [
-          { 'label' => 'issue_key' },
-          { 'label' => 'issue_type' },
-          { 'label' => 'developer' },
-          { 'label' => 'cycle_time' }
+          { 'label' => 'issue_key', 'type' => 'string' },
+          { 'label' => 'issue_type', 'type' => 'string' },
+          { 'label' => 'developer', 'type' => 'string' },
+          { 'label' => 'cycle_time', 'type' => 'number' }
         ],
         'rows' => [
           {

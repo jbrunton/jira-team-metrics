@@ -23,7 +23,9 @@ class JiraTeamMetrics::DataTable
 
   def to_json
     {
-      'cols' => columns.map { |column_name| { 'label' => column_name } },
+      'cols' => columns.each_with_index.map do |column_name, column_index|
+        { 'label' => column_name, 'type' => column_type(column_index) }
+      end,
       'rows' => rows.map { |row| { 'c' => row.map { |x| { 'v' => x } } } }
     }
   end
@@ -34,5 +36,13 @@ private
       aggregator_value,
       rows.map{ |row| row[expression_index] }.compact.send(operation)
     ]
+  end
+
+  def column_type(index)
+    types = rows.map{ |row| row[index] }.compact.map{ |v| v.class }.uniq
+    if types.count == 1 && types[0] <= Numeric
+      return 'number'
+    end
+    'string'
   end
 end
