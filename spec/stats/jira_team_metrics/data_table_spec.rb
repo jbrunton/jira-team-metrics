@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::DataTable do
-  let(:columns) { ['issue_key', 'issue_type'] }
+  let(:columns) { ['issue_key', 'issue_type', 'assignee'] }
 
   let(:rows) {[
-    ['DEV-100', 'Story'],
-    ['DEV-101', 'Bug'],
-    ['DEV-102', 'Story']
+    ['DEV-100', 'Story', 'Joe'],
+    ['DEV-101', 'Bug', 'Anne'],
+    ['DEV-102', 'Story', nil]
   ]}
 
   describe "#initialize" do
@@ -24,6 +24,16 @@ RSpec.describe JiraTeamMetrics::DataTable do
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
       expect(grouped_data.rows).to eq([
         ['Story', 2],
+        ['Bug', 1]
+      ])
+    end
+
+    it "aggregates based on compacted values" do
+      data_table = JiraTeamMetrics::DataTable.new(columns, rows)
+      grouped_data = data_table.group_by('issue_type', :count, of: 'assignee', as: 'Count')
+      expect(grouped_data.columns).to eq(['issue_type', 'Count'])
+      expect(grouped_data.rows).to eq([
+        ['Story', 1],
         ['Bug', 1]
       ])
     end
