@@ -1,4 +1,4 @@
-class JiraTeamMetrics::DataTable
+class JiraTeamMetrics::JsonDataTable
   attr_reader :rows
 
   def initialize(rows)
@@ -7,7 +7,7 @@ class JiraTeamMetrics::DataTable
 
   def column(index)
     @rows
-      .select{ |row| !row.is_a?(JiraTeamMetrics::DataTable::Header) }
+      .select{ |row| !row.is_a?(JiraTeamMetrics::JsonDataTable::Header) }
       .map{ |row| row.items[index] }
   end
 

@@ -25,7 +25,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   def count_summary
     summary_table = @board.summarize
 
-    builder = DataTableBuilder.new
+    builder = JiraTeamMetrics::JsonDataTableBuilder.new
       .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
       .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
 
@@ -47,7 +47,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   def effort_summary
     summary_table = @board.summarize
 
-    builder = JiraTeamMetrics::DataTableBuilder.new
+    builder = JiraTeamMetrics::JsonDataTableBuilder.new
       .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
       .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
 
@@ -134,7 +134,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
 private
   def build_ct_table(summary_table, series)
-    builder = JiraTeamMetrics::DataTableBuilder.new
+    builder = JiraTeamMetrics::JsonDataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
       .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
@@ -162,7 +162,7 @@ private
   end
 
   def build_count_table(summary_table, series)
-    builder = DataTableBuilder.new
+    builder = JsonDataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Count', id: 'count'}, summary_table.map(&:count))
 
@@ -239,7 +239,7 @@ private
       summary_table = @board.summarize('month').to_h
     end
 
-    builder = JiraTeamMetrics::DataTableBuilder.new
+    builder = JiraTeamMetrics::JsonDataTableBuilder.new
       .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
 
     @board.issue_types.each do |issue_type|
