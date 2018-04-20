@@ -7,12 +7,13 @@ RSpec.describe JiraTeamMetrics::DataTable do
     ['DEV-100', 'Story', 'Joe', 3],
     ['DEV-101', 'Bug', 'Anne', 2],
     ['DEV-102', 'Story', nil, nil],
-    ['DEV-102', 'Story', 'Anne', 4]
+    ['DEV-103', 'Story', 'Anne', 4]
   ]}
+
+  let(:data_table) { JiraTeamMetrics::DataTable.new(columns, rows) }
 
   describe "#initialize" do
     it "initializes the rows and columns" do
-      data_table = JiraTeamMetrics::DataTable.new(columns, rows)
       expect(data_table.columns).to eq(columns)
       expect(data_table.rows).to eq(rows)
     end
@@ -20,7 +21,6 @@ RSpec.describe JiraTeamMetrics::DataTable do
 
   describe "#group_by" do
     it "aggregates rows by the given column" do
-      data_table = JiraTeamMetrics::DataTable.new(columns, rows)
       grouped_data = data_table.group_by('issue_type', :count, of: 'issue_key', as: 'Count')
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
       expect(grouped_data.rows).to eq([
@@ -30,7 +30,6 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
 
     it "aggregates based on compacted values" do
-      data_table = JiraTeamMetrics::DataTable.new(columns, rows)
       grouped_data = data_table.group_by('issue_type', :count, of: 'developer', as: 'Count')
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
       expect(grouped_data.rows).to eq([
@@ -40,13 +39,60 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
 
     it "aggregates based on the given function" do
-      data_table = JiraTeamMetrics::DataTable.new(columns, rows)
       grouped_data = data_table.group_by('issue_type', :sum, of: 'cycle_time', as: 'Sum')
       expect(grouped_data.columns).to eq(['issue_type', 'Sum'])
       expect(grouped_data.rows).to eq([
         ['Story', 7],
         ['Bug', 2]
       ])
+    end
+  end
+
+  describe "#to_json" do
+    it "returns a json representation for google charts" do
+      json = data_table.to_json
+      expect(json).to eq({
+        'cols' => [
+          { 'label' => 'issue_key' },
+          { 'label' => 'issue_type' },
+          { 'label' => 'developer' },
+          { 'label' => 'cycle_time' }
+        ],
+        'rows' => [
+          {
+            'c' => [
+              { 'v' => 'DEV-100' },
+              { 'v' => 'Story' },
+              { 'v' => 'Joe' },
+              { 'v' => 3 }
+            ]
+          },
+          {
+            'c' => [
+              { 'v' => 'DEV-101' },
+              { 'v' => 'Bug' },
+              { 'v' => 'Anne' },
+              { 'v' => 2 }
+            ]
+          },
+          {
+            'c' => [
+              { 'v' => 'DEV-102' },
+              { 'v' => 'Story' },
+              { 'v' => nil },
+              { 'v' => nil }
+            ]
+          },
+          {
+            'c' => [
+              { 'v' => 'DEV-103' },
+              { 'v' => 'Story' },
+              { 'v' => 'Anne' },
+              { 'v' => 4 }
+            ]
+          }
+        ]
+      })
     end
   end
 end

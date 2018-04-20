@@ -21,6 +21,13 @@ class JiraTeamMetrics::DataTable
       grouped_data)
   end
 
+  def to_json
+    {
+      'cols' => columns.map { |column_name| { 'label' => column_name } },
+      'rows' => rows.map { |row| { 'c' => row.map { |x| { 'v' => x } } } }
+    }
+  end
+
 private
   def aggregate(aggregator_value, expression_index, operation, rows)
     [
