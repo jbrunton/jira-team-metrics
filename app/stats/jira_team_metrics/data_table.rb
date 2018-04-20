@@ -14,7 +14,7 @@ class JiraTeamMetrics::DataTable
 
     grouped_data = rows
       .group_by { |row| row[aggregate_index] }
-      .map { |aggregator_value, rows| aggregate(aggregator_value, expression_index, rows) }
+      .map { |aggregator_value, rows| aggregate(aggregator_value, expression_index, operation, rows) }
 
     JiraTeamMetrics::DataTable.new(
       [aggregate_column, expression_name],
@@ -22,10 +22,10 @@ class JiraTeamMetrics::DataTable
   end
 
 private
-  def aggregate(aggregator_value, expression_index, rows)
+  def aggregate(aggregator_value, expression_index, operation, rows)
     [
       aggregator_value,
-      rows.map{ |row| row[expression_index] }.compact.count
+      rows.map{ |row| row[expression_index] }.compact.send(operation)
     ]
   end
 end
