@@ -7,17 +7,22 @@ class JiraTeamMetrics::DataTable
     @rows = rows
   end
 
-  def group_by(expression_column, operation, opts)
+  def group_by(expression_opts, operation, opts)
+    if expression_opts.is_a?(Array)
+      expression_columns = expression_opts
+    else
+      expression_columns = [expression_opts]
+    end
     aggregate_column, aggregate_name = opts.values_at(:of, :as)
-    expression_index = columns.index(expression_column)
+    expression_indexes = expression_columns.map { |expression_column| columns.index(expression_column) }
     aggregate_index = columns.index(aggregate_column)
 
     grouped_data = rows
-      .group_by { |row| row[expression_index] }
-      .map { |expression_value, rows| aggregate(expression_value, aggregate_index, operation, rows) }
+      .group_by { |row| expression_indexes.map{ |expression_index| row[expression_index] } }
+      .map { |expression_values, rows| aggregate(expression_values, aggregate_index, operation, rows) }
 
     JiraTeamMetrics::DataTable.new(
-      [expression_column, aggregate_name],
+      expression_columns + [aggregate_name],
       grouped_data)
   end
 
@@ -40,9 +45,8 @@ class JiraTeamMetrics::DataTable
   end
 
 private
-  def aggregate(expression_value, aggregate_index, operation, rows)
-    [
-      expression_value,
+  def aggregate(expression_values, aggregate_index, operation, rows)
+    expression_values + [
       rows.map{ |row| row[aggregate_index] }.compact.send(operation)
     ]
   end

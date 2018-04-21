@@ -54,6 +54,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
       expect(grouped_data.rows).to eq([
         ['Story', 'Joe', 2],
         ['Bug', 'Anne', 1],
+        ['Story', nil, 1],
         ['Story', 'Anne', 1]
       ])
     end
