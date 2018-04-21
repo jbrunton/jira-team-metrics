@@ -4,7 +4,7 @@
   (function() {
     var chart = new ChartBuilder('<%= chart_id %>')
         .chartOpts({
-          title: 'Count By Type'
+          title: 'Count'
         })
         .url('<%= board_api_path(@board) %>/count_summary.json')
         .chartType('PieChart')
@@ -15,5 +15,5 @@
   })();
 </script>
 
-<div id="<%= chart_id %>">
+<div id="<%= chart_id %>" style="height: 300px;">
 </div>
