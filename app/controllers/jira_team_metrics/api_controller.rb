@@ -50,13 +50,18 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def effort_summary
-    summary_table = @board.summarize
+    completed_issues = @board.completed_issues.select do |issue|
+      @board.date_range.start_date <= issue.completed &&
+        issue.completed < @board.date_range.end_date
+    end
 
-    builder = JiraTeamMetrics::JsonDataTableBuilder.new
-      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
-      .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
-
-    render json: builder.build
+    render json: JiraTeamMetrics::DataTableBuilder.new
+      .data(completed_issues)
+      .pick(:issue_type, :cycle_time)
+      .build
+      .group_by('issue_type', :sum, of: 'cycle_time', as: 'Days')
+      .sort_by('Days', :desc)
+      .to_json
   end
 
   def cycle_time_summary
