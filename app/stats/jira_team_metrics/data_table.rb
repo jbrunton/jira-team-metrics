@@ -18,8 +18,17 @@ class JiraTeamMetrics::DataTable
     aggregate_index = columns.index(aggregate_column)
 
     grouped_data = rows
-      .group_by { |row| expression_indexes.map{ |expression_index| row[expression_index] } }
-      .map { |expression_values, rows| aggregate(expression_values, aggregate_index, operation, rows) }
+      .group_by do |row|
+        group_by_values = expression_indexes.map{ |expression_index| row[expression_index] }
+        if block_given?
+          yield(*group_by_values)
+        else
+          group_by_values
+        end
+      end
+      .map do |expression_values, rows|
+        aggregate(expression_values, aggregate_index, operation, rows)
+      end
 
     JiraTeamMetrics::DataTable.new(
       expression_columns + [aggregate_name],
