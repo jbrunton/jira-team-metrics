@@ -33,7 +33,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .pick(:issue_type)
       .build
       .group_by('issue_type', :count, of: 'issue_type', as: 'Count')
-      .sort_by('Count', :desc)
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .to_json
   end
 
@@ -48,11 +48,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .data(completed_issues)
       .pick(:issue_type, :completed)
       .build
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .group_by(['issue_type', 'completed'], :count, of: 'issue_type', as: 'Count') do |issue_type, completed|
         [issue_type, DateTime.new(completed.year, completed.month).strftime('%b %Y')]
       end
       .pivot_on('issue_type', select: 'Count', if_nil: 0)
-      .to_json
 
     render json: data_table.to_json
   end
