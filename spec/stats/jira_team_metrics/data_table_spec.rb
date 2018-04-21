@@ -7,7 +7,8 @@ RSpec.describe JiraTeamMetrics::DataTable do
     ['DEV-100', 'Story', 'Joe', 3],
     ['DEV-101', 'Bug', 'Anne', 2],
     ['DEV-102', 'Story', nil, nil],
-    ['DEV-103', 'Story', 'Anne', 4]
+    ['DEV-103', 'Story', 'Anne', 4],
+    ['DEV-104', 'Story', 'Joe', 1]
   ]}
 
   let(:data_table) { JiraTeamMetrics::DataTable.new(columns, rows) }
@@ -24,7 +25,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
       grouped_data = data_table.group_by('issue_type', :count, of: 'issue_key', as: 'Count')
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
       expect(grouped_data.rows).to eq([
-        ['Story', 3],
+        ['Story', 4],
         ['Bug', 1]
       ])
     end
@@ -33,7 +34,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
       grouped_data = data_table.group_by('issue_type', :count, of: 'developer', as: 'Count')
       expect(grouped_data.columns).to eq(['issue_type', 'Count'])
       expect(grouped_data.rows).to eq([
-        ['Story', 2],
+        ['Story', 3],
         ['Bug', 1]
       ])
     end
@@ -42,11 +43,28 @@ RSpec.describe JiraTeamMetrics::DataTable do
       grouped_data = data_table.group_by('issue_type', :sum, of: 'cycle_time', as: 'Sum')
       expect(grouped_data.columns).to eq(['issue_type', 'Sum'])
       expect(grouped_data.rows).to eq([
-        ['Story', 7],
+        ['Story', 8],
         ['Bug', 2]
       ])
     end
+
+    it "aggregates by multiple columns" do
+      grouped_data = data_table.group_by(['issue_type', 'developer'], :count, of: 'issue_key', as: 'Count')
+      expect(grouped_data.columns).to eq(['issue_type', 'developer', 'Count'])
+      expect(grouped_data.rows).to eq([
+        ['Story', 'Joe', 2],
+        ['Bug', 'Anne', 1],
+        ['Story', 'Anne', 1]
+      ])
+    end
   end
+
+  # describe "#pivot_on" do
+  #   it "creates a pivot table based on the given columns" do
+  #     pivot_data = data_table.pivot_on('developer')
+  #     expect(pivot_data.columns).to eq([''])
+  #   end
+  # end
 
   describe "#to_json" do
     it "returns a json representation for google charts" do
@@ -89,6 +107,14 @@ RSpec.describe JiraTeamMetrics::DataTable do
               { 'v' => 'Story' },
               { 'v' => 'Anne' },
               { 'v' => 4 }
+            ]
+          },
+          {
+            'c' => [
+              { 'v' => 'DEV-104' },
+              { 'v' => 'Story' },
+              { 'v' => 'Joe' },
+              { 'v' => 1 }
             ]
           }
         ]
