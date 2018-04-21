@@ -58,7 +58,9 @@ class JiraTeamMetrics::DataTable
     end
 
     pivot_rows = pivot_hash.map do |pivot_key, pivot_value_hash|
-      pivot_key + pivot_column_values.map { |val| pivot_value_hash[val] }
+      pivot_key + pivot_column_values.map do |val|
+        pivot_value_hash[val] || opts[:if_nil]
+      end
     end
 
     JiraTeamMetrics::DataTable.new(
