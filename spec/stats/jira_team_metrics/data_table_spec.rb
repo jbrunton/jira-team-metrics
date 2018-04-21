@@ -66,6 +66,10 @@ RSpec.describe JiraTeamMetrics::DataTable do
       expect(grouped_data.columns).to eq(['issue_type', 'developer', 'Count'])
       pivot_data = grouped_data.pivot_on('developer', select: 'Count')
       expect(pivot_data.columns).to eq(['issue_type', 'Joe', 'Anne', nil])
+      expect(pivot_data.rows).to eq([
+        ['Story', 2, 1, 1],
+        ['Bug', nil, 1, nil]
+      ])
     end
   end
 

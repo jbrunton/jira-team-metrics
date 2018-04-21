@@ -39,14 +39,31 @@ class JiraTeamMetrics::DataTable
     pivot_column_index = columns.index(pivot_column)
     pivot_column_values = rows.map{ |row| row[pivot_column_index] }.uniq
     select_column = opts[:select]
+    select_column_index = columns.index(select_column)
 
-    pivot_columns = columns.select do |column|
+    retained_columns = columns.select do |column|
       ![pivot_column, select_column].include?(column)
-    end + pivot_column_values
+    end
+
+    pivot_columns = retained_columns + pivot_column_values
+
+    pivot_hash = {}
+    pivot_hash_key_indexes = retained_columns.map { |column| columns.index(column) }
+
+    rows.each do |row|
+      pivot_key = row.values_at(*pivot_hash_key_indexes)
+      pivot_value = row[pivot_column_index]
+      pivot_hash[pivot_key] ||= {}
+      pivot_hash[pivot_key][pivot_value] = row[select_column_index]
+    end
+
+    pivot_rows = pivot_hash.map do |pivot_key, pivot_value_hash|
+      pivot_key + pivot_column_values.map { |val| pivot_value_hash[val] }
+    end
 
     JiraTeamMetrics::DataTable.new(
       pivot_columns,
-      []
+      pivot_rows
     )
   end
 
