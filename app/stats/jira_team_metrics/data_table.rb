@@ -35,6 +35,21 @@ class JiraTeamMetrics::DataTable
     )
   end
 
+  def pivot_on(pivot_column, opts)
+    pivot_column_index = columns.index(pivot_column)
+    pivot_column_values = rows.map{ |row| row[pivot_column_index] }.uniq
+    select_column = opts[:select]
+
+    pivot_columns = columns.select do |column|
+      ![pivot_column, select_column].include?(column)
+    end + pivot_column_values
+
+    JiraTeamMetrics::DataTable.new(
+      pivot_columns,
+      []
+    )
+  end
+
   def to_json
     {
       'cols' => columns.each_with_index.map do |column_name, column_index|

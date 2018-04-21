@@ -60,12 +60,14 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
-  # describe "#pivot_on" do
-  #   it "creates a pivot table based on the given columns" do
-  #     pivot_data = data_table.pivot_on('developer')
-  #     expect(pivot_data.columns).to eq([''])
-  #   end
-  # end
+  describe "#pivot_on" do
+    it "creates a pivot table based on the given columns" do
+      grouped_data = data_table.group_by(['issue_type', 'developer'], :count, of: 'issue_key', as: 'Count')
+      expect(grouped_data.columns).to eq(['issue_type', 'developer', 'Count'])
+      pivot_data = grouped_data.pivot_on('developer', select: 'Count')
+      expect(pivot_data.columns).to eq(['issue_type', 'Joe', 'Anne', nil])
+    end
+  end
 
   describe "#to_json" do
     it "returns a json representation for google charts" do
