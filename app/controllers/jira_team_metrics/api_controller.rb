@@ -242,10 +242,14 @@ private
   end
 
   def completed_issues
-    @board.completed_issues.select do |issue|
+    issues = @board.completed_issues.select do |issue|
       @board.date_range.start_date <= issue.completed &&
         issue.completed < @board.date_range.end_date
     end
+    JiraTeamMetrics::DataTableBuilder.new
+      .data(issues)
+      .pick(:key, :issue_type, :cycle_time)
+      .build
   end
 
   def created_issues
@@ -253,19 +257,15 @@ private
       @board.date_range.start_date <= issue.issue_created &&
         issue.issue_created < @board.date_range.end_date
     end
-    JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
+    issues = JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
+    JiraTeamMetrics::DataTableBuilder.new
+      .data(issues)
+      .pick(:key, :issue_type)
+      .build
   end
 
-  def summary_data_table(issues, &block)
-    pick_opts = [:key, :issue_type]
-    pick_opts << :cycle_time if issues.any? && issues[0].is_a?(JiraTeamMetrics::IssueDecorator)
-
-    selector = JiraTeamMetrics::DataTableBuilder.new
-      .data(issues)
-      .pick(*pick_opts)
-      .build
-      .select('issue_type')
-
+  def summary_data_table(data_table, &block)
+    selector = data_table.select('issue_type')
     selector.instance_eval(&block)
       .group
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
