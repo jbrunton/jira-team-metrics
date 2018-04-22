@@ -101,7 +101,8 @@ private
   end
 
   def column_type(index)
-    if rows.all?{ |row| row[index].class <= Numeric }
+    column_values = rows.map{ |row| row[index] }.compact
+    if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
       'number'
     else
       'string'
