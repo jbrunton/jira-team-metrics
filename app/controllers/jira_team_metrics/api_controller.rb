@@ -58,7 +58,22 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def effort_summary_by_month
-    render json: summarize_field_by_month(:total_time)
+    completed_issues = @board.completed_issues.select do |issue|
+      @board.date_range.start_date <= issue.completed &&
+        issue.completed < @board.date_range.end_date
+    end
+
+    data_table = JiraTeamMetrics::DataTableBuilder.new
+      .data(completed_issues)
+      .pick(:issue_type, :completed, :cycle_time)
+      .build
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
+      .group_by(['issue_type', 'completed'], :sum, of: 'cycle_time', as: 'Days') do |issue_type, completed|
+      [issue_type, DateTime.new(completed.year, completed.month).strftime('%b %Y')]
+    end
+      .pivot_on('issue_type', select: 'Days', if_nil: 0)
+
+    render json: data_table.to_json
   end
 
   def created_summary_by_month

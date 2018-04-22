@@ -101,10 +101,10 @@ private
   end
 
   def column_type(index)
-    types = rows.map{ |row| row[index] }.compact.map{ |v| v.class }.uniq
-    if types.count == 1 && types[0] <= Numeric
-      return 'number'
+    if rows.all?{ |row| row[index].class <= Numeric }
+      'number'
+    else
+      'string'
     end
-    'string'
   end
 end
