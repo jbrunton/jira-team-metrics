@@ -23,11 +23,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
 
   def count_summary
-    render json: summary_data_table(
-      completed_issues,
-      pick: [:issue_type],
-      group_by: ['issue_type', :count, of: 'issue_type', as: 'Count'])
-      .to_json
+    render json: summary_data_table(completed_issues) { count('key') }.to_json
   end
 
   def count_summary_by_month
@@ -41,11 +37,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def effort_summary
-    render json: summary_data_table(
-      completed_issues,
-      pick: [:issue_type, :cycle_time],
-      group_by: ['issue_type', :sum, of: 'cycle_time', as: 'Days'])
-      .to_json
+    render json: summary_data_table(completed_issues) { sum('cycle_time') }.to_json
   end
 
   def effort_summary_by_month
@@ -58,11 +50,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def created_summary
-    render json: summary_data_table(
-      created_issues,
-      pick: [:issue_type],
-      group_by: ['issue_type', :count, of: 'issue_type', as: 'Count'])
-      .to_json
+    render json: summary_data_table(created_issues) { count('key') }.to_json
   end
 
   def created_summary_by_month
@@ -268,12 +256,18 @@ private
     JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
   end
 
-  def summary_data_table(issues, opts)
-    JiraTeamMetrics::DataTableBuilder.new
+  def summary_data_table(issues, &block)
+    pick_opts = [:key, :issue_type]
+    pick_opts << :cycle_time if issues.any? && issues[0].is_a?(JiraTeamMetrics::IssueDecorator)
+
+    selector = JiraTeamMetrics::DataTableBuilder.new
       .data(issues)
-      .pick(*opts[:pick])
+      .pick(*pick_opts)
       .build
-      .group_by(*opts[:group_by])
+      .select('issue_type')
+
+    selector.instance_eval(&block)
+      .group
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
