@@ -20,6 +20,117 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#select" do
+    context "when given varargs" do
+      it "returns a query selector for the given args" do
+        selector = data_table.select('issue_type')
+        expect(selector.data_table).to eq(data_table)
+        expect(selector.columns).to eq({
+          'issue_type' => {}
+        })
+      end
+    end
+
+    context "when given a hash" do
+      it "returns a query selector for the given hash" do
+        selector = data_table.select({
+          'issue_type' => { op: :count, as: 'Count' }
+        })
+        expect(selector.data_table).to eq(data_table)
+        expect(selector.columns).to eq({
+          'issue_type' => { op: :count, as: 'Count' }
+        })
+      end
+    end
+
+    context "when given no args" do
+      it "returns an empty selector" do
+        selector = data_table.select
+        expect(selector.data_table).to eq(data_table)
+        expect(selector.columns).to eq({})
+      end
+    end
+  end
+
+  context "Selector" do
+    describe "#count" do
+      it "appends a count transformation" do
+        selector = data_table.select.count('issue_type')
+        expect(selector.columns).to eq({
+          'issue_type' => { op: :count }
+        })
+      end
+
+      it "appends a transformation with the given options" do
+        selector = data_table.select.count('issue_type', as: 'Count')
+        expect(selector.columns).to eq({
+          'issue_type' => { op: :count, as: 'Count' }
+        })
+      end
+    end
+
+    describe "#sum" do
+      it "appends a sum transformation" do
+        selector = data_table.select.sum('cycle_time')
+        expect(selector.columns).to eq({
+          'cycle_time' => { op: :sum }
+        })
+      end
+    end
+
+    describe "#group" do
+      it "aggregates rows by the selected column" do
+        grouped_data = data_table
+          .select('issue_type').count('issue_key', as: 'Count')
+          .group
+        
+        expect(grouped_data.columns).to eq(['issue_type', 'Count'])
+        expect(grouped_data.rows).to eq([
+          ['Story', 4],
+          ['Bug', 1]
+        ])
+      end
+
+      it "aggregates based on compacted values" do
+        grouped_data = data_table
+          .select('issue_type').count('developer', as: 'Count')
+          .group
+
+        expect(grouped_data.columns).to eq(['issue_type', 'Count'])
+        expect(grouped_data.rows).to eq([
+          ['Story', 3],
+          ['Bug', 1]
+        ])
+      end
+
+      it "aggregates based on the given function" do
+        grouped_data = data_table
+          .select('issue_type').sum('cycle_time', as: 'Sum')
+          .group
+
+        expect(grouped_data.columns).to eq(['issue_type', 'Sum'])
+        expect(grouped_data.rows).to eq([
+          ['Story', 8],
+          ['Bug', 2]
+        ])
+      end
+
+      it "aggregates by multiple columns" do
+        grouped_data = data_table
+          .select('issue_type', 'developer').count('issue_key', as: 'Count')
+          .group
+
+        expect(grouped_data.columns).to eq(['issue_type', 'developer', 'Count'])
+        expect(grouped_data.rows).to eq([
+          ['Story', 'Joe', 2],
+          ['Bug', 'Anne', 1],
+          ['Story', nil, 1],
+          ['Story', 'Anne', 1]
+        ])
+      end
+    end
+  end
+
   describe "#group_by" do
     it "aggregates rows by the given column" do
       grouped_data = data_table.group_by('issue_type', :count, of: 'issue_key', as: 'Count')

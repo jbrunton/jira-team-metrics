@@ -7,6 +7,17 @@ class JiraTeamMetrics::DataTable
     @rows = rows
   end
 
+  def select(*opts)
+    if opts.empty?
+      columns = {}
+    elsif opts.count == 1 && opts[0].is_a?(Hash)
+      columns = opts[0]
+    else
+      columns = opts.map{ |column| [column, {}] }.to_h
+    end
+    Selector.new(self, columns)
+  end
+
   def group_by(expression_opts, operation, opts)
     if expression_opts.is_a?(Array)
       expression_columns = expression_opts
@@ -104,6 +115,70 @@ class JiraTeamMetrics::DataTable
       end,
       'rows' => rows.map { |row| { 'c' => row.map { |x| { 'v' => x } } } }
     }
+  end
+
+  class Selector
+    attr_reader :data_table
+    attr_reader :columns
+
+    def initialize(data_table, columns)
+      @data_table = data_table
+      @columns = columns
+    end
+
+    def count(column, opts = {})
+      @columns[column] = { op: :count }.merge(opts)
+      self
+    end
+
+    def sum(column, opts = {})
+      @columns[column] = { op: :sum }.merge(opts)
+      self
+    end
+
+    def group
+      group_by_columns = columns
+        .select{ |column, _| col_op(column) == :id }
+        .map { |column, _| column }
+
+      aggregate_columns = columns
+        .select{ |column, _| col_op(column) != :id }
+        .map { |column, _| column }
+
+      grouped_rows = data_table.rows.group_by do |row|
+        group_by_values = group_by_columns.map{ |column| row[col_index(column)] }
+        if block_given?
+          yield(*group_by_values)
+        else
+          group_by_values
+        end
+      end
+
+
+      aggregated_rows = grouped_rows.map do |group_by_values, rows|
+        group_by_values + aggregate_columns.map do |column|
+          rows.map{ |row| row[col_index(column)] }.compact.send(col_op(column))
+        end
+      end
+
+      JiraTeamMetrics::DataTable.new(
+        columns.map { |col, opts| opts[:as] || col },
+        aggregated_rows
+      )
+    end
+
+  private
+    def col_index(column)
+      data_table.columns.index(column)
+    end
+
+    def col_op(column)
+      columns[column][:op] || :id
+    end
+
+    def col_name(column)
+      columns[column][:as] || column
+    end
   end
 
 private
