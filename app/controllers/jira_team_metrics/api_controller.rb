@@ -253,31 +253,6 @@ private
     }
   end
 
-  def summarize_field_by_month(field)
-    if field == :issue_created
-      summary_table = @board.summarize_created('month').to_h
-    else
-      summary_table = @board.summarize('month').to_h
-    end
-
-    builder = JiraTeamMetrics::JsonDataTableBuilder.new
-      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
-
-    @board.issue_types.each do |issue_type|
-      values = summary_table.values.map do |summary_rows|
-        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
-        if summary_row_for_type.nil?
-          0
-        else
-          summary_row_for_type.send(field)
-        end
-      end
-      builder.number({label: issue_type}, values)
-    end
-
-    builder.build
-  end
-
   def completed_issues
     @board.completed_issues.select do |issue|
       @board.date_range.start_date <= issue.completed &&
