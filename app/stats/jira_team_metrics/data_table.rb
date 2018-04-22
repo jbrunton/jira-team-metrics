@@ -53,6 +53,16 @@ class JiraTeamMetrics::DataTable
       rows.reverse)
   end
 
+  def map(column)
+    column_index = columns.index(column)
+    new_rows = rows.map do |row|
+      row.each_with_index.map do |val, index|
+        index == column_index ? yield(val) : val
+      end
+    end
+    JiraTeamMetrics::DataTable.new(columns, new_rows)
+  end
+
   def pivot_on(pivot_column, opts)
     pivot_column_index = columns.index(pivot_column)
     pivot_column_values = rows.map{ |row| row[pivot_column_index] }.uniq

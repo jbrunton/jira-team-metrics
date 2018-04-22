@@ -110,6 +110,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#map" do
+    it "transforms values in the column with the given block" do
+      cycle_times_hours = data_table.map('cycle_time') { |t| t * 24 unless t.nil? }
+      expect(cycle_times_hours.rows).to eq([
+        ['DEV-100', 'Story', 'Joe', 72],
+        ['DEV-101', 'Bug', 'Anne', 48],
+        ['DEV-102', 'Story', nil, nil],
+        ['DEV-103', 'Story', 'Anne', 96],
+        ['DEV-104', 'Story', 'Joe', 24]
+      ])
+    end
+  end
+
   describe "#reverse" do
     it "slips the order" do
       sorted_data = data_table.sort_by('cycle_time').reverse
