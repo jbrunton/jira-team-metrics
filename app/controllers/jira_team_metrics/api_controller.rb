@@ -23,17 +23,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
 
   def count_summary
-    completed_issues = @board.completed_issues.select do |issue|
-      @board.date_range.start_date <= issue.completed &&
-        issue.completed < @board.date_range.end_date
-    end
-
-    render json: JiraTeamMetrics::DataTableBuilder.new
-      .data(completed_issues)
-      .pick(:issue_type)
-      .build
-      .group_by('issue_type', :count, of: 'issue_type', as: 'Count')
-      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
+    render json: summary_data_table(
+      completed_issues,
+      pick: [:issue_type],
+      group_by: ['issue_type', :count, of: 'issue_type', as: 'Count'])
       .to_json
   end
 
@@ -59,6 +52,14 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: data_table.to_json
   end
 
+  def effort_summary
+    render json: summary_data_table(
+      completed_issues,
+      pick: [:issue_type, :cycle_time],
+      group_by: ['issue_type', :sum, of: 'cycle_time', as: 'Days'])
+      .to_json
+  end
+
   def effort_summary_by_month
     completed_issues = @board.completed_issues.select do |issue|
       @board.date_range.start_date <= issue.completed &&
@@ -81,17 +82,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def created_summary
-    created_issues = @board.object.issues.select do |issue|
-      @board.date_range.start_date <= issue.issue_created &&
-        issue.issue_created < @board.date_range.end_date
-    end
-
-    render json: JiraTeamMetrics::DataTableBuilder.new
-      .data(created_issues)
-      .pick(:issue_type)
-      .build
-      .group_by('issue_type', :count, of: 'issue_type', as: 'Count')
-      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
+    render json: summary_data_table(
+      created_issues,
+      pick: [:issue_type],
+      group_by: ['issue_type', :count, of: 'issue_type', as: 'Count'])
       .to_json
   end
 
@@ -114,21 +108,6 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .pivot_on('issue_type', from: @board.issue_types, select: 'Count', if_nil: 0)
 
     render json: data_table.to_json
-  end
-
-  def effort_summary
-    completed_issues = @board.completed_issues.select do |issue|
-      @board.date_range.start_date <= issue.completed &&
-        issue.completed < @board.date_range.end_date
-    end
-
-    render json: JiraTeamMetrics::DataTableBuilder.new
-      .data(completed_issues)
-      .pick(:issue_type, :cycle_time)
-      .build
-      .group_by('issue_type', :sum, of: 'cycle_time', as: 'Days')
-      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
-    .to_json
   end
 
   def cycle_time_summary
@@ -332,6 +311,30 @@ private
     end
 
     builder.build
+  end
+
+  def completed_issues
+    @board.completed_issues.select do |issue|
+      @board.date_range.start_date <= issue.completed &&
+        issue.completed < @board.date_range.end_date
+    end
+  end
+
+  def created_issues
+    all_created_issues = @board.object.issues.select do |issue|
+      @board.date_range.start_date <= issue.issue_created &&
+        issue.issue_created < @board.date_range.end_date
+    end
+    JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
+  end
+
+  def summary_data_table(issues, opts)
+    JiraTeamMetrics::DataTableBuilder.new
+      .data(issues)
+      .pick(*opts[:pick])
+      .build
+      .group_by(*opts[:group_by])
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
   CT_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.
