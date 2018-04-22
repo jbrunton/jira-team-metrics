@@ -110,6 +110,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#reverse" do
+    it "slips the order" do
+      sorted_data = data_table.sort_by('cycle_time').reverse
+      expect(sorted_data.rows).to eq([
+        ['DEV-103', 'Story', 'Anne', 4],
+        ['DEV-100', 'Story', 'Joe', 3],
+        ['DEV-101', 'Bug', 'Anne', 2],
+        ['DEV-104', 'Story', 'Joe', 1],
+        ['DEV-102', 'Story', nil, nil]
+      ])
+    end
+  end
+
   describe "#to_json" do
     it "returns a json representation for google charts" do
       json = data_table.to_json
