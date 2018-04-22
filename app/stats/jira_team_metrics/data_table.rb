@@ -35,17 +35,14 @@ class JiraTeamMetrics::DataTable
       grouped_data)
   end
 
-  def sort_by(column, sort_order = :asc)
+  def sort_by(column)
     index = columns.index(column)
-    sort_factor = sort_order == :desc ? -1 : 1
     JiraTeamMetrics::DataTable.new(
       columns,
       rows.sort_by do |row|
-        if block_given?
-          yield(row[index])
-        else
-          row[index] * sort_factor
-        end
+        val = row[index]
+        sort_val = block_given? ? yield(val) : val
+        [val.nil? ? 0 : 1, sort_val]
       end
     )
   end

@@ -97,6 +97,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#sort_by" do
+    it "sorts by the given column" do
+      sorted_data = data_table.sort_by('cycle_time')
+      expect(sorted_data.rows).to eq([
+        ['DEV-102', 'Story', nil, nil],
+        ['DEV-104', 'Story', 'Joe', 1],
+        ['DEV-101', 'Bug', 'Anne', 2],
+        ['DEV-100', 'Story', 'Joe', 3],
+        ['DEV-103', 'Story', 'Anne', 4]
+      ])
+    end
+  end
+
   describe "#to_json" do
     it "returns a json representation for google charts" do
       json = data_table.to_json
