@@ -22,11 +22,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   COMPLETED_ISSUES_KEY_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'completed_issues_key' }
   WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
 
-  def count_summary
+  def completed_summary
     render json: summary_data_table(completed_issues) { count('key') }.to_json
   end
 
-  def count_summary_by_month
+  def completed_summary_by_month
     data_table = monthly_summary_data_table(completed_issues,
       pick: [:issue_type, :completed],
       sort_by: 'completed',
