@@ -75,7 +75,9 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   end
 
   def issue_types
-    issues_by_type.keys
+    issues_by_type
+      .keys
+      .sort_by{ |issue_type| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
   def wip_history

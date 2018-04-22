@@ -79,7 +79,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
     }
 
     it "creates a pivot table based on the given columns" do
-      pivot_data = grouped_data.pivot_on('developer', select: 'Count')
+      pivot_data = grouped_data.pivot_on('developer', from: ['Joe', 'Anne', nil], select: 'Count')
       expect(pivot_data.columns).to eq(['issue_type', 'Joe', 'Anne', nil])
       expect(pivot_data.rows).to eq([
         ['Story', 2, 1, 1],
@@ -87,8 +87,17 @@ RSpec.describe JiraTeamMetrics::DataTable do
       ])
     end
 
+    it "creates a pivot table based on the given column order" do
+      pivot_data = grouped_data.pivot_on('developer', from: ['Anne', 'Joe', nil], select: 'Count')
+      expect(pivot_data.columns).to eq(['issue_type', 'Anne', 'Joe', nil])
+      expect(pivot_data.rows).to eq([
+        ['Story', 1, 2, 1],
+        ['Bug', 1, nil, nil]
+      ])
+    end
+
     it "sets nil values to if_nil if given" do
-      pivot_data = grouped_data.pivot_on('developer', select: 'Count', if_nil: 0)
+      pivot_data = grouped_data.pivot_on('developer', from: ['Joe', 'Anne', nil], select: 'Count', if_nil: 0)
       expect(pivot_data.columns).to eq(['issue_type', 'Joe', 'Anne', nil])
       expect(pivot_data.rows).to eq([
         ['Story', 2, 1, 1],

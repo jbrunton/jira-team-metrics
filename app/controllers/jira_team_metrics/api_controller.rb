@@ -50,9 +50,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .build
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .group_by(['issue_type', 'completed'], :count, of: 'issue_type', as: 'Count') do |issue_type, completed|
-        [issue_type, DateTime.new(completed.year, completed.month).strftime('%b %Y')]
+        [issue_type, DateTime.new(completed.year, completed.month)]
       end
-      .pivot_on('issue_type', select: 'Count', if_nil: 0)
+      .sort_by('completed')
+      .map('completed') { |date| date.strftime('%b %Y') }
+      .pivot_on('issue_type', from: @board.issue_types, select: 'Count', if_nil: 0)
 
     render json: data_table.to_json
   end
@@ -69,9 +71,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .build
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .group_by(['issue_type', 'completed'], :sum, of: 'cycle_time', as: 'Days') do |issue_type, completed|
-        [issue_type, DateTime.new(completed.year, completed.month).strftime('%b %Y')]
+        [issue_type, DateTime.new(completed.year, completed.month)]
       end
-      .pivot_on('issue_type', select: 'Days', if_nil: 0)
+      .sort_by('completed')
+      .map('completed') { |date| date.strftime('%b %Y') }
+      .pivot_on('issue_type', from: @board.issue_types, select: 'Days', if_nil: 0)
 
     render json: data_table.to_json
   end
@@ -87,7 +91,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .pick(:issue_type)
       .build
       .group_by('issue_type', :count, of: 'issue_type', as: 'Count')
-      .sort_by('Count', :desc)
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .to_json
   end
 
@@ -103,9 +107,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .build
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .group_by(['issue_type', 'issue_created'], :count, of: 'issue_type', as: 'Count') do |issue_type, issue_created|
-        [issue_type, DateTime.new(issue_created.year, issue_created.month).strftime('%b %Y')]
+        [issue_type, DateTime.new(issue_created.year, issue_created.month)]
       end
-      .pivot_on('issue_type', select: 'Count', if_nil: 0)
+      .sort_by('issue_created')
+      .map('issue_created') { |date| date.strftime('%b %Y') }
+      .pivot_on('issue_type', from: @board.issue_types, select: 'Count', if_nil: 0)
 
     render json: data_table.to_json
   end
@@ -121,8 +127,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       .pick(:issue_type, :cycle_time)
       .build
       .group_by('issue_type', :sum, of: 'cycle_time', as: 'Days')
-      .sort_by('Days', :desc)
-      .to_json
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
+    .to_json
   end
 
   def cycle_time_summary

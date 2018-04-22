@@ -65,7 +65,7 @@ class JiraTeamMetrics::DataTable
 
   def pivot_on(pivot_column, opts)
     pivot_column_index = columns.index(pivot_column)
-    pivot_column_values = rows.map{ |row| row[pivot_column_index] }.uniq
+    pivot_column_values = opts[:from]
     select_column = opts[:select]
     select_column_index = columns.index(select_column)
 
