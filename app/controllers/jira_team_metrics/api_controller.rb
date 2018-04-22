@@ -248,7 +248,7 @@ private
     end
     JiraTeamMetrics::DataTableBuilder.new
       .data(issues)
-      .pick(:key, :issue_type, :cycle_time)
+      .pick(:key, :issue_type, :cycle_time, :completed)
       .build
   end
 
@@ -260,7 +260,7 @@ private
     issues = JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
     JiraTeamMetrics::DataTableBuilder.new
       .data(issues)
-      .pick(:key, :issue_type)
+      .pick(:key, :issue_type, :issue_created)
       .build
   end
 
@@ -271,11 +271,8 @@ private
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
-  def monthly_summary_data_table(issues, opts)
-    JiraTeamMetrics::DataTableBuilder.new
-      .data(issues)
-      .pick(*opts[:pick])
-      .build
+  def monthly_summary_data_table(data_table, opts)
+    data_table
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .group_by(*opts[:group_by]) do |issue_type, date|
         [issue_type, DateTime.new(date.year, date.month)]

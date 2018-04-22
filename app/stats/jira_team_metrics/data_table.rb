@@ -154,7 +154,6 @@ class JiraTeamMetrics::DataTable
         end
       end
 
-
       aggregated_rows = grouped_rows.map do |group_by_values, rows|
         group_by_values + aggregate_columns.map do |column|
           rows.map{ |row| row[col_index(column)] }.compact.send(col_op(column))
@@ -167,7 +166,27 @@ class JiraTeamMetrics::DataTable
       )
     end
 
-  private
+    def pivot(aggregated_column, pivot_opts)
+      pivot_column = pivot_opts[:for]
+      pivoted_columns = pivot_opts[:in]
+      pivot_index = col_index(pivot_column)
+      aggregated_index = col_index(aggregated_column)
+
+      pivoted_rows = data_table.rows.map do |row|
+        pivot_value = row[pivot_index]
+        pivoted_values = Array.new(pivoted_columns.count)
+        pivoted_values[pivoted_columns.index(pivot_value)] = row[aggregated_index] || opts[:if_nil]
+        row + pivoted_values
+      end
+
+      pivoted_data_table = JiraTeamMetrics::DataTable.new(
+        data_table.columns + pivoted_columns,
+        pivoted_rows
+      )
+      Selector.new(pivoted_data_table, columns).group
+    end
+
+  #private
     def col_index(column)
       data_table.columns.index(column)
     end
@@ -178,6 +197,55 @@ class JiraTeamMetrics::DataTable
 
     def col_name(column)
       columns[column][:as] || column
+    end
+  end
+
+  class PivotSelector
+    attr_reader :selector
+    attr_reader :pivot_column # column we're pivoting on
+    attr_reader :aggregate_op # operation we're aggregating with
+    attr_reader :aggregated_column # column we're aggregating
+    attr_reader :pivoted_columns # columns we're creating from pivot_column values
+
+    def initialize(selector, pivot_column)
+      @selector = selector
+      @pivot_column = pivot_column
+    end
+
+    def count(aggregated_column)
+      @aggregate_op = :count
+      @aggregated_column = aggregated_column
+      self
+    end
+
+    def sum(aggregated_column)
+      @aggregate_op = :sum
+      @aggregated_column = aggregated_column
+      self
+    end
+
+    def from(*pivoted_columns)
+      @pivoted_columns = pivoted_columns
+      build
+    end
+
+  private
+    def build
+      pivot_index = selector.col_index(pivot_column)
+      aggregated_index = selector.col_index(aggregated_column)
+
+      pivoted_rows = selector.data_table.rows.map do |row|
+        pivot_value = row[pivot_index]
+        pivoted_values = Array.new(pivoted_columns)
+        pivoted_values[pivoted_columns.index(pivot_value)] = row[aggregated_index]
+        row + pivoted_values
+      end
+
+      pivoted_data_table = JiraTeamMetrics::DataTable.new(
+        selector.data_table.columns + pivoted_columns,
+        pivoted_rows
+      )
+      Selector.new(pivoted_data_table, selector.columns + pivoted_columns).group
     end
   end
 
