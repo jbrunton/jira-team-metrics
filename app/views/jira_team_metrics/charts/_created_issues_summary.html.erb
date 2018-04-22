@@ -4,11 +4,10 @@
   (function() {
     var chart = new ChartBuilder('<%= chart_id %>')
         .chartOpts({
-          title: 'Created Issues By Month',
-          isStacked: true
+          title: 'Count'
         })
-        .url('<%= board_api_path(@board) %>/created_summary_by_month.json')
-        .chartType('ColumnChart')
+        .url('<%= board_api_path(@board) %>/created_summary.json')
+        .chartType('PieChart')
         .build();
 
     google.charts.setOnLoadCallback(chart.refresh);

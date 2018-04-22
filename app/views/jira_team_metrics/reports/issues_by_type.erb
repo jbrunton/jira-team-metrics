@@ -33,7 +33,13 @@
 </div>
 
 <div class="row">
-  <div class="col s12 card">
+  <div class="col s12">
+    <h5>Count of Created Issues</h5>
+  </div>
+  <div class="col s5">
+    <%= render partial: 'jira_team_metrics/charts/created_issues_summary' %>
+  </div>
+  <div class="col s7">
     <%= render partial: 'jira_team_metrics/charts/created_issues_by_month' %>
   </div>
 </div>
