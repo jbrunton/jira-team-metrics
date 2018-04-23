@@ -275,17 +275,6 @@ private
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
-  def monthly_summary_data_table(data_table, opts)
-    data_table
-      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
-      .group_by(*opts[:group_by]) do |issue_type, date|
-        [issue_type, DateTime.new(date.year, date.month)]
-      end
-      .sort_by(opts[:sort_by])
-      .map(opts[:sort_by]) { |date| date.strftime('%b %Y') }
-      .pivot_on(*opts[:pivot_on])
-  end
-
   CT_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.
     pluck{ |issue| issue.cycle_time }.
     map do |issue, mean, stddev|
