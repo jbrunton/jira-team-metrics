@@ -126,17 +126,29 @@ class JiraTeamMetrics::DataTable
       @columns = columns
     end
 
-    def count(column, opts = {})
-      @columns[column] = { op: :count }.merge(opts)
+    def count(*opts)
+      if opts.length == 1 && opts[0].is_a?(Array)
+        opts[0].each { |column| count(column) }
+      else
+        column = opts[0]
+        column_opts = opts[1] || {}
+        @columns[column] = { op: :count }.merge(column_opts)
+      end
       self
     end
 
-    def sum(column, opts = {})
-      @columns[column] = { op: :sum }.merge(opts)
+    def sum(*opts)
+      if opts.length == 1 && opts[0].is_a?(Array)
+        opts[0].each { |column| sum(column) }
+      else
+        column = opts[0]
+        column_opts = opts[1] || {}
+        @columns[column] = { op: :sum }.merge(column_opts)
+      end
       self
     end
 
-    def group
+    def group(opts = {})
       group_by_columns = columns
         .select{ |column, _| col_op(column) == :id }
         .map { |column, _| column }
@@ -156,7 +168,8 @@ class JiraTeamMetrics::DataTable
 
       aggregated_rows = grouped_rows.map do |group_by_values, rows|
         group_by_values + aggregate_columns.map do |column|
-          rows.map{ |row| row[col_index(column)] }.compact.send(col_op(column))
+          column_values = rows.map{ |row| row[col_index(column)] }.compact
+          column_values.empty? ? opts[:if_nil] : column_values.send(col_op(column))
         end
       end
 
@@ -175,7 +188,7 @@ class JiraTeamMetrics::DataTable
       pivoted_rows = data_table.rows.map do |row|
         pivot_value = row[pivot_index]
         pivoted_values = Array.new(pivoted_columns.count)
-        pivoted_values[pivoted_columns.index(pivot_value)] = row[aggregated_index] || opts[:if_nil]
+        pivoted_values[pivoted_columns.index(pivot_value)] = row[aggregated_index]
         row + pivoted_values
       end
 
@@ -183,10 +196,12 @@ class JiraTeamMetrics::DataTable
         data_table.columns + pivoted_columns,
         pivoted_rows
       )
-      Selector.new(pivoted_data_table, columns).group
+
+      Selector.new(pivoted_data_table, columns)
+        .group(if_nil: pivot_opts[:if_nil])
     end
 
-  #private
+  private
     def col_index(column)
       data_table.columns.index(column)
     end
@@ -259,6 +274,9 @@ private
   def column_type(index)
     column_values = rows.map{ |row| row[index] }.compact
     if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
+      'number'
+    elsif column_values.empty?
+      # play it safe with google charts - assume a number unless clearly not
       'number'
     else
       'string'

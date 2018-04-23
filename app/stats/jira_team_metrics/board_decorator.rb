@@ -67,7 +67,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   # end
 
   def issues_by_type
-    @issues_by_type ||= completed_issues
+    @issues_by_type ||= all_issues
       .group_by{ |i| i.issue_type }
       .map{ |issue_type, issues| [issue_type, JiraTeamMetrics::IssuesDecorator.new(issues)] }
       .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }

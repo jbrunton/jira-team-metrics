@@ -27,11 +27,12 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def completed_summary_by_month
-    data_table = monthly_summary_data_table(completed_issues,
-      pick: [:issue_type, :completed],
-      sort_by: 'completed',
-      group_by: [['issue_type', 'completed'], :count, of: 'issue_type', as: 'Count'],
-      pivot_on: ['issue_type', from: @board.issue_types, select: 'Count', if_nil: 0])
+    data_table = completed_issues
+      .map('completed') { |date| DateTime.new(date.year, date.month) }
+      .select('completed').count(@board.issue_types)
+        .pivot('key', for: 'issue_type', in: @board.issue_types)
+      .sort_by('completed')
+      .map('completed') { |date| date.strftime('%b %Y') }
 
     render json: data_table.to_json
   end
@@ -41,11 +42,13 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def effort_summary_by_month
-    data_table = monthly_summary_data_table(completed_issues,
-      pick: [:issue_type, :completed, :cycle_time],
-      sort_by: 'completed',
-      group_by: [['issue_type', 'completed'], :sum, of: 'cycle_time', as: 'Days'],
-      pivot_on: ['issue_type', from: @board.issue_types, select: 'Days', if_nil: 0])
+    data_table = completed_issues
+      .map('completed') { |date| DateTime.new(date.year, date.month) }
+      .select('completed').sum(@board.issue_types)
+        .pivot('cycle_time', for: 'issue_type', in: @board.issue_types, if_nil: 0)
+      .sort_by('completed')
+      .map('completed') { |date| date.strftime('%b %Y') }
+
     render json: data_table.to_json
   end
 
@@ -54,11 +57,12 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def created_summary_by_month
-    data_table = monthly_summary_data_table(created_issues,
-      pick: [:issue_type, :issue_created],
-      sort_by: 'issue_created',
-      group_by: [['issue_type', 'issue_created'], :count, of: 'issue_type', as: 'Count'],
-      pivot_on: ['issue_type', from: @board.issue_types, select: 'Count', if_nil: 0])
+    data_table = created_issues
+      .map('issue_created') { |date| DateTime.new(date.year, date.month) }
+      .select('issue_created').count(@board.issue_types)
+        .pivot('key', for: 'issue_type', in: @board.issue_types)
+      .sort_by('issue_created')
+      .map('issue_created') { |date| date.strftime('%b %Y') }
 
     render json: data_table.to_json
   end

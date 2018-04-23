@@ -67,6 +67,14 @@ RSpec.describe JiraTeamMetrics::DataTable do
           'issue_type' => { op: :count, as: 'Count' }
         })
       end
+
+      it "appends multiple transformation given an array" do
+        selector = data_table.select.count(['issue_type', 'developer'])
+        expect(selector.columns).to eq({
+          'issue_type' => { op: :count },
+          'developer' => { op: :count }
+        })
+      end
     end
 
     describe "#sum" do
