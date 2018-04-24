@@ -56,7 +56,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @team = params[:team]
     @increment = @board.object.issues.find_by(key: params[:issue_key])
 
-    @report = TeamScopeReport.for(@increment, @team)
+    @report = JiraTeamMetrics::TeamScopeReport.for(@increment, @team)
     @issues_by_epic = @report.scope
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
