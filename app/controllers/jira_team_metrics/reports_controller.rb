@@ -64,7 +64,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def increment_report
-    @increment_report ||= IncrementScopeReport.new(@increment).build
+    @increment_report ||= JiraTeamMetrics::IncrementScopeReport.new(@increment).build
   end
 
   helper_method :cfd_data
