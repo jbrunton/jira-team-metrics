@@ -45,7 +45,7 @@ private
 
   def sync_months
     months = params.permit(:months)[:months]
-    months.nil? ? nil : months.to_i
+    months.blank? ? nil : months.to_i
   end
 
   def board_params
