@@ -6,37 +6,6 @@
     <a href="#!" class="breadcrumb">Scope Details</a>
 <% end %>
 
-
-<h5>Summary Figures</h5>
-
-<table class="bordered col s6" style="width: 50%">
-  <tr>
-    <th>Progress</th>
-    <td>
-      <%= pretty_print_number(increment_report.percent_completed) %>%
-    </td>
-  </tr>
-  <tr>
-    <th>Scope</th>
-    <td><%= increment_report.completed_scope.count %> / <%= increment_report.scope.count %></td>
-  </tr>
-  <tr>
-    <th>Epics</th>
-    <td>
-      <%= increment_report.epics.count %>
-      <%= increment_report.epics.count %>
-    </td>
-  </tr>
-  <tr>
-    <th>Issues / Epic</th>
-    <td>
-      (<%= pretty_print_number(increment_report.issues_per_epic) %> issues / epic)
-    </td>
-  </tr>
-</table>
-
-<h5>Details</h5>
-
 <table class="bordered jira-tree">
   <thead>
     <tr>
