@@ -15,6 +15,11 @@ class JiraTeamMetrics::Scatterplot
       .build
       .sort_by('completed')
 
+    data_table
+      .add_column('50%')
+      .insert_row(0, [data_table.rows[0][0], nil, 10])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, 10])
+
     data_table.to_json
   end
 

@@ -3,9 +3,17 @@
 <script>
   (function() {
     var chart = new ChartBuilder('<%= chart_id %>')
-        .chartOpts({})
+        .chartOpts({
+          seriesType: 'scatter',
+          interpolateNulls: true,
+          series: {
+            1: {
+              type: 'line'
+            }
+          }
+        })
         .url('<%= board_api_path(@board) %>/scatterplot.json')
-        .chartType('ScatterChart')
+        .chartType('ComboChart')
         .build();
 
     google.charts.setOnLoadCallback(chart.refresh);

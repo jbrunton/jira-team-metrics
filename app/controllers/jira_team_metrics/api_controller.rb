@@ -89,7 +89,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       query: params[:query],
       date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
     )
-    render json: JiraTeamMetrics::Scatterplot.new(@board, chart_params).json_data
+    data_table = JiraTeamMetrics::Scatterplot.new(@board, chart_params)
+    render json: data_table.json_data
   end
 
   def control_chart

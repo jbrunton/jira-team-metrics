@@ -44,6 +44,24 @@ class JiraTeamMetrics::DataTable
     JiraTeamMetrics::DataTable.new(columns, new_rows)
   end
 
+  def add_column(column)
+    columns << column
+    rows.each do |row|
+      row << nil
+    end
+    self
+  end
+
+  def add_row(row)
+    rows << row
+    self
+  end
+
+  def insert_row(index, row)
+    rows.insert(index, row)
+    self
+  end
+
   def to_json
     json_cols = columns.each_with_index.map do |column_name, column_index|
       { 'label' => column_name, 'type' => column_type(column_index) }
