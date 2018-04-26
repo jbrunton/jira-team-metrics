@@ -65,25 +65,11 @@ class JiraTeamMetrics::DataTable
     end
 
     def count(*opts)
-      if opts.length == 1 && opts[0].is_a?(Array)
-        opts[0].each { |column| count(column) }
-      else
-        column = opts[0]
-        column_opts = opts[1] || {}
-        @columns[column] = { op: :count }.merge(column_opts)
-      end
-      self
+      aggregate(opts, :count)
     end
 
     def sum(*opts)
-      if opts.length == 1 && opts[0].is_a?(Array)
-        opts[0].each { |column| sum(column) }
-      else
-        column = opts[0]
-        column_opts = opts[1] || {}
-        @columns[column] = { op: :sum }.merge(column_opts)
-      end
-      self
+      aggregate(opts, :sum)
     end
 
     def group(opts = {})
@@ -150,6 +136,17 @@ class JiraTeamMetrics::DataTable
 
     def col_name(column)
       columns[column][:as] || column
+    end
+
+    def aggregate(opts, op)
+      if opts.length == 1 && opts[0].is_a?(Array)
+        opts[0].each { |column| count(column) }
+      else
+        column = opts[0]
+        column_opts = opts[1] || {}
+        @columns[column] = { op: op }.merge(column_opts)
+      end
+      self
     end
   end
 
