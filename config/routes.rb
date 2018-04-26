@@ -27,10 +27,11 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#delivery'
   get '/reports/boards/:board_id/deliveries/:issue_key/scope/:team', to: 'reports#delivery_scope'
 
-  get '/api/boards/:board_id/count_summary.json', to: 'api#count_summary'
-  get '/api/boards/:board_id/count_summary_by_month.json', to: 'api#count_summary_by_month'
+  get '/api/boards/:board_id/completed_summary.json', to: 'api#completed_summary'
+  get '/api/boards/:board_id/completed_summary_by_month.json', to: 'api#completed_summary_by_month'
   get '/api/boards/:board_id/effort_summary.json', to: 'api#effort_summary'
   get '/api/boards/:board_id/effort_summary_by_month.json', to: 'api#effort_summary_by_month'
+  get '/api/boards/:board_id/created_summary.json', to: 'api#created_summary'
   get '/api/boards/:board_id/created_summary_by_month.json', to: 'api#created_summary_by_month'
   get '/api/boards/:board_id/cycle_time_summary.json', to: 'api#cycle_time_summary'
   get '/api/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'

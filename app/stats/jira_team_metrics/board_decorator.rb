@@ -1,6 +1,8 @@
 class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   include JiraTeamMetrics::FormattingHelper
 
+  attr_reader :date_range
+
   ISSUE_TYPE_ORDERING = ['Story', 'Bug', 'Improvement', 'Technical Debt']
   
   delegate_all
@@ -65,7 +67,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   # end
 
   def issues_by_type
-    @issues_by_type ||= completed_issues
+    @issues_by_type ||= all_issues
       .group_by{ |i| i.issue_type }
       .map{ |issue_type, issues| [issue_type, JiraTeamMetrics::IssuesDecorator.new(issues)] }
       .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
@@ -73,7 +75,9 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   end
 
   def issue_types
-    issues_by_type.keys
+    issues_by_type
+      .keys
+      .sort_by{ |issue_type| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
   def wip_history
@@ -107,7 +111,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
 
   def summary_rows_for(issues)
     summarize(nil, issues).map do |row|
-      JiraTeamMetrics::DataTable::Row.new([
+      JiraTeamMetrics::JsonDataTable::Row.new([
         row.issue_type,
         row.count,
         pretty_print_number(row.count_percentage),
@@ -120,8 +124,8 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
 
   def summary_table(group_by = nil)
     rows = [
-      JiraTeamMetrics::DataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
-      JiraTeamMetrics::DataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
+      JiraTeamMetrics::JsonDataTable::Header.new(['Issue Type', 'Count', '(%)', 'Cycle Times', '', '']),
+      JiraTeamMetrics::JsonDataTable::Header.new(['', '', '', 'Mean', 'Median', 'Std Dev'])
     ]
 
     if ['month', 'week'].include?(group_by)
@@ -132,7 +136,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
         date_range = from_date...to_date
 
         heading = pretty_print_date_range(date_range, group_by == 'week' ? {show_day: true} : {})
-        rows << JiraTeamMetrics::DataTable::Header.new([heading, '', '', '', '', ''])
+        rows << JiraTeamMetrics::JsonDataTable::Header.new([heading, '', '', '', '', ''])
 
         issues = completed_issues_in_range(date_range)
         rows.concat(summary_rows_for(issues))
@@ -142,7 +146,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
     else
       rows.concat(summary_rows_for(completed_issues))
 
-      rows << JiraTeamMetrics::DataTable::Row.new([
+      rows << JiraTeamMetrics::JsonDataTable::Row.new([
         'ALL',
         completed_issues.count,
         '',
@@ -152,17 +156,17 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
       ], nil)
     end
 
-    JiraTeamMetrics::DataTable.new(rows)
+    JiraTeamMetrics::JsonDataTable.new(rows)
   end
 
   def issues_table
     @issues_table ||= begin
       headers = [
-        JiraTeamMetrics::DataTable::Header.new(['Key', 'Issue Type', 'Summary', 'Completed', 'Cycle Time'])
+        JiraTeamMetrics::JsonDataTable::Header.new(['Key', 'Issue Type', 'Summary', 'Completed', 'Cycle Time'])
       ]
 
       rows = completed_issues.map do |issue|
-        JiraTeamMetrics::DataTable::Row.new([
+        JiraTeamMetrics::JsonDataTable::Row.new([
           issue.key,
           issue.issue_type,
           issue.summary,
@@ -171,7 +175,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
         ], issue)
       end
 
-      JiraTeamMetrics::DataTable.new(headers + rows)
+      JiraTeamMetrics::JsonDataTable.new(headers + rows)
     end
   end
 

@@ -22,36 +22,37 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   COMPLETED_ISSUES_KEY_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'completed_issues_key' }
   WIP_COL = CONTROL_CHART_COLUMNS.find_index{ |c| c[:id] == 'wip' }
 
-  def count_summary
-    summary_table = @board.summarize
-
-    builder = DataTableBuilder.new
-      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
-      .column({id: 'count', type: 'number', label: 'Count' }, summary_table.map(&:count))
-
-    render json: builder.build
+  def completed_summary
+    render json: summary_data_table(completed_issues) { count('key') }.to_json
   end
 
-  def count_summary_by_month
-    render json: summarize_field_by_month(:count)
-  end
+  def completed_summary_by_month
+    data_table = summarize_by_month(completed_issues,
+      select_by: 'completed', aggregate_by: :count, pivot_on: 'key')
 
-  def effort_summary_by_month
-    render json: summarize_field_by_month(:total_time)
-  end
-
-  def created_summary_by_month
-    render json: summarize_field_by_month(:count)
+    render json: data_table.to_json
   end
 
   def effort_summary
-    summary_table = @board.summarize
+    render json: summary_data_table(completed_issues) { sum('cycle_time') }.to_json
+  end
 
-    builder = JiraTeamMetrics::DataTableBuilder.new
-      .column({id: 'issue_type', type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type))
-      .column({id: 'days', type: 'number', label: 'Total Days' }, summary_table.map(&:total_time))
+  def effort_summary_by_month
+    data_table = summarize_by_month(completed_issues,
+      select_by: 'completed', aggregate_by: :sum, pivot_on: 'cycle_time')
 
-    render json: builder.build
+    render json: data_table.to_json
+  end
+
+  def created_summary
+    render json: summary_data_table(created_issues) { count('key') }.to_json
+  end
+
+  def created_summary_by_month
+    data_table = summarize_by_month(created_issues,
+      select_by: 'issue_created', aggregate_by: :count, pivot_on: 'key')
+
+    render json: data_table.to_json
   end
 
   def cycle_time_summary
@@ -134,7 +135,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
 private
   def build_ct_table(summary_table, series)
-    builder = JiraTeamMetrics::DataTableBuilder.new
+    builder = JiraTeamMetrics::JsonDataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Mean', id: 'mean'}, summary_table.map(&:ct_mean))
       .number({label: 'Median', id: 'median'}, summary_table.map(&:ct_median))
@@ -162,7 +163,7 @@ private
   end
 
   def build_count_table(summary_table, series)
-    builder = DataTableBuilder.new
+    builder = JsonDataTableBuilder.new
       .column({type: 'string', label: 'Issue Type'}, summary_table.map(&:issue_type_label))
       .number({label: 'Count', id: 'count'}, summary_table.map(&:count))
 
@@ -232,29 +233,47 @@ private
     }
   end
 
-  def summarize_field_by_month(field)
-    if field == :issue_created
-      summary_table = @board.summarize_created('month').to_h
+  def completed_issues
+    issues = @board.completed_issues.select do |issue|
+      @board.date_range.start_date <= issue.completed &&
+        issue.completed < @board.date_range.end_date
+    end
+    JiraTeamMetrics::DataTableBuilder.new
+      .data(issues)
+      .pick(:key, :issue_type, :cycle_time, :completed)
+      .build
+  end
+
+  def created_issues
+    all_created_issues = @board.object.issues.select do |issue|
+      @board.date_range.start_date <= issue.issue_created &&
+        issue.issue_created < @board.date_range.end_date
+    end
+    if params[:query].blank?
+      issues = all_created_issues
     else
-      summary_table = @board.summarize('month').to_h
+      issues = JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
     end
+    JiraTeamMetrics::DataTableBuilder.new
+      .data(issues)
+      .pick(:key, :issue_type, :issue_created)
+      .build
+  end
 
-    builder = JiraTeamMetrics::DataTableBuilder.new
-      .column({id: 'date_range', type: 'string', label: 'Date Range'}, summary_table.keys)
+  def summarize_by_month(issues, opts)
+    issues
+      .map(opts[:select_by]) { |date| DateTime.new(date.year, date.month) }
+      .select(opts[:select_by]).send(opts[:aggregate_by], @board.issue_types)
+      .pivot(opts[:pivot_on], for: 'issue_type', in: @board.issue_types, if_nil: 0)
+      .sort_by(opts[:select_by])
+      .map(opts[:select_by]) { |date| date.strftime('%b %Y') }
+  end
 
-    @board.issue_types.each do |issue_type|
-      values = summary_table.values.map do |summary_rows|
-        summary_row_for_type = summary_rows.find{ |row| row.issue_type == issue_type }
-        if summary_row_for_type.nil?
-          0
-        else
-          summary_row_for_type.send(field)
-        end
-      end
-      builder.number({label: issue_type}, values)
-    end
-
-    builder.build
+  def summary_data_table(data_table, &block)
+    selector = data_table.select('issue_type')
+    selector.instance_eval(&block)
+      .group
+      .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
   end
 
   CT_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.
