@@ -1,4 +1,6 @@
 class JiraTeamMetrics::DataTable
+  include JiraTeamMetrics::ChartsHelper
+
   attr_reader :columns
   attr_reader :rows
 
@@ -43,11 +45,24 @@ class JiraTeamMetrics::DataTable
   end
 
   def to_json
+    json_cols = columns.each_with_index.map do |column_name, column_index|
+      { 'label' => column_name, 'type' => column_type(column_index) }
+    end
+    json_rows = rows.map do |row|
+      {
+        'c' => row.each_with_index.map do |val, column_index|
+          if json_cols[column_index]['type'] == 'date'
+            json_val = date_as_string(val)
+          else
+            json_val = val
+          end
+          { 'v' => json_val }
+        end
+      }
+    end
     {
-      'cols' => columns.each_with_index.map do |column_name, column_index|
-        { 'label' => column_name, 'type' => column_type(column_index) }
-      end,
-      'rows' => rows.map { |row| { 'c' => row.map { |x| { 'v' => x } } } }
+      'cols' => json_cols,
+      'rows' => json_rows
     }
   end
 
@@ -158,6 +173,8 @@ private
     column_values = rows.map{ |row| row[index] }.compact
     if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
       'number'
+    elsif column_values.any? && column_values.all?{ |val| val.class <= Time }
+      'date'
     elsif column_values.empty?
       # play it safe with google charts - assume a number unless clearly not
       'number'

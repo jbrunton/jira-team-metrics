@@ -1,0 +1,17 @@
+<% chart_id = generate_id %>
+
+<script>
+  (function() {
+    var chart = new ChartBuilder('<%= chart_id %>')
+        .chartOpts({})
+        .url('<%= board_api_path(@board) %>/scatterplot.json')
+        .chartType('ScatterChart')
+        .build();
+
+    google.charts.setOnLoadCallback(chart.refresh);
+    $('#ct-states input, #ct-states textarea').change(chart.refresh);
+  })();
+</script>
+
+<div id="<%= chart_id %>" style="height: 300px;">
+</div>
