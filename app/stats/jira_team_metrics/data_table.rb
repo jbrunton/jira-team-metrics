@@ -112,7 +112,7 @@ class JiraTeamMetrics::DataTable
       end
 
       JiraTeamMetrics::DataTable.new(
-        columns.map { |col, opts| opts[:as] || col },
+        columns.map { |col, col_opts| col_opts[:as] || col },
         aggregated_rows
       )
     end
