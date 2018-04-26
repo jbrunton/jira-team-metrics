@@ -27,12 +27,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def completed_summary_by_month
-    data_table = completed_issues
-      .map('completed') { |date| DateTime.new(date.year, date.month) }
-      .select('completed').count(@board.issue_types)
-        .pivot('key', for: 'issue_type', in: @board.issue_types)
-      .sort_by('completed')
-      .map('completed') { |date| date.strftime('%b %Y') }
+    data_table = summarize_by_month(completed_issues,
+      select_by: 'completed', aggregate_by: :count, pivot_on: 'key')
 
     render json: data_table.to_json
   end
@@ -42,12 +38,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def effort_summary_by_month
-    data_table = completed_issues
-      .map('completed') { |date| DateTime.new(date.year, date.month) }
-      .select('completed').sum(@board.issue_types)
-        .pivot('cycle_time', for: 'issue_type', in: @board.issue_types, if_nil: 0)
-      .sort_by('completed')
-      .map('completed') { |date| date.strftime('%b %Y') }
+    data_table = summarize_by_month(completed_issues,
+      select_by: 'completed', aggregate_by: :sum, pivot_on: 'cycle_time')
 
     render json: data_table.to_json
   end
@@ -57,12 +49,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def created_summary_by_month
-    data_table = created_issues
-      .map('issue_created') { |date| DateTime.new(date.year, date.month) }
-      .select('issue_created').count(@board.issue_types)
-        .pivot('key', for: 'issue_type', in: @board.issue_types)
-      .sort_by('issue_created')
-      .map('issue_created') { |date| date.strftime('%b %Y') }
+    data_table = summarize_by_month(created_issues,
+      select_by: 'issue_created', aggregate_by: :count, pivot_on: 'key')
 
     render json: data_table.to_json
   end
@@ -270,6 +258,15 @@ private
       .data(issues)
       .pick(:key, :issue_type, :issue_created)
       .build
+  end
+
+  def summarize_by_month(issues, opts)
+    issues
+      .map(opts[:select_by]) { |date| DateTime.new(date.year, date.month) }
+      .select(opts[:select_by]).send(opts[:aggregate_by], @board.issue_types)
+      .pivot(opts[:pivot_on], for: 'issue_type', in: @board.issue_types, if_nil: 0)
+      .sort_by(opts[:select_by])
+      .map(opts[:select_by]) { |date| date.strftime('%b %Y') }
   end
 
   def summary_data_table(data_table, &block)
