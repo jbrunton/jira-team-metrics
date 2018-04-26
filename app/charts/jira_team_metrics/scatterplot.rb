@@ -22,10 +22,10 @@ class JiraTeamMetrics::Scatterplot
     percentile_85 = cycle_times.percentile(85)
 
     data_table
-      .add_column("50th percentile (#{pretty_print_number(percentile_50)} days)")
-      .add_column("85th percentile (#{pretty_print_number(percentile_85)} days)")
-      .insert_row(0, [data_table.rows[0][0], nil, percentile_50, percentile_85])
-      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_50, percentile_85])
+      .add_column("85th percentile")
+      .add_column("50th percentile")
+      .add_row([data_table.rows[0][0], nil, percentile_85, percentile_50])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_85, percentile_50])
 
     data_table.to_json
   end
