@@ -68,7 +68,7 @@ class JiraTeamMetrics::DataTable
       aggregate(opts, :sum)
     end
 
-    def group(opts = {})
+    def group(opts = {}, &block)
       group_by_columns = columns
         .select{ |column, _| col_op(column) == :id }
         .map { |column, _| column }
@@ -77,21 +77,8 @@ class JiraTeamMetrics::DataTable
         .select{ |column, _| col_op(column) != :id }
         .map { |column, _| column }
 
-      grouped_rows = data_table.rows.group_by do |row|
-        group_by_values = group_by_columns.map{ |column| row[col_index(column)] }
-        if block_given?
-          yield(*group_by_values)
-        else
-          group_by_values
-        end
-      end
-
-      aggregated_rows = grouped_rows.map do |group_by_values, rows|
-        group_by_values + aggregate_columns.map do |column|
-          column_values = rows.map{ |row| row[col_index(column)] }.compact
-          column_values.empty? ? opts[:if_nil] : column_values.send(col_op(column))
-        end
-      end
+      grouped_rows = group_rows_by(group_by_columns, block)
+      aggregated_rows = aggregate_rows_by(grouped_rows, aggregate_columns, opts)
 
       JiraTeamMetrics::DataTable.new(
         columns.map { |col, col_opts| col_opts[:as] || col },
@@ -143,6 +130,26 @@ class JiraTeamMetrics::DataTable
         @columns[column] = { op: op }.merge(column_opts)
       end
       self
+    end
+
+    def group_rows_by(group_by_columns, block)
+      data_table.rows.group_by do |row|
+        group_by_values = group_by_columns.map{ |column| row[col_index(column)] }
+        if block.nil?
+          group_by_values
+        else
+          block.call(*group_by_values)
+        end
+      end
+    end
+
+    def aggregate_rows_by(grouped_rows, aggregate_columns, opts)
+      grouped_rows.map do |group_by_values, rows|
+        group_by_values + aggregate_columns.map do |column|
+          column_values = rows.map{ |row| row[col_index(column)] }.compact
+          column_values.empty? ? opts[:if_nil] : column_values.send(col_op(column))
+        end
+      end
     end
   end
 
