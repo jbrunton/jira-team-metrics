@@ -157,7 +157,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
     describe "#pivot" do
       it "creates a pivot table based on the given columns" do
         pivot_data = data_table.select('issue_type').count('Joe').count('Anne').count(nil)
-          .pivot('issue_key', for: 'developer', in: ['Joe', 'Anne', nil])
+          .pivot('issue_key', for: 'developer', in: ['Joe', 'Anne', nil], if_nil: 0)
 
         expect(pivot_data.columns).to eq(['issue_type', 'Joe', 'Anne', nil])
         expect(pivot_data.rows).to eq([
