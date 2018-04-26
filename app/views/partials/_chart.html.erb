@@ -8,11 +8,21 @@
           interpolateNulls: true,
           series: {
             1: {
-              type: 'line'
+              type: 'line',
+              color: '#FA0',
+              enableInteractivity: false
             },
             2: {
-              type: 'line'
+              type: 'line',
+              color: '#F66',
+              enableInteractivity: false
             }
+          },
+          legend: {
+            position: 'bottom'
+          },
+          chartArea: {
+            width: '90%'
           }
         })
         .url('<%= board_api_path(@board) %>/scatterplot.json')
