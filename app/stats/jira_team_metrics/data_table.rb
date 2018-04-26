@@ -34,6 +34,11 @@ class JiraTeamMetrics::DataTable
       rows.reverse)
   end
 
+  def column_values(column)
+    index = columns.index(column)
+    rows.map{ |row| row[index] }.compact
+  end
+
   def map(column)
     column_index = columns.index(column)
     new_rows = rows.map do |row|
