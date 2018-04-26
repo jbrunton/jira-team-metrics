@@ -261,7 +261,11 @@ private
       @board.date_range.start_date <= issue.issue_created &&
         issue.issue_created < @board.date_range.end_date
     end
-    issues = JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
+    if params[:query].blank?
+      issues = all_created_issues
+    else
+      issues = JiraTeamMetrics::MqlInterpreter.new(@board, all_created_issues).eval(params[:query])
+    end
     JiraTeamMetrics::DataTableBuilder.new
       .data(issues)
       .pick(:key, :issue_type, :issue_created)
