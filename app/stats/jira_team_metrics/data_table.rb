@@ -18,18 +18,11 @@ class JiraTeamMetrics::DataTable
     Selector.new(self, columns)
   end
 
-  def sort_by(column)
+  def sort_by(column, &block)
     column_index = columns.index(column)
     JiraTeamMetrics::DataTable.new(
       columns,
-      rows.sort_by do |row|
-        val = row[column_index]
-        if val.nil?
-          [0, nil]
-        else
-          [1, block_given? ? yield(val) : val]
-        end
-      end
+      rows.sort_by { |row| sort_key_for(row[column_index], block) }
     )
   end
 
@@ -163,6 +156,14 @@ private
       'number'
     else
       'string'
+    end
+  end
+
+  def sort_key_for(val, block)
+    if val.nil?
+      [0, nil]
+    else
+      [1, block.nil? ? val : block.call(val)]
     end
   end
 end
