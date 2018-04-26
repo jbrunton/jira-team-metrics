@@ -19,13 +19,16 @@ class JiraTeamMetrics::DataTable
   end
 
   def sort_by(column)
-    index = columns.index(column)
+    column_index = columns.index(column)
     JiraTeamMetrics::DataTable.new(
       columns,
       rows.sort_by do |row|
-        val = row[index]
-        sort_val = block_given? ? yield(val) : val
-        [val.nil? ? 0 : 1, sort_val]
+        val = row[column_index]
+        if val.nil?
+          [0, nil]
+        else
+          [1, block_given? ? yield(val) : val]
+        end
       end
     )
   end

@@ -179,6 +179,17 @@ RSpec.describe JiraTeamMetrics::DataTable do
         ['DEV-103', 'Story', 'Anne', 4]
       ])
     end
+
+    it "sorts by the given block" do
+      sorted_data = data_table.sort_by('cycle_time') { |ct| -ct }
+      expect(sorted_data.rows).to eq([
+        ['DEV-102', 'Story', nil, nil],
+        ['DEV-103', 'Story', 'Anne', 4],
+        ['DEV-100', 'Story', 'Joe', 3],
+        ['DEV-101', 'Bug', 'Anne', 2],
+        ['DEV-104', 'Story', 'Joe', 1]
+      ])
+    end
   end
 
   describe "#map" do
