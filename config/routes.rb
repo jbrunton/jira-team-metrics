@@ -26,6 +26,7 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#delivery'
   get '/reports/boards/:board_id/deliveries/:issue_key/scope/:team', to: 'reports#delivery_scope'
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
+  get '/reports/boards/:board_id/aging', to: 'reports#aging'
 
   get '/api/boards/:board_id/completed_summary.json', to: 'api#completed_summary'
   get '/api/boards/:board_id/completed_summary_by_month.json', to: 'api#completed_summary_by_month'
@@ -37,6 +38,7 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/api/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'
   get '/api/boards/:board_id/control_chart.json', to: 'api#control_chart'
   get '/api/boards/:board_id/scatterplot.json', to: 'api#scatterplot'
+  get '/api/boards/:board_id/aging.json', to: 'api#aging'
 
   get '/components/boards/:board_id/wip/:date', to: 'components#wip'
   get '/components/boards/:board_id/issues_list', to: 'components#issues_list'

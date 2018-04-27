@@ -93,6 +93,15 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart.json_data
   end
 
+  def aging
+    chart_params = JiraTeamMetrics::ChartParams.new(
+      query: params[:query],
+      date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
+    )
+    chart = JiraTeamMetrics::AgingWip.new(@board, chart_params)
+    render json: chart.json_data
+  end
+
   def control_chart
     sorted_issues = @board.completed_issues.sort_by { |issue| issue.completed }
     ct_trends = CT_TREND_BUILDER.analyze(sorted_issues)

@@ -1,0 +1,15 @@
+<% content_for :nav_content do %>
+    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
+    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
+    <a href="#!" class="breadcrumb">Aging Work In Progress</a>
+<% end %>
+
+<h3>Aging Work In Progress</h3>
+
+<%= render partial: 'partials/cycle_time_form' %>
+<%= render partial: 'partials/chart', locals: {
+    chart_id: generate_id,
+    chart_type: 'Timeline',
+    url: "#{board_api_path(@board)}/aging.json",
+    chart_opts: {}.to_json
+} %>
