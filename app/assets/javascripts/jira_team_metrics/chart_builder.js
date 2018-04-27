@@ -54,9 +54,7 @@ ChartBuilder.prototype.selectHandler = function(selectHandler) {
 }
 
 ChartBuilder.prototype.build = function() {
-  var chart = new Chart(this._opts);
-  google.charts.setOnLoadCallback(chart._init);
-  return chart;
+  return new Chart(this._opts);
 }
 
 function Chart(opts) {
@@ -74,21 +72,17 @@ Chart.prototype._findContainer = function() {
   return $('#' + this._id);
 }
 
-Chart.prototype._init = function() {
-  this.refresh();
-  this._gchart = new google.visualization[this._chartType](document.getElementById(this._id));
-  if (this._selectHandler) {
-    google.visualization.events.addListener(this._gchart, 'select', this._selectHandler);
-  }
-}
-
 Chart.prototype.draw = function(jsonData) {
   this._data = new google.visualization.DataTable(jsonData);
 
   var $container = this._findContainer();
   $container.css('height', $container.width() * this._relativeHeight);
 
+  this._gchart = new google.visualization[this._chartType](document.getElementById(this._id));
   this._gchart.draw(this._data, this._chartOpts);
+  if (this._selectHandler) {
+    google.visualization.events.addListener(this._gchart, 'select', this._selectHandler);
+  }
 
   this.loading(false);
 }

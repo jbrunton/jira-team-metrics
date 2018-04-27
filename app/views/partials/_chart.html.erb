@@ -11,6 +11,7 @@
 
 
     var chart = chartBuilder.build();
+    google.charts.setOnLoadCallback(chart.refresh);
 
     if (typeof _charts == 'undefined') {
       _charts = {};
