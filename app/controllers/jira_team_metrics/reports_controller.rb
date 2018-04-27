@@ -52,7 +52,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def scatterplot
   end
 
-  def aging
+  def aging_wip
   end
 
   def delivery_scope

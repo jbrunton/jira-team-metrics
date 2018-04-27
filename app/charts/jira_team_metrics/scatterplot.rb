@@ -19,13 +19,17 @@ class JiraTeamMetrics::Scatterplot
 
     cycle_times = data_table.column_values('cycle_time')
     percentile_50 = cycle_times.percentile(50)
+    percentile_70 = cycle_times.percentile(70)
     percentile_85 = cycle_times.percentile(85)
+    percentile_95 = cycle_times.percentile(95)
 
     data_table
+      .add_column("95th percentile")
       .add_column("85th percentile")
+      .add_column("70th percentile")
       .add_column("50th percentile")
-      .add_row([data_table.rows[0][0], nil, nil, percentile_85, percentile_50])
-      .add_row([data_table.rows[data_table.rows.count-1][0], nil, nil, percentile_85, percentile_50])
+      .add_row([data_table.rows[0][0], nil, nil, percentile_95, percentile_85, percentile_70, percentile_50])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, nil, percentile_95, percentile_85, percentile_70, percentile_50])
 
     data_table
   end
@@ -42,14 +46,27 @@ class JiraTeamMetrics::Scatterplot
       seriesType: 'scatter',
       interpolateNulls: true,
       series: {
-          '2' => {
+        '1' => {
           type: 'steppedArea',
-          color: '#FA0',
+          color: '#f44336',
           areaOpacity: 0
         },
-          '1' => {
+        '2' => {
           type: 'steppedArea',
-          color: '#F66',
+          color: '#f44336',
+          lineDashStyle: [4, 4],
+          areaOpacity: 0
+        },
+        '3' => {
+          type: 'steppedArea',
+          color: '#ff9800',
+          lineDashStyle: [4, 4],
+          areaOpacity: 0
+        },
+        '4' => {
+          type: 'steppedArea',
+          color: '#03a9f4',
+          lineDashStyle: [4, 4],
           areaOpacity: 0
         }
       },
@@ -58,7 +75,8 @@ class JiraTeamMetrics::Scatterplot
       },
       chartArea: {
         width: '90%'
-      }
+      },
+      height: 500
     }
   end
 end

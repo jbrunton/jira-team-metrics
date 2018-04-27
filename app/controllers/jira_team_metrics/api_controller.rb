@@ -93,7 +93,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart.json_data
   end
 
-  def aging
+  def aging_wip
     chart_params = JiraTeamMetrics::ChartParams.new(
       query: params[:query],
       date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
