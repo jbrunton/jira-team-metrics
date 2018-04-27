@@ -89,8 +89,8 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       query: params[:query],
       date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
     )
-    data_table = JiraTeamMetrics::Scatterplot.new(@board, chart_params)
-    render json: data_table.json_data
+    chart = JiraTeamMetrics::Scatterplot.new(@board, chart_params)
+    render json: chart.json_data
   end
 
   def control_chart
@@ -123,22 +123,6 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
         stddev = wip_trends[index][:stddev]
         {c: [{v: date_as_string(date)}, {v: nil}, {v: nil}, {v: wip}, {v: nil}, {v: nil}, {v: nil}, {v: mean}, {v: mean - stddev}, {v: mean + stddev}, {v: nil}]}
       end
-    }
-  end
-
-  def compare
-    sorted_issues = IssuesDecorator.new(@board.completed_issues.sort_by { |issue| issue.cycle_time })
-    selected_issues = IssuesDecorator.new(params[:selection_query].blank? ? [] : MqlInterpreter.new(sorted_issues, @board).eval(params[:selection_query]))
-    other_issues = IssuesDecorator.new(sorted_issues.select{ |issue| !selected_issues.include?(issue) })
-
-    chart_data = data_for_compare_chart(sorted_issues, selected_issues, other_issues)
-    histogram_data = data_for_compare_histogram(sorted_issues, selected_issues)
-    quartiles_data = data_for_compare_quartiles(sorted_issues, selected_issues)
-
-    render json: {
-      chartData: chart_data,
-      histogramData: histogram_data,
-      quartiles: quartiles_data
     }
   end
 
@@ -177,69 +161,6 @@ private
       .number({label: 'Count', id: 'count'}, summary_table.map(&:count))
 
     builder.build
-  end
-
-  def data_for_compare_chart(sorted_issues, selected_issues, other_issues)
-    selected_rows = selected_issues.map do |issue|
-      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
-      {c: [{v: percentile}, {v: issue.cycle_time}, {v: nil}]}
-    end
-    other_rows = other_issues.map do |issue|
-      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
-      {c: [{v: percentile}, {v: nil}, {v: issue.cycle_time}]}
-    end
-    {
-      cols: [
-        {id: 'percentile', type: 'number', label: 'Percentile'},
-        {id: 'ct_selected', type: 'number', label: 'Cycle Time (Selected)'},
-        {id: 'ct_other', type: 'number', label: 'Cycle Time (Others)'}
-      ],
-      rows: selected_rows + other_rows
-    }
-  end
-
-  def data_for_compare_histogram(sorted_issues, selected_issues)
-    selected_rows = selected_issues.map do |issue|
-      percentile = (sorted_issues.index(issue) + 1).to_f / sorted_issues.count * 100
-      {c: [{v: issue.key}, {v: percentile}]}
-    end
-    {
-      cols: [
-        {id: 'issue', type: 'string', label: 'Issue'},
-        {id: 'percentile', type: 'number', label: 'Percentile'},
-      ],
-      rows: selected_rows
-    }
-  end
-
-  def data_for_compare_quartiles(sorted_issues, selected_issues)
-    q1 = sorted_issues.cycle_times.percentile(25)
-    q2 = sorted_issues.cycle_times.percentile(50)
-    q3 = sorted_issues.cycle_times.percentile(75)
-
-    total_q1 = selected_issues.select{ |issue| issue.cycle_time <= q1 }.count
-    total_q2 = selected_issues.select{ |issue| q1 < issue.cycle_time && issue.cycle_time <= q2 }.count
-    total_q3 = selected_issues.select{ |issue| q2 < issue.cycle_time && issue.cycle_time <= q3 }.count
-    total_q4 = selected_issues.select{ |issue| q3 < issue.cycle_time }.count
-
-    {
-      q1: {
-        total: total_q1,
-        percent: total_q1.to_f / selected_issues.count * 100
-      },
-      q2: {
-        total: total_q2,
-        percent: total_q2.to_f / selected_issues.count * 100
-      },
-      q3: {
-        total: total_q3,
-        percent: total_q3.to_f / selected_issues.count * 100
-      },
-      q4: {
-        total: total_q4,
-        percent: total_q4.to_f / selected_issues.count * 100
-      }
-    }
   end
 
   def completed_issues

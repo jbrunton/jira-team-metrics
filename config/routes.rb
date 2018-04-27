@@ -21,7 +21,6 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/cycle_times_by_type', to: 'reports#cycle_times_by_type'
   get '/reports/boards/:board_id/control_chart', to: 'reports#control_chart'
   get '/reports/boards/:board_id/issues', to: 'reports#issues'
-  get '/reports/boards/:board_id/compare', to: 'reports#compare'
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/deliveries', to: 'reports#deliveries'
   get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#delivery'
@@ -37,7 +36,6 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/api/boards/:board_id/cycle_time_summary.json', to: 'api#cycle_time_summary'
   get '/api/boards/:board_id/cycle_time_summary_by_month.json', to: 'api#cycle_time_summary_by_month'
   get '/api/boards/:board_id/control_chart.json', to: 'api#control_chart'
-  get '/api/boards/:board_id/compare.json', to: 'api#compare'
   get '/api/boards/:board_id/scatterplot.json', to: 'api#scatterplot'
 
   get '/components/boards/:board_id/wip/:date', to: 'components#wip'

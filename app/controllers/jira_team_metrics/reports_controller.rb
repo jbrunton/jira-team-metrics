@@ -8,9 +8,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def issues
   end
 
-  def compare
-  end
-
   # get '/:domain/boards/:board_id' do
   #   erb 'boards/show'.to_sym
   # end
