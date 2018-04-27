@@ -30,7 +30,28 @@ class JiraTeamMetrics::Scatterplot
     data_table.to_json
   end
 
-  def chart_options
-
+  def self.chart_opts
+    {
+      seriesType: 'scatter',
+      interpolateNulls: true,
+      series: {
+          '1' => {
+          type: 'steppedArea',
+          color: '#FA0',
+          areaOpacity: 0
+        },
+          '2' => {
+          type: 'steppedArea',
+          color: '#F66',
+          areaOpacity: 0
+        }
+      },
+      legend: {
+        position: 'none'
+      },
+      chartArea: {
+        width: '90%'
+      }
+    }.to_json
   end
 end

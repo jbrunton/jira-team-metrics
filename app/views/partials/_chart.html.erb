@@ -3,30 +3,9 @@
 <script>
   (function() {
     var chart = new ChartBuilder('<%= chart_id %>')
-        .chartOpts({
-          seriesType: 'scatter',
-          interpolateNulls: true,
-          series: {
-            1: {
-              type: 'steppedArea',
-              color: '#FA0',
-              areaOpacity: 0
-            },
-            2: {
-              type: 'steppedArea',
-              color: '#F66',
-              areaOpacity: 0
-            }
-          },
-          legend: {
-            position: 'none'
-          },
-          chartArea: {
-            width: '90%'
-          }
-        })
-        .url('<%= board_api_path(@board) %>/scatterplot.json')
-        .chartType('ComboChart')
+        .chartOpts(<%= chart_opts.html_safe %>)
+        .url('<%= url %>')
+        .chartType('<%= chart_type %>')
         .build();
 
     google.charts.setOnLoadCallback(chart.refresh);
