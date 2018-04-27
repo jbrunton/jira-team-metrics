@@ -24,8 +24,8 @@ class JiraTeamMetrics::Scatterplot
     data_table
       .add_column("85th percentile")
       .add_column("50th percentile")
-      .add_row([data_table.rows[0][0], nil, percentile_85, percentile_50])
-      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_85, percentile_50])
+      .add_row([data_table.rows[0][0], nil, nil, percentile_85, percentile_50])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, nil, percentile_85, percentile_50])
 
     data_table.to_json('key' => { role: 'annotationText' })
   end
@@ -35,12 +35,12 @@ class JiraTeamMetrics::Scatterplot
       seriesType: 'scatter',
       interpolateNulls: true,
       series: {
-          '1' => {
+          '2' => {
           type: 'steppedArea',
           color: '#FA0',
           areaOpacity: 0
         },
-          '2' => {
+          '1' => {
           type: 'steppedArea',
           color: '#F66',
           areaOpacity: 0
