@@ -47,10 +47,10 @@ class JiraTeamMetrics::DataTable
     JiraTeamMetrics::DataTable.new(columns, new_rows)
   end
 
-  def add_column(column)
+  def add_column(column, values = nil)
     columns << column
-    rows.each do |row|
-      row << nil
+    rows.each_with_index do |row, index|
+      row << (values.nil? ? nil : values[index])
     end
     self
   end

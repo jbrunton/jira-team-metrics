@@ -85,12 +85,11 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def scatterplot
-    chart_params = JiraTeamMetrics::ChartParams.new(
-      query: params[:query],
-      date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
-    )
-    chart = JiraTeamMetrics::Scatterplot.new(@board, chart_params)
-    render json: chart.json_data
+    render json: chart_data_for(:scatterplot)
+  end
+
+  def aging_wip
+    render json: chart_data_for(:aging_wip)
   end
 
   def control_chart
@@ -204,6 +203,15 @@ private
     selector.instance_eval(&block)
       .group
       .sort_by('issue_type') { |issue_type| -(JiraTeamMetrics::BoardDecorator::ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
+  end
+
+  def chart_data_for(chart_name)
+    chart_params = JiraTeamMetrics::ChartParams.new(
+      query: params[:query],
+      date_range: JiraTeamMetrics::DateRange.new(params[:from_date], params[:to_date])
+    )
+    chart_class = "JiraTeamMetrics::#{chart_name.to_s.camelize}Chart".constantize
+    chart_class.new(@board, chart_params).json_data
   end
 
   CT_TREND_BUILDER = JiraTeamMetrics::TrendBuilder.new.

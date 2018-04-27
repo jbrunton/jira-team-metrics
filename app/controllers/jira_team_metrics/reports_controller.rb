@@ -52,6 +52,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def scatterplot
   end
 
+  def aging_wip
+  end
+
   def delivery_scope
     @team = params[:team]
     @increment = @board.object.issues.find_by(key: params[:issue_key])
