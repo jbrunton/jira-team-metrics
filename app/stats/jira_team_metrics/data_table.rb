@@ -32,6 +32,11 @@ class JiraTeamMetrics::DataTable
       rows.reverse)
   end
 
+  def column_values(column)
+    index = columns.index(column)
+    rows.map{ |row| row[index] }.compact
+  end
+
   def map(column)
     column_index = columns.index(column)
     new_rows = rows.map do |row|
@@ -42,13 +47,26 @@ class JiraTeamMetrics::DataTable
     JiraTeamMetrics::DataTable.new(columns, new_rows)
   end
 
-  def to_json
-    {
-      'cols' => columns.each_with_index.map do |column_name, column_index|
-        { 'label' => column_name, 'type' => column_type(column_index) }
-      end,
-      'rows' => rows.map { |row| { 'c' => row.map { |x| { 'v' => x } } } }
-    }
+  def add_column(column)
+    columns << column
+    rows.each do |row|
+      row << nil
+    end
+    self
+  end
+
+  def add_row(row)
+    rows << row
+    self
+  end
+
+  def insert_row(index, row)
+    rows.insert(index, row)
+    self
+  end
+
+  def to_json(opts = {})
+    JiraTeamMetrics::DataTableSerializer.new(self).to_json(opts)
   end
 
   class Selector
@@ -154,18 +172,6 @@ class JiraTeamMetrics::DataTable
   end
 
 private
-  def column_type(index)
-    column_values = rows.map{ |row| row[index] }.compact
-    if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
-      'number'
-    elsif column_values.empty?
-      # play it safe with google charts - assume a number unless clearly not
-      'number'
-    else
-      'string'
-    end
-  end
-
   def sort_key_for(val, block)
     if val.nil?
       [0, nil]

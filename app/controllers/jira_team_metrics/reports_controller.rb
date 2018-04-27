@@ -8,9 +8,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def issues
   end
 
-  def compare
-  end
-
   # get '/:domain/boards/:board_id' do
   #   erb 'boards/show'.to_sym
   # end
@@ -50,6 +47,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def delivery
     @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
+  end
+
+  def scatterplot
   end
 
   def delivery_scope

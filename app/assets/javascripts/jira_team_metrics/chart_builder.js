@@ -48,8 +48,15 @@ ChartBuilder.prototype.url = function(url) {
   return this;
 }
 
+ChartBuilder.prototype.selectHandler = function(selectHandler) {
+  this._opts.selectHandler = selectHandler;
+  return this;
+}
+
 ChartBuilder.prototype.build = function() {
-  return new Chart(this._opts);
+  var chart = new Chart(this._opts);
+  google.charts.setOnLoadCallback(chart._init);
+  return chart;
 }
 
 function Chart(opts) {
@@ -58,6 +65,7 @@ function Chart(opts) {
   this._chartOpts = opts.chartOpts;
   this._relativeHeight = opts.relativeHeight;
   this._url = opts.url;
+  this._selectHandler = opts.selectHandler;
 
   _.bindAll(this, _.functions(Chart.prototype));
 }
@@ -66,14 +74,21 @@ Chart.prototype._findContainer = function() {
   return $('#' + this._id);
 }
 
+Chart.prototype._init = function() {
+  this.refresh();
+  this._gchart = new google.visualization[this._chartType](document.getElementById(this._id));
+  if (this._selectHandler) {
+    google.visualization.events.addListener(this._gchart, 'select', this._selectHandler);
+  }
+}
+
 Chart.prototype.draw = function(jsonData) {
-  var data = new google.visualization.DataTable(jsonData);
+  this._data = new google.visualization.DataTable(jsonData);
 
   var $container = this._findContainer();
   $container.css('height', $container.width() * this._relativeHeight);
 
-  var chart = new google.visualization[this._chartType](document.getElementById(this._id));
-  chart.draw(data, this._chartOpts);
+  this._gchart.draw(this._data, this._chartOpts);
 
   this.loading(false);
 }
