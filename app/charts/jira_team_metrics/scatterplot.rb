@@ -74,7 +74,9 @@ class JiraTeamMetrics::Scatterplot
         position: 'none'
       },
       chartArea: {
-        width: '90%'
+        width: '90%',
+        height: '80%',
+        top: '5%'
       },
       height: 500
     }

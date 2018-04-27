@@ -31,7 +31,7 @@ class JiraTeamMetrics::AgingWip
           '#f44336'
         end
       end,
-      height: (wip_issues.count + 3) * 41 + 50
+      height: (wip_issues.count + 1) * 41 + 50
     }
   end
 

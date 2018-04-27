@@ -23,7 +23,6 @@
   }
 </script>
 
-<%= render partial: 'partials/cycle_time_form' %>
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
@@ -32,3 +31,5 @@
 } %>
 
 <div id="selected_content"></div>
+
+<%= render partial: 'partials/cycle_time_form' %>

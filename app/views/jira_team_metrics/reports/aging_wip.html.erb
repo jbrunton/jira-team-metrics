@@ -6,11 +6,10 @@
 
 <h3>Aging Work In Progress</h3>
 
-<%= render partial: 'partials/cycle_time_form' %>
-
 <%= render partial: 'partials/chart', locals: {
     chart_id: generate_id,
     chart_type: 'Timeline',
     url: "#{board_api_path(@board)}/aging_wip.json"
 } %>
 
+<%= render partial: 'partials/cycle_time_form' %>
