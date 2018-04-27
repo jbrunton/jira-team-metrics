@@ -6,9 +6,19 @@
 
 <h3>Scatterplot</h3>
 
+<script>
+  function selectHandler() {
+    alert('Hi');
+  }
+</script>
+
 <%= render partial: 'partials/cycle_time_form' %>
 <%= render partial: 'partials/chart', locals: {
+    chart_id: generate_id,
     chart_type: 'ComboChart',
+    select_handler: 'selectHandler',
     url: "#{board_api_path(@board)}/scatterplot.json",
     chart_opts: JiraTeamMetrics::Scatterplot.chart_opts
 } %>
+
+<div id="selected_content"></div>

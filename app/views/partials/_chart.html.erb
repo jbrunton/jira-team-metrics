@@ -1,14 +1,17 @@
-<% chart_id = generate_id %>
-
 <script>
   (function() {
-    var chart = new ChartBuilder('<%= chart_id %>')
+    var chartBuilder = new ChartBuilder('<%= chart_id %>')
         .chartOpts(<%= chart_opts.html_safe %>)
         .url('<%= url %>')
-        .chartType('<%= chart_type %>')
-        .build();
+        .chartType('<%= chart_type %>');
 
-    google.charts.setOnLoadCallback(chart.refresh);
+    <% if defined?(select_handler) %>
+        chartBuilder.selectHandler(<%= select_handler %>);
+    <% end %>
+
+
+    var chart = chartBuilder.build();
+    
     $('#ct-states input, #ct-states textarea').change(chart.refresh);
   })();
 </script>
