@@ -46,29 +46,10 @@ class JiraTeamMetrics::ScatterplotChart
       seriesType: 'scatter',
       interpolateNulls: true,
       series: {
-        '1' => {
-          type: 'steppedArea',
-          color: '#f44336',
-          areaOpacity: 0
-        },
-        '2' => {
-          type: 'steppedArea',
-          color: '#f44336',
-          lineDashStyle: [4, 4],
-          areaOpacity: 0
-        },
-        '3' => {
-          type: 'steppedArea',
-          color: '#ff9800',
-          lineDashStyle: [4, 4],
-          areaOpacity: 0
-        },
-        '4' => {
-          type: 'steppedArea',
-          color: '#03a9f4',
-          lineDashStyle: [4, 4],
-          areaOpacity: 0
-        }
+        '1' => series_opts('#f44336', false),
+        '2' => series_opts('#f44336', true),
+        '3' => series_opts('#ff9800', true),
+        '4' => series_opts('#03a9f4', true),
       },
       legend: {
         position: 'none'
@@ -80,5 +61,16 @@ class JiraTeamMetrics::ScatterplotChart
       },
       height: 500
     }
+  end
+
+private
+  def series_opts(color, dash)
+    opts = {
+      type: 'steppedArea',
+      color: color,
+      areaOpacity: 0
+    }
+    opts.merge!(lineDashStyle: [4, 4]) if dash
+    opts
   end
 end
