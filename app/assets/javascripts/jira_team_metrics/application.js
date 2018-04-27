@@ -12,7 +12,7 @@
 //
 //= require rails-ujs
 //= require jquery
-//= require materialize
+//= require semantic-ui
 //= require handlebars.runtime
 //= require lodash
 //= require_tree ./templates
@@ -23,6 +23,10 @@ $.ajaxSetup({
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   }
 });
+
+$(function() {
+  $('.menu .item').tab();
+})
 
 $(function() {
   $('.datepicker').on('change', function(){

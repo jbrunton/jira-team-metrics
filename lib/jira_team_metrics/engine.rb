@@ -4,7 +4,7 @@ module JiraTeamMetrics
 
     require 'jquery-rails'
     require 'handlebars_assets'
-    require 'materialize-sass'
+    require 'semantic-ui-sass'
     require 'lodash-rails'
     require 'coffee-rails'
     require 'draper'

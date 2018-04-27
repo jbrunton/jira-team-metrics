@@ -14,8 +14,10 @@
  *= require_self
  */
 
-@import "https://fonts.googleapis.com/icon?family=Material+Icons";
-@import "materialize";
+//$font-url: 'http://fonts.useso.com/css?family=Lato:400,700,400italic,700italic&subset=latin';
+@import "semantic-ui";
+
+$input-error-color: '#F00';
 
 span.error {
   color: $input-error-color;
@@ -44,7 +46,7 @@ table.team-dashboard {
 
   td, th {
     &.highlight {
-      @extend .grey, .lighten-4;
+      //@extend .grey, .lighten-4;
     }
   }
 }
@@ -78,7 +80,7 @@ table.jira-tree {
 
   td {
     &.effort-stats {
-      @extend .right-align;
+      //@extend .right-align;
       width: 5%;
     }
   }

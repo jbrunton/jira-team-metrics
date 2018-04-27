@@ -37,28 +37,31 @@
 
 <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
 
-<div class="row">
-  <div class="col s7">
-        <ul class="tabs">
-          <li class="tab col s3"><a href="#synced_boards">Synced Boards</a></li>
-          <li class="tab col s3"><a href="#search_boards">Search</a></li>
-        </ul>
-      <div id="synced_boards">
-        <ul class="collection">
-          <% @boards.each do |board| %>
-              <li class="collection-item"><%= link_to board.name, board_path(board) %></li>
-          <% end %>
-        </ul>
-      </div>
-      <div id="search_boards">
-        <div class="input-field">
-          <input id="search" type="search" required>
-          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+<div class="ui grid">
+  <div class="ten wide column">
+
+    <div class="ui secondary menu">
+      <a class="item active" data-tab="synced_boards">Synced Boards</a>
+      <a class="item" data-tab="search_boards">Search</a>
+    </div>
+    <div class="ui tab active" data-tab="synced_boards">
+      <ul class="collection">
+        <% @boards.each do |board| %>
+            <li class="collection-item"><%= link_to board.name, board_path(board) %></li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="ui tab" data-tab="search_boards">
+      <div class="input-field">
+        <div class="ui icon input">
+          <input id="search" type="text" placeholder="Search...">
+          <i class="search icon"></i>
         </div>
-        <div id="search-results"></div>
       </div>
+      <div id="search-results"></div>
+    </div>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'partials/status_card', locals: { object: @domain } %>
   </div>
 </div>

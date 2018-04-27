@@ -1,27 +1,30 @@
 <% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="#!" class="breadcrumb"><%= @board.name %></a>
+    <div class="ui breadcrumb">
+      <a href="<%= domain_path %>" class="section"><%= @domain.config.name %></a>
+      <i class="right angle icon divider"></i>
+      <a href="#!" class="active section"><%= @board.name %></a>
+    </div>
 <% end %>
 
-<h3><%= @board.name %></h3>
+<h1><%= @board.name %></h1>
 
 <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
 
-<div class="row">
-  <div class="col s7">
-    <ul class="collection with-header">
-      <li class="collection-header"><h4>Reports</h4></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/issues">Issues</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/timesheets">Timesheets</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/deliveries">Deliveries</a></div></li>
-    </ul>
+<div class="ui grid">
+  <div class="ten wide column">
+    <div class="ui list">
+      <div class="item"><div class="header">Reports</div></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/issues">Issues</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/timesheets">Timesheets</a></div>
+      <div class="item"><a href="<%= reports_path(@board) %>/deliveries">Deliveries</a></div>
+    </div>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'partials/status_card', locals: { object: @board } %>
   </div>
 </div>
