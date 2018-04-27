@@ -4,17 +4,28 @@
   <a href="#!" class="breadcrumb">Scatterplot</a>
 <% end %>
 
+<% chart_id = generate_id %>
+
 <h3>Scatterplot</h3>
 
 <script>
   function selectHandler() {
-    alert('Hi');
+    var chart = _charts['<%= chart_id %>'];
+    var selection = chart._gchart.getSelection()[0];
+    // completed issues column
+    if (selection.column == 1) {
+      var key = chart._data.getValue(selection.row, 2);
+      $('#selected_content').animate({opacity: 0}).load('<%= board_path(@board) %>/issues/' + key + '?fragment=true', function () {
+        $(this).animate({opacity: 1});
+        $('.collapsible').collapsible();
+      });
+    }
   }
 </script>
 
 <%= render partial: 'partials/cycle_time_form' %>
 <%= render partial: 'partials/chart', locals: {
-    chart_id: generate_id,
+    chart_id: chart_id,
     chart_type: 'ComboChart',
     select_handler: 'selectHandler',
     url: "#{board_api_path(@board)}/scatterplot.json",

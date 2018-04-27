@@ -83,12 +83,12 @@ Chart.prototype._init = function() {
 }
 
 Chart.prototype.draw = function(jsonData) {
-  var data = new google.visualization.DataTable(jsonData);
+  this._data = new google.visualization.DataTable(jsonData);
 
   var $container = this._findContainer();
   $container.css('height', $container.width() * this._relativeHeight);
 
-  this._gchart.draw(data, this._chartOpts);
+  this._gchart.draw(this._data, this._chartOpts);
 
   this.loading(false);
 }

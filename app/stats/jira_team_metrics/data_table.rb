@@ -67,9 +67,15 @@ class JiraTeamMetrics::DataTable
     self
   end
 
-  def to_json
+  def to_json(opts = {})
     json_cols = columns.each_with_index.map do |column_name, column_index|
-      { 'label' => column_name, 'type' => column_type(column_index) }
+      column_opts = opts[column_name] || {}
+      json_col = {
+        'label' => column_opts[:as] || column_name,
+        'type' => column_opts[:type] || column_type(column_index)
+      }
+      json_col.merge!('role' => column_opts[:role]) unless column_opts[:role].nil?
+      json_col
     end
     json_rows = rows.map do |row|
       {

@@ -11,7 +11,12 @@
 
 
     var chart = chartBuilder.build();
-    
+
+    if (typeof _charts == 'undefined') {
+      _charts = {};
+    }
+    _charts['<%= chart_id %>'] = chart;
+
     $('#ct-states input, #ct-states textarea').change(chart.refresh);
   })();
 </script>

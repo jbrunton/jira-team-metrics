@@ -13,7 +13,7 @@ class JiraTeamMetrics::Scatterplot
     end
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(completed_issues)
-      .pick(:completed, :cycle_time)
+      .pick(:completed, :cycle_time, :key)
       .build
       .sort_by('completed')
 
@@ -27,7 +27,7 @@ class JiraTeamMetrics::Scatterplot
       .add_row([data_table.rows[0][0], nil, percentile_85, percentile_50])
       .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_85, percentile_50])
 
-    data_table.to_json
+    data_table.to_json('key' => { role: 'annotationText' })
   end
 
   def self.chart_opts
