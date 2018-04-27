@@ -1,6 +1,4 @@
 class JiraTeamMetrics::DataTable
-  include JiraTeamMetrics::ChartsHelper
-
   attr_reader :columns
   attr_reader :rows
 
@@ -68,31 +66,7 @@ class JiraTeamMetrics::DataTable
   end
 
   def to_json(opts = {})
-    json_cols = columns.each_with_index.map do |column_name, column_index|
-      column_opts = opts[column_name] || {}
-      json_col = {
-        'label' => column_opts[:as] || column_name,
-        'type' => column_opts[:type] || column_type(column_index)
-      }
-      json_col.merge!('role' => column_opts[:role]) unless column_opts[:role].nil?
-      json_col
-    end
-    json_rows = rows.map do |row|
-      {
-        'c' => row.each_with_index.map do |val, column_index|
-          if json_cols[column_index]['type'] == 'date'
-            json_val = date_as_string(val)
-          else
-            json_val = val
-          end
-          { 'v' => json_val }
-        end
-      }
-    end
-    {
-      'cols' => json_cols,
-      'rows' => json_rows
-    }
+    JiraTeamMetrics::DataTableSerializer.new(self).to_json(opts)
   end
 
   class Selector
@@ -198,20 +172,6 @@ class JiraTeamMetrics::DataTable
   end
 
 private
-  def column_type(index)
-    column_values = rows.map{ |row| row[index] }.compact
-    if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
-      'number'
-    elsif column_values.any? && column_values.all?{ |val| val.class <= Time }
-      'date'
-    elsif column_values.empty?
-      # play it safe with google charts - assume a number unless clearly not
-      'number'
-    else
-      'string'
-    end
-  end
-
   def sort_key_for(val, block)
     if val.nil?
       [0, nil]
