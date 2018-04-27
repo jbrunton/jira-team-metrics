@@ -31,7 +31,7 @@ private
     @data_table.rows.map do |row|
       {
         'c' => row.each_with_index.map do |val, column_index|
-          if json_cols[column_index]['type'] == 'date'
+          if ['date', 'datetime'].include?(json_cols[column_index]['type'])
             json_val = date_as_string(val)
           else
             json_val = val

@@ -1,9 +1,12 @@
 <script>
   (function() {
     var chartBuilder = new ChartBuilder('<%= chart_id %>')
-        .chartOpts(<%= chart_opts.html_safe %>)
         .url('<%= url %>')
         .chartType('<%= chart_type %>');
+
+    <% if defined?(chart_opts) %>
+        chartBuilder.chartOpts(<%= chart_opts.html_safe %>)
+    <% end %>
 
     <% if defined?(select_handler) %>
         chartBuilder.selectHandler(<%= select_handler %>);

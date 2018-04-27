@@ -73,7 +73,12 @@ Chart.prototype._findContainer = function() {
 }
 
 Chart.prototype.draw = function(jsonData) {
-  this._data = new google.visualization.DataTable(jsonData);
+  if (jsonData.data) {
+    this._data = new google.visualization.DataTable(jsonData.data);
+    this._chartOpts = jsonData.chartOpts;
+  } else {
+    this._data = new google.visualization.DataTable(jsonData);
+  }
 
   var $container = this._findContainer();
   $container.css('height', $container.width() * this._relativeHeight);

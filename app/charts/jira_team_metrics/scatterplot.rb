@@ -6,7 +6,7 @@ class JiraTeamMetrics::Scatterplot
     @params = chart_params
   end
 
-  def json_data
+  def data_table
     completed_issues = @board.completed_issues.select do |issue|
       @params.date_range.start_date <= issue.completed &&
         issue.completed < @params.date_range.end_date
@@ -27,10 +27,17 @@ class JiraTeamMetrics::Scatterplot
       .add_row([data_table.rows[0][0], nil, nil, percentile_85, percentile_50])
       .add_row([data_table.rows[data_table.rows.count-1][0], nil, nil, percentile_85, percentile_50])
 
-    data_table.to_json('key' => { role: 'annotationText' })
+    data_table
   end
 
-  def self.chart_opts
+  def json_data
+    {
+      chartOpts: chart_opts,
+      data: data_table.to_json('key' => { role: 'annotationText' })
+    }
+  end
+
+  def chart_opts
     {
       seriesType: 'scatter',
       interpolateNulls: true,
@@ -52,6 +59,6 @@ class JiraTeamMetrics::Scatterplot
       chartArea: {
         width: '90%'
       }
-    }.to_json
+    }
   end
 end

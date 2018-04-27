@@ -7,9 +7,16 @@
 <h3>Aging Work In Progress</h3>
 
 <%= render partial: 'partials/cycle_time_form' %>
+
+<p class="center-align">
+  <span class="light-blue white-text" style="padding: 4px;">OK</span>
+  <span class="orange" style="padding: 4px;">50th percentile</span>
+  <span class="red white-text" style="padding: 4px;">70th percentile</span>
+</p>
+
 <%= render partial: 'partials/chart', locals: {
     chart_id: generate_id,
     chart_type: 'Timeline',
-    url: "#{board_api_path(@board)}/aging.json",
-    chart_opts: {}.to_json
+    url: "#{board_api_path(@board)}/aging.json"
 } %>
+
