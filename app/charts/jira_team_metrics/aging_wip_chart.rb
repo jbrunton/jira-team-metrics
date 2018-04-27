@@ -1,4 +1,4 @@
-class JiraTeamMetrics::AgingWip
+class JiraTeamMetrics::AgingWipChart
   def initialize(board, chart_params)
     @board = board
     @params = chart_params

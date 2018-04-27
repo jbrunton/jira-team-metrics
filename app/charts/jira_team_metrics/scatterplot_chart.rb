@@ -1,4 +1,4 @@
-class JiraTeamMetrics::Scatterplot
+class JiraTeamMetrics::ScatterplotChart
   include JiraTeamMetrics::FormattingHelper
 
   def initialize(board, chart_params)
