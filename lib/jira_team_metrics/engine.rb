@@ -14,6 +14,7 @@ module JiraTeamMetrics
     require 'descriptive_statistics'
     require 'open-uri'
     require 'parslet'
+    require 'pickadate-rails'
 
     #config.autoload_paths << File.expand_path("../../../app/jira", __FILE__)
     #config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)

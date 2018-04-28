@@ -1,48 +1,28 @@
-<div class="row" id="ct-states">
-  <form id="filter-params" class="col s6">
-    <div class="row">
-      <div class="input-field col s6">
-        <input name="from_state" id="from_state" type="text" class="validate state" autocomplete="off" value="<%= @board.config_property('cycle_times.in_progress.from') %>">
-        <label for="from_state">From State</label>
-      </div>
-      <div class="input-field col s6">
-        <input name="to_state" id="to_state" type="text" class="validate state" autocomplete="off" value="<%= @board.config_property('cycle_times.in_progress.to') %>">
-        <label for="to_state">To State</label>
+<div id="ct-states">
+  <form id="filter-params" class="ui form grid">
+    <div class="eight wide column">
+      <div class="field">
+        <label>Query</label>
+        <textarea class="mono" id="query" name="query"><%= @board.config_property('default_query') %></textarea>
       </div>
     </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input name="from_date" id="from_date" type="text" class="datepicker" data-value="<%= (@board.synced_from || Time.now - 90.days).strftime('%Y-%m-%d') %>">
-        <label for="from_date">From Date</label>
-      </div>
-      <div class="input-field col s6">
-        <input name="to_date" id="to_date" type="text" class="datepicker" data-value="<%= Time.now.strftime('%Y-%m-%d') %>">
-        <label for="to_date">To Date</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <textarea class="mono materialize-textarea" id="query" name="query"><%= @board.config_property('default_query') %></textarea>
-        <label for="query">Query</label>
-      </div>
-    </div>
-    <% if defined?(subquery) && subquery %>
-      <div class="row">
-        <div class="input-field col s12">
-          <input name="selection_query" id="selection_query" type="text" class="validate" autocomplete="off">
-          <label for="selection_query">Subquery</label>
+    <div class="eight wide column">
+      <div class="fields">
+        <div class="eight wide field">
+          <label for="from_date">From Date</label>
+          <input name="from_date" id="from_date" type="text" class="datepicker" data-value="<%= (@board.synced_from || Time.now - 90.days).strftime('%Y-%m-%d') %>">
+        </div>
+        <div class="eight wide field">
+          <label for="to_date">To Date</label>
+          <input name="to_date" id="to_date" type="text" class="datepicker" data-value="<%= Time.now.strftime('%Y-%m-%d') %>">
         </div>
       </div>
-    <% end %>
-  </form>
-  <div class="col s6">
-    <ul class="collapsible popout" data-collapsible="expandable">
-      <li>
-        <div class="collapsible-header">
-          <i class="material-icons">info_outline</i>
+      <div class="ui styled accordion">
+        <div class="title">
+          <i class="dropdown icon"></i>
           Help with query language
         </div>
-        <div class="collapsible-body">
+        <div class="content">
           <p><strong>Select by field:</strong>
             <br><span class="mono">key = 'ISSUE-101'</span>
             <br><span class="mono">issue_type = 'Story'</span>
@@ -65,21 +45,13 @@
             <br><span class="mono"><%= @board.issue_types.join(', ') %></span>
           </p>
         </div>
-      </li>
-    </ul>
-  </div>
+      </div>
+    </div>
+  </form>
 </div>
 
 <script>
   $(function() {
-    $('.state').autocomplete({
-      data: {
-        <% @domain['statuses'].each do |status, _| %>
-        "<%= status.html_safe %>": null,
-        <% end %>
-      }
-    });
-
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month
       selectYears: 15, // Creates a dropdown of 15 years to control year,
@@ -88,7 +60,12 @@
       close: 'Ok',
       formatSubmit: 'yyyy-mm-dd',
       hiddenName: true,
-      max: true
+      max: true,
+      container: '#pickadate-container',
+      onClose : function()
+      {
+        this.$holder.blur();
+      }
     });
   });
 

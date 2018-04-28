@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency "parslet"
   s.add_dependency "sass-rails"
   s.add_dependency "less-rails"
+  s.add_dependency "pickadate-rails"
   #s.add_dependency 'sprockets-rails', '<= 2.3.3'
 
   s.add_development_dependency "sqlite3"

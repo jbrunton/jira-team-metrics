@@ -13,6 +13,8 @@
 //= require rails-ujs
 //= require jquery
 //= require semantic_ui/semantic_ui
+//= require pickadate/picker
+//= require pickadate/picker.date
 //= require handlebars.runtime
 //= require lodash
 //= require_tree ./templates
@@ -26,12 +28,13 @@ $.ajaxSetup({
 
 $(function() {
   $('.menu .item').tab();
+  $('.ui.accordion').accordion();
 })
 
 $(function() {
-  $('.datepicker').on('change', function(){
-    $(this).next().find('.picker__close').click();
-  });
+  //$('.datepicker').on('change', function(){
+  //  $('#pickadate-container').find('.picker__close').click();
+  //});
 
   $(document).on('change', 'form.flag-outlier input', function(event) {
     var $form = $(event.target).closest('form.flag-outlier');

@@ -29,3 +29,6 @@ spec/dummy/tmp/
 
 /cache
 /.idea
+
+.DS_Store
+
