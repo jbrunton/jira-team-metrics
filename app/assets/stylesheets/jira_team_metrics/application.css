@@ -49,15 +49,15 @@ table.team-dashboard td.highlight, table.team-dashboard th.highlight {
     background-color: #F6F6F6;
 }
 
-table.jira-tree td.indent {
+table.jira-tree .indent {
     width: 50px;
 }
 
-table.jira-tree tr.delivery {
+table.jira-tree .delivery {
     font-weight: bold;
 }
 
-table.jira-tree tr.epic td {
+table.jira-tree .epic td {
     background-color: #f9fafb;
     font-weight: bold;
 }
@@ -66,11 +66,11 @@ table.jira-tree tr td:first-child {
       padding-left: 50px;
 }
 
-table.jira-tree tr.story td:first-child {
+table.jira-tree .story td:first-child {
     padding-left: 90px;
 }
 
-table.jira-tree td.effort-stats {
+table.jira-tree .effort-stats {
     width: 5%;
 }
 

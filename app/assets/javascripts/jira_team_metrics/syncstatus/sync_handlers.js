@@ -1,7 +1,7 @@
 function statusReceived(data) {
   if (data.in_progress) {
     $('#sync-indicator').show();
-    if (typeof(data.progress) != 'undefined') {
+    if (typeof(data.progress) !== 'undefined') {
       $('#indicator-indeterminate').hide();
       $('#indicator-determinate').show().progress({ percent: data.progress, autoSuccess: false });
     } else {
