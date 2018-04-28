@@ -15,6 +15,7 @@
  */
 
 //$font-url: 'http://fonts.useso.com/css?family=Lato:400,700,400italic,700italic&subset=latin';
+$internalBorderColor: '#000';
 @import "semantic-ui";
 
 $input-error-color: '#F00';
@@ -33,9 +34,6 @@ span.error {
 table {
   &.issue-details th {
     width: 25%;
-  }
-  td,th {
-    vertical-align: top;
   }
 }
 

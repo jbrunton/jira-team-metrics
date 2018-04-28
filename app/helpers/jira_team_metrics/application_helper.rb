@@ -77,13 +77,13 @@ module JiraTeamMetrics::ApplicationHelper
     input_tag = form_input_tag(object, method, options)
     label_tag = form_label_tag(object, method)
 
-    [input_tag, label_tag].join.html_safe
+    [label_tag, input_tag].join.html_safe
   end
 
   def form_input_tag(object, method, options)
     object_name = object_name_for(object)
-    classes = 'validate'
-    classes += ' invalid' if object.errors[method].any?
+    classes = 'ui'
+    classes += ' error' if object.errors[method].any?
     tag(:input, :id => input_id_for(object, method),
       :name =>  "#{object_name}[#{method}]",
       :type => options[:type] || 'text',

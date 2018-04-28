@@ -12,6 +12,44 @@
 
 <div class="ui grid">
   <div class="ten wide column">
+    <table class="ui celled structured table">
+      <thead>
+        <tr>
+          <th>hi</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td rowspan="3">
+          Manage flow
+        </td>
+        <td>
+          <div class="item"><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div>
+        </td>
+        <td>
+          Inspect issue cycle times and visualise percentiles.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item"><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div>
+        </td>
+        <td>
+          See which in progress issues are aging into higher cycle time percentiles.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item"><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div>
+        </td>
+        <td>
+          Visualise cycle times alongside WIP.
+        </td>
+      </tr>
+      </tbody>
+    </table>
     <div class="ui list">
       <div class="item"><div class="header">Reports</div></div>
       <div class="item"><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div>
