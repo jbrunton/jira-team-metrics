@@ -18,13 +18,6 @@
  */
 
 
-.picker__holder {
-    pointer-events: none;
-}
-.picker__wrap {
-    pointer-events: auto;
-}
-
 /*$input-error-color: '#F00';*/
 
 /*span.error {*/
@@ -44,17 +37,17 @@
   /*}*/
 /*}*/
 
-/*table.team-dashboard {*/
-  /*td {*/
-    /*padding: 5px 5px;*/
-  /*}*/
+.ui.table.team-dashboard td, .ui.table.team-dashboard th {
+    padding: 5px 5px;
+}
 
-  /*td, th {*/
-    /*&.highlight {*/
-      /*//@extend .grey, .lighten-4;*/
-    /*}*/
-  /*}*/
-/*}*/
+.ui.table.team-dashboard td {
+    border-top: none;
+}
+
+table.team-dashboard td.highlight, table.team-dashboard th.highlight {
+    background-color: #F6F6F6;
+}
 
 /*table.jira-tree {*/
   /*td.indent {*/

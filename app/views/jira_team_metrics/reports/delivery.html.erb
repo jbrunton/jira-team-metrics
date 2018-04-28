@@ -1,9 +1,4 @@
-<% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="<%= reports_path(@board) %>/deliveries" class="breadcrumb">Deliveries</a>
-    <a href="#!" class="breadcrumb"><%= @increment.key %></a>
-<% end %>
+<% breadcrumb :delivery, @increment %>
 
 <script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});
@@ -61,27 +56,27 @@
   }
 </script>
 
-<div class="row">
-  <div id="raw-cfd" class="col s6" style="height: 300px; margin-top: 20px;">
+<div class="ui grid">
+  <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
 
   </div>
-  <div id="trained-cfd" class="col s6" style="height: 300px; margin-top: 20px;">
+  <div id="trained-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
 
   </div>
 </div>
 
 <% cache "team_dashboard/#{@increment.key}" do %>
 
-<table class="team-dashboard">
+<table class="ui table team-dashboard">
   <thead>
     <tr>
-      <th class="center-align">Status</th>
-      <th class="center-align">Team</th>
-      <th class="center-align">Target</th>
-      <th class="center-align" colspan="2">Remaining</th>
-      <th class="center-align" colspan="2">Completed</th>
-      <th class="center-align highlight" colspan="2">Rolling Metrics</th>
-      <th class="center-align" colspan="2">Trained Metrics</th>
+      <th class="center aligned">Status</th>
+      <th class="center aligned">Team</th>
+      <th class="center aligned">Target</th>
+      <th class="center aligned" colspan="2">Remaining</th>
+      <th class="center aligned" colspan="2">Completed</th>
+      <th class="center aligned highlight" colspan="2">Rolling Metrics</th>
+      <th class="center aligned" colspan="2">Trained Metrics</th>
       <th></th>
     </tr>
     <tr>
@@ -101,7 +96,7 @@
     <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
       <td>
         <% if @increment.target_date %>
-            <span class="status-indicator <%= team_data[:status_color] %>"></span>
+            <span class="ui <%= team_data[:status_color] %> circular label"></span>
         <% end %>
       </td>
       <td>
@@ -110,25 +105,25 @@
       <td>
         <%= pretty_print_date(@increment.target_date, show_tz: false) %>
       </td>
-      <td class="right-align">
+      <td class="right aligned">
         <%= team_data[:remaining_scope] %>
       </td>
       <td>
         [<%= team_data[:predicted_scope] %>]
       </td>
-      <td class="right-align">
+      <td class="right aligned">
         <%= team_data[:completed_scope] %>
       </td>
       <td>
         (<%= pretty_print_number(team_data[:progress_percent], round: true) %>%)
       </td>
-      <td class="right-align highlight">
+      <td class="right aligned highlight">
         <%= pretty_print_number(team_data[:rolling_completion_rate] * 7) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
       </td>
-      <td class="right-align">
+      <td class="right aligned">
         <%= pretty_print_number(team_data[:trained_completion_rate] * 7) %>
       </td>
       <td>
@@ -148,24 +143,24 @@
     <th>
       <%= pretty_print_date(@increment.target_date, show_tz: false) %>
     </th>
-    <th class="right-align">
+    <th class="right aligned">
       <%= team_dashboard_data[:totals][:remaining_scope] %>
     </th>
     <th>
       [<%= team_dashboard_data[:totals][:predicted_scope] %>]
     </th>
-    <th class="right-align">
+    <th class="right aligned">
       <%= team_dashboard_data[:totals][:completed_scope] %>
     </th>
     <th>
       (<%= pretty_print_number(team_dashboard_data[:totals][:progress_percent], round: true) %>%)
     </th>
-    <th class="right-align highlight">
+    <th class="right aligned highlight">
       <%= pretty_print_number(team_dashboard_data[:totals][:rolling_completion_rate] * 7) %>
     </th>
     <th class="highlight">
     </th>
-    <th class="right-align">
+    <th class="right aligned">
       <%= pretty_print_number(team_dashboard_data[:totals][:trained_completion_rate] * 7) %>
     </th>
     <th>

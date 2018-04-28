@@ -12,6 +12,16 @@ crumb :report do |board, report_key, report_name|
   parent :board, board
 end
 
+crumb :deliveries do |board|
+  link "Deliveries", deliveries_report_path(board)
+  parent :board, board
+end
+
+crumb :delivery do |delivery|
+  link delivery.key, delivery_report_path(delivery.board, delivery)
+  parent :deliveries, delivery.board
+end
+
 
 # crumb :projects do
 #   link "Projects", projects_path
