@@ -1,7 +1,3 @@
-<% content_for :nav_content do %>
-    <a href="#!" class="breadcrumb"><%= @domain.config.name %></a>
-<% end %>
-
 <script>
   $(function() {
     performSearch();
@@ -14,10 +10,10 @@
         $.get(searchUrl)
             .done(function (data) {
               $('#search-results').empty();
-              var collection = $('<ul class="collection"></ul>');
+              var collection = $('<div class="ui list"></div>');
               $(data).each(function (i, board) {
                 collection.append(
-                    '<li class="collection-item"><a href="' + board.link + '">' + board.name + '</a></li>'
+                    '<a class="item" href="' + board.link + '">' + board.name + '</a>'
                 );
               });
               if (data.length) {
@@ -31,34 +27,37 @@
   });
 </script>
 
-<h3>
+<h1>
   <%= @domain.config.name %>
-</h3>
+</h1>
 
 <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
 
 <div class="ui grid">
   <div class="ten wide column">
+    <table class="ui table">
+      <thead>
+        <tr>
+          <th>Synchronized Boards</th>
+          <th style="width: 200px;">Last Synchronized</th>
+        </tr>
+      </thead>
+      <% @boards.each do |board| %>
+          <tr>
+            <td><%= link_to board.name, board_path(board) %></td>
+            <td><%= pretty_print_date(board.last_synced) %></td>
+          </tr>
+      <% end %>
+    </table>
 
-    <div class="ui secondary menu">
-      <a class="item active" data-tab="synced_boards">Synced Boards</a>
-      <a class="item" data-tab="search_boards">Search</a>
-    </div>
-    <div class="ui tab active" data-tab="synced_boards">
-      <ul class="collection">
-        <% @boards.each do |board| %>
-            <li class="collection-item"><%= link_to board.name, board_path(board) %></li>
-        <% end %>
-      </ul>
-    </div>
-    <div class="ui tab" data-tab="search_boards">
+    <div class="ui segment">
       <div class="input-field">
-        <div class="ui icon input">
-          <input id="search" type="text" placeholder="Search...">
+        <div class="ui icon fluid input">
+          <input id="search" type="text" placeholder="Search all boards...">
           <i class="search icon"></i>
         </div>
       </div>
-      <div id="search-results"></div>
+      <div id="search-results" style="height: 200px; overflow-y: hidden; margin: 10px 0;"></div>
     </div>
   </div>
   <div class="six wide column">
