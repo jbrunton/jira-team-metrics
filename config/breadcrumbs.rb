@@ -22,6 +22,11 @@ crumb :delivery do |delivery|
   parent :deliveries, delivery.board
 end
 
+crumb :scope_report do |delivery, team|
+  link "#{team} Scope", delivery_scope_report_path(delivery.board, delivery, team)
+  parent :delivery, delivery
+end
+
 
 # crumb :projects do
 #   link "Projects", projects_path

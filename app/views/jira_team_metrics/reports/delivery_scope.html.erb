@@ -1,12 +1,6 @@
-<% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="<%= reports_path(@board) %>/deliveries" class="breadcrumb">Deliveries</a>
-    <a href="<%= delivery_report_path(@board, @increment) %>" class="breadcrumb"><%= @increment.key %></a>
-    <a href="#!" class="breadcrumb">Scope Details</a>
-<% end %>
+<% breadcrumb :scope_report, @increment, @team %>
 
-<table class="bordered jira-tree">
+<table class="ui table jira-tree">
   <thead>
     <tr>
       <th style="width: 90%">Issue</th>
@@ -40,7 +34,7 @@
               <% end %>
             </td>
             <td></td>
-            <td class="<%= @domain.status_color_for(issue.status) %> lighten-4">
+            <td class="red <%= @domain.status_color_for(issue.status) %>">
               <%= issue.status %>
             </td>
           </tr>
