@@ -77,7 +77,7 @@ private
   def analyze_status
     forecast_completion_date = rolling_forecast_completion_date(7)
     if on_track?(forecast_completion_date)
-      @status_color = 'light-blue'
+      @status_color = 'blue'
     elsif at_risk?(forecast_completion_date)
       @status_color = 'yellow'
     else

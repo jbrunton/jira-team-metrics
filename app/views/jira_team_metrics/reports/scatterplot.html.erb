@@ -1,8 +1,4 @@
-<% content_for :nav_content do %>
-  <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-  <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-  <a href="#!" class="breadcrumb">Scatterplot</a>
-<% end %>
+<% breadcrumb :report, @board, :scatterplot, 'Scatterplot' %>
 
 <% chart_id = generate_id %>
 
@@ -30,6 +26,6 @@
     url: "#{board_api_path(@board)}/scatterplot.json"
 } %>
 
-<div id="selected_content"></div>
-
 <%= render partial: 'partials/cycle_time_form' %>
+
+<div id="selected_content"></div>

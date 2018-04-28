@@ -2,20 +2,20 @@ function alertModal(opts) {
   return _modal(Object.assign({
     title: '',
     body: '<p>' + opts.message + '</p>',
-    modalClass: 'modal',
+    modalClass: 'ui modal',
     negativeAction: null
   }, opts));
 }
 
 function fixedFooterModal(opts) {
   return _modal(Object.assign({
-    modalClass: 'modal modal-fixed-footer'
+    modalClass: 'ui modal modal-fixed-footer'
   }, opts));
 }
 
 function modal(opts) {
   return _modal(Object.assign({
-    modalClass: 'modal'
+    modalClass: 'ui modal'
   }, opts));
 }
 
@@ -39,22 +39,23 @@ function _modal(opts) {
   var $modal = $(render('dialogs/modal', opts))
       .appendTo('body');
 
-  if (Materialize) {
-    Materialize.updateTextFields();
-  }
+  //if (Materialize) {
+  //  Materialize.updateTextFields();
+  //}
   $modal.find('.materialize-textarea').trigger('autoresize');
 
-  addHandler('.modal-ok', 'confirm');
-  addHandler('.modal-cancel', 'cancel');
+  addHandler('.ui.positive.button', 'confirm');
+  addHandler('.ui.negative.button', 'cancel');
 
-  $modal.modal('open', {
-    complete: function() {
+  $modal.modal({
+    onHidden: function() {
+      $modal.remove();
       if (opts.complete) {
         opts.complete($modal);
       }
-      $modal.remove();
     }
-  });
+  })
+  .modal('show');
 
   return $modal;
 }

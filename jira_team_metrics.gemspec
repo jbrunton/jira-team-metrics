@@ -14,23 +14,29 @@ Gem::Specification.new do |s|
   s.description = "Description of JiraTeamMetrics."
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib,vendor}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails", ">= 5.0.0"
 
   s.add_dependency "jquery-rails"
   s.add_dependency "handlebars_assets"
-  s.add_dependency "materialize-sass", "~> 0.99.0"
+  s.add_dependency "less-rails-semantic_ui"
+  s.add_dependency "autoprefixer-rails"
+  s.add_dependency "therubyracer"
   s.add_dependency "lodash-rails"
   s.add_dependency "coffee-rails"
   s.add_dependency "draper", "~> 3.0.0"
   s.add_dependency "descriptive_statistics"
   s.add_dependency "parslet"
+  s.add_dependency "sass-rails"
+  s.add_dependency "less-rails"
+  s.add_dependency "pickadate-rails"
+  s.add_dependency "gretel"
+  #s.add_dependency 'sprockets-rails', '<= 2.3.3'
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "byebug"
   s.add_development_dependency "puma"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "factory_bot_rails"
-  s.add_development_dependency "jasmine-rails", "~> 0.14.1"
 end

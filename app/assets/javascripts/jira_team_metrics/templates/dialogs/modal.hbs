@@ -1,14 +1,16 @@
 <div class="{{ modalClass }}">
-  <div class="modal-content">
-    <h4>{{ title }}</h4>
+  <div class="header">
+    {{ title }}
+  </div>
+  <div class="content">
     {{{ body }}}
   </div>
-  <div class="modal-footer">
+  <div class="actions">
     {{#if negativeAction}}
-      <a href="#!" class="modal-cancel modal-action modal-close waves-effect waves-green btn-flat">{{negativeAction.text}}</a>
+      <a href="#!" class="ui negative button">{{negativeAction.text}}</a>
     {{/if}}
     {{#if positiveAction}}
-      <a href="#!" class="modal-ok modal-action modal-close waves-effect waves-light btn">{{positiveAction.text}}</a>
+      <a href="#!" class="ui positive button">{{positiveAction.text}}</a>
     {{/if}}
   </div>
 </div>

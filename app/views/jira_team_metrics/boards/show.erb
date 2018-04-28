@@ -1,27 +1,86 @@
-<% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="#!" class="breadcrumb"><%= @board.name %></a>
-<% end %>
+<% breadcrumb :board, @board %>
 
-<h3><%= @board.name %></h3>
+<h1><%= @board.name %></h1>
 
 <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
 
-<div class="row">
-  <div class="col s7">
-    <ul class="collection with-header">
-      <li class="collection-header"><h4>Reports</h4></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/issues">Issues</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/timesheets">Timesheets</a></div></li>
-      <li class="collection-item"><div><a href="<%= reports_path(@board) %>/deliveries">Deliveries</a></div></li>
-    </ul>
+<div class="ui grid">
+  <div class="ten wide column">
+    <table class="ui celled structured table">
+      <tbody>
+        <tr>
+          <td rowspan="3">
+            Manage flow
+          </td>
+          <td>
+            <a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a>
+          </td>
+          <td>
+            Inspect issue cycle times and visualise percentiles.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a>
+          </td>
+          <td>
+            See which in progress issues are aging into higher cycle time percentiles.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/control_chart">Control Chart</a>
+          </td>
+          <td>
+            Visualise cycle times alongside WIP.
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="4">
+            Inspect work done
+          </td>
+          <td>
+            <a href="<%= reports_path(@board) %>/issues">Issues</a>
+          </td>
+          <td>
+            List and search for any issue
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a>
+          </td>
+          <td>
+            See how effort is divided between issue types
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a>
+          </td>
+          <td>
+            Box plots describing different issue types
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/timesheets">Timesheets</a>
+          </td>
+          <td>
+            How the teams' time was allocated across projects
+          </td>
+        </tr>
+        <tr>
+          <td>Portfolio management</td>
+          <td>
+            <a href="<%= reports_path(@board) %>/deliveries">Deliveries</a>
+          </td>
+          <td>Predictive reports for Deliveries</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'partials/status_card', locals: { object: @board } %>
   </div>
 </div>

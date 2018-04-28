@@ -1,0 +1,15 @@
+<% object = @board.try(:object) || @domain %>
+
+<form id="config-form" class="ui form <%= 'error' if object.errors.any? %>">
+  <% if object.errors.any? %>
+      <div class="ui error message">
+        <% object.errors.full_messages.each do |error| %>
+            <span class="error"><%= error %></span>
+        <% end %>
+      </div>
+  <% end %>
+
+  <div class="field">
+    <%= form_input(object, :config_string, type: :textarea) %>
+  </div>
+</form>

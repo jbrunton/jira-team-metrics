@@ -1,10 +1,12 @@
 function statusReceived(data) {
   if (data.in_progress) {
     $('#sync-indicator').show();
-    if (data.progress) {
-      $('.progress #indicator').addClass('determinate').removeClass('indeterminate').css('width', data.progress + '%');
+    if (typeof(data.progress) !== 'undefined') {
+      $('#indicator-indeterminate').hide();
+      $('#indicator-determinate').show().progress({ percent: data.progress, autoSuccess: false });
     } else {
-      $('.progress #indicator').addClass('indeterminate').removeClass('determinate').css('width', '');
+      $('#indicator-indeterminate').show();
+      $('#indicator-determinate').hide();
     }
     $('#sync-status-title').text(data.statusTitle);
     $('#sync-status').text(data.status);
@@ -23,3 +25,14 @@ function statusReceived(data) {
     }
   }
 }
+
+$(function() {
+  $('#indicator-indeterminate').progress({
+    percent: 100,
+    autoSuccess: false
+  });
+  setTimeout(function() {
+    // A hack to show the active animation, which otherwise is disabled on completion
+    $('#indicator-indeterminate').addClass('active');
+  }, 1000);
+});

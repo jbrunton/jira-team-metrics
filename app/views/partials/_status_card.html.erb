@@ -1,12 +1,12 @@
-<div class="card">
-  <div class="card-content">
-    <span class="card-title">
+<div class="ui fluid card">
+  <div class="content">
+    <div class="header">
     <% if object.class == JiraTeamMetrics::Domain %>
         Domain Status
     <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
         Board Status
     <% end %>
-    </span>
+    </div>
     <p>Last synced: <%= pretty_print_date(object.last_synced) %></p>
     <% if object.class == JiraTeamMetrics::Domain %>
         <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
@@ -14,13 +14,13 @@
         <p>Synced from: <%= pretty_print_date(object.synced_from) %></p>
     <% end %>
   </div>
-  <div class="card-action">
-    <a href="#" onclick="showSyncModal();">Sync</a>
+  <div class="extra content">
+    <a class="ui button" href="#" onclick="showSyncModal();">Sync</a>
     <% unless readonly? %>
-      <a href="#" onclick="showConfigModal();">Config</a>
+      <a class="ui button" href="#" onclick="showConfigModal();">Config</a>
     <% end %>
     <% if object.class == JiraTeamMetrics::Domain %>
-        <a href="<%= domain_metadata_path %>">Metadata</a>
+        <a class="ui button" href="<%= domain_metadata_path %>">Metadata</a>
   <% end %>
   </div>
 </div>
@@ -30,7 +30,7 @@
 </script>
 
 <script id="config-form-template" type="text/x-handlebars-template">
-  <%= render partial: 'config_form' %>
+  <%= render partial: 'partials/config_form' %>
 </script>
 
 <script>

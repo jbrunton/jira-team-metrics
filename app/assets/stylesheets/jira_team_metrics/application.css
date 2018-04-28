@@ -1,0 +1,95 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require semantic_ui/semantic_ui
+ *= require pickadate/default
+ *= require pickadate/default.date
+ *= require_tree .
+ *= require_self
+ */
+
+
+/*$input-error-color: '#F00';*/
+
+/*span.error {*/
+  /*color: $input-error-color;*/
+/*}*/
+
+/*.status-indicator {*/
+  /*height: 25px;*/
+  /*width: 25px;*/
+  /*border-radius: 50%;*/
+  /*display: inline-block;*/
+/*}*/
+
+/*table {*/
+  /*&.issue-details th {*/
+    /*width: 25%;*/
+  /*}*/
+/*}*/
+
+.ui.table.team-dashboard td, .ui.table.team-dashboard th {
+    padding: 5px 5px;
+}
+
+.ui.table.team-dashboard td {
+    border-top: none;
+}
+
+table.team-dashboard td.highlight, table.team-dashboard th.highlight {
+    background-color: #F6F6F6;
+}
+
+table.jira-tree .indent {
+    width: 50px;
+}
+
+table.jira-tree .delivery {
+    font-weight: bold;
+}
+
+table.jira-tree .epic td {
+    background-color: #f9fafb;
+    font-weight: bold;
+}
+
+table.jira-tree tr td:first-child {
+      padding-left: 50px;
+}
+
+table.jira-tree .story td:first-child {
+    padding-left: 90px;
+}
+
+table.jira-tree .effort-stats {
+    width: 5%;
+}
+
+.red {
+    background-color: #ffcdd2;
+}
+
+.orange {
+    background-color: #ffe0b2;
+}
+
+.green {
+    background-color: #c8e6c9;
+}
+
+.blue {
+    background-color: #bbdefb;
+}
+
+/*.mono {*/
+  /*font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;;*/
+/*}*/

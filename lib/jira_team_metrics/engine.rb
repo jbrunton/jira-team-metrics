@@ -4,13 +4,18 @@ module JiraTeamMetrics
 
     require 'jquery-rails'
     require 'handlebars_assets'
-    require 'materialize-sass'
+    require 'less-rails'
+    require 'less/rails/semantic_ui/engine'
+    require 'autoprefixer-rails'
+    require 'therubyracer'
     require 'lodash-rails'
     require 'coffee-rails'
     require 'draper'
     require 'descriptive_statistics'
     require 'open-uri'
     require 'parslet'
+    require 'pickadate-rails'
+    require 'gretel'
 
     #config.autoload_paths << File.expand_path("../../../app/jira", __FILE__)
     #config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)

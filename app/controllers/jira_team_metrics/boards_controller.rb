@@ -20,7 +20,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
     elsif @board.update(board_params)
       render json: {}, status: :ok
     else
-      render partial: 'config_form', status: 400
+      render partial: 'partials/config_form', status: 400
     end
   end
 

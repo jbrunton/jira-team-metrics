@@ -1,45 +1,37 @@
-<% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="#!" class="breadcrumb">Issues</a>
-<% end %>
+<% breadcrumb :report, @board, :issues_by_type, 'Issues by Type' %>
 
-<h3>Issues By Type</h3>
+<h1>Issues By Type</h1>
 
 <%= render partial: 'partials/cycle_time_form' %>
 
-<div class="row">
-  <div class="col s12">
+<div class="ui grid">
+  <div class="sixteen wide column">
     <h5>Count of Completed Issues</h5>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'jira_team_metrics/charts/issue_count_summary' %>
   </div>
-  <div class="col s7">
+  <div class="ten wide column">
     <%= render partial: 'jira_team_metrics/charts/issue_count_by_month' %>
   </div>
-</div>
 
-<div class="row">
-  <div class="col s12">
+  <div class="sixteen wide column">
     <h5>Total Cycle Times for Completed Issues</h5>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'jira_team_metrics/charts/issue_effort_summary' %>
   </div>
-  <div class="col s7">
+  <div class="ten wide column">
     <%= render partial: 'jira_team_metrics/charts/issue_effort_by_month' %>
   </div>
-</div>
 
-<div class="row">
-  <div class="col s12">
+  <div class="sixteen wide column">
     <h5>Count of Created Issues</h5>
   </div>
-  <div class="col s5">
+  <div class="six wide column">
     <%= render partial: 'jira_team_metrics/charts/created_issues_summary' %>
   </div>
-  <div class="col s7">
+  <div class="ten wide column">
     <%= render partial: 'jira_team_metrics/charts/created_issues_by_month' %>
   </div>
 </div>
