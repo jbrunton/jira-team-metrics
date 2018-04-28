@@ -1,10 +1,6 @@
-<% content_for :nav_content do %>
-    <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-    <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-    <a href="#!" class="breadcrumb">Aging Work In Progress</a>
-<% end %>
+<% breadcrumb :report, @board, :aging_wip, 'Agile Work In Progress' %>
 
-<h3>Aging Work In Progress</h3>
+<h1>Aging Work In Progress</h1>
 
 <%= render partial: 'partials/chart', locals: {
     chart_id: generate_id,
