@@ -1,0 +1,5 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+
+@internalBorderColor: rgba(204, 216, 228, 1.0);

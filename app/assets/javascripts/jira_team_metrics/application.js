@@ -12,7 +12,7 @@
 //
 //= require rails-ujs
 //= require jquery
-//= require semantic-ui
+//= require semantic_ui/semantic_ui
 //= require handlebars.runtime
 //= require lodash
 //= require_tree ./templates

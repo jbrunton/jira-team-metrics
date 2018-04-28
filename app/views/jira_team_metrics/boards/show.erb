@@ -13,54 +13,78 @@
 <div class="ui grid">
   <div class="ten wide column">
     <table class="ui celled structured table">
-      <thead>
-        <tr>
-          <th>hi</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
       <tbody>
-      <tr>
-        <td rowspan="3">
-          Manage flow
-        </td>
-        <td>
-          <div class="item"><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div>
-        </td>
-        <td>
-          Inspect issue cycle times and visualise percentiles.
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div class="item"><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div>
-        </td>
-        <td>
-          See which in progress issues are aging into higher cycle time percentiles.
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div class="item"><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div>
-        </td>
-        <td>
-          Visualise cycle times alongside WIP.
-        </td>
-      </tr>
+        <tr>
+          <td rowspan="3">
+            Manage flow
+          </td>
+          <td>
+            <a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a>
+          </td>
+          <td>
+            Inspect issue cycle times and visualise percentiles.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a>
+          </td>
+          <td>
+            See which in progress issues are aging into higher cycle time percentiles.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/control_chart">Control Chart</a>
+          </td>
+          <td>
+            Visualise cycle times alongside WIP.
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="4">
+            Inspect work done
+          </td>
+          <td>
+            <a href="<%= reports_path(@board) %>/issues">Issues</a>
+          </td>
+          <td>
+            List and search for any issue
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a>
+          </td>
+          <td>
+            See how effort is divided between issue types
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a>
+          </td>
+          <td>
+            Box plots describing different issue types
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/timesheets">Timesheets</a>
+          </td>
+          <td>
+            How the teams' time was allocated across projects
+          </td>
+        </tr>
+        <tr>
+          <td>Portfolio management</td>
+          <td>
+            <a href="<%= reports_path(@board) %>/deliveries">Deliveries</a>
+          </td>
+          <td>Predictive reports for Deliveries</td>
+        </tr>
       </tbody>
     </table>
-    <div class="ui list">
-      <div class="item"><div class="header">Reports</div></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/control_chart">Control Chart</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/issues">Issues</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/issues_by_type">Issues by Type</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/cycle_times_by_type">Cycle Times by Type</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/timesheets">Timesheets</a></div>
-      <div class="item"><a href="<%= reports_path(@board) %>/deliveries">Deliveries</a></div>
-    </div>
   </div>
   <div class="six wide column">
     <%= render partial: 'partials/status_card', locals: { object: @board } %>
