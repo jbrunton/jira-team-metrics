@@ -1,4 +1,4 @@
-<% object = @board || @domain %>
+<% object = @board.try(:object) || @domain %>
 
 <form id="config-form" class="ui form <%= 'error' if object.errors.any? %>">
   <% if object.errors.any? %>
