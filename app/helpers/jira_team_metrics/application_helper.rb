@@ -90,11 +90,25 @@ module JiraTeamMetrics::ApplicationHelper
     object_name = object_name_for(object)
     classes = 'ui'
     classes += ' error' if object.errors[method].any?
-    tag(:input, :id => input_id_for(object, method),
+    opts = {
+      :id => input_id_for(object, method),
       :name =>  "#{object_name}[#{method}]",
-      :type => options[:type] || 'text',
-      :class => classes,
-      :value => object.send(method))
+      :class => classes
+    }
+    input_value = object.send(method)
+    if options[:type] == :textarea
+      content_tag(:textarea, input_value, opts)
+    else
+      opts.merge!({
+        :value => input_value,
+        :type => options[:type] || 'text',
+      })
+      tag(:input, :id => input_id_for(object, method),
+        :name =>  "#{object_name}[#{method}]",
+        :type => options[:type] || 'text',
+        :class => classes,
+        :value => input_value)
+    end
   end
 
   def form_label_tag(object, method)
