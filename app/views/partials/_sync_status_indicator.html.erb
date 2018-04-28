@@ -9,11 +9,14 @@
 
 <div id="sync-indicator" style="display: none;">
   <p>
-    <span id="sync-status-title"></span>
+    <span id="sync-status-title">Updating Board</span>
     &middot;
-    <span class="grey-text" id="sync-status"></span>
+    <span class="grey-text" id="sync-status">Syncing issues</span>
   </p>
-  <div class="progress">
-    <div id="indicator" class="indeterminate"></div>
+  <div class="ui tiny blue progress" id="indicator-determinate">
+    <div class="bar"></div>
+  </div>
+  <div class="ui tiny blue active progress" id="indicator-indeterminate">
+    <div class="bar"></div>
   </div>
 </div>
