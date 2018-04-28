@@ -76,8 +76,14 @@ module JiraTeamMetrics::ApplicationHelper
   def form_input(object, method, options = {})
     input_tag = form_input_tag(object, method, options)
     label_tag = form_label_tag(object, method)
-
-    [label_tag, input_tag].join.html_safe
+    field_classes = 'field'
+    field_classes += ' error' if object.errors[method].any?
+    if object.errors[method].any?
+      error_tag = content_tag(:div, object.errors[method][0], :class => 'ui pointing red basic label')
+    else
+      error_tag = ""
+    end
+    content_tag(:div, [label_tag, input_tag, error_tag].join.html_safe, :class => field_classes)
   end
 
   def form_input_tag(object, method, options)
@@ -94,7 +100,7 @@ module JiraTeamMetrics::ApplicationHelper
   def form_label_tag(object, method)
     value = object.send(method)
     attributes = { :for => input_id_for(object, method) }
-    attributes.merge!('data-error' => object.errors[method][0]) if object.errors[method].any?
+    #attributes.merge!('data-error' => object.errors[method][0]) if object.errors[method].any?
     attributes.merge!('class' => 'active') unless value.blank?
     content_tag(:label, method.capitalize, attributes)
   end

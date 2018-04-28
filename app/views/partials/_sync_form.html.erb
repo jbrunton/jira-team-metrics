@@ -1,22 +1,16 @@
 <% @credentials = JiraTeamMetrics::Credentials.new unless @credentials %>
-<form id="sync-form" class="ui form">
-  <div class="field">
-    <div class="two fields">
-      <div class="field">
-        <%= form_input(@credentials, :username) %>
-      </div>
-      <div class="field">
-        <%= form_input(@credentials, :password, type: :password) %>
-      </div>
-    </div>
+<form id="sync-form" class="ui form grid">
+  <div class="eight wide column">
+      <%= form_input(@credentials, :username) %>
+  </div>
+  <div class="eight wide column">
+      <%= form_input(@credentials, :password, type: :password) %>
   </div>
 
   <% unless @board.nil? %>
-      <div class="field">
-        <div class="eight wide field">
-          <label for="months">Months to sync (Optional)</label>
-          <input id="months" name="months" type="text" class="validate" value="<%= @board.config.sync_months %>">
-        </div>
+      <div class="eight wide column">
+        <label for="months">Months to sync (Optional)</label>
+        <input id="months" name="months" type="text" class="validate" value="<%= @board.config.sync_months %>">
       </div>
   <% end %>
 </form>
