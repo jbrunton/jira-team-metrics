@@ -24,6 +24,8 @@
         </h1>
       </div>
       <div class="nav-content ui container">
+        <%= breadcrumbs class: 'ui breadcrumb',
+            separator: '<i class="right chevron icon divider"></i>' %>
         <%= yield :nav_content %>
       </div>
       <div class="ui divider"></div>

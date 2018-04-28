@@ -6,6 +6,7 @@ PATH
       coffee-rails
       descriptive_statistics
       draper (~> 3.0.0)
+      gretel
       handlebars_assets
       jquery-rails
       less-rails
@@ -94,6 +95,8 @@ GEM
     ffi (1.9.23)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    gretel (3.0.9)
+      rails (>= 3.1.0)
     handlebars_assets (0.23.2)
       execjs (~> 2.0)
       sprockets (>= 2.0.0)

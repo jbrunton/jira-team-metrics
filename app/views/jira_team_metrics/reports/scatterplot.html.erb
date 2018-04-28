@@ -1,8 +1,4 @@
-<% content_for :nav_content do %>
-  <a href="<%= domain_path %>" class="breadcrumb"><%= @domain.config.name %></a>
-  <a href="<%= board_path(@board) %>" class="breadcrumb"><%= @board.name %></a>
-  <a href="#!" class="breadcrumb">Scatterplot</a>
-<% end %>
+<% breadcrumb :report, @board, :scatterplot, 'Scatterplot' %>
 
 <% chart_id = generate_id %>
 

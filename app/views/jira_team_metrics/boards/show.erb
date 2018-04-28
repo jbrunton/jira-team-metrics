@@ -1,10 +1,4 @@
-<% content_for :nav_content do %>
-    <div class="ui breadcrumb">
-      <a href="<%= domain_path %>" class="section"><%= @domain.config.name %></a>
-      <i class="right angle icon divider"></i>
-      <a href="#!" class="active section"><%= @board.name %></a>
-    </div>
-<% end %>
+<% breadcrumb :board, @board %>
 
 <h1><%= @board.name %></h1>
 
