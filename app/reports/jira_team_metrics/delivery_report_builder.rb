@@ -35,19 +35,24 @@ private
   def team_dashboard_data
     {
       rolling_window_days: rolling_window_days,
-      totals: team_dashboard_row_data(increment_report),
+      totals: aggregate_data_for(increment_report),
       teams: increment_report.teams.map do |team|
         team_report = @increment_report.team_report_for(team)
-        [team, team_dashboard_row_data(team_report).merge({
-          status_color: @increment.target_date ? team_report.status_color : nil,
-          rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
-          trained_completion_date: team_report.trained_completion_date
-        })]
+        [team, aggregate_data_for(team_report).merge(target_data_for(team_report))]
       end.to_h
     }
   end
 
-  def team_dashboard_row_data(report)
+  def target_data_for(team_report)
+    {
+      status_color: @increment.target_date ? team_report.status_color : nil,
+      status_reason: @increment.target_date ? team_report.status_reason : nil,
+      rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
+      trained_completion_date: team_report.trained_completion_date
+    }
+  end
+
+  def aggregate_data_for(report)
     {
       scope: report.scope.count,
       remaining_scope: report.remaining_scope.count,

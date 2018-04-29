@@ -11,6 +11,7 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :trained_completion_date
   attr_reader :trained_issues_per_epic
   attr_reader :status_color
+  attr_reader :status_reason
 
   def initialize(team, increment, issues, training_team_reports = nil)
     @team = team
@@ -24,9 +25,8 @@ class JiraTeamMetrics::TeamScopeReport
     build_predicted_scope unless @training_team_reports.nil?
 
     analyze_scope
-    analyze_status if @increment.target_date
-
     build_trained_forecasts unless @training_team_reports.nil?
+    analyze_status if @increment.target_date
 
     self
   end
@@ -75,22 +75,43 @@ private
   end
 
   def analyze_status
-    forecast_completion_date = rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
-    if on_track?(forecast_completion_date)
+    if on_track?
       @status_color = 'blue'
-    elsif at_risk?(forecast_completion_date)
+      status_risk = 'on target'
+    elsif at_risk?
       @status_color = 'yellow'
+      status_risk = 'at risk, over target by < 20% of time remaining'
     else
       @status_color = 'red'
+      status_risk = 'at risk, over target by > 20% of time remaining'
+    end
+    if use_rolling_forecast?
+      @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
+    else
+      @status_reason = "< 5 issues completed, using trained forecast. Forecast is #{status_risk}."
     end
   end
 
-  def on_track?(forecast_completion_date)
+  def use_rolling_forecast?
+    completed_scope.count >= 5
+  end
+
+  def forecast_completion_date
+    @forecast_completion_date ||= begin
+      if use_rolling_forecast?
+        rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
+      else
+        trained_completion_date
+      end
+    end
+  end
+
+  def on_track?
     @remaining_scope.empty? || (forecast_completion_date &&
       forecast_completion_date <= @increment.target_date)
   end
 
-  def at_risk?(forecast_completion_date)
+  def at_risk?
     forecast_completion_date &&
       (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
   end

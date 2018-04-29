@@ -37,14 +37,6 @@
   /*}*/
 /*}*/
 
-.ui.table.team-dashboard td, .ui.table.team-dashboard th {
-    padding: 5px 5px;
-}
-
-.ui.table.team-dashboard td {
-    border-top: none;
-}
-
 table.team-dashboard td.highlight, table.team-dashboard th.highlight {
     background-color: #F6F6F6;
 }

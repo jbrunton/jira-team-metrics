@@ -68,7 +68,7 @@
 
 <% cache "team_dashboard/#{@increment.key}" do %>
 
-<table class="ui table team-dashboard">
+<table class="ui very compact table team-dashboard">
   <thead>
     <tr>
       <th class="center aligned">Status</th>
@@ -80,24 +80,26 @@
       <th class="center aligned" colspan="2">Trained Metrics</th>
       <th></th>
     </tr>
-    <tr>
-      <td colspan="3"></td>
-      <td>Total</td>
-      <td>[Predicted]</td>
-      <td colspan="2"></td>
-      <td class="highlight">Throughput</td>
-      <td class="highlight">Forecast</td>
-      <td>Throughput</td>
-      <td>Forecast</td>
-      <td></td>
-    </tr>
   </thead>
+  <tr>
+    <td colspan="3"></td>
+    <td>Total</td>
+    <td>[Predicted]</td>
+    <td colspan="2"></td>
+    <td class="highlight">Throughput</td>
+    <td class="highlight">Forecast</td>
+    <td>Throughput</td>
+    <td>Forecast</td>
+    <td></td>
+  </tr>
 
 <% team_dashboard_data[:teams].each do |team, team_data| %>
     <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
-      <td>
+      <td class="center aligned">
         <% if @increment.target_date %>
-            <span class="ui <%= team_data[:status_color] %> circular label"></span>
+            <span class="ui <%= team_data[:status_color] %> circular label"
+                  data-tooltip="<%= team_data[:status_reason] %>"
+                  data-position="bottom left"></span>
         <% end %>
       </td>
       <td>
@@ -136,6 +138,7 @@
     </tr>
 <% end %>
 
+  <tfoot>
   <tr>
     <th></th>
     <th>
@@ -168,6 +171,7 @@
     </th>
     <th></th>
   </tr>
+  </tfoot>
 
 </table>
 
