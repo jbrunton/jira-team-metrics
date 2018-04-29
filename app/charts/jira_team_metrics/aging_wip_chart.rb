@@ -13,9 +13,9 @@ class JiraTeamMetrics::AgingWipChart
     now = Time.now
 
     data_table.add_column('now', Array.new(data_table.rows.count, now))
-    data_table.insert_row(0, ['Percentiles', '70 - 85', now - percentiles[85].days, now - percentiles[70].days])
-    data_table.insert_row(1, ['Percentiles', '50 - 70', now - percentiles[70].days, now - percentiles[50].days])
-    data_table.insert_row(2, ['Percentiles', '0 - 50', now - percentiles[50].days, now])
+    data_table.insert_row(0, ['Percentiles', '85th', now - percentiles[85].days, now])
+    data_table.insert_row(1, ['Percentiles', '70th', now - percentiles[70].days, now])
+    data_table.insert_row(2, ['Percentiles', '50th', now - percentiles[50].days, now])
 
     data_table
   end
@@ -31,7 +31,7 @@ class JiraTeamMetrics::AgingWipChart
           '#f44336'
         end
       end,
-      height: (wip_issues.count + 1) * 41 + 50
+      height: (wip_issues.count + 3) * 41 + 50
     }
   end
 
