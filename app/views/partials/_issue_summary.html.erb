@@ -6,21 +6,21 @@
   </a>
 </div>
 <div class="<%= 'active' if expand %> content">
-  <table class="issue-details">
+  <table class="ui definition table issue-details">
     <tr>
-      <th>Issue Type</th>
+      <td>Issue Type</td>
       <td><%= issue.issue_type %></td>
     </tr>
     <tr>
-      <th>Summary</th>
+      <td>Summary</td>
       <td><%= issue.summary %></td>
     </tr>
     <tr>
-      <th>Status</th>
+      <td>Status</td>
       <td><%= issue.status %></td>
     </tr>
     <tr>
-      <th>Created</th>
+      <td>Created</td>
       <td><%= pretty_print_date(issue.issue_created) %></td>
     </tr>
   </table>

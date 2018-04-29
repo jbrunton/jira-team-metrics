@@ -4,10 +4,10 @@
 </div>
 <div class="<%= 'active' if expand %> content">
   <% if issue.links.any? %>
-      <table class="issue-details">
+      <table class="issue-details ui table">
         <% issue.links.each do |link| %>
             <tr>
-              <th><%= link_type(link) %></th>
+              <td><%= link_type(link) %></td>
               <td>
                 <a class="right" href="<%= external_link_url(link, @domain) %>" target="_blank">
                   <i class="material-icons" style="margin: 0;">launch</i>
