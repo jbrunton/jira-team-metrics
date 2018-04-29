@@ -44,4 +44,12 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
       config_hash['sync']['months'].to_i
     end
   end
+
+  def rolling_window_days
+    if config_hash['rolling_window'].nil?
+      7
+    else
+      config_hash['rolling_window']['days'].to_i
+    end
+  end
 end
