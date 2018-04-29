@@ -1,33 +1,33 @@
-<li>
-  <div class="collapsible-header<%= ' active' if expand %>">
-    <span><%= issue.key %> - <%= issue.short_summary %></span>
-    <a id="launch-<%= issue.key %>" class="right" href="<%= issue.domain_url %>" target="_blank">
-      <i class="material-icons" style="margin: 0;">launch</i>
-    </a>
-  </div>
-  <div class="collapsible-body">
-    <table class="issue-details">
-      <tr>
-        <th>Issue Type</th>
-        <td><%= issue.issue_type %></td>
-      </tr>
-      <tr>
-        <th>Summary</th>
-        <td><%= issue.summary %></td>
-      </tr>
-      <tr>
-        <th>Status</th>
-        <td><%= issue.status %></td>
-      </tr>
-      <tr>
-        <th>Created</th>
-        <td><%= pretty_print_date(issue.issue_created) %></td>
-      </tr>
-    </table>
-  </div>
-</li>
+<div class="<%= 'active' if expand %> title">
+  <i class="dropdown icon"></i>
+  <span><%= issue.key %> - <%= issue.short_summary %></span>
+  <a id="launch-<%= issue.key %>" class="right" href="<%= issue.domain_url %>" target="_blank">
+    <i class="material-icons" style="margin: 0;">launch</i>
+  </a>
+</div>
+<div class="<%= 'active' if expand %> content">
+  <table class="issue-details">
+    <tr>
+      <th>Issue Type</th>
+      <td><%= issue.issue_type %></td>
+    </tr>
+    <tr>
+      <th>Summary</th>
+      <td><%= issue.summary %></td>
+    </tr>
+    <tr>
+      <th>Status</th>
+      <td><%= issue.status %></td>
+    </tr>
+    <tr>
+      <th>Created</th>
+      <td><%= pretty_print_date(issue.issue_created) %></td>
+    </tr>
+  </table>
+</div>
+
 <script>
-  $('#launch-<%= issue.key %>').on('click.collapse', function(e) {
-    e.stopPropagation();
-  });
+$('#launch-<%= issue.key %>').on('click.collapse', function(e) {
+  e.stopPropagation();
+});
 </script>

@@ -28,7 +28,7 @@ $.ajaxSetup({
 
 $(function() {
   $('.menu .item').tab();
-  $('.ui.accordion').accordion();
+  $('.ui.accordion').accordion({ exclusive: false });
 })
 
 $(function() {

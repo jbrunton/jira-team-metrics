@@ -1,24 +1,24 @@
-<li>
-  <div class="collapsible-header<%= ' active' if expand %>">Filters</div>
-  <div class="collapsible-body">
-    <table class="issue-details">
-      <tr>
-        <th>Filters</th>
-        <td>
-          <% issue.filters.each do |filter| %>
-              <div class="chip"><%= filter.name %></div>
-          <% end %>
-        </td>
-      </tr>
-      <tr>
-        <th></th>
-        <td>
-          <form class="flag-outlier" action="<%= url_for(issue) %>/flag_outlier">
-            <input type="checkbox" id="outlier" name="outlier" <%= issue.outlier? ? 'checked' : '' %> />
-            <label for="outlier">Outlier</label>
-          </form>
-        </td>
-      </tr>
-    </table>
-  </div>
-</li>
+<div class="<%= 'active' if expand %> title">
+  <i class="dropdown icon"></i>Filters
+</div>
+<div class="<%= 'active' if expand %> content">
+  <table class="issue-details">
+    <tr>
+      <th>Filters</th>
+      <td>
+        <% issue.filters.each do |filter| %>
+            <div class="chip"><%= filter.name %></div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <form class="flag-outlier" action="<%= url_for(issue) %>/flag_outlier">
+          <input type="checkbox" id="outlier" name="outlier" <%= issue.outlier? ? 'checked' : '' %> />
+          <label for="outlier">Outlier</label>
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>
