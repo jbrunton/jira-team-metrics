@@ -13,7 +13,7 @@
       var key = chart._data.getValue(selection.row, 2);
       $('#selected_content').animate({opacity: 0}).load('<%= board_path(@board) %>/issues/' + key + '?fragment=true', function () {
         $(this).animate({opacity: 1});
-        $('.collapsible').collapsible();
+        $('.ui.accordion').accordion({ exclusive: false });
       });
     }
   }
