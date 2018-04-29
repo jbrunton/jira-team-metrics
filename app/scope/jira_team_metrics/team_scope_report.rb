@@ -94,7 +94,7 @@ private
     if use_completed_scope
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
     else
-      @status_reason = "Using trained forecast. Forecast is #{status_risk}."
+      @status_reason = "< 5 issues completed, using trained forecast. Forecast is #{status_risk}."
     end
   end
 

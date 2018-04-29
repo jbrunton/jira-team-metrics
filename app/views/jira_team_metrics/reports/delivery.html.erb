@@ -95,10 +95,11 @@
 
 <% team_dashboard_data[:teams].each do |team, team_data| %>
     <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
-      <td>
+      <td class="center aligned">
         <% if @increment.target_date %>
-            <span class="ui has-popup <%= team_data[:status_color] %> circular label"
-                  data-content="<%= team_data[:status_reason] %>"></span>
+            <span class="ui <%= team_data[:status_color] %> circular label"
+                  data-tooltip="<%= team_data[:status_reason] %>"
+                  data-position="bottom left"></span>
         <% end %>
       </td>
       <td>
