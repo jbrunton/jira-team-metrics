@@ -75,35 +75,43 @@ private
   end
 
   def analyze_status
-    use_completed_scope = completed_scope.count >= 5
-    if use_completed_scope
-      forecast_completion_date = rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
-    else
-      forecast_completion_date = trained_completion_date
-    end
-    if on_track?(forecast_completion_date)
+    if on_track?
       @status_color = 'blue'
       status_risk = 'on target'
-    elsif at_risk?(forecast_completion_date)
+    elsif at_risk?
       @status_color = 'yellow'
       status_risk = 'at risk, over target by < 20% of time remaining'
     else
       @status_color = 'red'
       status_risk = 'at risk, over target by > 20% of time remaining'
     end
-    if use_completed_scope
+    if use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
     else
       @status_reason = "< 5 issues completed, using trained forecast. Forecast is #{status_risk}."
     end
   end
 
-  def on_track?(forecast_completion_date)
+  def use_rolling_forecast?
+    completed_scope.count >= 5
+  end
+
+  def forecast_completion_date
+    @forecast_completion_date ||= begin
+      if use_rolling_forecast?
+        rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
+      else
+        trained_completion_date
+      end
+    end
+  end
+
+  def on_track?
     @remaining_scope.empty? || (forecast_completion_date &&
       forecast_completion_date <= @increment.target_date)
   end
 
-  def at_risk?(forecast_completion_date)
+  def at_risk?
     forecast_completion_date &&
       (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
   end
