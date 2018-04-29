@@ -1,18 +1,16 @@
-<div class="row">
-  <div class="col s6">
-
-    <ul class="collapsible" data-collapsible="expandable">
+<div class="issue-details ui grid">
+  <div class="eight wide column">
+    <div class="ui styled accordion" data-exclusive="false">
       <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_fields', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_links', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_filters', locals: { issue: issue, expand: expand } %>
-    </ul>
+    </div>
   </div>
-
-  <div class="col s6">
-    <ul class="collapsible" data-collapsible="expandable">
+  <div class="eight wide column">
+    <div class="ui styled accordion">
       <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: expand } %>
       <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
-    </ul>
+    </div>
   </div>
 </div>

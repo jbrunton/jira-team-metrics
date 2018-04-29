@@ -1,31 +1,32 @@
-<li>
-  <div class="collapsible-header<%= ' active' if expand %>">Fields</div>
-  <div class="collapsible-body">
-    <table class="issue-details">
-      <tr>
-        <th>Labels</th>
-        <td>
-          <% issue.labels.each do |label| %>
-              <div class="chip"><%= label %></div>
-          <% end %>
-        </td>
-      </tr>
+<div class="<%= 'active' if expand %> title">
+  <i class="dropdown icon"></i>
+  Fields
+</div>
+<div class="<%= 'active' if expand %> content">
+  <table class="issue-details ui definition table">
+    <tr>
+      <td>Labels</td>
+      <td>
+        <% issue.labels.each do |label| %>
+            <div class="chip"><%= label %></div>
+        <% end %>
+      </td>
+    </tr>
 
-      <% issue.fields.keys.each do |field_name| %>
-          <tr>
-            <th><%= field_name %></th>
-            <% if field_name == 'Epic Link' %>
-                <td>
-                  <a class="right" href="<%= issue.epic.domain_url %>" target="_blank">
-                    <i class="material-icons" style="margin: 0;">launch</i>
-                  </a>
-                  <%= issue_summary(issue.epic) %>
-                </td>
-            <% else %>
-                <td><%= issue_field(issue, field_name) %></td>
-            <% end %>
-          </tr>
-      <% end %>
-    </table>
-  </div>
-</li>
+    <% issue.fields.keys.each do |field_name| %>
+        <tr>
+          <td><%= field_name %></td>
+          <% if field_name == 'Epic Link' %>
+              <td>
+                <a class="right floated" href="<%= issue.epic.domain_url %>" target="_blank">
+                  <i class="external alternate icon"></i>
+                </a>
+                <%= issue_summary(issue.epic) %>
+              </td>
+          <% else %>
+              <td><%= issue_field(issue, field_name) %></td>
+          <% end %>
+        </tr>
+    <% end %>
+  </table>
+</div>

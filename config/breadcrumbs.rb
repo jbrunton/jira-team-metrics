@@ -3,8 +3,17 @@ crumb :root do
   link domain.config.name, domain_path
 end
 
+crumb :metadata do
+  link 'Metadata', domain_metadata_path
+end
+
 crumb :board do |board|
   link board.name, board
+end
+
+crumb :issue do |issue|
+  link issue.key, issue
+  parent :board, issue.board
 end
 
 crumb :report do |board, report_key, report_name|
