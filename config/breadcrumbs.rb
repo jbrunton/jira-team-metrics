@@ -11,6 +11,11 @@ crumb :board do |board|
   link board.name, board
 end
 
+crumb :issue do |issue|
+  link issue.key, issue
+  parent :board, issue.board
+end
+
 crumb :report do |board, report_key, report_name|
   link "#{report_name} Report", "#{reports_path(board)}/#{report_key}"
   parent :board, board
