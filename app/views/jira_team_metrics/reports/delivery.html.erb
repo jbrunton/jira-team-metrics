@@ -20,7 +20,7 @@
       isStacked: true,
       lineWidth: 1,
       areaOpacity: 0.4,
-      legend: { position: 'bottom' },
+      legend: { position: 'top' },
       series: {
         0: { color: 'blue' },
         1: { color: 'green' },
@@ -29,7 +29,8 @@
       },
       chartArea: {
         width: '95%',
-        height: '80%'
+        height: '75%',
+        top: 40
       },
       annotations: {
         textStyle: {
@@ -172,15 +173,13 @@
 
 <% end %>
 
+  <div class="ui center aligned basic segment">
+    <p>Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.</p>
 <form action="#">
-  <p class="center-align">
-    Rolling metrics measured across previous 7 day window. Throughput is closed issues per week.
-  </p>
-  <p class="center-align">
     <input type="checkbox" id="hide_complete" name="hide_completed" checked />
     <label for="hide_complete">Hide teams with no remaining scope</label>
-  </p>
 </form>
+  </div>
 
 <script>
   $(function() {

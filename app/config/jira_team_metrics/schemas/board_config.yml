@@ -46,6 +46,10 @@ optional:
     required:
       board_id: "//int"
       adjustments_field: "//str"
+  rolling_window:
+    type: "//rec"
+    required:
+      days: "//int"
   sync:
     type: "//rec"
     required:

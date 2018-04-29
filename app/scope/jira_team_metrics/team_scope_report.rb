@@ -75,7 +75,7 @@ private
   end
 
   def analyze_status
-    forecast_completion_date = rolling_forecast_completion_date(7)
+    forecast_completion_date = rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
     if on_track?(forecast_completion_date)
       @status_color = 'blue'
     elsif at_risk?(forecast_completion_date)
