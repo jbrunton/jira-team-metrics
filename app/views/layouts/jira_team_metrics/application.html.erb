@@ -17,7 +17,7 @@
   </head>
 
   <body>
-    <nav class="nav-extended">
+    <header class="nav-extended">
       <div class="nav-wrapper ui container">
         <h1>
           <a href="<%= root_url %>">Jira Team Metrics</a>
@@ -28,11 +28,19 @@
             separator: '<i class="right chevron icon divider"></i>' %>
       </div>
       <div class="ui divider"></div>
-    </nav>
+    </header>
 
-    <div class="ui container" id="content_container">
+    <main class="ui container" id="content_container">
       <%= yield %>
-    </div>
-    <div id="pickadate-container"></div>
+      <div id="pickadate-container"></div>
+    </main>
+
+    <footer class="ui basic center aligned segment">
+      <% unless @board.nil? %>
+          <div class="ui divider"></div>
+          <p><%= @board.name %> last synchronized: <%= pretty_print_date(@board.last_synced) %></p>
+      <% end %>
+    </footer>
+
   </body>
 </html>
