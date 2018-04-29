@@ -40,6 +40,7 @@ private
         team_report = @increment_report.team_report_for(team)
         [team, team_dashboard_row_data(team_report).merge({
           status_color: @increment.target_date ? team_report.status_color : nil,
+          status_reason: @increment.target_date ? team_report.status_reason : nil,
           rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
           trained_completion_date: team_report.trained_completion_date
         })]

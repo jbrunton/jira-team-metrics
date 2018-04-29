@@ -97,7 +97,8 @@
     <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
       <td>
         <% if @increment.target_date %>
-            <span class="ui <%= team_data[:status_color] %> circular label"></span>
+            <span class="ui has-popup <%= team_data[:status_color] %> circular label"
+                  data-content="<%= team_data[:status_reason] %>"></span>
         <% end %>
       </td>
       <td>

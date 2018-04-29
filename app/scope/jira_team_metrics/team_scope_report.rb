@@ -11,6 +11,7 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :trained_completion_date
   attr_reader :trained_issues_per_epic
   attr_reader :status_color
+  attr_reader :status_reason
 
   def initialize(team, increment, issues, training_team_reports = nil)
     @team = team
@@ -24,9 +25,8 @@ class JiraTeamMetrics::TeamScopeReport
     build_predicted_scope unless @training_team_reports.nil?
 
     analyze_scope
-    analyze_status if @increment.target_date
-
     build_trained_forecasts unless @training_team_reports.nil?
+    analyze_status if @increment.target_date
 
     self
   end
@@ -75,13 +75,26 @@ private
   end
 
   def analyze_status
-    forecast_completion_date = rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
+    use_completed_scope = completed_scope.count >= 5
+    if use_completed_scope
+      forecast_completion_date = rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
+    else
+      forecast_completion_date = trained_completion_date
+    end
     if on_track?(forecast_completion_date)
       @status_color = 'blue'
+      status_risk = 'on target'
     elsif at_risk?(forecast_completion_date)
       @status_color = 'yellow'
+      status_risk = 'at risk, over target by < 20% of time remaining'
     else
       @status_color = 'red'
+      status_risk = 'at risk, over target by > 20% of time remaining'
+    end
+    if use_completed_scope
+      @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
+    else
+      @status_reason = "Using trained forecast. Forecast is #{status_risk}."
     end
   end
 
