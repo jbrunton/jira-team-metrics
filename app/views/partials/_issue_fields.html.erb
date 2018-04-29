@@ -18,8 +18,8 @@
           <td><%= field_name %></td>
           <% if field_name == 'Epic Link' %>
               <td>
-                <a class="right" href="<%= issue.epic.domain_url %>" target="_blank">
-                  <i class="material-icons" style="margin: 0;">launch</i>
+                <a class="right floated" href="<%= issue.epic.domain_url %>" target="_blank">
+                  <i class="external alternate icon"></i>
                 </a>
                 <%= issue_summary(issue.epic) %>
               </td>

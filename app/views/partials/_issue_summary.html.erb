@@ -1,8 +1,8 @@
 <div class="<%= 'active' if expand %> title">
   <i class="dropdown icon"></i>
   <span><%= issue.key %> - <%= issue.short_summary %></span>
-  <a id="launch-<%= issue.key %>" class="right" href="<%= issue.domain_url %>" target="_blank">
-    <i class="material-icons" style="margin: 0;">launch</i>
+  <a id="launch-<%= issue.key %>" class="right floated" href="<%= issue.domain_url %>" target="_blank">
+    <i class="external alternate icon"></i>
   </a>
 </div>
 <div class="<%= 'active' if expand %> content">

@@ -9,8 +9,8 @@
             <tr>
               <td><%= link_type(link) %></td>
               <td>
-                <a class="right" href="<%= external_link_url(link, @domain) %>" target="_blank">
-                  <i class="material-icons" style="margin: 0;">launch</i>
+                <a class="right floated" href="<%= external_link_url(link, @domain) %>" target="_blank">
+                  <i class="external alternate icon"></i>
                 </a>
                 <%= link_summary(link, @board) %>
               </td>
