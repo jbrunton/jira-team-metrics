@@ -1,9 +1,9 @@
-<h3>Domain Metadata</h3>
+<h1>Domain Metadata</h1>
 
-<div class="row">
-  <div class="col s6">
-    <h5>Statuses</h5>
-    <table class="striped">
+<div class="ui grid">
+  <div class="eight wide column">
+    <h3>Statuses</h3>
+    <table class="ui striped table">
       <thead>
         <tr>
           <th>Status</th>
@@ -21,13 +21,13 @@
     </table>
   </div>
 
-  <div class="col s6">
-    <h5>Fields</h5>
-    <table class="striped">
+  <div class="eight wide column">
+    <h3>Fields</h3>
+    <table class="ui striped table">
       <thead>
         <tr>
-          <td>Name</td>
-          <td>Type</td>
+          <th>Name</th>
+          <th>Type</th>
         </tr>
       </thead>
       <% @domain.fields.each do |field_hash| %>
