@@ -63,7 +63,7 @@
         var key = data.getValue(selection.row, <%= JiraTeamMetrics::ApiController::COMPLETED_ISSUES_KEY_COL %>);
         $('#selected_content').animate({ opacity: 0 }).load( '<%= board_path(@board) %>/issues/' + key + '?fragment=true', function() {
           $(this).animate({ opacity: 1 });
-          $('.collapsible').collapsible();
+          $('.ui.accordion').accordion({ exclusive: false });
         });
       } else if (selection.column == <%= JiraTeamMetrics::ApiController::WIP_COL %>) {
         // WIP column
@@ -72,7 +72,7 @@
         var url = buildComponentUrl('<%= board_components_path(@board) %>/wip/' + dateStr);
         $('#selected_content').animate({ opacity: 0 }).load(url, function() {
           $(this).animate({ opacity: 1 })
-          $('.collapsible').collapsible();
+          $('.ui.accordion').accordion({ exclusive: false });
         });
       } else {
         $('#selected_content').empty();
