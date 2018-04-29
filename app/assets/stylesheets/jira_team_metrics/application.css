@@ -100,8 +100,8 @@ table.jira-tree .effort-stats {
 
 body {
     display: flex;
-    min-height: 100vh;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
