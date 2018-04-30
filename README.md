@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/jbrunton/jira-team-metrics.svg?branch=master)](https://travis-ci.org/jbrunton/jira-team-metrics)
 [![Code Climate](https://codeclimate.com/github/jbrunton/jira-team-metrics/badges/gpa.svg)](https://codeclimate.com/github/jbrunton/jira-team-metrics)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/539564b79f1ce4331549/test_coverage)](https://codeclimate.com/github/jbrunton/jira-team-metrics/test_coverage)
+[![Dependency Status](https://gemnasium.com/badges/github.com/jbrunton/jira-team-metrics.svg)](https://gemnasium.com/github.com/jbrunton/jira-team-metrics)
 
 A reporting tool for visualising flow metrics for JIRA projects.
 
