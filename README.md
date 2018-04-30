@@ -42,7 +42,7 @@ To start the server in read-only mode, set a `READONLY` environment variable:
 
 If you want to customize how you deploy the app, you can create your own Rails app and add it as a dependency to your Gemfile:
 
-    gem 'jira_team_metrics', :git => 'https://github.com/jbrunton/jira-team-metrics.git'
+    gem 'jira-team-metrics', :git => 'https://github.com/jbrunton/jira-team-metrics.git'
     
 Then mount it as a Rails engine in your routes.rb file:
 
