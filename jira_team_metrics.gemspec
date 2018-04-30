@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.add_dependency "draper", "~> 3.0.0"
   s.add_dependency "descriptive_statistics"
   s.add_dependency "parslet"
-  s.add_dependency "sass-rails"
   s.add_dependency "less-rails"
   s.add_dependency "pickadate-rails"
   s.add_dependency "gretel"
