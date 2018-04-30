@@ -5,7 +5,7 @@ require "jira_team_metrics/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "jira_team_metrics"
+  s.name        = "jira-team-metrics"
   s.version     = JiraTeamMetrics::VERSION
   s.authors     = ["John Brunton"]
   s.email       = ["jbrunton@zipcar.com"]
@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib,vendor}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails", ">= 5.0.0"
-
   s.add_dependency "jquery-rails"
   s.add_dependency "handlebars_assets"
   s.add_dependency "less-rails-semantic_ui"
@@ -31,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_dependency "less-rails"
   s.add_dependency "pickadate-rails"
   s.add_dependency "gretel"
-  #s.add_dependency 'sprockets-rails', '<= 2.3.3'
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "byebug"
