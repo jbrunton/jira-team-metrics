@@ -15,7 +15,10 @@
           <% if epic.nil? %>
           None
           <% else %>
-          <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
+          <%= link_to(epic.key, epic) %>
+            (<a href="<%= epic.domain_url %>" target="_blank">
+              <i class="external alternate icon"></i></a>)
+            &mdash; <%= epic.summary %>
           <% end %>
         </td>
         <td>
@@ -28,7 +31,10 @@
           <tr class="story">
             <td>
               <% if issue.persisted? %>
-                  <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+                  <%= link_to(issue.key, issue) %>
+                (<a href="<%= issue.domain_url %>" target="_blank">
+                  <i class="external alternate icon"></i></a>)
+                &mdash; <%= issue.summary %>
               <% else %>
                   <%= issue.summary %>
               <% end %>
