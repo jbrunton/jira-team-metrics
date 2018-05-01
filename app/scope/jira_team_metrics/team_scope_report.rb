@@ -78,9 +78,12 @@ private
     if done?
       @status_color = 'blue'
       @status_reason = "Done."
-      return
+    else
+      analyze_progress
     end
+  end
 
+  def analyze_progress
     if on_track?
       @status_color = 'green'
       status_risk = 'on target'
