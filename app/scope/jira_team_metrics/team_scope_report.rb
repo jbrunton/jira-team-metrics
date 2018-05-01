@@ -75,8 +75,14 @@ private
   end
 
   def analyze_status
-    if on_track?
+    if done?
       @status_color = 'blue'
+      @status_reason = "Done."
+      return
+    end
+
+    if on_track?
+      @status_color = 'green'
       status_risk = 'on target'
     elsif at_risk?
       @status_color = 'yellow'
@@ -106,9 +112,13 @@ private
     end
   end
 
+  def done?
+    @remaining_scope.empty?
+  end
+
   def on_track?
-    @remaining_scope.empty? || (forecast_completion_date &&
-      forecast_completion_date <= @increment.target_date)
+    forecast_completion_date &&
+      forecast_completion_date <= @increment.target_date
   end
 
   def at_risk?
