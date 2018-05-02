@@ -32,15 +32,16 @@ class JiraTeamMetrics::CfdBuilder
   end
 
   def lookup_team_completion_rates(cfd_type, increment_report)
+    rolling_window_days = increment_report.increment.board.config.rolling_window_days
     case cfd_type
       when :raw
         @team_completion_dates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          [team, team_report.rolling_forecast_completion_date(7)]
+          [team, team_report.rolling_forecast_completion_date(rolling_window_days)]
         end.to_h
         @team_completion_rates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          [team, team_report.rolling_completion_rate(7)]
+          [team, team_report.rolling_completion_rate(rolling_window_days)]
         end.to_h
       when :trained
         @team_completion_dates = increment_report.teams.map do |team|

@@ -4,6 +4,7 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
 
 
 
+  attr_reader :increment
   attr_reader :epics
   attr_reader :scope
   attr_reader :completed_scope
