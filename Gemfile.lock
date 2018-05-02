@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jira-team-metrics (0.0.6)
+    jira_team_metrics (0.0.6)
       autoprefixer-rails
       coffee-rails
       descriptive_statistics
@@ -213,7 +213,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   factory_bot_rails
-  jira-team-metrics!
+  jira_team_metrics!
   puma
   rspec-rails
   simplecov

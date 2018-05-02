@@ -5,7 +5,7 @@ require "jira_team_metrics/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "jira-team-metrics"
+  s.name        = "jira_team_metrics"
   s.version     = JiraTeamMetrics::VERSION
   s.authors     = ["John Brunton"]
   s.email       = ["jbrunton@zipcar.com"]
