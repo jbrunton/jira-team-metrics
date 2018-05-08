@@ -9,10 +9,8 @@
 
   function updateChart() {
 
-    <% cache "cfd_data/#{@increment.key}" do %>
-      var rawData = google.visualization.arrayToDataTable(<%= cfd_data(:raw).to_json.html_safe %>);
-      var trainedData = google.visualization.arrayToDataTable(<%= cfd_data(:trained).to_json.html_safe %>);
-    <% end %>
+    var rawData = google.visualization.arrayToDataTable(<%= cfd_data(:raw).to_json.html_safe %>);
+    var trainedData = google.visualization.arrayToDataTable(<%= cfd_data(:trained).to_json.html_safe %>);
 
     var options = {
       hAxis: {titleTextStyle: {color: '#333'}},
@@ -65,8 +63,6 @@
 
   </div>
 </div>
-
-<% cache "team_dashboard/#{@increment.key}" do %>
 
 <table class="ui very compact table team-dashboard">
   <thead>
@@ -174,8 +170,6 @@
   </tfoot>
 
 </table>
-
-<% end %>
 
   <div class="ui center aligned basic segment">
     <p>Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.</p>
