@@ -7,11 +7,11 @@
         Board Status
     <% end %>
     </div>
-    <p>Last synced: <%= pretty_print_date(object.last_synced) %></p>
+    <p>Last synced: <%= pretty_print_time(object.last_synced) %></p>
     <% if object.class == JiraTeamMetrics::Domain %>
         <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
     <% elsif object.class == JiraTeamMetrics::BoardDecorator %>
-        <p>Synced from: <%= pretty_print_date(object.synced_from) %></p>
+        <p>Synced from: <%= pretty_print_time(object.synced_from) %></p>
     <% end %>
   </div>
   <div class="extra content">
