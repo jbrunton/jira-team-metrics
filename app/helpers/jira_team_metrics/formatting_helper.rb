@@ -10,7 +10,7 @@ module JiraTeamMetrics::FormattingHelper
   end
 
   def pretty_print_time(time)
-    time.nil? ? '-' : time.strftime('%d %b %Y %H:%M %z')
+    time.nil? ? '-' : time.strftime('%d %b %Y %H:%M %Z')
   end
 
   def pretty_print_number(number, opts = {})
