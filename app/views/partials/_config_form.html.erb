@@ -9,7 +9,17 @@
       </div>
   <% end %>
 
+  <% if readonly? %>
+      <div class="ui info message">
+        <p>Server started in readonly mode. Config is readonly.</p>
+      </div>
+  <% end %>
+
   <div class="field">
-    <%= form_input(object, :config_string, type: :textarea) %>
+    <% if readonly? %>
+        <%= form_input(object, :config_string, type: :textarea, readonly: true) %>
+    <% else %>
+        <%= form_input(object, :config_string, type: :textarea) %>
+    <% end %>
   </div>
 </form>

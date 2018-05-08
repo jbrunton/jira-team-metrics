@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jira_team_metrics (0.0.9)
+    jira_team_metrics (0.0.10)
       autoprefixer-rails
       coffee-rails
       descriptive_statistics
