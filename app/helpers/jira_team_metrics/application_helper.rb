@@ -95,6 +95,7 @@ module JiraTeamMetrics::ApplicationHelper
       :name =>  "#{object_name}[#{method}]",
       :class => classes
     }
+    opts.merge!(:readonly => 'readonly') if options[:readonly]
     input_value = object.send(method)
     if options[:type] == :textarea
       content_tag(:textarea, input_value, opts)
@@ -103,11 +104,7 @@ module JiraTeamMetrics::ApplicationHelper
         :value => input_value,
         :type => options[:type] || 'text',
       })
-      tag(:input, :id => input_id_for(object, method),
-        :name =>  "#{object_name}[#{method}]",
-        :type => options[:type] || 'text',
-        :class => classes,
-        :value => input_value)
+      tag(:input, opts)
     end
   end
 
