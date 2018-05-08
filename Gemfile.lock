@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jira_team_metrics (0.0.7)
+    jira_team_metrics (0.0.8)
       autoprefixer-rails
       coffee-rails
       descriptive_statistics
@@ -128,7 +128,7 @@ GEM
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
-    nio4r (2.3.0)
+    nio4r (2.3.1)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     parslet (1.8.2)
