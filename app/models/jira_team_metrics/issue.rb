@@ -100,6 +100,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     last_transition ? Time.parse(last_transition['date']) : nil
   end
 
+  def cycle_time
+    cycle_time_between(nil, nil)
+  end
+
   def cycle_time_between(start_state, end_state)
     started = started_time(start_state)
     completed = completed_time(end_state)

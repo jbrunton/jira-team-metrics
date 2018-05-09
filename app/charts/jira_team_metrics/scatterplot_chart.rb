@@ -8,14 +8,14 @@ class JiraTeamMetrics::ScatterplotChart
 
   def data_table
     completed_issues = @board.completed_issues.select do |issue|
-      @params.date_range.start_date <= issue.completed &&
-        issue.completed < @params.date_range.end_date
+      @params.date_range.start_date <= issue.completed_time &&
+        issue.completed_time < @params.date_range.end_date
     end
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(completed_issues)
-      .pick(:completed, :cycle_time, :key)
+      .pick(:completed_time, :cycle_time, :key)
       .build
-      .sort_by('completed')
+      .sort_by('completed_time')
 
     cycle_times = data_table.column_values('cycle_time')
     percentile_50 = cycle_times.percentile(50)

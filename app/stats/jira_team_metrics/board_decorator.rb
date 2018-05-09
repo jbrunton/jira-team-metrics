@@ -35,7 +35,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   end
 
   def all_issues
-    @all_issues ||= object.issues.map{ |i| JiraTeamMetrics::IssueDecorator.new(i, @from_state, @to_state, @date_range) }
+    @all_issues ||= object.issues
   end
 
   def exclusions
@@ -54,10 +54,9 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
 
   def completed_issues
     @completed_issues ||= begin
-      issues = self.issues
-        .select{ |i| i.completed && i.started }
-        .sort_by{ |i| i.completed }
-      JiraTeamMetrics::IssuesDecorator.new(issues)
+      self.issues
+        .select{ |i| i.completed_time && i.started_time }
+        .sort_by{ |i| i.completed_time }
     end
   end
 
@@ -69,7 +68,7 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
   def issues_by_type
     @issues_by_type ||= all_issues
       .group_by{ |i| i.issue_type }
-      .map{ |issue_type, issues| [issue_type, JiraTeamMetrics::IssuesDecorator.new(issues)] }
+      .map{ |issue_type, issues| [issue_type, issues] }
       .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
       .to_h
   end
@@ -92,8 +91,8 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
 
   def wip_on_date(date)
     issues.select do |issue|
-      issue.started && issue.started < date &&
-        (issue.completed.nil? or issue.completed > date)
+      issue.started_time && issue.started_time < date &&
+        (issue.completed_time.nil? or issue.completed_time > date)
     end
   end
 
@@ -129,9 +128,9 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
     ]
 
     if ['month', 'week'].include?(group_by)
-      from_date = completed_issues.first.completed
+      from_date = completed_issues.first.completed_time
 
-      while from_date < completed_issues.last.completed
+      while from_date < completed_issues.last.completed_time
         to_date = next_date(from_date, group_by)
         date_range = from_date...to_date
 

@@ -105,7 +105,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(_, issues)
       query_date_range = JiraTeamMetrics::DateRange.new(Time.parse(lhs[:value].to_s), Time.parse(rhs[:value].to_s))
       issues.select do |issue|
-        issue_date_range = JiraTeamMetrics::DateRange.new(issue.started, issue.completed)
+        issue_date_range = JiraTeamMetrics::DateRange.new(issue.started_time, issue.completed_time)
         issue_date_range.overlaps?(query_date_range)
       end
     end
