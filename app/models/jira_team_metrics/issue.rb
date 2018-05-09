@@ -152,6 +152,14 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     end
   end
 
+  def duration_in_range(date_range)
+    if issue_type == 'Epic'
+      nil
+    else
+      date_range.nil? ? nil : date_range.overlap_with(JiraTeamMetrics::DateRange.new(started_time, completed_time)).duration
+    end
+  end
+
 private
   def cycle_time_between_properties(start_property_name, end_property_name = nil)
     end_property_name = start_property_name if end_property_name.nil?

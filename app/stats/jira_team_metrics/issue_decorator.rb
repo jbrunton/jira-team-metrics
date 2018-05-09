@@ -26,13 +26,13 @@ class JiraTeamMetrics::IssueDecorator < Draper::Decorator
     @cycle_time ||= object.cycle_time_between(@from_state, @to_state)
   end
 
-  def duration_in_range
-    if issue_type == 'Epic'
-      nil
-    else
-      @date_range.nil? ? nil : @date_range.overlap_with(JiraTeamMetrics::DateRange.new(@started, @completed)).duration
-    end
-  end
+  # def duration_in_range
+  #   if issue_type == 'Epic'
+  #     nil
+  #   else
+  #     @date_range.nil? ? nil : @date_range.overlap_with(JiraTeamMetrics::DateRange.new(@started, @completed)).duration
+  #   end
+  # end
 
   def decorate(_options)
     self
