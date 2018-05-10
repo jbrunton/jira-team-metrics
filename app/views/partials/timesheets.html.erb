@@ -15,7 +15,10 @@
           <% if increment.nil? %>
               None
           <% else %>
-              <%= increment['issue']['key'] %> &mdash; <%= increment['issue']['summary'] %>
+              <%= increment['issue']['key'] %>
+              (<a href="<%= external_link_url(increment, @domain) %>" target="_blank">
+                <i class="external alternate icon"></i></a>)
+              &mdash; <%= increment['issue']['summary'] %>
           <% end %>
         </td>
         <td class="effort-stats">
@@ -34,7 +37,10 @@
                   <% if epic.nil? %>
                       None
                   <% else %>
-                      <%= link_to(epic.key, epic) %> &mdash; <%= epic.summary %>
+                      <%= link_to(epic.key, epic) %>
+                      (<a href="<%= epic.domain_url %>" target="_blank">
+                        <i class="external alternate icon"></i></a>)
+                      &mdash; <%= epic.summary %>
                   <% end %>
                 </td>
                 <td class="effort-stats">
@@ -49,7 +55,10 @@
           <% issues.each do |issue| %>
               <tr class="story">
                 <td>
-                  <%= link_to(issue.key, issue) %> &mdash; <%= issue.summary %>
+                  <%= link_to(issue.key, issue) %>
+                  (<a href="<%= issue.domain_url %>" target="_blank">
+                    <i class="external alternate icon"></i></a>)
+                  &mdash; <%= issue.summary %>
                 </td>
                 <td class="effort-stats">
                   <%= pretty_print_number(issue.duration_in_range) %>
