@@ -41,6 +41,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def issue_types
+    issues.map{ |issue| issue.issue_type }.uniq
+  end
+
   def config_property(property)
     *scopes, property_name = property.split('.')
     config = config_hash

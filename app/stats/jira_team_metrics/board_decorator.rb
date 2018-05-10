@@ -60,46 +60,6 @@ class JiraTeamMetrics::BoardDecorator < Draper::Decorator
     end
   end
 
-  # def completed_issues_in_range(date_range)
-  #   completed_issues
-  #     .select{ |i| date_range.cover?(i.completed) }
-  # end
-
-  def issues_by_type
-    @issues_by_type ||= all_issues
-      .group_by{ |i| i.issue_type }
-      .map{ |issue_type, issues| [issue_type, issues] }
-      .sort_by { |issue_type, _| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
-      .to_h
-  end
-
-  def issue_types
-    issues_by_type
-      .keys
-      .sort_by{ |issue_type| -(ISSUE_TYPE_ORDERING.reverse.index(issue_type) || -1) }
-  end
-
-  def wip_history
-    min_date = @date_range.start_date
-    max_date = @date_range.end_date
-
-    dates = JiraTeamMetrics::DateRange.new(min_date, max_date).to_a
-    dates.map do |date|
-      [date, wip_on_date(date)]
-    end
-  end
-
-  def wip_on_date(date)
-    issues.select do |issue|
-      issue.started_time && issue.started_time < date &&
-        (issue.completed_time.nil? or issue.completed_time > date)
-    end
-  end
-
-  def get_binding
-    binding()
-  end
-
   def summarize(group_by = nil)
     JiraTeamMetrics::IssuesAggregator.new(completed_issues, :completed).aggregate(group_by)
   end
