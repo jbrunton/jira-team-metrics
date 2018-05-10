@@ -17,10 +17,16 @@ private
       to_state = params[:to_state]
     end
 
-    unless params[:from_date].blank?
+    if params[:from_date].blank? || params[:to_date].blank?
+      @default_from_date = board.synced_from || Time.now - 90.days
+      @default_to_date = Time.now
+    else
       from_date = Time.parse(params[:from_date])
-      to_date = Time.parse(params[:to_date]) unless params[:to_date].blank?
+      to_date = Time.parse(params[:to_date])
       @date_range = JiraTeamMetrics::DateRange.new(from_date, to_date)
+
+      @default_from_date = from_date
+      @default_to_date = to_date
     end
 
     @board = JiraTeamMetrics::BoardDecorator.new(board, from_state, to_state, @date_range, params[:query])
