@@ -55,7 +55,7 @@ private
               field_value
             when 'array'
               field_value.map{ |x| x['value'] }
-            when 'user'
+            when 'user', 'resolution'
               field_value['name']
             else
               nil
