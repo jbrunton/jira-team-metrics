@@ -11,8 +11,9 @@ class JiraTeamMetrics::ScatterplotChart
       @params.date_range.start_date <= issue.completed_time &&
         issue.completed_time < @params.date_range.end_date
     end
+    filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, completed_issues).eval(@params.query)
     data_table = JiraTeamMetrics::DataTableBuilder.new
-      .data(completed_issues)
+      .data(filtered_issues)
       .pick(:completed_time, :cycle_time, :key)
       .build
       .sort_by('completed_time')

@@ -45,7 +45,7 @@ class JiraTeamMetrics::AgingWipChart
 private
   def wip_issues
     @wip_issues ||= begin
-      issues = @board.all_issues.select do |issue|
+      issues = @board.issues.select do |issue|
         issue.status_category == 'In Progress' &&
           issue.started_time
       end

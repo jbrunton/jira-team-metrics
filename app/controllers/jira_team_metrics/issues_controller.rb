@@ -20,6 +20,6 @@ class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
 
 private
   def set_issue
-    @issue = @board.object.issues.find{ |i| i.key == params[:issue_key] }
+    @issue = @board.issues.find{ |i| i.key == params[:issue_key] }
   end
 end
