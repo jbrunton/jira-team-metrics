@@ -50,12 +50,11 @@ table.jira-tree .delivery {
 }
 
 table.jira-tree .epic td {
-    background-color: #f9fafb;
     font-weight: bold;
 }
 
-table.jira-tree tr td:first-child {
-      padding-left: 50px;
+table.jira-tree .epic td:first-child {
+    padding-left: 50px;
 }
 
 table.jira-tree .story td:first-child {
