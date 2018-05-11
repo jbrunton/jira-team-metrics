@@ -1,9 +1,0 @@
-<table class="striped">
-  <% table.rows.each do |row| %>
-      <% if row.kind_of?(JiraTeamMetrics::JsonDataTable::Header) %>
-        <%= render partial: 'partials/table_header', locals: { row: row } %>
-      <% else %>
-        <%= render partial: 'partials/table_row', locals: { row: row } %>
-      <% end %>
-  <% end %>
-</table>
