@@ -222,6 +222,7 @@ DEPENDENCIES
   rspec-rails
   simplecov
   sqlite3
+  teaspoon
   teaspoon-jasmine
 
 BUNDLED WITH
