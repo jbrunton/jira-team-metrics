@@ -1,6 +1,6 @@
 <div class="<%= 'active' if expand %> title">
   <i class="dropdown icon"></i>
-  Cycle Time and Churn
+  Cycle Time
 </div>
 <div class="<%= 'active' if expand %> content">
   <table class="issue-details ui definition table">
@@ -15,18 +15,6 @@
     <tr>
       <td>Days</td>
       <td><%= pretty_print_number(issue.cycle_time) %></td>
-    </tr>
-    <tr>
-      <td>Churn</td>
-      <td><%= pretty_print_number(issue.churn_metrics[:score]) %>%</td>
-    </tr>
-    <tr>
-      <td>Review Time</td>
-      <td><%= pretty_print_number(issue.churn_metrics[:review_time]) %>%</td>
-    </tr>
-    <tr>
-      <td>Test Time</td>
-      <td><%= pretty_print_number(issue.churn_metrics[:test_time]) %>%</td>
     </tr>
   </table>
 </div>

@@ -111,16 +111,6 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
-  describe "#churn_metrics" do
-    it "returns churn metrics" do
-      expect(issue.churn_metrics).to eq({
-        review_time: 10.0,
-        test_time: 10.0,
-        score: 20.0
-      })
-    end
-  end
-
   describe "#epic" do
     let(:epic) { create(:issue, board: board, issue_type: 'Epic') }
 
