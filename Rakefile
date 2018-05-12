@@ -29,5 +29,6 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   # spec.rspec_opts = ['-cfs --backtrace']
 end
 
+require 'teaspoon/lib/tasks/teaspoon.rake'
 desc "Run the javascript specs"
 task :teaspoon => "app:teaspoon"
