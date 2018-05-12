@@ -15,7 +15,6 @@ PATH
       parslet
       pickadate-rails
       rails (>= 5.0.0)
-      teaspoon-jasmine
       therubyracer
 
 GEM
@@ -223,6 +222,7 @@ DEPENDENCIES
   rspec-rails
   simplecov
   sqlite3
+  teaspoon-jasmine
 
 BUNDLED WITH
    1.16.1
