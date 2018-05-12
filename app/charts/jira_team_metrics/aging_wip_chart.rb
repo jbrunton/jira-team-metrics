@@ -58,9 +58,16 @@ private
   end
 
   def completed_issues
-    @completed_issues ||= @board.completed_issues.select do |issue|
-      @params.date_range.start_date <= issue.completed_time &&
-        issue.completed_time < @params.date_range.end_date
+    @completed_issues ||= begin
+      issues = @board.completed_issues.select do |issue|
+        @params.date_range.start_date <= issue.completed_time &&
+          issue.completed_time < @params.date_range.end_date
+      end
+      if @params.query.blank?
+        issues
+      else
+        JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
+      end
     end.sort_by { |issue| issue.cycle_time }
   end
 
