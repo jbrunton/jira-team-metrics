@@ -70,16 +70,8 @@ RSpec.describe JiraTeamMetrics::Issue do
   end
 
   describe "started_time" do
-    context "when passed no parameters" do
-      it "returns the time of the first transition to 'In Progress' status category" do
-        expect(issue.started_time).to eq(Time.parse('2017-01-02T12:00:00.000-0000'))
-      end
-    end
-
-    context "when passed a status name" do
-      it "returns the time of the first transition to that status" do
-        expect(issue.started_time('In Test')).to eq(Time.parse('2017-01-03T15:00:00.000-0000'))
-      end
+    it "returns the time of the first transition to 'In Progress' status category" do
+      expect(issue.started_time).to eq(Time.parse('2017-01-02T12:00:00.000-0000'))
     end
 
     context "when never started" do
@@ -88,16 +80,8 @@ RSpec.describe JiraTeamMetrics::Issue do
   end
 
   describe "completed" do
-    context "when passed no parameters" do
-      it "returns the time of the last transition to 'Done' status category" do
-        expect(issue.completed_time).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
-      end
-    end
-
-    context "when passed a status name" do
-      it "returns the time of the last transition to that status" do
-        expect(issue.completed_time('In Test')).to eq(Time.parse('2017-01-03T15:00:00.000-0000'))
-      end
+    it "returns the time of the last transition to 'Done' status category" do
+      expect(issue.completed_time).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
     end
 
     context "when reopened" do
@@ -107,23 +91,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "#cycle_time" do
     it "returns the time in days the issue was in progress" do
-      expect(issue.cycle_time_between(nil, nil)).to eq(1.25)
-    end
-  end
-
-  describe "#cycle_time_between" do
-    it "returns the time in days the issue was between the given states" do
-      expect(issue.cycle_time_between('In Progress', 'In Test')).to eq(1.125)
-    end
-  end
-
-  describe "#churn_metrics" do
-    it "returns churn metrics" do
-      expect(issue.churn_metrics).to eq({
-        review_time: 10.0,
-        test_time: 10.0,
-        score: 20.0
-      })
+      expect(issue.cycle_time).to eq(1.25)
     end
   end
 
