@@ -107,13 +107,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "#cycle_time" do
     it "returns the time in days the issue was in progress" do
-      expect(issue.cycle_time_between(nil, nil)).to eq(1.25)
-    end
-  end
-
-  describe "#cycle_time_between" do
-    it "returns the time in days the issue was between the given states" do
-      expect(issue.cycle_time_between('In Progress', 'In Test')).to eq(1.125)
+      expect(issue.cycle_time).to eq(1.25)
     end
   end
 

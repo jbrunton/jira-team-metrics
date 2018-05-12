@@ -76,37 +76,25 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     display_name.truncate(50, separator: /\s/)
   end
 
-  def started_time(status = nil)
+  def started_time
     first_transition = transitions.find do |t|
-      if status
-        t['toStatus'] == status
-      else
-        t['toStatusCategory'] == 'In Progress'
-      end
+      t['toStatusCategory'] == 'In Progress'
     end
 
     first_transition ? Time.parse(first_transition['date']) : nil
   end
 
-  def completed_time(status = nil)
+  def completed_time
     last_transition = transitions.reverse.find do |t|
-      if status
-        t['toStatus'] == status
-      else
-        t['toStatusCategory'] == 'Done'
-      end
+      t['toStatusCategory'] == 'Done'
     end
 
     last_transition ? Time.parse(last_transition['date']) : nil
   end
 
   def cycle_time
-    cycle_time_between(nil, nil)
-  end
-
-  def cycle_time_between(start_state, end_state)
-    started = started_time(start_state)
-    completed = completed_time(end_state)
+    started = started_time
+    completed = completed_time
     completed && started ? (completed - started) / (60 * 60 * 24) : nil
   end
 
