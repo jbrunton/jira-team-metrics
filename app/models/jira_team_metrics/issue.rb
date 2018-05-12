@@ -157,16 +157,9 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def duration_in_range(date_range)
-    if issue_type == 'Epic'
-      0
-    else
-      if date_range.nil?
-        0
-      else
-        overlap = date_range.overlap_with(JiraTeamMetrics::DateRange.new(started_time, completed_time))
-        overlap.nil? ? 0 : overlap.duration
-      end
-    end
+    return 0 if issue_type == 'Epic' || date_range.nil?
+    overlap = date_range.overlap_with(JiraTeamMetrics::DateRange.new(started_time, completed_time))
+    overlap.nil? ? 0 : overlap.duration
   end
 
 private
