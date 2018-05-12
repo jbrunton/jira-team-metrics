@@ -7,7 +7,7 @@ class JiraTeamMetrics::AgingWipChart
   def data_table
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(wip_issues)
-      .pick(:key, :summary, :started)
+      .pick(:key, :summary, :started_time)
       .build
 
     now = Time.now
@@ -23,9 +23,9 @@ class JiraTeamMetrics::AgingWipChart
   def chart_opts
     {
       colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (Time.now - issue.started) < percentiles[50] * 60 * 60 * 24
+        if (Time.now - issue.started_time) < percentiles[50] * 60 * 60 * 24
           '#03a9f4'
-        elsif (Time.now - issue.started) < percentiles[70] * 60 * 60 * 24
+        elsif (Time.now - issue.started_time) < percentiles[70] * 60 * 60 * 24
           '#ff9800'
         else
           '#f44336'
@@ -38,29 +38,36 @@ class JiraTeamMetrics::AgingWipChart
   def json_data
     {
       chartOpts: chart_opts,
-      data: data_table.to_json('started' => { type: 'datetime' }, 'now' => { type: 'datetime' })
+      data: data_table.to_json('started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
     }
   end
 
 private
   def wip_issues
     @wip_issues ||= begin
-      issues = @board.all_issues.select do |issue|
+      issues = @board.issues.select do |issue|
         issue.status_category == 'In Progress' &&
-          issue.started
+          issue.started_time
       end
       if @params.query.blank?
         issues
       else
         JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
       end
-    end.sort_by { |issue| issue.started }
+    end.sort_by { |issue| issue.started_time }
   end
 
   def completed_issues
-    @completed_issues ||= @board.completed_issues.select do |issue|
-      @params.date_range.start_date <= issue.completed &&
-        issue.completed < @params.date_range.end_date
+    @completed_issues ||= begin
+      issues = @board.completed_issues.select do |issue|
+        @params.date_range.start_date <= issue.completed_time &&
+          issue.completed_time < @params.date_range.end_date
+      end
+      if @params.query.blank?
+        issues
+      else
+        JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
+      end
     end.sort_by { |issue| issue.cycle_time }
   end
 

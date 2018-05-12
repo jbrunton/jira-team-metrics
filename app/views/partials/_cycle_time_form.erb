@@ -10,11 +10,13 @@
       <div class="fields">
         <div class="eight wide field">
           <label for="from_date">From Date</label>
-          <input name="from_date" id="from_date" type="text" class="datepicker" data-value="<%= @default_from_date.strftime('%Y-%m-%d') %>">
+          <input name="from_date" id="from_date" type="text" class="datepicker"
+                 data-value="<%= @chart_params.date_range.start_date.strftime('%Y-%m-%d') %>">
         </div>
         <div class="eight wide field">
           <label for="to_date">To Date</label>
-          <input name="to_date" id="to_date" type="text" class="datepicker" data-value="<%= @default_to_date.strftime('%Y-%m-%d') %>">
+          <input name="to_date" id="to_date" type="text" class="datepicker"
+                 data-value="<%= @chart_params.date_range.end_date.strftime('%Y-%m-%d') %>">
         </div>
       </div>
       <div class="ui styled accordion">

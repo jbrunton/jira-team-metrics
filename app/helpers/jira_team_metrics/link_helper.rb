@@ -5,7 +5,7 @@ module JiraTeamMetrics::LinkHelper
 
   def link_summary(link, board)
     issue_key = link['issue']['key']
-    issue = board.object.issues.find_by(key: issue_key)
+    issue = board.issues.find_by(key: issue_key)
     if issue.nil?
       "#{issue_key} – #{link['issue']['summary']}".html_safe
     else

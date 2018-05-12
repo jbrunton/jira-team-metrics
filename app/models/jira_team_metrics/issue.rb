@@ -100,6 +100,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     last_transition ? Time.parse(last_transition['date']) : nil
   end
 
+  def cycle_time
+    cycle_time_between(nil, nil)
+  end
+
   def cycle_time_between(start_state, end_state)
     started = started_time(start_state)
     completed = completed_time(end_state)
@@ -150,6 +154,12 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     else
       'To Do'
     end
+  end
+
+  def duration_in_range(date_range)
+    return 0 if issue_type == 'Epic' || date_range.nil?
+    overlap = date_range.overlap_with(JiraTeamMetrics::DateRange.new(started_time, completed_time))
+    overlap.nil? ? 0 : overlap.duration
   end
 
 private

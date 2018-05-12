@@ -41,6 +41,18 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def completed_issues
+    @completed_issues ||= begin
+      self.issues
+        .select{ |i| i.completed_time && i.started_time }
+        .sort_by{ |i| i.completed_time }
+    end
+  end
+
+  def issue_types
+    issues.map{ |issue| issue.issue_type }.uniq
+  end
+
   def config_property(property)
     *scopes, property_name = property.split('.')
     config = config_hash
