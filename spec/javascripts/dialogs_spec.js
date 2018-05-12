@@ -2,15 +2,15 @@ describe('alertModal', function() {
   var title = 'Some title',
       message = 'Some message';
 
-  xit("shows a modal", function() {
+  it("shows a modal", function() {
     var modal = alertModal({
       title: title,
       message: message
     });
 
     expect(modal).toBeVisible();
-    expect(modal.find('.modal-content h4')).toHaveText(title);
-    expect(modal.find('.modal-content p')).toHaveText(message);
+    expect(modal.find('.header')).toHaveText(title);
+    expect(modal.find('.content')).toHaveText(message);
   });
 
   xit("is dismissable", function(done) {
@@ -23,6 +23,6 @@ describe('alertModal', function() {
       }
     });
 
-    modal.find('.modal-ok').click();
+    modal.find('.ui.positive.button').click();
   });
 });
