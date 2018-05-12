@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:jira_id) { |k| k }
     sequence(:name) { |k| "Board #{k}" }
     domain
-    config_string JiraTeamMetrics::Board::DEFAULT_CONFIG
+    config_string { 'url: jira.example.com' }
     query 'Project = MyProject'
   end
 end

@@ -1,11 +1,7 @@
 class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   BoardDetails = Struct.new(:board_id, :config_url) do
     def fetch_config_string
-      if config_url.nil?
-        JiraTeamMetrics::Board::DEFAULT_CONFIG
-      else
-        open(config_url).read
-      end
+      open(config_url).read unless config_url.nil?
     end
   end
 
