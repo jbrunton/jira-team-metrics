@@ -6,6 +6,7 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
 
   attr_reader :increment
   attr_reader :epics
+  attr_reader :unscoped_epics
   attr_reader :scope
   attr_reader :completed_scope
   attr_reader :remaining_scope
@@ -29,6 +30,7 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
     @team_reports['None'] = JiraTeamMetrics::TeamScopeReport.for(@increment, 'None').build
 
     @epics = increment_issues.select{ |issue| issue.is_epic? }
+    @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @team_reports.values.map{ |team_report| team_report.scope }.flatten.uniq
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq

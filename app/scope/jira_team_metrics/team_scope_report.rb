@@ -3,6 +3,7 @@ class JiraTeamMetrics::TeamScopeReport
 
   attr_reader :team
   attr_reader :epics
+  attr_reader :unscoped_epics
   attr_reader :scope
   attr_reader :completed_scope
   attr_reader :remaining_scope
@@ -61,7 +62,7 @@ private
       # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
       @epics = @issues.select { |issue| issue.is_epic? }
     end
-
+    @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @issues.select { |issue| issue.is_scope? }
   end
 
