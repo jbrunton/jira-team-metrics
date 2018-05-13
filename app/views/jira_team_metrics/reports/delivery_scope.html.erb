@@ -19,7 +19,7 @@
             <td><%= training_report.scope.count %></td>
             <td><%= training_report.epics.count %></td>
             <td><%= training_report.issues_per_epic.round %></td>
-            <td><%= link_to 'link', delivery_scope_report_path(@board, training_report.increment, @team) %></td>
+            <td><%= link_to 'link', delivery_scope_report_path(@board.training_board, training_report.increment, @team) %></td>
           </tr>
       <% end %>
       <tfoot>
