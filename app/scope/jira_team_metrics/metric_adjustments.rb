@@ -12,4 +12,8 @@ class JiraTeamMetrics::MetricAdjustments
     team_adjustment = JiraTeamMetrics::TeamAdjustment.new(@team_adjustments[short_team_name] || {})
     team_adjustment.adjusted_throughput(trained_throughput)
   end
+
+  def as_string(short_team_name)
+    @team_adjustments[short_team_name].to_yaml.gsub("\n", "<br>").html_safe
+  end
 end

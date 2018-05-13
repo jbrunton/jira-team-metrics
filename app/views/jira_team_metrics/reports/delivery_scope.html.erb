@@ -39,7 +39,15 @@
           <th></th>
         </tr>
         <tr>
-          <th>Adjusted</th>
+          <th>Adjusted
+            <% if @report.adjusted_epic_scope %>
+                <a id="adjustments-popup"
+                   data-html="<%= @increment.metric_adjustments.as_string(@domain.short_team_name(@team)) %>"
+                   data-position="right center">
+                  <i class="question circle outline icon"></i>
+                </a>
+            <% end %>
+          </th>
           <th></th>
           <th></th>
           <th class="right aligned"><%= pretty_print_number(@report.adjusted_epic_scope) %></th>
@@ -61,6 +69,9 @@
     <script>
       $('#training-popup').popup({
         inline: true,
+        hoverable: true
+      });
+      $('#adjustments-popup').popup({
         hoverable: true
       });
     </script>
