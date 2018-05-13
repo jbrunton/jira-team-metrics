@@ -125,16 +125,16 @@
         (<%= pretty_print_number(team_data[:progress_percent], round: true) %>%)
       </td>
       <td class="right aligned highlight">
-        <%= pretty_print_number(team_data[:rolling_completion_rate] * 7) %>
+        <%= pretty_print_number(team_data[:rolling_throughput] * 7) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
       </td>
       <td class="right aligned">
-        <%= pretty_print_number(team_data[:trained_completion_rate] * 7) %>
+        <%= pretty_print_number(team_data[:predicted_throughput] * 7) %>
       </td>
       <td>
-        <%= pretty_print_date(team_data[:trained_completion_date], show_tz: false) %>
+        <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
       </td>
       <td>
         <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
@@ -164,12 +164,12 @@
       (<%= pretty_print_number(team_dashboard_data[:totals][:progress_percent], round: true) %>%)
     </th>
     <th class="right aligned highlight">
-      <%= pretty_print_number(team_dashboard_data[:totals][:rolling_completion_rate] * 7) %>
+      <%= pretty_print_number(team_dashboard_data[:totals][:rolling_throughput] * 7) %>
     </th>
     <th class="highlight">
     </th>
     <th class="right aligned">
-      <%= pretty_print_number(team_dashboard_data[:totals][:trained_completion_rate] * 7) %>
+      <%= pretty_print_number(team_dashboard_data[:totals][:predicted_throughput] * 7) %>
     </th>
     <th>
     </th>
