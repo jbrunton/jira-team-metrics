@@ -111,7 +111,7 @@ private
     if use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
     else
-      @status_reason = "< 5 issues completed, using trained forecast. Forecast is #{status_risk}."
+      @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
     end
   end
 

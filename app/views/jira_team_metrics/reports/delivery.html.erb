@@ -78,7 +78,7 @@
       <th class="center aligned" colspan="2">Remaining</th>
       <th class="center aligned" colspan="2">Completed</th>
       <th class="center aligned highlight" colspan="2">Rolling Metrics</th>
-      <th class="center aligned" colspan="2">Trained Metrics</th>
+      <th class="center aligned" colspan="2">Predicted Metrics</th>
       <th></th>
     </tr>
   </thead>
@@ -114,7 +114,7 @@
       </td>
       <td>
         [<a
-          data-tooltip="<%= team_data[:unscoped_epics] %> unscoped epics, predicted epic scope is <%= (team_data[:trained_issues_per_epic] || 0).round %> issue(s) per epic."
+          data-tooltip="<%= team_data[:unscoped_epics] %> unscoped epics, predicted epic scope is <%= (team_data[:predicted_epic_scope] || 0).round %> issue(s) per epic."
           data-position="bottom left"
         ><%= team_data[:predicted_scope] %></a>]
       </td>
