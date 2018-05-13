@@ -1,5 +1,47 @@
 <% breadcrumb :scope_report, @increment, @team %>
 
+<% if @report.has_training_data? %>
+    <div id="training-popup" class="ui button">Predicted scope: <%= @report.trained_issues_per_epic.round %> issue(s) / epic.</div>
+    <div class="ui fluid popup bottom left transition hidden">
+    <table class="ui table">
+      <thead>
+        <tr>
+          <th>Delivery</th>
+          <th>Scope</th>
+          <th>Epics</th>
+          <th>Avg. Epic Scope</th>
+          <th></th>
+        </tr>
+      </thead>
+      <% @report.training_team_reports.each do |training_report| %>
+          <tr>
+            <td><%= training_report.increment.key %></td>
+            <td><%= training_report.scope.count %></td>
+            <td><%= training_report.epics.count %></td>
+            <td><%= training_report.issues_per_epic.round %></td>
+            <td><%= link_to 'link', delivery_scope_report_path(@board, training_report.increment, @team) %></td>
+          </tr>
+      <% end %>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
+          <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
+          <th><%= @report.trained_issues_per_epic.round %></th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+      </div>
+
+    <script>
+      $('#training-popup').popup({
+        inline: true,
+        hoverable: true
+      });
+    </script>
+<% end %>
+
 <table class="ui table jira-tree">
   <thead>
     <tr>

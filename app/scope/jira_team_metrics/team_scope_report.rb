@@ -2,6 +2,7 @@ class JiraTeamMetrics::TeamScopeReport
   include JiraTeamMetrics::DescriptiveScopeStatistics
 
   attr_reader :team
+  attr_reader :increment
   attr_reader :epics
   attr_reader :unscoped_epics
   attr_reader :scope
@@ -11,6 +12,7 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
   attr_reader :trained_issues_per_epic
+  attr_reader :training_team_reports
   attr_reader :status_color
   attr_reader :status_reason
 
@@ -21,15 +23,19 @@ class JiraTeamMetrics::TeamScopeReport
     @training_team_reports = training_team_reports
   end
 
+  def has_training_data?
+    @training_team_reports.any?
+  end
+
   def build
     build_scope
-    build_predicted_scope unless @training_team_reports.empty?
+    build_predicted_scope if has_training_data?
 
     analyze_scope
-    build_trained_forecasts unless @training_team_reports.empty?
+    build_trained_forecasts if has_training_data?
     analyze_status if @increment.target_date
 
-    zero_predicted_scope if @training_team_reports.empty?
+    zero_predicted_scope unless has_training_data?
 
     self
   end
