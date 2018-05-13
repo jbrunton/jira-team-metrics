@@ -35,7 +35,8 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq
     @remaining_scope = @team_reports.values.map{ |team_report| team_report.remaining_scope }.flatten.uniq
-    @trained_completion_rate = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.sum
+    trained_completion_rates = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.compact
+    @trained_completion_rate = trained_completion_rates.empty? ? 0 : trained_completion_rates.sum
     if @trained_completion_rate > 0
       @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
     end

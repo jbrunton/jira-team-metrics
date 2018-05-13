@@ -22,7 +22,7 @@ class JiraTeamMetrics::CfdBuilder
   def build(cfd_type)
     lookup_team_completion_rates(cfd_type, @increment_report)
 
-    completion_date = @team_completion_dates.values.compact.max
+    completion_date = @team_completion_dates.values.compact.max || Time.now
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a

@@ -7,6 +7,7 @@ class JiraTeamMetrics::ReportFragment < ApplicationRecord
   end
 
   def self.fetch_contents(board, report_key, fragment_key)
-    fetch(board, report_key, fragment_key).contents
+    fragment = fetch(board, report_key, fragment_key)
+    fragment.contents unless fragment.nil?
   end
 end

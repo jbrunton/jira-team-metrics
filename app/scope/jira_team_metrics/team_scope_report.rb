@@ -14,7 +14,7 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :status_color
   attr_reader :status_reason
 
-  def initialize(team, increment, issues, training_team_reports = nil)
+  def initialize(team, increment, issues, training_team_reports = [])
     @team = team
     @increment = increment
     @issues = issues
@@ -23,11 +23,13 @@ class JiraTeamMetrics::TeamScopeReport
 
   def build
     build_scope
-    build_predicted_scope unless @training_team_reports.nil?
+    build_predicted_scope unless @training_team_reports.empty?
 
     analyze_scope
-    build_trained_forecasts unless @training_team_reports.nil?
+    build_trained_forecasts unless @training_team_reports.empty?
     analyze_status if @increment.target_date
+
+    zero_predicted_scope if @training_team_reports.empty?
 
     self
   end
@@ -179,5 +181,11 @@ private
         })
       end
     end
+  end
+
+  def zero_predicted_scope
+    @predicted_scope = []
+    @trained_completion_rate = 0
+    @trained_issues_per_epic = 0
   end
 end
