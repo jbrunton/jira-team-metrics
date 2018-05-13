@@ -41,6 +41,11 @@ table.team-dashboard td.highlight, table.team-dashboard th.highlight {
     background-color: #F6F6F6;
 }
 
+table.ui tr.compact th {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
 table.jira-tree .indent {
     width: 50px;
 }

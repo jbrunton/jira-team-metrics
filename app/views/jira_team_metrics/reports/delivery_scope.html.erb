@@ -30,7 +30,7 @@
           </tr>
       <% end %>
       <tfoot>
-        <tr>
+        <tr class="compact">
           <th>Trained</th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
@@ -38,7 +38,7 @@
           <th></th>
           <th></th>
         </tr>
-        <tr>
+        <tr class="compact">
           <th>Adjusted
             <% if @report.adjusted_epic_scope %>
                 <a id="adjustments-popup"
