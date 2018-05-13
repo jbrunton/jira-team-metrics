@@ -191,7 +191,7 @@ private
 
   def zero_predicted_scope
     @predicted_scope = []
-    @trained_completion_rate = 0
-    @trained_issues_per_epic = 0
+    @trained_completion_rate = 0.0
+    @trained_issues_per_epic = 0.0
   end
 end
