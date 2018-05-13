@@ -18,6 +18,7 @@ class JiraTeamMetrics::TeamScopeReport
 
   def initialize(team, increment, issues, training_team_reports = [])
     @team = team
+    @short_team_name = increment.board.domain.short_team_name(team)
     @increment = increment
     @issues = issues
     @training_team_reports = training_team_reports
@@ -151,7 +152,7 @@ private
     training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
     return if training_epic_count == 0
 
-    @trained_issues_per_epic = training_scope / training_epic_count
+    @trained_issues_per_epic = @increment.metric_adjustments.adjusted_epic_scope(@short_team_name, training_scope / training_epic_count)
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end
@@ -163,7 +164,7 @@ private
     if reports_with_completed_scope.any?
       total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
       total_worked_time = reports_with_completed_scope.map { |team_report| team_report.duration_excl_outliers }.sum
-      @trained_completion_rate = total_completed_scope / total_worked_time
+      @trained_completion_rate = @increment.metric_adjustments.adjusted_throughput(@short_team_name, total_completed_scope / total_worked_time)
     else
       @trained_completion_rate = 0
     end

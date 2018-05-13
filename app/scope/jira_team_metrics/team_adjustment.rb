@@ -17,18 +17,18 @@ JiraTeamMetrics::TeamAdjustment = Struct.new(:adjustments) do
 
 private
   def epic_scope
-    adjustments[:epic_scope]
+    adjustments['epic_scope']
   end
 
   def epic_scope_factor
-    adjustments[:epic_scope_factor] || 1.0
+    adjustments['epic_scope_factor'] || 1.0
   end
 
   def throughput
-    adjustments[:throughput]
+    adjustments['throughput']
   end
 
   def throughput_factor
-    adjustments[:throughput_factor] || 1.0
+    adjustments['throughput_factor'] || 1.0
   end
 end

@@ -12,7 +12,7 @@ RSpec.describe JiraTeamMetrics::TeamAdjustment do
     end
 
     context "when an epic scope value is given" do
-      before(:each) { adjustments[:epic_scope] = 3.0 }
+      before(:each) { adjustments['epic_scope'] = 3.0 }
 
       it "returns the given epic scope" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
@@ -21,7 +21,7 @@ RSpec.describe JiraTeamMetrics::TeamAdjustment do
     end
 
     context "when an epic scope factor is given" do
-      before(:each) { adjustments[:epic_scope_factor] = 2.0 }
+      before(:each) { adjustments['epic_scope_factor'] = 2.0 }
 
       it "returns the adjusted epic scope" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
@@ -39,7 +39,7 @@ RSpec.describe JiraTeamMetrics::TeamAdjustment do
     end
 
     context "when an epic scope value is given" do
-      before(:each) { adjustments[:throughput] = 3.0 }
+      before(:each) { adjustments['throughput'] = 3.0 }
 
       it "returns the given epic scope" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
@@ -48,7 +48,7 @@ RSpec.describe JiraTeamMetrics::TeamAdjustment do
     end
 
     context "when an epic scope factor is given" do
-      before(:each) { adjustments[:throughput_factor] = 2.0 }
+      before(:each) { adjustments['throughput_factor'] = 2.0 }
 
       it "returns the adjusted epic scope" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
