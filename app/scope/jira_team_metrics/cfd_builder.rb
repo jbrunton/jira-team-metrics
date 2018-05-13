@@ -3,12 +3,15 @@
 # 2. for teams with zero closure rate, don't add scope
 
 class JiraTeamMetrics::CfdBuilder
-  include JiraTeamMetrics::ChartsHelper
   include JiraTeamMetrics::FormattingHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
-    def to_array(date_string, annotation, annotation_text)
-      [date_string, done, annotation, annotation_text, in_progress, to_do, predicted]
+    include JiraTeamMetrics::ChartsHelper
+
+    def to_array(date, annotation, annotation_text)
+      date_string = date_as_string(date)
+      today_annotation = date.to_date == Time.now.to_date ? 'today' : nil
+      [date_string, today_annotation, done, annotation, annotation_text, in_progress, to_do, predicted]
     end
   end
 
@@ -21,11 +24,11 @@ class JiraTeamMetrics::CfdBuilder
 
     completion_date = @team_completion_dates.values.compact.max
 
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
     dates.each do |date|
       annotation, annotation_text = annotation_for(date)
-      data << cfd_row_for(date).to_array(date_as_string(date), annotation, annotation_text)
+      data << cfd_row_for(date).to_array(date, annotation, annotation_text)
     end
 
     data
@@ -96,7 +99,7 @@ class JiraTeamMetrics::CfdBuilder
 
     if annotations.any?
       annotation = annotations.join(',')
-      annotation_text = pretty_print_date(date, show_tz: false, hide_year: true)
+      annotation_text = "#{annotation} - #{pretty_print_date(date, show_tz: false, hide_year: true)}"
     end
 
     [annotation, annotation_text]
