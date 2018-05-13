@@ -2,7 +2,9 @@ class JiraTeamMetrics::TeamScopeReport
   include JiraTeamMetrics::DescriptiveScopeStatistics
 
   attr_reader :team
+  attr_reader :increment
   attr_reader :epics
+  attr_reader :unscoped_epics
   attr_reader :scope
   attr_reader :completed_scope
   attr_reader :remaining_scope
@@ -10,23 +12,30 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :trained_completion_rate
   attr_reader :trained_completion_date
   attr_reader :trained_issues_per_epic
+  attr_reader :training_team_reports
   attr_reader :status_color
   attr_reader :status_reason
 
-  def initialize(team, increment, issues, training_team_reports = nil)
+  def initialize(team, increment, issues, training_team_reports = [])
     @team = team
     @increment = increment
     @issues = issues
     @training_team_reports = training_team_reports
   end
 
+  def has_training_data?
+    @training_team_reports.any?
+  end
+
   def build
     build_scope
-    build_predicted_scope unless @training_team_reports.nil?
+    build_predicted_scope if has_training_data?
 
     analyze_scope
-    build_trained_forecasts unless @training_team_reports.nil?
+    build_trained_forecasts if has_training_data?
     analyze_status if @increment.target_date
+
+    zero_predicted_scope unless has_training_data?
 
     self
   end
@@ -61,7 +70,7 @@ private
       # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
       @epics = @issues.select { |issue| issue.is_epic? }
     end
-
+    @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @issues.select { |issue| issue.is_scope? }
   end
 
@@ -89,10 +98,10 @@ private
       status_risk = 'on target'
     elsif at_risk?
       @status_color = 'yellow'
-      status_risk = 'at risk, over target by < 20% of time remaining'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     else
       @status_color = 'red'
-      status_risk = 'at risk, over target by > 20% of time remaining'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     end
     if use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
@@ -127,6 +136,14 @@ private
   def at_risk?
     forecast_completion_date &&
       (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+  end
+
+  def over_target_by
+    if forecast_completion_date.nil?
+      'Inf'
+    else
+      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now)).round
+    end
   end
 
   def build_predicted_scope
@@ -170,5 +187,11 @@ private
         })
       end
     end
+  end
+
+  def zero_predicted_scope
+    @predicted_scope = []
+    @trained_completion_rate = 0.0
+    @trained_issues_per_epic = 0.0
   end
 end

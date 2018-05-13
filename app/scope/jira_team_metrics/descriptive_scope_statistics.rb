@@ -1,6 +1,6 @@
 module JiraTeamMetrics::DescriptiveScopeStatistics
   def issues_per_epic
-    scope.count.to_f / epics.count
+    epics.count > 0 ? scope.count.to_f / epics.count : 0
   end
 
   def percent_completed

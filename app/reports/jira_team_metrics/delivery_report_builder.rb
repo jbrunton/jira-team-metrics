@@ -55,12 +55,15 @@ private
   def aggregate_data_for(report)
     {
       scope: report.scope.count,
+      epics: report.epics.count,
+      unscoped_epics: report.unscoped_epics.count,
       remaining_scope: report.remaining_scope.count,
       predicted_scope: report.predicted_scope.count,
       completed_scope: report.completed_scope.count,
       progress_percent: 100.0 * report.completed_scope.count / report.scope.count,
       rolling_completion_rate: report.rolling_completion_rate(rolling_window_days),
-      trained_completion_rate: report.trained_completion_rate
+      trained_completion_rate: report.trained_completion_rate,
+      trained_issues_per_epic: report.trained_issues_per_epic
     }
   end
 end

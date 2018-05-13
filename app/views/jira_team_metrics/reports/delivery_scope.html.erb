@@ -1,5 +1,57 @@
 <% breadcrumb :scope_report, @increment, @team %>
 
+<% if @report.has_training_data? %>
+    <div class="ui grid">
+      <div class="eight wide column">
+    <div id="training-popup" class="ui button">Predicted scope: <%= @report.trained_issues_per_epic.round %> issue(s) / epic.</div>
+    <div class="ui fluid popup bottom left transition hidden">
+    <table class="ui compact table">
+      <thead>
+        <tr>
+          <th>Delivery</th>
+          <th>Scope</th>
+          <th>Epics</th>
+          <th colspan="2" class="center aligned">Avg. Epic Scope</th>
+          <th></th>
+        </tr>
+      </thead>
+      <% @report.training_team_reports.each do |training_report| %>
+          <tr>
+            <td><%= training_report.increment.key %></td>
+            <td><%= training_report.scope.count %></td>
+            <td><%= training_report.epics.count %></td>
+            <td class="right aligned"><%= pretty_print_number(training_report.issues_per_epic) %></td>
+            <td></td>
+            <td>
+              <a href="<%= delivery_scope_report_path(@board.training_board, training_report.increment, @team) %>" target="_blank">
+                <i class="external alternate icon"></i>
+              </a>
+            </td>
+          </tr>
+      <% end %>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
+          <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
+          <th class="right aligned"><%= pretty_print_number(@report.trained_issues_per_epic) %></th>
+          <th><span class="ui label">~ <%= @report.trained_issues_per_epic.round %></span></th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+      </div>
+
+    <script>
+      $('#training-popup').popup({
+        inline: true,
+        hoverable: true
+      });
+    </script>
+      </div>
+    </div>
+<% end %>
+
 <table class="ui table jira-tree">
   <thead>
     <tr>

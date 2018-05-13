@@ -113,7 +113,10 @@
         <%= team_data[:remaining_scope] %>
       </td>
       <td>
-        [<%= team_data[:predicted_scope] %>]
+        [<a
+          data-tooltip="<%= team_data[:unscoped_epics] %> unscoped epics, avg. of <%= (team_data[:trained_issues_per_epic] || 0).round %> issue(s) / epic in training data."
+          data-position="bottom left"
+        ><%= team_data[:predicted_scope] %></a>]
       </td>
       <td class="right aligned">
         <%= team_data[:completed_scope] %>

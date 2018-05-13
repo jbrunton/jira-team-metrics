@@ -64,9 +64,16 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     value
   end
 
+  def training_board
+    if config.predictive_scope
+      JiraTeamMetrics::Board.find_by(jira_id: config.predictive_scope.board_id)
+    else
+      nil
+    end
+  end
+
   def training_increments
     if config.predictive_scope
-      training_board = JiraTeamMetrics::Board.find_by(jira_id: config.predictive_scope.board_id)
       training_board.increments
     else
       []

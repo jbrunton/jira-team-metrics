@@ -34,7 +34,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def delivery_scope
     @team = params[:team]
-    @increment = @board.object.issues.find_by(key: params[:issue_key])
+    @increment = @board.issues.find_by(key: params[:issue_key])
 
     @report = JiraTeamMetrics::TeamScopeReport.for(@increment, @team)
     @issues_by_epic = @report.scope
