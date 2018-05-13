@@ -44,16 +44,16 @@ class JiraTeamMetrics::CfdBuilder
         end.to_h
         @team_completion_rates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          [team, team_report.rolling_completion_rate(rolling_window_days)]
+          [team, team_report.rolling_throughput(rolling_window_days)]
         end.to_h
       when :trained
         @team_completion_dates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          [team, team_report.trained_completion_date]
+          [team, team_report.predicted_completion_date]
         end.to_h
         @team_completion_rates = increment_report.teams.map do |team|
           team_report = increment_report.team_report_for(team)
-          [team, team_report.trained_completion_rate]
+          [team, team_report.predicted_throughput]
         end.to_h
       else
         raise "Unexpected cfd_type: #{cfd_type}"

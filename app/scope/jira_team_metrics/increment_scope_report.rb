@@ -11,8 +11,8 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
   attr_reader :completed_scope
   attr_reader :remaining_scope
   attr_reader :predicted_scope
-  attr_reader :trained_completion_rate
-  attr_reader :trained_completion_date
+  attr_reader :predicted_throughput
+  attr_reader :predicted_completion_date
 
   attr_reader :teams
 
@@ -35,10 +35,10 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq
     @predicted_scope = @team_reports.values.map{ |team_report| team_report.predicted_scope }.flatten.uniq
     @remaining_scope = @team_reports.values.map{ |team_report| team_report.remaining_scope }.flatten.uniq
-    trained_completion_rates = @team_reports.values.map{ |team_report| team_report.trained_completion_rate }.compact
-    @trained_completion_rate = trained_completion_rates.empty? ? 0 : trained_completion_rates.sum
-    if @trained_completion_rate > 0
-      @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
+    predicted_throughputs = @team_reports.values.map{ |team_report| team_report.predicted_throughput }.compact
+    @predicted_throughput = predicted_throughputs.empty? ? 0 : predicted_throughputs.sum
+    if @predicted_throughput > 0
+      @predicted_completion_date = Time.now + (@remaining_scope.count.to_f / @predicted_throughput).days
     end
 
     self

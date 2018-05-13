@@ -1,18 +1,12 @@
 JiraTeamMetrics::TeamAdjustment = Struct.new(:adjustments) do
   def adjusted_epic_scope(trained_epic_scope)
-    if epic_scope.nil?
-      trained_epic_scope * epic_scope_factor
-    else
-      epic_scope
-    end
+    return epic_scope unless epic_scope.nil?
+    return trained_epic_scope * epic_scope_factor unless epic_scope_factor.nil?
   end
 
   def adjusted_throughput(trained_throughput)
-    if throughput.nil?
-      trained_throughput * throughput_factor
-    else
-      throughput
-    end
+    return throughput unless throughput.nil?
+    return trained_throughput * throughput_factor unless throughput_factor.nil?
   end
 
 private
@@ -21,7 +15,7 @@ private
   end
 
   def epic_scope_factor
-    adjustments['epic_scope_factor'] || 1.0
+    adjustments['epic_scope_factor']
   end
 
   def throughput
@@ -29,6 +23,6 @@ private
   end
 
   def throughput_factor
-    adjustments['throughput_factor'] || 1.0
+    adjustments['throughput_factor']
   end
 end

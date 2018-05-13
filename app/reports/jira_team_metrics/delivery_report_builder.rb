@@ -48,7 +48,7 @@ private
       status_color: @increment.target_date ? team_report.status_color : nil,
       status_reason: @increment.target_date ? team_report.status_reason : nil,
       rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
-      trained_completion_date: team_report.trained_completion_date
+      predicted_completion_date: team_report.predicted_completion_date
     }
   end
 
@@ -61,9 +61,9 @@ private
       predicted_scope: report.predicted_scope.count,
       completed_scope: report.completed_scope.count,
       progress_percent: 100.0 * report.completed_scope.count / report.scope.count,
-      rolling_completion_rate: report.rolling_completion_rate(rolling_window_days),
-      trained_completion_rate: report.trained_completion_rate,
-      trained_issues_per_epic: report.trained_issues_per_epic
+      rolling_throughput: report.rolling_throughput(rolling_window_days),
+      predicted_throughput: report.predicted_throughput,
+      predicted_epic_scope: report.predicted_epic_scope
     }
   end
 end

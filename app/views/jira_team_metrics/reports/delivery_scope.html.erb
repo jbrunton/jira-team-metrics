@@ -3,9 +3,9 @@
 <% if @report.has_training_data? %>
     <div class="ui grid">
       <div class="eight wide column">
-    <div id="training-popup" class="ui button">Predicted scope: <%= @report.trained_issues_per_epic.round %> issue(s) / epic.</div>
+    <div id="training-popup" class="ui button">Predicted scope: <%= @report.predicted_epic_scope.round %> issue(s) / epic.</div>
     <div class="ui fluid popup bottom left transition hidden">
-    <table class="ui compact table">
+    <table class="ui very compact table">
       <thead>
         <tr>
           <th>Delivery</th>
@@ -20,7 +20,7 @@
             <td><%= training_report.increment.key %></td>
             <td><%= training_report.scope.count %></td>
             <td><%= training_report.epics.count %></td>
-            <td class="right aligned"><%= pretty_print_number(training_report.issues_per_epic) %></td>
+            <td class="right aligned"><%= pretty_print_number(training_report.epic_scope) %></td>
             <td></td>
             <td>
               <a href="<%= delivery_scope_report_path(@board.training_board, training_report.increment, @team) %>" target="_blank">
@@ -31,11 +31,27 @@
       <% end %>
       <tfoot>
         <tr>
-          <th></th>
+          <th>Trained</th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
-          <th class="right aligned"><%= pretty_print_number(@report.trained_issues_per_epic) %></th>
-          <th><span class="ui label">~ <%= @report.trained_issues_per_epic.round %></span></th>
+          <th class="right aligned"><%= pretty_print_number(@report.trained_epic_scope) %></th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr>
+          <th>Adjusted</th>
+          <th></th>
+          <th></th>
+          <th class="right aligned"><%= pretty_print_number(@report.adjusted_epic_scope) %></th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr>
+          <th>Predicted</th>
+          <th></th>
+          <th></th>
+          <th class="right aligned"><%= pretty_print_number(@report.predicted_epic_scope) %></th>
+          <th><span class="ui label">~ <%= @report.predicted_epic_scope.round %></span></th>
           <th></th>
         </tr>
       </tfoot>

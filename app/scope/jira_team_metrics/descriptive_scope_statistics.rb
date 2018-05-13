@@ -1,5 +1,5 @@
 module JiraTeamMetrics::DescriptiveScopeStatistics
-  def issues_per_epic
+  def epic_scope
     epics.count > 0 ? scope.count.to_f / epics.count : 0
   end
 
@@ -43,7 +43,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
     completed_scope.select{ |issue| from_date <= issue.completed_time && issue.completed_time <= to_date }
   end
 
-  def completion_rate_between(from_date, to_date)
+  def throughput_between(from_date, to_date)
     completed_scope_between(from_date, to_date).count.to_f / ((to_date - from_date) / 1.day)
   end
 
@@ -52,24 +52,24 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
     @rolling_completed_issues[days] ||= completed_scope_between(Time.now - days.days, Time.now)
   end
 
-  def rolling_completion_rate(days)
+  def rolling_throughput(days)
     @rolling_completion_date ||= {}
     @rolling_completion_date[days] ||=
       rolling_completed_issues(days).count.to_f / days
   end
 
-  def completion_rate
+  def throughput
     return 0 if completed_scope.empty?
-    @completion_rate ||= completed_scope_between(started_date, completed_date).count.to_f /
+    @throughput ||= completed_scope_between(started_date, completed_date).count.to_f /
       ((completed_date - started_date) / 1.day)
   end
 
   def rolling_forecast_completion_date(days)
-    completion_rate = rolling_completion_rate(days)
-    if completion_rate == 0
+    throughput = rolling_throughput(days)
+    if throughput == 0
       nil
     else
-      Time.now + (remaining_scope.count.to_f / completion_rate).days
+      Time.now + (remaining_scope.count.to_f / throughput).days
     end
   end
 end
