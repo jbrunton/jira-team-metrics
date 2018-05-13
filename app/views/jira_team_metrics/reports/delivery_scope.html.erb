@@ -35,7 +35,7 @@
           <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
           <th class="right aligned"><%= pretty_print_number(@report.trained_issues_per_epic) %></th>
-          <th>~ <%= @report.trained_issues_per_epic.round %></th>
+          <th><span class="ui label">~ <%= @report.trained_issues_per_epic.round %></span></th>
           <th></th>
         </tr>
       </tfoot>
