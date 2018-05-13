@@ -42,7 +42,7 @@ function _modal(opts) {
   //if (Materialize) {
   //  Materialize.updateTextFields();
   //}
-  $modal.find('.materialize-textarea').trigger('autoresize');
+  //$modal.find('.materialize-textarea').trigger('autoresize');
 
   addHandler('.ui.positive.button', 'confirm');
   addHandler('.ui.negative.button', 'cancel');
