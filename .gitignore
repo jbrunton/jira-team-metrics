@@ -34,3 +34,5 @@ spec/dummy/tmp/
 
 .DS_Store
 
+/Gemfile.lock
+
