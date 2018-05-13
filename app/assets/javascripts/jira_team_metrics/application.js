@@ -17,6 +17,7 @@
 //= require pickadate/picker.date
 //= require handlebars.runtime
 //= require lodash
+//= require ./polyfill
 //= require_tree ./templates
 //= require_tree .
 
