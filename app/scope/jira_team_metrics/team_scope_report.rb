@@ -90,10 +90,10 @@ private
       status_risk = 'on target'
     elsif at_risk?
       @status_color = 'yellow'
-      status_risk = 'at risk, over target by < 20% of time remaining'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     else
       @status_color = 'red'
-      status_risk = 'at risk, over target by > 20% of time remaining'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     end
     if use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
@@ -128,6 +128,14 @@ private
   def at_risk?
     forecast_completion_date &&
       (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+  end
+
+  def over_target_by
+    if forecast_completion_date.nil?
+      'Inf'
+    else
+      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now)).round
+    end
   end
 
   def build_predicted_scope
