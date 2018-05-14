@@ -13,6 +13,8 @@ engines:
     checks:
       adjoining-classes:
         enabled: false
+      overqualified-elements:
+        enabled: false
   duplication:
     enabled: true
     config:
