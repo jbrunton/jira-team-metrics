@@ -115,7 +115,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(board, issues)
       lhs_issues = lhs.eval(board, issues)
       rhs_issues = rhs.eval(board, issues)
-      lhs_issues + rhs_issues
+      (lhs_issues + rhs_issues).uniq
     end
   end
 
