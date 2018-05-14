@@ -68,12 +68,12 @@ class JiraTeamMetrics::TeamScopeReport
 
 private
   def build_scope
-    if @training_team_reports.nil?
-      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
-      @epics = @issues.map { |issue| issue.epic }.compact.uniq
-    else
+    if has_training_data?
       # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
       @epics = @issues.select { |issue| issue.is_epic? }
+    else
+      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
+      @epics = @issues.map { |issue| issue.epic }.compact.uniq
     end
     @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @issues.select { |issue| issue.is_scope? }
