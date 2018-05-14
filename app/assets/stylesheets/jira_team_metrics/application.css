@@ -42,8 +42,8 @@ table.team-dashboard td.highlight, table.team-dashboard th.highlight {
 }
 
 table.ui tr.compact th {
-    padding-top: 0.4em;
     padding-bottom: 0.4em;
+    padding-top: 0.4em;
 }
 
 table.jira-tree .indent {
