@@ -9,15 +9,20 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :completed_scope
   attr_reader :remaining_scope
   attr_reader :predicted_scope
-  attr_reader :trained_completion_rate
-  attr_reader :trained_completion_date
-  attr_reader :trained_issues_per_epic
+  attr_reader :trained_throughput
+  attr_reader :trained_epic_scope
+  attr_reader :adjusted_throughput
+  attr_reader :adjusted_epic_scope
+  attr_reader :predicted_throughput
+  attr_reader :predicted_epic_scope
+  attr_reader :predicted_completion_date
   attr_reader :training_team_reports
   attr_reader :status_color
   attr_reader :status_reason
 
   def initialize(team, increment, issues, training_team_reports = [])
     @team = team
+    @short_team_name = increment.board.domain.short_team_name(team)
     @increment = increment
     @issues = issues
     @training_team_reports = training_team_reports
@@ -63,12 +68,12 @@ class JiraTeamMetrics::TeamScopeReport
 
 private
   def build_scope
-    if @training_team_reports.nil?
-      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
-      @epics = @issues.map { |issue| issue.epic }.compact.uniq
-    else
+    if has_training_data?
       # predictive report, so we want to include epics which may not have issues, i.e. those defined through includes relations
       @epics = @issues.select { |issue| issue.is_epic? }
+    else
+      # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
+      @epics = @issues.map { |issue| issue.epic }.compact.uniq
     end
     @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @issues.select { |issue| issue.is_scope? }
@@ -106,7 +111,7 @@ private
     if use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
     else
-      @status_reason = "< 5 issues completed, using trained forecast. Forecast is #{status_risk}."
+      @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
     end
   end
 
@@ -119,7 +124,7 @@ private
       if use_rolling_forecast?
         rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
       else
-        trained_completion_date
+        predicted_completion_date
       end
     end
   end
@@ -151,7 +156,9 @@ private
     training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
     return if training_epic_count == 0
 
-    @trained_issues_per_epic = training_scope / training_epic_count
+    @trained_epic_scope = training_scope / training_epic_count
+    @adjusted_epic_scope = @increment.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    @predicted_epic_scope = @adjusted_epic_scope || @trained_epic_scope
     @epics.each do |epic|
       build_predicted_scope_for(epic)
     end
@@ -163,19 +170,22 @@ private
     if reports_with_completed_scope.any?
       total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
       total_worked_time = reports_with_completed_scope.map { |team_report| team_report.duration_excl_outliers }.sum
-      @trained_completion_rate = total_completed_scope / total_worked_time
+      @trained_throughput = total_completed_scope / total_worked_time
     else
-      @trained_completion_rate = 0
+      @trained_throughput = 0
     end
 
-    if @trained_completion_rate > 0
-      @trained_completion_date = Time.now + (@remaining_scope.count.to_f / @trained_completion_rate).days
+    @adjusted_throughput = @increment.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    @predicted_throughput = @adjusted_throughput || @trained_throughput
+
+    if @predicted_throughput > 0
+      @predicted_completion_date = Time.now + (@remaining_scope.count.to_f / @predicted_throughput).days
     end
   end
 
   def build_predicted_scope_for(epic)
-    if epic.issues(recursive: false).empty? && !@trained_issues_per_epic.nil?
-      @trained_issues_per_epic.round.times do |k|
+    if epic.issues(recursive: false).empty? && !@predicted_epic_scope.nil?
+      @predicted_epic_scope.round.times do |k|
         @scope << JiraTeamMetrics::Issue.new({
           issue_type: 'Story',
           board: epic.board,
@@ -191,7 +201,7 @@ private
 
   def zero_predicted_scope
     @predicted_scope = []
-    @trained_completion_rate = 0.0
-    @trained_issues_per_epic = 0.0
+    @trained_throughput = @predicted_throughput = 0.0
+    @trained_epic_scope = @predicted_epic_scope = 0.0
   end
 end

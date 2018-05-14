@@ -64,6 +64,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     incr
   end
 
+  def metric_adjustments
+    @metric_adjustments ||= begin
+      if is_increment?
+        yaml_string = fields[board.config.predictive_scope.adjustments_field]
+        JiraTeamMetrics::MetricAdjustments.parse(yaml_string)
+      end
+    end
+  end
+
   def short_summary
     summary.truncate(50, separator: /\s/)
   end
