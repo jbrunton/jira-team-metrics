@@ -67,8 +67,8 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   def metric_adjustments
     @metric_adjustments ||= begin
       if is_increment?
-        adjustments = YAML.load(fields[board.config.predictive_scope.adjustments_field])
-        JiraTeamMetrics::MetricAdjustments.new(adjustments)
+        yaml_string = fields[board.config.predictive_scope.adjustments_field]
+        JiraTeamMetrics::MetricAdjustments.parse(yaml_string)
       end
     end
   end
