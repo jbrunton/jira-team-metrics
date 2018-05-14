@@ -9,7 +9,13 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
         # and is either still in progress, or ends within the range
         (issue.completed_time.nil? || issue.completed_time >= @chart_params.date_range.start_date)
     end
-    @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
+    if @chart_params.query.empty?
+      @filtered_issues = issues
+    else
+      @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
+    end
+
+    #byebug
 
     epics_by_increment = @filtered_issues
       .group_by{ |issue| issue.increment }

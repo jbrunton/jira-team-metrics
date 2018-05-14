@@ -138,7 +138,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(_, issues)
       issues.select do |issue|
         field_name = field[:identifier].to_s
-        if ['key', 'issue_type', 'summary'].include?(field_name)
+        if ['key', 'issue_type', 'summary', 'status', 'status_category'].include?(field_name)
           issue.send(field_name) == value[:value].to_s
         elsif !issue.fields[field_name].nil?
           issue.fields[field_name] == value[:value].to_s
