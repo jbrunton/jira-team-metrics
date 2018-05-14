@@ -33,7 +33,6 @@ class JiraTeamMetrics::MetricAdjustments
     JiraTeamMetrics::MetricAdjustments.new(adjustments)
   end
 
-private
   PERCENT_REGEX = /^(\d+)+%$/
 
   def self.parse_number(value)
