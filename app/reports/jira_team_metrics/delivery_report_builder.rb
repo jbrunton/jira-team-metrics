@@ -38,17 +38,19 @@ private
       totals: aggregate_data_for(increment_report),
       teams: increment_report.teams.map do |team|
         team_report = @increment_report.team_report_for(team)
-        [team, aggregate_data_for(team_report).merge(target_data_for(team_report))]
+        [team, aggregate_data_for(team_report).merge(team_data_for(team_report))]
       end.to_h
     }
   end
 
-  def target_data_for(team_report)
+  def team_data_for(team_report)
+    rounded_epic_scope = team_report.predicted_epic_scope.round
     {
       status_color: @increment.target_date ? team_report.status_color : nil,
       status_reason: @increment.target_date ? team_report.status_reason : nil,
       rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
-      predicted_completion_date: team_report.predicted_completion_date
+      predicted_completion_date: team_report.predicted_completion_date,
+      predicted_scope_tooltip: "#{team_report.unscoped_epics.count} unscoped epics, predicting #{rounded_epic_scope || 0} #{'issue'.pluralize(rounded_epic_scope)} / epic."
     }
   end
 

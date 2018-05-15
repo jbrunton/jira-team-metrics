@@ -3,7 +3,9 @@
 <% if @report.has_training_data? %>
     <div class="ui grid">
       <div class="eight wide column">
-    <div id="training-popup" class="ui button">Predicted scope: <%= @report.predicted_epic_scope.round %> issue(s) / epic.</div>
+    <div id="training-popup" class="ui button">
+      Predicted scope: <%= @report.predicted_epic_scope.round %>
+      <%= 'issue'.pluralize(@report.predicted_epic_scope.round) %> / epic</div>
     <div class="ui fluid popup bottom left transition hidden">
     <table class="ui very compact table">
       <thead>
@@ -11,7 +13,7 @@
           <th>Delivery</th>
           <th>Scope</th>
           <th>Epics</th>
-          <th colspan="2" class="center aligned">Avg. Epic Scope</th>
+          <th colspan="2" class="center aligned">Issues / Epic</th>
           <th></th>
         </tr>
       </thead>
@@ -31,7 +33,7 @@
       <% end %>
       <tfoot>
         <tr class="compact">
-          <th>Trained</th>
+          <th><strong>Trained</strong></th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.scope.count }.sum %></th>
           <th><%= @report.training_team_reports.map{ |training_report| training_report.epics.count }.sum %></th>
           <th class="right aligned"><%= pretty_print_number(@report.trained_epic_scope) %></th>
@@ -39,7 +41,7 @@
           <th></th>
         </tr>
         <tr class="compact">
-          <th>Adjusted
+          <th><strong>Adjusted</strong>
             <% if @report.adjusted_epic_scope %>
                 <a id="adjustments-popup"
                    data-html="<%= @increment.metric_adjustments.as_string(@domain.short_team_name(@team)) %>"
@@ -55,7 +57,7 @@
           <th></th>
         </tr>
         <tr>
-          <th>Predicted</th>
+          <th><strong>Predicted</strong></th>
           <th></th>
           <th></th>
           <th class="right aligned"><%= pretty_print_number(@report.predicted_epic_scope) %></th>
