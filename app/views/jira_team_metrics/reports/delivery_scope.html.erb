@@ -57,7 +57,7 @@
           <th></th>
           <th class="right aligned"><%= pretty_print_number(@report.adjusted_epic_scope) %></th>
           <th></th>
-          <th><%= pretty_print_number(@report.adjusted_throughput * 7) %></th>
+          <th><%= pretty_print_number(@report.adjusted_throughput.nil? ? nil : @report.adjusted_throughput * 7) %></th>
           <th></th>
         </tr>
         <tr>
