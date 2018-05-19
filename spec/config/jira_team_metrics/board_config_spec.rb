@@ -2,22 +2,7 @@ require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::BoardConfig do
   let(:default_query) { "not (filter = 'Outliers')" }
-  let(:cycle_times) {
-    {
-      'in_test' => {
-        'from' => 'In Test',
-        'to' => 'Done'
-      },
-      'in_review' => {
-        'from' => 'Review',
-        'to' => 'In Test'
-      },
-      'in_progress' => {
-        'from' => 'In Progress',
-        'to' => 'Done'
-      }
-    }
-  }
+
   let(:sync) {
     {
       'since' => '-30d',
@@ -27,8 +12,7 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
 
   let(:config_hash) do
     {
-      'default_query' => default_query,
-      'cycle_times' => cycle_times
+      'default_query' => default_query
     }
   end
 
@@ -60,13 +44,6 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       config_hash.delete('default_query')
       board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
       expect(board_config.default_query).to eq('')
-    end
-  end
-
-  context "#cycle_times" do
-    it "returns cycle time states" do
-      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
-      expect(board_config.cycle_times).to eq(cycle_times)
     end
   end
 
