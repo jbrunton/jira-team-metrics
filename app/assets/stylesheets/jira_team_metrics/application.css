@@ -37,72 +37,11 @@
   /*}*/
 /*}*/
 
-table.team-dashboard td.highlight, table.team-dashboard th.highlight {
-    background-color: #F6F6F6;
-}
 
-table.ui tr.compact th {
-    padding-bottom: 0.4em;
-    padding-top: 0.4em;
-}
 
-table.jira-tree .indent {
-    width: 50px;
-}
 
-table.jira-tree .delivery {
-    font-weight: bold;
-}
 
-table.jira-tree .epic td {
-    font-weight: bold;
-}
 
-table.jira-tree .epic td:first-child {
-    padding-left: 50px;
-}
-
-table.jira-tree .story td:first-child {
-    padding-left: 90px;
-}
-
-table.jira-tree .effort-stats {
-    width: 5%;
-}
-
-.red {
-    background-color: #ffcdd2;
-}
-
-.orange {
-    background-color: #ffe0b2;
-}
-
-.green {
-    background-color: #c8e6c9;
-}
-
-.blue {
-    background-color: #bbdefb;
-}
-
-.left.floated {
-    float: left;
-}
-
-.right.floated {
-    float: right;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-main {
-    flex: 1;
-}
 
 /*.mono {*/
   /*font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;;*/
