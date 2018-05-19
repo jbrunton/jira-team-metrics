@@ -17,7 +17,6 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/domain/boards/:board_id/issues/:issue_key', to: 'issues#show'
   put '/domain/boards/:board_id/issues/:issue_key/flag_outlier', to: 'issues#flag_outlier'
 
-  get '/reports/boards/:board_id/issues_by_type', to: 'reports#issues_by_type'
   get '/reports/boards/:board_id/cycle_times_by_type', to: 'reports#cycle_times_by_type'
   get '/reports/boards/:board_id/control_chart', to: 'reports#control_chart'
   get '/reports/boards/:board_id/issues', to: 'reports#issues'
