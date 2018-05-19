@@ -49,6 +49,13 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def wip_issues
+    @in_progress_issues ||= begin
+      self.issues
+        .select{ |i| i.started_time && !i.completed_time }
+    end
+  end
+
   def issue_types
     issues.map{ |issue| issue.issue_type }.uniq
   end
