@@ -4,18 +4,9 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
   def timesheets
     issues = @board.issues.select do |issue|
-      # issue is started before the range ends
-      issue.started_time && issue.started_time < @chart_params.date_range.end_date &&
-        # and is either still in progress, or ends within the range
-        (issue.completed_time.nil? || issue.completed_time >= @chart_params.date_range.start_date)
+      issue.in_progress_during?(@chart_params.date_range)
     end
-    if @chart_params.query.empty?
-      @filtered_issues = issues
-    else
-      @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
-    end
-
-    #byebug
+    @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
 
     epics_by_increment = @filtered_issues
       .group_by{ |issue| issue.increment }
