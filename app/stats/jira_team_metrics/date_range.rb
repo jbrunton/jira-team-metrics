@@ -43,6 +43,10 @@ class JiraTeamMetrics::DateRange
     )
   end
 
+  def contains?(time)
+    start_date <= time && time < end_date
+  end
+
   def duration
     ((end_date - start_date) / 1.day).to_f.abs
   end
