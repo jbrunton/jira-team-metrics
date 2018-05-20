@@ -79,7 +79,7 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
-  describe "completed" do
+  describe "completed_time" do
     it "returns the time of the last transition to 'Done' status category" do
       expect(issue.completed_time).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
     end
@@ -92,6 +92,52 @@ RSpec.describe JiraTeamMetrics::Issue do
   describe "#cycle_time" do
     it "returns the time in days the issue was in progress" do
       expect(issue.cycle_time).to eq(1.25)
+    end
+  end
+
+  describe "#started?" do
+    it "returns true if the issue is started" do
+      issue = create(:issue, transitions: [in_progress_transition])
+      expect(issue.started?).to eq(true)
+    end
+
+    it "returns false otherwise" do
+      issue = create(:issue, transitions: [])
+      expect(issue.started?).to eq(false)
+    end
+  end
+
+  describe "#completed?" do
+    it "returns true if the issue is both started and completed" do
+      issue = create(:issue, transitions: [in_progress_transition, done_transition])
+      expect(issue.completed?).to eq(true)
+    end
+
+    it "returns false if the issue is started but not completed" do
+      issue = create(:issue, transitions: [in_progress_transition])
+      expect(issue.completed?).to eq(false)
+    end
+
+    it "returns false if the issue is completed but never started" do
+      issue = create(:issue, transitions: [done_transition])
+      expect(issue.completed?).to eq(false)
+    end
+  end
+
+  describe "#in_progress?" do
+    it "returns true if the issue is started but not completed" do
+      issue = create(:issue, transitions: [in_progress_transition])
+      expect(issue.in_progress?).to eq(true)
+    end
+
+    it "returns false if the issue is completed" do
+      issue = create(:issue, transitions: [in_progress_transition, done_transition])
+      expect(issue.in_progress?).to eq(false)
+    end
+
+    it "returns false if the issue is not started" do
+      issue = create(:issue, transitions: [])
+      expect(issue.in_progress?).to eq(false)
     end
   end
 
