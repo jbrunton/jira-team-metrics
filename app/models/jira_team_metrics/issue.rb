@@ -107,6 +107,29 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     completed && started ? (completed - started) / (60 * 60 * 24) : nil
   end
 
+  def started?
+    !started_time.nil?
+  end
+
+  def completed?
+    started? && !completed_time.nil?
+  end
+
+  def in_progress?
+    started? && !completed?
+  end
+
+  def completed_during?(date_range)
+    completed? && date_range.contains?(completed_time)
+  end
+
+  def in_progress_during?(date_range)
+    # issue is started before the range ends
+    started? && started_time < date_range.end_date &&
+        # and is either still in progress, or ends within the range
+        (!completed? || completed_time >= date_range.start_date)
+  end
+
   def domain_url
     "#{board.domain.config.url}/browse/#{key}"
   end

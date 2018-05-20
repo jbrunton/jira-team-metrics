@@ -41,10 +41,14 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  def completed_issues
+  def completed_issues(date_range)
     @completed_issues ||= begin
       self.issues
-        .select{ |i| i.completed_time && i.started_time }
+        .select do |issue|
+          issue.completed_time && issue.started_time &&
+              date_range.start_date <= issue.completed_time &&
+              issue.completed_time < date_range.end_date
+        end
         .sort_by{ |i| i.completed_time }
     end
   end

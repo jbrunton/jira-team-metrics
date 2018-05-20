@@ -6,6 +6,8 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   def eval(query)
+    return @issues if query.blank?
+
     parser = MqlParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))

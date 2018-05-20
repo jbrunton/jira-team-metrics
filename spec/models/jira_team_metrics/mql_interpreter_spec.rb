@@ -4,6 +4,15 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
   let(:board) { create(:board) }
 
   describe "#eval" do
+    context "when given a blank query" do
+      let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
+
+      it "returns all issues" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("")
+        expect(issues).to eq([issue])
+      end
+    end
+
     context "when given an issue field comparison" do
       let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
 
