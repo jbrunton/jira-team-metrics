@@ -2,18 +2,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_domain
   before_action :set_board
 
-  def issues_by_type
-  end
-
-  def issues
-  end
-
-  def control_chart
-  end
-
-  def cycle_times_by_type
-  end
-
   def timesheets
   end
 

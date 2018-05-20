@@ -3,24 +3,6 @@ type: "//rec"
 optional:
   default_query:
     type: "//str"
-  cycle_times:
-    type: "//rec"
-    required:
-      in_test:
-        type: "//rec"
-        required:
-          from: "//str"
-          to: "//str"
-      in_review:
-        type: "//rec"
-        required:
-          from: "//str"
-          to: "//str"
-      in_progress:
-        type: "//rec"
-        required:
-          from: "//str"
-          to: "//str"
   filters:
     type: "//arr"
     contents:
