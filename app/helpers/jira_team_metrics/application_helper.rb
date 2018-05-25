@@ -37,6 +37,10 @@ module JiraTeamMetrics::ApplicationHelper
     "#{delivery_report_path(board, issue)}/scope/#{team}"
   end
 
+  def delivery_throughput_report_path(board, issue, team)
+    "#{delivery_report_path(board, issue)}/throughput/#{team}"
+  end
+
   def timesheets_report_path(board)
     "#{reports_path(board)}/timesheets"
   end
