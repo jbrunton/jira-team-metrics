@@ -54,7 +54,7 @@ class JiraTeamMetrics::DataTable
     end
     self
   end
-  
+
   def add_row(row)
     rows << row
     self
