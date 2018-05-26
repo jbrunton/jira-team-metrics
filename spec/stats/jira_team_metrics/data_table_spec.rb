@@ -230,6 +230,54 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#insert_if_missing" do
+    let(:indexes) { [0, 1, 2] }
+
+    context "given an empty table" do
+      let(:data_table) { JiraTeamMetrics::DataTable.new(['index', 'count'], []) }
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+            [0, 0],
+            [1, 0],
+            [2, 0]])
+      end
+    end
+
+    context "given a table with some existing values" do
+      let(:data_table) do
+        JiraTeamMetrics::DataTable.new(
+            ['index', 'count'],
+            [[1, 4]])
+      end
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+                                          [0, 0],
+                                          [1, 4],
+                                          [2, 0]])
+      end
+    end
+
+    context "given a table that starts with some existing values" do
+      let(:data_table) do
+        JiraTeamMetrics::DataTable.new(
+            ['index', 'count'],
+            [[0, 4]])
+      end
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+                                          [0, 4],
+                                          [1, 0],
+                                          [2, 0]])
+      end
+    end
+  end
+
   describe "#to_json" do
     it "returns a json representation for google charts" do
       json = data_table.to_json

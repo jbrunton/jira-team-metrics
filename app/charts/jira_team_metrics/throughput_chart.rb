@@ -14,10 +14,13 @@ class JiraTeamMetrics::ThroughputChart
         .pick(:completed_time, :key)
         .build
 
+    dates = @params.date_range.to_a
+
     data_table
         .select('completed_time').count('key', as: 'Count')
         .group(if_nil: 0) { |completed_time| completed_time.to_date }
         .sort_by('completed_time')
+        .insert_if_missing(dates, [0])
   end
 
   def json_data
