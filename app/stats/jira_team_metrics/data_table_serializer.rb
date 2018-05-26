@@ -46,7 +46,7 @@ private
     column_values = @data_table.rows.map{ |row| row[index] }.compact
     if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
       'number'
-    elsif column_values.any? && column_values.all?{ |val| val.class <= Time }
+    elsif column_values.any? && column_values.all?{ |val| val.class <= Time || val.class <= Date || val.class <= DateTime }
       'date'
     elsif column_values.empty?
       # play it safe with google charts - assume a number unless clearly not
