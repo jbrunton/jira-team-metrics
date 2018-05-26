@@ -12,6 +12,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart_data_for(:aging_wip)
   end
 
+  def throughput
+    render json: chart_data_for(:throughput)
+  end
+
 private
   def chart_data_for(chart_name)
     chart_class = "JiraTeamMetrics::#{chart_name.to_s.camelize}Chart".constantize

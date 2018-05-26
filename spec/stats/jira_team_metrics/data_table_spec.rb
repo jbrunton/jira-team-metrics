@@ -137,7 +137,7 @@ RSpec.describe JiraTeamMetrics::DataTable do
         ])
       end
 
-      it "aggregates by a custom block" do
+      it "aggregates by multiple columns with a custom block" do
         grouped_data = data_table
           .select('issue_type', 'developer').count('issue_key', as: 'Count')
           .group do |issue_type, developer|

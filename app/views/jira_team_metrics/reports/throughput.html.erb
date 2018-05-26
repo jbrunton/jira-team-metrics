@@ -1,1 +1,28 @@
 <% breadcrumb :report, @board, :throughput, 'Throughput' %>
+
+<% chart_id = generate_id %>
+
+<h3>Throughput</h3>
+
+<script>
+<!--    function selectHandler() {-->
+<!--        var chart = _charts['<%= chart_id %>'];-->
+<!--        var selection = chart._gchart.getSelection()[0];-->
+<!--        // completed issues column-->
+<!--        if (selection.column == 1) {-->
+<!--            var key = chart._data.getValue(selection.row, 2);-->
+<!--            $('#selected_content').animate({opacity: 0}).load('<%= board_path(@board) %>/issues/' + key + '?fragment=true', function () {-->
+<!--                $(this).animate({opacity: 1});-->
+<!--                $('.ui.accordion').accordion({exclusive: false});-->
+<!--            });-->
+<!--        }-->
+<!--    }-->
+</script>
+
+<%= render partial: 'partials/chart', locals: {
+    chart_id: chart_id,
+    chart_type: 'ComboChart',
+    url: "#{board_api_path(@board)}/throughput.json"
+} %>
+
+<%= render partial: 'partials/cycle_time_form' %>
