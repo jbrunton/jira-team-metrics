@@ -156,7 +156,9 @@ class JiraTeamMetrics::DataTable
         if block.nil?
           group_by_values
         else
-          block.call(*group_by_values)
+          result = block.call(*group_by_values)
+          # so that we can write .group{ |x| x.y } instead of .group{ |x| [x.y] } when grouping by a single value
+          result.is_a?(Array) ? result : [result]
         end
       end
     end

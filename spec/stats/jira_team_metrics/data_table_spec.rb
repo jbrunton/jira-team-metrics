@@ -137,6 +137,18 @@ RSpec.describe JiraTeamMetrics::DataTable do
         ])
       end
 
+      it "aggregates by a single column with a custom block" do
+        grouped_data = data_table
+           .select('issue_type').count('issue_key', as: 'Count')
+           .group { |issue_type| issue_type.try(:downcase) }
+
+        expect(grouped_data.columns).to eq(['issue_type', 'Count'])
+        expect(grouped_data.rows).to eq([
+            ['story', 4],
+            ['bug', 1]
+        ])
+      end
+
       it "aggregates by multiple columns with a custom block" do
         grouped_data = data_table
           .select('issue_type', 'developer').count('issue_key', as: 'Count')

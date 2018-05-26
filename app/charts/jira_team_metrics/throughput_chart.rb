@@ -16,7 +16,7 @@ class JiraTeamMetrics::ThroughputChart
 
     data_table
         .select('completed_time').count('key', as: 'Count')
-        .group(if_nil: 0) { |completed_time| [completed_time.to_date] }
+        .group(if_nil: 0) { |completed_time| completed_time.to_date }
         .sort_by('completed_time')
   end
 
