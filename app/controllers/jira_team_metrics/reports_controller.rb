@@ -36,6 +36,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def delivery_throughput
     @team = params[:team]
+    @increment = @board.issues.find_by(key: params[:issue_key])
   end
 
   def increment_report

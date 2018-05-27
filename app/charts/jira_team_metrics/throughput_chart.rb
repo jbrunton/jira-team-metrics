@@ -7,11 +7,12 @@ class JiraTeamMetrics::ThroughputChart
   end
 
   def data_table
-    completed_issues = @board.completed_issues(@params.date_range)
-    filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, completed_issues).eval(@params.query)
+    issues = @board.completed_issues(@params.date_range)
+    issues = JiraTeamMetrics::TeamScopeReport.issues_for_team(issues, @params.team) if @params.team
+    issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
 
     data_table = JiraTeamMetrics::DataTableBuilder.new
-        .data(filtered_issues)
+        .data(issues)
         .pick(:completed_time, :key)
         .build
         .select('completed_time').count('key', as: 'Count')

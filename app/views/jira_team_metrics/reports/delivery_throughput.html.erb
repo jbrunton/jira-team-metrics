@@ -1,1 +1,15 @@
 <% breadcrumb :delivery_throughput_report, @increment, @team %>
+
+<% chart_id = generate_id %>
+
+<%= render partial: 'partials/chart', locals: {
+    chart_id: chart_id,
+    chart_type: 'ComboChart',
+    url: "#{board_api_path(@board)}/throughput.json"
+} %>
+
+<script>
+    function buildComponentUrl(path) {
+        return path +'?team=<%= @team %>';
+    }
+</script>
