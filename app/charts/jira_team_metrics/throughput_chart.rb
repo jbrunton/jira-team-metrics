@@ -30,7 +30,6 @@ class JiraTeamMetrics::ThroughputChart
         nil
       end
     end
-    data_table.add_column('Avg / Day', th_averages)
     data_table.add_column('Avg / Week', th_averages.map{ |x| x.try(:*, 7.0) })
     data_table
   end
@@ -45,9 +44,6 @@ class JiraTeamMetrics::ThroughputChart
   def chart_opts
     {
         seriesType: 'scatter',
-        legend: {
-            position: 'none'
-        },
         chartArea: {
             width: '90%',
             height: '80%',
@@ -55,9 +51,8 @@ class JiraTeamMetrics::ThroughputChart
         },
         height: 500,
         series: {
-            0 => { pointSize: 4, color: 'indianred' },
-            1 => { lineWidth: 2, pointSize: 0, color: 'indianred' },
-            2 => { lineWidth: 2, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
+            0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
+            1 => { lineWidth: 2, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
         }
     }
   end
