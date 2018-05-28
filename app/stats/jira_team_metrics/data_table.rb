@@ -66,35 +66,7 @@ class JiraTeamMetrics::DataTable
   end
 
   def insert_if_missing(column_values, default_values)
-    remaining_values = column_values.clone
-    row_index = 0
-    while remaining_values.any?
-      if row_index >= rows.count
-        rows.concat(remaining_values.map{ |val| [val] + default_values })
-        remaining_values = []
-      else
-        value_to_insert = remaining_values.first
-        value_at_index = rows.count > row_index ? rows[row_index][0] : nil
-        if value_to_insert < value_at_index
-          insert_row(row_index, [value_to_insert] + default_values)
-          remaining_values.shift
-        elsif value_to_insert == value_at_index
-          remaining_values.shift
-        end
-        row_index += 1
-      end
-
-      # value_at_index = rows[row_index][column_index]
-      # value_to_insert = remaining_values.first
-      # if value_at_index > value_to_insert
-      #   insert_row(row_index, [value_to_insert] + default_values)
-      #   row_index += 1
-      # elsif value_at_index < value_to_insert
-      #   remaining_values.shift
-      # else
-      #
-      # end
-    end
+    InsertIfMissingOp.new(self).apply(column_values, default_values)
     self
   end
 
@@ -212,6 +184,44 @@ private
       [0, nil]
     else
       [1, block.nil? ? val : block.call(val)]
+    end
+  end
+
+  class InsertIfMissingOp
+    attr_reader :data_table
+
+    def initialize(data_table)
+      @data_table = data_table
+    end
+
+    def apply(column_values, default_values)
+      remaining_values = column_values.clone
+      row_index = 0
+      while remaining_values.any?
+        if row_index >= data_table.rows.count
+          insert_remaining_values(remaining_values, default_values)
+        else
+          insert_next_value(row_index, remaining_values, default_values)
+          row_index += 1
+        end
+      end
+    end
+
+  private
+    def insert_remaining_values(remaining_values, default_values)
+      data_table.rows.concat(remaining_values.map{ |val| [val] + default_values })
+      remaining_values.clear
+    end
+
+    def insert_next_value(row_index, remaining_values, default_values)
+      value_to_insert = remaining_values.first
+      value_at_index = data_table.rows.count > row_index ? data_table.rows[row_index][0] : nil
+      if value_to_insert < value_at_index
+        data_table.insert_row(row_index, [value_to_insert] + default_values)
+        remaining_values.shift
+      elsif value_to_insert == value_at_index
+        remaining_values.shift
+      end
     end
   end
 end
