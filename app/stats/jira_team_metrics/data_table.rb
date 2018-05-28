@@ -161,11 +161,15 @@ class JiraTeamMetrics::DataTable
         if block.nil?
           group_by_values
         else
-          result = block.call(*group_by_values)
-          # so that we can write .group{ |x| x.y } instead of .group{ |x| [x.y] } when grouping by a single value
-          result.is_a?(Array) ? result : [result]
+          apply_group_by_block(group_by_values, block)
         end
       end
+    end
+
+    def apply_group_by_block(group_by_values, block)
+      result = block.call(*group_by_values)
+      # so that we can write .group{ |x| x.y } instead of .group{ |x| [x.y] } when grouping by a single value
+      result.is_a?(Array) ? result : [result]
     end
 
     def aggregate_rows_by(grouped_rows, aggregate_columns, opts)
