@@ -19,15 +19,19 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
   end
 
   def time_in_category(status_category, date_range = nil)
-    history_as_ranges
+    durations = history_as_ranges
         .select{ |h| h[:status_category] == status_category }
         .map do |h|
-      byebug
           if date_range.nil?
             h[:date_range].duration
           else
             h[:date_range].overlap_with(date_range).duration
           end
-        end.sum
+    end
+    if durations.nil? || durations.empty?
+      0
+    else
+      durations.sum
+    end
   end
 end
