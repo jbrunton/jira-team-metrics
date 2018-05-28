@@ -154,6 +154,14 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     overlap.nil? ? 0 : overlap.duration
   end
 
+  def transition_ranges
+
+  end
+
+  def time_in_category(status_category, date_range)
+
+  end
+
 private
   def completed_by?(date)
     completed_time && completed_time < date

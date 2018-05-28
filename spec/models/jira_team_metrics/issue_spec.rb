@@ -217,4 +217,16 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
 
   end
+
+  describe "#transition_ranges" do
+    it "returns a list of date ranges with status categories" do
+
+    end
+  end
+
+  describe "#duration_in_status_category" do
+    it "returns the time spent in the given status category" do
+      expect()
+    end
+  end
 end
