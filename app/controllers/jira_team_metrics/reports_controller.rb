@@ -5,6 +5,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def timesheets
   end
 
+  def throughput
+  end
+
   def deliveries
     @increments = @board.increments
   end
@@ -29,6 +32,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
+  end
+
+  def delivery_throughput
+    @team = params[:team]
+    @increment = @board.issues.find_by(key: params[:issue_key])
   end
 
   def increment_report
