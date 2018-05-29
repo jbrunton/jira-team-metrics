@@ -22,7 +22,7 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
   def time_in_category(status_category, date_range = nil)
     durations = history_as_ranges
         .select{ |h| h[:status_category] == status_category }
-        .map { |h| h.time_in_category(status_category, date_range) }
+        .map { |h| h.time_in_range(date_range) }
 
     if durations.empty?
       0
@@ -32,7 +32,7 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
   end
 
   StatusHistory = Struct.new(:status, :status_category, :date_range) do
-    def time_in_category(status_category, date_range)
+    def time_in_range(date_range)
       if date_range.nil?
         self.date_range.duration
       else
