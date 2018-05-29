@@ -64,38 +64,38 @@ RSpec.describe JiraTeamMetrics::Issue do
   describe "#history_as_ranges" do
     it "returns a list of status changes with ranges" do
       expect(analyzer.history_as_ranges).to eq([
-          {
-              status: 'Analysis',
-              status_category: 'To Do',
-              date_range: JiraTeamMetrics::DateRange.new(
+          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+              'Analysis',
+              'To Do',
+              JiraTeamMetrics::DateRange.new(
                   Time.parse('2017-01-01T12:00:00.000-0000'),
                   Time.parse('2017-01-02T12:00:00.000-0000')
               )
-          },
-          {
-              status: 'In Progress',
-              status_category: 'In Progress',
-              date_range: JiraTeamMetrics::DateRange.new(
+          ),
+          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+              'In Progress',
+              'In Progress',
+              JiraTeamMetrics::DateRange.new(
                   Time.parse('2017-01-02T12:00:00.000-0000'),
                   Time.parse('2017-01-03T12:00:00.000-0000')
               )
-          },
-          {
-              status: 'Blocked',
-              status_category: 'To Do',
-              date_range: JiraTeamMetrics::DateRange.new(
+          ),
+          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+              'Blocked',
+              'To Do',
+              JiraTeamMetrics::DateRange.new(
                   Time.parse('2017-01-03T12:00:00.000-0000'),
                   Time.parse('2017-01-04T12:00:00.000-0000')
               )
-          },
-          {
-              status: 'In Progress',
-              status_category: 'In Progress',
-              date_range: JiraTeamMetrics::DateRange.new(
+          ),
+          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+              'In Progress',
+              'In Progress',
+              JiraTeamMetrics::DateRange.new(
                   Time.parse('2017-01-04T12:00:00.000-0000'),
                   Time.parse('2017-01-04T18:00:00.000-0000')
               )
-          }
+          )
       ])
     end
   end
