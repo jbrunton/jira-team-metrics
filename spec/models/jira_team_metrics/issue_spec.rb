@@ -57,7 +57,7 @@ RSpec.describe JiraTeamMetrics::Issue do
   }
 
   it "initializes the instance" do
-    expect(issue.key).to eq('ISSUE-101')
+    expect(issue.key).to match(/ISSUE-\d+/)
     expect(issue.summary).to eq('Some Issue')
     expect(issue.issue_type).to eq('Story')
     expect(issue.transitions).to eq([
@@ -215,6 +215,5 @@ RSpec.describe JiraTeamMetrics::Issue do
     it "returns the epic given by the Epic Link field" do
       expect(issue.epic).to eq(epic)
     end
-
   end
 end

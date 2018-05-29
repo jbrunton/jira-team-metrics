@@ -7,7 +7,7 @@ RSpec.describe JiraTeamMetrics::Board do
     context "when the rounded date is the same year" do
       it "returns the 1st of the month a given number of months ago" do
         travel_to Time.new(2018, 4, 12) do
-          expect(board.sync_from(1)).to eq(Time.new(2018, 3, 1))
+          expect(board.sync_from(1)).to eq(DateTime.new(2018, 3, 1))
         end
       end
     end
@@ -15,7 +15,7 @@ RSpec.describe JiraTeamMetrics::Board do
     context "when the rounded date is the previous year" do
       it "returns the 1st of the month a given number of months ago" do
         travel_to Time.new(2018, 1, 12) do
-          expect(board.sync_from(1)).to eq(Time.new(2017, 12, 1))
+          expect(board.sync_from(1)).to eq(DateTime.new(2017, 12, 1))
         end
       end
     end
