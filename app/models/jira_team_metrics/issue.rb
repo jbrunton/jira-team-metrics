@@ -32,6 +32,16 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     end
   end
 
+  def teams
+    if is_increment?
+      []
+    elsif is_epic?
+      fields['Teams'] || []
+    else
+      fields['Teams'] || epic.try(:teams) || []
+    end
+  end
+
   def target_date
     if is_increment?
       # TODO: get this field name from config

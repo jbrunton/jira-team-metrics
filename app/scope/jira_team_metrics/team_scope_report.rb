@@ -48,9 +48,9 @@ class JiraTeamMetrics::TeamScopeReport
   def self.issues_for_team(issues, team)
     issues.select do |issue|
       if team == 'None'
-        (issue.fields['Teams'] || []).empty?
+        issue.teams.empty?
       else
-        (issue.fields['Teams'] || []).include?(team)
+        issue.teams.include?(team)
       end
     end
   end
