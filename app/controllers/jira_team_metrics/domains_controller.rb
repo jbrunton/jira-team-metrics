@@ -11,6 +11,8 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   def update
     if readonly?
       render_unauthorized
+    elsif syncing?(@domain)
+      render_syncing
     elsif @domain.update(domain_params)
       render json: {}, status: :ok
     else
@@ -20,7 +22,9 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
 
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-    if @credentials.valid?
+    if syncing?(@domain)
+      render_syncing
+    elsif @credentials.valid?
       JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.to_serializable_hash)
       render json: {}, status: 200
     else

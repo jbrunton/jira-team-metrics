@@ -15,4 +15,8 @@ private
   def render_unauthorized
     render json: {}, status: 401
   end
+
+  def render_syncing
+    render json: { responseText: 'Sync in progress. Try again later.' }, status: 400
+  end
 end

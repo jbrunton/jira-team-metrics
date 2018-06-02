@@ -17,6 +17,8 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   def update
     if readonly?
       render_unauthorized
+    elsif syncing?(@board)
+      render_syncing
     elsif @board.update(board_params)
       render json: {}, status: :ok
     else
@@ -26,7 +28,9 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
 
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-    if @credentials.valid?
+    if syncing?(@board)
+      render_syncing
+    elsif @credentials.valid?
       JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
       render json: {}, status: 200
     else
