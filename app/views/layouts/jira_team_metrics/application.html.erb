@@ -31,11 +31,11 @@
     </header>
 
     <div class="ui container">
-    <% if !@board.nil? %>
-        <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
-    <% elsif !@domain.nil? %>
-        <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
-    <% end %>
+      <% if !@board.nil? %>
+          <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
+      <% elsif !@domain.nil? %>
+          <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
+      <% end %>
     </div>
 
     <% if syncing? %>
