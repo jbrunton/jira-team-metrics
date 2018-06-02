@@ -44,7 +44,7 @@ RSpec.describe JiraTeamMetrics::LinkHelper do
     end
 
     context "if the linked issue was synchronized" do
-      let(:issue) { board.issues.create(attributes_for(:issue, key: 'ISSUE-2')) }
+      let(:issue) { board.issues.create(attributes_for(:issue, key: 'ISSUE-2', summary: 'Issue 2 summary')) }
       let(:issue_url) { '/boards/1/issues/ISSUE-2' }
 
       before(:each) { allow(helper).to receive(:url_for).with(issue).and_return(issue_url) }
@@ -53,6 +53,25 @@ RSpec.describe JiraTeamMetrics::LinkHelper do
         expected_html = "<a href='/boards/1/issues/ISSUE-2'>ISSUE-2</a> – Issue 2 summary".html_safe
         expect(helper.link_summary(inward_link, board)).to eq(expected_html)
       end
+    end
+  end
+
+  describe "#issue_summary" do
+    let(:issue) { create(:issue, key: 'ISSUE-2', summary: 'Issue 2 summary') }
+    let(:issue_url) { '/boards/1/issues/ISSUE-2' }
+
+    before(:each) { allow(helper).to receive(:url_for).with(issue).and_return(issue_url) }
+
+    it "returns an html link for the issue" do
+      expected_html = "<a href='/boards/1/issues/ISSUE-2'>ISSUE-2</a> – Issue 2 summary".html_safe
+      expect(helper.issue_summary(issue)).to eq(expected_html)
+    end
+  end
+
+  describe "#external_link_url" do
+    it "returns an external link for the issue" do
+      domain = create(:domain, config_string: 'url: https://jira.example.com')
+      expect(helper.external_link_url(inward_link, domain)).to eq('https://jira.example.com/browse/ISSUE-2')
     end
   end
 end
