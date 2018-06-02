@@ -2,7 +2,10 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
   queue_as :default
 
   def perform(domain, credentials)
-    #TODO: do this in a transaction
+    domain.transaction do
+      domain.syncing = true
+      domain.save!
+    end
     @notifier = JiraTeamMetrics::StatusNotifier.new(domain, "syncing #{domain.config.name}")
     clear_cache(domain)
     boards, statuses, fields = fetch_data(domain, credentials)
@@ -15,6 +18,10 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
       JiraTeamMetrics::SyncBoardJob.perform_now(board, credentials, board.config.sync_months, false)
     end
 
+    domain.transaction do
+      domain.syncing = false
+      domain.save!
+    end
     @notifier.notify_complete
   end
 

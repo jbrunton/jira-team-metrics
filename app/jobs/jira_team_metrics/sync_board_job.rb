@@ -2,6 +2,10 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(board, credentials, months, notify_complete = true)
+    board.transaction do
+      board.syncing = true
+      board.save!
+    end
     @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
     clear_cache(board)
@@ -9,6 +13,10 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     create_filters(board, credentials)
     build_reports(board)
 
+    board.transaction do
+      board.syncing = false
+      board.save!
+    end
     @notifier.notify_complete if notify_complete
   end
 

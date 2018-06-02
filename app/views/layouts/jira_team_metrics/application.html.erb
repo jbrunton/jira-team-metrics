@@ -30,10 +30,27 @@
       <div class="ui divider"></div>
     </header>
 
-    <main class="ui container" id="content_container">
-      <%= yield %>
-      <div id="pickadate-container"></div>
-    </main>
+    <div class="ui container">
+    <% if !@board.nil? %>
+        <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
+    <% elsif !@domain.nil? %>
+        <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
+    <% end %>
+    </div>
+
+    <% if syncing? %>
+          <main class="ui basic segment">
+            <div class="ui active inverted dimmer">
+              <div class="ui text loader">Synchronizing data ... this may take a few minutes.</div>
+            </div>
+            <p></p>
+          </main>
+      <% else %>
+        <main class="ui container" id="content_container">
+          <%= yield %>
+          <div id="pickadate-container"></div>
+        </main>
+      <% end %>
 
     <footer class="ui basic center aligned segment">
       <% unless @board.nil? %>
