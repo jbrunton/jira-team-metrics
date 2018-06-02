@@ -38,7 +38,7 @@
       <% end %>
     </div>
 
-    <% if syncing? %>
+    <% if syncing?(@domain) || syncing?(@board) %>
           <main class="ui basic segment">
             <div class="ui active inverted dimmer">
               <div class="ui text loader">Synchronizing data ... this may take a few minutes.</div>

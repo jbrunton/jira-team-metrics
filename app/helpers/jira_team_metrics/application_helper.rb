@@ -9,10 +9,8 @@ module JiraTeamMetrics::ApplicationHelper
     !!ENV['READONLY']
   end
 
-  def syncing?
-    ActiveRecord::Base.transaction do
-      @domain && @domain.syncing || @board && @board.syncing
-    end
+  def syncing?(object)
+    !!(object && object.transaction { object.syncing })
   end
 
   def domain_path
