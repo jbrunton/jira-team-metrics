@@ -6,21 +6,23 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
       domain.syncing = true
       domain.save!
     end
-    @notifier = JiraTeamMetrics::StatusNotifier.new(domain, "syncing #{domain.config.name}")
-    clear_cache(domain)
-    boards, statuses, fields = fetch_data(domain, credentials)
-    update_cache(domain, boards, statuses, fields)
+    begin
+      @notifier = JiraTeamMetrics::StatusNotifier.new(domain, "syncing #{domain.config.name}")
+      clear_cache(domain)
+      boards, statuses, fields = fetch_data(domain, credentials)
+      update_cache(domain, boards, statuses, fields)
 
-    domain.config.boards.each do |board_details|
-      board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
-      board.config_string = board_details.fetch_config_string
-      board.save
-      JiraTeamMetrics::SyncBoardJob.perform_now(board, credentials, board.config.sync_months, false)
-    end
-
-    domain.transaction do
-      domain.syncing = false
-      domain.save!
+      domain.config.boards.each do |board_details|
+        board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
+        board.config_string = board_details.fetch_config_string
+        board.save
+        JiraTeamMetrics::SyncBoardJob.perform_now(board, credentials, board.config.sync_months, false)
+      end
+    ensure
+      domain.transaction do
+        domain.syncing = false
+        domain.save!
+      end
     end
     @notifier.notify_complete
   end
