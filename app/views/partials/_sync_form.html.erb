@@ -1,5 +1,15 @@
 <% @credentials = JiraTeamMetrics::Credentials.new unless @credentials %>
-<form id="sync-form" class="ui form grid">
+<form id="sync-form" class="ui form grid <%= 'error' if @credentials.errors.any? %>">
+  <div class="sixteen wide column">
+    <% if @credentials.errors[:base].any? %>
+        <div class="ui error message">
+          <% @credentials.errors[:base].each do |error| %>
+              <span class="error"><%= error %></span>
+          <% end %>
+        </div>
+    <% end %>
+  </div>
+
   <div class="eight wide column">
       <%= form_input(@credentials, :username) %>
   </div>

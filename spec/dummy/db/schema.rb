@@ -22,7 +22,6 @@ ActiveRecord::Schema.define(version: 2018_06_02_115504) do
     t.integer "domain_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "syncing"
     t.index ["domain_id"], name: "index_jira_team_metrics_boards_on_domain_id"
   end
 

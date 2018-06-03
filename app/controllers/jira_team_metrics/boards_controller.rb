@@ -15,26 +15,27 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def update
-    if readonly?
-      render_unauthorized
-    elsif syncing?(@board)
-      render_syncing
-    elsif @board.update(board_params)
-      render json: {}, status: :ok
-    else
-      render partial: 'partials/config_form', status: 400
+    @board.transaction do
+      if readonly?
+        render_unauthorized
+      elsif @board.update(board_params)
+        render json: {}, status: :ok
+      else
+        render partial: 'partials/config_form', status: 400
+      end
     end
   end
 
   def sync
-    @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-    if syncing?(@board)
-      render_syncing
-    elsif @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
-      render json: {}, status: 200
-    else
-      render partial: 'partials/sync_form', status: 400
+    @board.transaction do
+      @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+      if @board.valid? && @credentials.valid?
+        JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
+        render json: {}, status: 200
+      else
+        @board.errors[:base].each { |e| @credentials.errors.add(:base, e) }
+        render partial: 'partials/sync_form', status: 400
+      end
     end
   end
 
