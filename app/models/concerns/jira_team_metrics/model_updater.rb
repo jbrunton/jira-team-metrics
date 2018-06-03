@@ -1,4 +1,4 @@
-class JiraTeamMetrics::UpdateCheck
+class JiraTeamMetrics::ModelUpdater
   include JiraTeamMetrics::EnvironmentHelper
 
   def initialize(object)
@@ -23,5 +23,10 @@ class JiraTeamMetrics::UpdateCheck
     else
       true
     end
+  end
+
+  def update(object_params, target_model = nil)
+    target_model ||= @object
+    can_update?(target_model) && @object.update(object_params)
   end
 end

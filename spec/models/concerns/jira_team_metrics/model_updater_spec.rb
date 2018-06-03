@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe JiraTeamMetrics::UpdateCheck do
+RSpec.describe JiraTeamMetrics::ModelUpdater do
   let(:domain) { create(:domain) }
   let(:board) { domain.boards.create(attributes_for(:board)) }
-  let(:check) { JiraTeamMetrics::UpdateCheck.new(board) }
+  let(:check) { JiraTeamMetrics::ModelUpdater.new(board) }
 
   describe "#can_update?" do
     context "if the model isn't syncing" do
