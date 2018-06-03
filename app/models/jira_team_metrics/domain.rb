@@ -1,6 +1,5 @@
 class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   include JiraTeamMetrics::Configurable
-  include JiraTeamMetrics::Synchronizable
 
   serialize :statuses
   serialize :fields
@@ -11,7 +10,9 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def sync_in_progress?
-    syncing?
+    self.transaction do
+      syncing? || boards.any? { |board| board.syncing? }
+    end
   end
 
   def status_category_for(status)

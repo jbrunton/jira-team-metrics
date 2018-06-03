@@ -1,6 +1,5 @@
 class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   include JiraTeamMetrics::Configurable
-  include JiraTeamMetrics::Synchronizable
 
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
@@ -8,7 +7,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   has_many :report_fragments, :dependent => :delete_all
 
   def sync_in_progress?
-    domain.syncing?
+    domain.sync_in_progress?
   end
 
   def exclusions

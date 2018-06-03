@@ -39,4 +39,16 @@ RSpec.describe JiraTeamMetrics::Board do
       end
     end
   end
+
+  describe "#update" do
+    context "when READONLY is 1" do
+      before(:each) { allow(ENV).to receive(:[]).with('READONLY').and_return(1) }
+
+      it "updates the config" do
+        new_attributes = { config_string: "sync:\n  months: 6" }
+        board.update(new_attributes)
+        expect(board.config.sync_months).to eq(6)
+      end
+    end
+  end
 end

@@ -10,7 +10,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
 
   def update
     @domain.transaction do
-      if @domain.validate_syncing && @domain.update(domain_params)
+      if JiraTeamMetrics::ModelUpdater.new(@domain).update(domain_params)
         render json: {}, status: :ok
       else
         render partial: 'partials/config_form', status: 400
@@ -21,7 +21,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   def sync
     @domain.transaction do
       @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-      if @domain.validate_syncing(@credentials) && @credentials.valid?
+      if JiraTeamMetrics::ModelUpdater.new(@domain).can_sync?(@credentials) && @credentials.valid?
         JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.to_serializable_hash)
         render json: {}, status: 200
       else
