@@ -6,10 +6,7 @@ module JiraTeamMetrics::ApplicationHelper
   include JiraTeamMetrics::ChartsHelper
   include JiraTeamMetrics::PathHelper
   include JiraTeamMetrics::HtmlHelper
-
-  def readonly?
-    !!ENV['READONLY']
-  end
+  include JiraTeamMetrics::EnvironmentHelper
 
   def generate_id
     SecureRandom.urlsafe_base64(10)

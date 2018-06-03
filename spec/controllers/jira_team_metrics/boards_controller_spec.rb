@@ -33,4 +33,81 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
       expect(assigns(:boards)).to eq([board])
     end
   end
+
+  describe "POST #update" do
+    context "with valid params" do
+      let(:new_attributes) {
+        { config_string: "sync:\n  months: 6" }
+      }
+
+      it "updates the board" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        board.reload
+        expect(board.config.sync_months).to eq(6)
+      end
+
+      it "returns a 200" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "with invalid params" do
+      let(:new_attributes) {
+        { config_string: "sync:\n  months: 6\ninvalid: attribute" }
+      }
+
+      it "doesn't update the board" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(board.config.sync_months).to eq(nil)
+      end
+
+      it "re-renders the 'config' template" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(response).to render_template('partials/_config_form')
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "if the app is in readonly mode" do
+      let(:new_attributes) {
+        { config_string: "sync:\n  months: 6" }
+      }
+
+      before(:each) { allow(ENV).to receive(:[]).with('READONLY').and_return(1) }
+
+      it "doesn't update the board" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(board.config.sync_months).to eq(nil)
+      end
+
+      it "re-renders the 'config' template" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(response).to render_template('partials/_config_form')
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "if the domain is syncing" do
+      let(:new_attributes) {
+        { config_string: "sync:\n  months: 6" }
+      }
+
+      before(:each) {
+        domain.syncing = true
+        domain.save
+      }
+
+      it "doesn't update the board" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(board.config.sync_months).to eq(nil)
+      end
+
+      it "re-renders the 'config' template" do
+        post :update, params: {:board_id => board.jira_id, :board => new_attributes}
+        expect(response).to render_template('partials/_config_form')
+        expect(response.status).to eq(400)
+      end
+    end
+  end
 end
