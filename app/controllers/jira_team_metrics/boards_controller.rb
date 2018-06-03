@@ -14,7 +14,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
 
   def update
     @domain.transaction do
-      if @board.validate_syncing && @board.update(board_params)
+      if JiraTeamMetrics::UpdateCheck.new(@board).can_update? && @board.update(board_params)
         render json: {}, status: :ok
       else
         render partial: 'partials/config_form', status: 400
@@ -25,7 +25,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   def sync
     @domain.transaction do
       @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-      if @board.validate_syncing(@credentials) && @credentials.valid?
+      if JiraTeamMetrics::UpdateCheck.new(@board).can_update?(@credentials) && @credentials.valid?
         JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
         render json: {}, status: 200
       else

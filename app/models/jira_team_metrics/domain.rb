@@ -1,6 +1,5 @@
 class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   include JiraTeamMetrics::Configurable
-  include JiraTeamMetrics::Synchronizable
 
   serialize :statuses
   serialize :fields

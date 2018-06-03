@@ -1,6 +1,5 @@
 class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   include JiraTeamMetrics::Configurable
-  include JiraTeamMetrics::Synchronizable
 
   belongs_to :domain
   has_many :issues, :dependent => :delete_all

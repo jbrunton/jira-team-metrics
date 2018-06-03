@@ -1,5 +1,5 @@
 module JiraTeamMetrics::EnvironmentHelper
-  def readonly?
+  def readonly_mode?
     !!ENV['READONLY']
   end
 end
