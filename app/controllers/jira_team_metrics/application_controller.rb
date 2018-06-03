@@ -11,12 +11,4 @@ private
     @board = @domain.boards.find_by(jira_id: params[:board_id])
     @chart_params = JiraTeamMetrics::ChartParams.from_params(@board, params)
   end
-
-  def render_unauthorized
-    render json: {}, status: 401
-  end
-
-  def render_syncing
-    render json: { responseText: 'Sync in progress. Try again later.' }, status: 400
-  end
 end

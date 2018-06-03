@@ -10,9 +10,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
 
   def update
     @domain.transaction do
-      if readonly?
-        render_unauthorized
-      elsif @domain.validate_syncing && @domain.update(domain_params)
+      if @domain.validate_syncing && @domain.update(domain_params)
         render json: {}, status: :ok
       else
         render partial: 'partials/config_form', status: 400

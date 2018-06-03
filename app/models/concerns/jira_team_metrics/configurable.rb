@@ -17,7 +17,11 @@ module JiraTeamMetrics::Configurable
 
   def validate_config
     begin
-      config.validate
+      if readonly?
+        errors.add(:config, 'Server started in readonly mode. Config is readonly.')
+      else
+        config.validate
+      end
     rescue Rx::ValidationError => e
       errors.add(:config, e.message)
     end
