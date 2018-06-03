@@ -21,7 +21,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   def sync
     @domain.transaction do
       @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-      if JiraTeamMetrics::UpdateCheck.new(@domain).can_update?(@credentials) && @credentials.valid?
+      if JiraTeamMetrics::UpdateCheck.new(@domain).can_sync?(@credentials) && @credentials.valid?
         JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.to_serializable_hash)
         render json: {}, status: 200
       else

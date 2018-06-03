@@ -63,7 +63,7 @@
       title: 'Update Config',
       body: bodyHtml ? bodyHtml : $('#config-form-template').html(),
       confirm: submitConfig,
-      <% if readonly? %>
+      <% if readonly_mode? %>
           positiveAction: false,
       <% else %>
           positiveAction: { text: 'Submit' },

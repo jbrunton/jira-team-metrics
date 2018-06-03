@@ -10,7 +10,14 @@ class JiraTeamMetrics::UpdateCheck
     if readonly_mode?
       target_model.errors.add(:base, 'Server started in readonly mode. Config is readonly.')
       false
-    elsif @object.sync_in_progress?
+    else
+      can_sync?(target_model)
+    end
+  end
+
+  def can_sync?(target_model = nil)
+    target_model ||= @object
+    if @object.sync_in_progress?
       target_model.errors.add(:base, 'Synchronize job in progress, please wait.')
       false
     else
