@@ -1,12 +1,13 @@
 module JiraTeamMetrics::Synchronizable
   extend ActiveSupport::Concern
 
-  included do
-    validate :validate_syncing
-  end
-
-private
-  def validate_syncing
-    errors.add(:base, 'Synchronize job in progress, please wait.') if sync_in_progress?
+  def validate_syncing(target_model = nil)
+    target_model ||= self
+    if sync_in_progress?
+      target_model.errors.add(:base, 'Synchronize job in progress, please wait.') if sync_in_progress?
+      false
+    else
+      true
+    end
   end
 end
