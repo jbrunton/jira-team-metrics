@@ -10,7 +10,7 @@ RSpec.describe JiraTeamMetrics::Domain do
 
   describe "#short_team_name" do
     it "returns a shortened version of the team name" do
-      expect(domain.short_team_name("Android")).to eq("and")
+      expect(JiraTeamMetrics::Domain.get_instance.short_team_name("Android")).to eq("and")
     end
   end
 end
