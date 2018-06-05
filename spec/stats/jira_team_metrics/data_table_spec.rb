@@ -137,7 +137,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
         ])
       end
 
-      it "aggregates by a custom block" do
+      it "aggregates by a single column with a custom block" do
+        grouped_data = data_table
+           .select('issue_type').count('issue_key', as: 'Count')
+           .group { |issue_type| issue_type.try(:downcase) }
+
+        expect(grouped_data.columns).to eq(['issue_type', 'Count'])
+        expect(grouped_data.rows).to eq([
+            ['story', 4],
+            ['bug', 1]
+        ])
+      end
+
+      it "aggregates by multiple columns with a custom block" do
         grouped_data = data_table
           .select('issue_type', 'developer').count('issue_key', as: 'Count')
           .group do |issue_type, developer|
@@ -215,6 +227,54 @@ RSpec.describe JiraTeamMetrics::DataTable do
         ['DEV-104', 'Story', 'Joe', 1],
         ['DEV-102', 'Story', nil, nil]
       ])
+    end
+  end
+
+  describe "#insert_if_missing" do
+    let(:indexes) { [0, 1, 2] }
+
+    context "given an empty table" do
+      let(:data_table) { JiraTeamMetrics::DataTable.new(['index', 'count'], []) }
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+            [0, 0],
+            [1, 0],
+            [2, 0]])
+      end
+    end
+
+    context "given a table with some existing values" do
+      let(:data_table) do
+        JiraTeamMetrics::DataTable.new(
+            ['index', 'count'],
+            [[1, 4]])
+      end
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+                                          [0, 0],
+                                          [1, 4],
+                                          [2, 0]])
+      end
+    end
+
+    context "given a table that starts with some existing values" do
+      let(:data_table) do
+        JiraTeamMetrics::DataTable.new(
+            ['index', 'count'],
+            [[0, 4]])
+      end
+
+      it "fills in the missing rows" do
+        data_table.insert_if_missing(indexes, [0])
+        expect(data_table.rows).to eq([
+                                          [0, 4],
+                                          [1, 0],
+                                          [2, 0]])
+      end
     end
   end
 

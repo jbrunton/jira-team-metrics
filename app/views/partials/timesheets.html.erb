@@ -1,5 +1,5 @@
 <%
-   total_duration = @filtered_issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum
+   total_duration = @filtered_issues.empty? ? 0 : @filtered_issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum
 %>
 
 <table class="ui basic compact selectable table jira-tree">
