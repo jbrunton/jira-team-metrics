@@ -123,7 +123,7 @@ class JiraTeamMetrics::CfdBuilder
     end
 
     if row.in_progress > 0 && predicted_completion_rate > 0
-      row.in_progress -= predicted_completion_rate
+      row.in_progress -= [row.in_progress, predicted_completion_rate].min
     end
   end
 

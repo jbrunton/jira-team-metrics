@@ -1,4 +1,4 @@
-<% object = @board.try(:object) || @domain %>
+<% object = @board || @domain %>
 
 <form id="config-form" class="ui form <%= 'error' if object.errors.any? %>">
   <% if object.errors.any? %>
@@ -9,14 +9,14 @@
       </div>
   <% end %>
 
-  <% if readonly? %>
+  <% if readonly_mode? %>
       <div class="ui info message">
         <p>Server started in readonly mode. Config is readonly.</p>
       </div>
   <% end %>
 
   <div class="field">
-    <% if readonly? %>
+    <% if readonly_mode? %>
         <%= form_input(object, :config_string, type: :textarea, readonly: true) %>
     <% else %>
         <%= form_input(object, :config_string, type: :textarea) %>

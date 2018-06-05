@@ -44,9 +44,9 @@ private
 
   def column_type(index)
     column_values = @data_table.rows.map{ |row| row[index] }.compact
-    if column_values.any? && column_values.all?{ |val| val.class <= Numeric }
+    if numeric_column?(column_values)
       'number'
-    elsif column_values.any? && column_values.all?{ |val| val.class <= Time }
+    elsif date_column?(column_values)
       'date'
     elsif column_values.empty?
       # play it safe with google charts - assume a number unless clearly not
@@ -54,5 +54,13 @@ private
     else
       'string'
     end
+  end
+
+  def numeric_column?(column_values)
+    column_values.any? && column_values.all?{ |val| val.class <= Numeric }
+  end
+
+  def date_column?(column_values)
+    column_values.any? && column_values.all?{ |val| val.class <= Time || val.class <= Date || val.class <= DateTime }
   end
 end

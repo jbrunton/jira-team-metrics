@@ -6,6 +6,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   has_many :filters, :dependent => :delete_all
   has_many :report_fragments, :dependent => :delete_all
 
+  def sync_in_progress?
+    domain.sync_in_progress?
+  end
+
   def exclusions
     exclusions_string = config_hash['exclude']
     exclusions_string ||= ''
@@ -41,11 +45,22 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  def completed_issues
+  def completed_issues(date_range)
     @completed_issues ||= begin
       self.issues
-        .select{ |i| i.completed_time && i.started_time }
+        .select do |issue|
+          issue.completed_time && issue.started_time &&
+              date_range.start_date <= issue.completed_time &&
+              issue.completed_time < date_range.end_date
+        end
         .sort_by{ |i| i.completed_time }
+    end
+  end
+
+  def wip_issues
+    @in_progress_issues ||= begin
+      self.issues
+        .select{ |i| i.started_time && !i.completed_time }
     end
   end
 

@@ -2,19 +2,10 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_domain
   before_action :set_board
 
-  def issues_by_type
-  end
-
-  def issues
-  end
-
-  def control_chart
-  end
-
-  def cycle_times_by_type
-  end
-
   def timesheets
+  end
+
+  def throughput
   end
 
   def deliveries
@@ -41,6 +32,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
+  end
+
+  def delivery_throughput
+    @team = params[:team]
+    @increment = @board.issues.find_by(key: params[:issue_key])
   end
 
   def increment_report
