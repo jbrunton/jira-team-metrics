@@ -23,21 +23,8 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  SHORT_TEAM_NAMES = {
-    'Android' => 'and',
-    'iOS' => 'ios',
-    'OpsTools' => 'ops',
-    'Core' => 'cor',
-    'Jarvis' => 'jar',
-    'BridgeAPI' => 'bri',
-    'Billing' => 'bil',
-    'Data & Analytics' => 'dat',
-    'Member Web' => 'mem',
-    'None' => 'non'
-  }
-
   def short_team_name(full_team_name)
-    SHORT_TEAM_NAMES[full_team_name]
+    full_team_name[0..2].downcase
   end
 
   def status_color_for(status)
