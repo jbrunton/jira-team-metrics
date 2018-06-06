@@ -154,7 +154,10 @@ private
   def build_predicted_scope
     training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
     training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
-    return if training_epic_count == 0
+    if training_epic_count == 0
+      zero_predicted_scope
+      return
+    end
 
     @trained_epic_scope = training_scope / training_epic_count
     @adjusted_epic_scope = @increment.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
