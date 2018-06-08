@@ -65,6 +65,11 @@ class JiraTeamMetrics::DataTable
     self
   end
 
+  def insert_if_missing(column_values, default_values)
+    InsertIfMissingOp.new(self).apply(column_values, default_values)
+    self
+  end
+
   def to_json(opts = {})
     JiraTeamMetrics::DataTableSerializer.new(self).to_json(opts)
   end
@@ -156,9 +161,15 @@ class JiraTeamMetrics::DataTable
         if block.nil?
           group_by_values
         else
-          block.call(*group_by_values)
+          apply_group_by_block(group_by_values, block)
         end
       end
+    end
+
+    def apply_group_by_block(group_by_values, block)
+      result = block.call(*group_by_values)
+      # so that we can write .group{ |x| x.y } instead of .group{ |x| [x.y] } when grouping by a single value
+      result.is_a?(Array) ? result : [result]
     end
 
     def aggregate_rows_by(grouped_rows, aggregate_columns, opts)
@@ -177,6 +188,44 @@ private
       [0, nil]
     else
       [1, block.nil? ? val : block.call(val)]
+    end
+  end
+
+  class InsertIfMissingOp
+    attr_reader :data_table
+
+    def initialize(data_table)
+      @data_table = data_table
+    end
+
+    def apply(column_values, default_values)
+      remaining_values = column_values.clone
+      row_index = 0
+      while remaining_values.any?
+        if row_index >= data_table.rows.count
+          insert_remaining_values(remaining_values, default_values)
+        else
+          insert_next_value(row_index, remaining_values, default_values)
+          row_index += 1
+        end
+      end
+    end
+
+  private
+    def insert_remaining_values(remaining_values, default_values)
+      data_table.rows.concat(remaining_values.map{ |val| [val] + default_values })
+      remaining_values.clear
+    end
+
+    def insert_next_value(row_index, remaining_values, default_values)
+      value_to_insert = remaining_values.first
+      value_at_index = data_table.rows.count > row_index ? data_table.rows[row_index][0] : nil
+      if value_to_insert < value_at_index
+        data_table.insert_row(row_index, [value_to_insert] + default_values)
+        remaining_values.shift
+      elsif value_to_insert == value_at_index
+        remaining_values.shift
+      end
     end
   end
 end

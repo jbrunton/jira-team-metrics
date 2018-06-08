@@ -6,6 +6,8 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   def eval(query)
+    return @issues if query.blank?
+
     parser = MqlParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))
@@ -115,7 +117,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(board, issues)
       lhs_issues = lhs.eval(board, issues)
       rhs_issues = rhs.eval(board, issues)
-      lhs_issues + rhs_issues
+      (lhs_issues + rhs_issues).uniq
     end
   end
 
@@ -138,7 +140,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(_, issues)
       issues.select do |issue|
         field_name = field[:identifier].to_s
-        if ['key', 'issue_type', 'summary'].include?(field_name)
+        if ['key', 'issue_type', 'summary', 'status', 'status_category'].include?(field_name)
           issue.send(field_name) == value[:value].to_s
         elsif !issue.fields[field_name].nil?
           issue.fields[field_name] == value[:value].to_s

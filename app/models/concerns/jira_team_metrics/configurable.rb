@@ -1,5 +1,6 @@
 module JiraTeamMetrics::Configurable
   extend ActiveSupport::Concern
+  include JiraTeamMetrics::EnvironmentHelper
 
   included do
     validate :validate_config

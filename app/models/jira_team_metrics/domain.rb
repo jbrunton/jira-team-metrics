@@ -9,6 +9,12 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     boards.where.not(jira_team_metrics_boards: {last_synced: nil})
   end
 
+  def sync_in_progress?
+    self.transaction do
+      syncing? || boards.any? { |board| board.syncing? }
+    end
+  end
+
   def status_category_for(status)
     if status == 'Predicted'
       'Predicted'
