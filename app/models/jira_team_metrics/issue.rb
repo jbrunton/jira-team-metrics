@@ -100,7 +100,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
       t['toStatusCategory'] == 'In Progress'
     end
 
-    first_transition ? Time.parse(first_transition['date']) : nil
+    first_transition ? DateTime.parse(first_transition['date']) : nil
   end
 
   def completed_time
@@ -108,7 +108,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
       t['toStatusCategory'] == 'Done'
     end
 
-    last_transition ? Time.parse(last_transition['date']) : nil
+    last_transition ? DateTime.parse(last_transition['date']) : nil
   end
 
   def cycle_time
