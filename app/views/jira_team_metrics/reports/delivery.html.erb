@@ -125,7 +125,8 @@
         (<%= pretty_print_number(team_data[:progress_percent], round: true) %>%)
       </td>
       <td class="right aligned highlight">
-        <%= pretty_print_number(team_data[:rolling_throughput] * 7) %>
+        <%= link_to pretty_print_number(team_data[:rolling_throughput] * 7),
+            delivery_throughput_report_path(@board, @increment, team) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>

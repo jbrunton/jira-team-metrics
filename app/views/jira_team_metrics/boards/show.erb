@@ -2,14 +2,12 @@
 
 <h1><%= @board.name %></h1>
 
-<%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.jira_id } %>
-
 <div class="ui grid">
   <div class="ten wide column">
     <table class="ui celled structured table">
       <tbody>
         <tr>
-          <td rowspan="3">
+          <td rowspan="4">
             Manage flow
           </td>
           <td>
@@ -36,6 +34,15 @@
           <td>
             <span class="ui orange horizontal label">Prototype</span>
             How the teams' time was allocated across projects
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="<%= reports_path(@board) %>/throughput">Throughput</a>
+          </td>
+          <td>
+            <span class="ui orange horizontal label">Prototype</span>
+            Visualize throughput over time
           </td>
         </tr>
         <tr>

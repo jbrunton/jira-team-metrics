@@ -32,6 +32,16 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     end
   end
 
+  def teams
+    if is_increment?
+      []
+    elsif is_epic?
+      fields['Teams'] || []
+    else
+      fields['Teams'] || epic.try(:teams) || []
+    end
+  end
+
   def target_date
     if is_increment?
       # TODO: get this field name from config
@@ -107,6 +117,29 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     completed && started ? (completed - started) / (60 * 60 * 24) : nil
   end
 
+  def started?
+    !started_time.nil?
+  end
+
+  def completed?
+    started? && !completed_time.nil?
+  end
+
+  def in_progress?
+    started? && !completed?
+  end
+
+  def completed_during?(date_range)
+    completed? && date_range.contains?(completed_time)
+  end
+
+  def in_progress_during?(date_range)
+    # issue is started before the range ends
+    started? && started_time < date_range.end_date &&
+        # and is either still in progress, or ends within the range
+        (!completed? || completed_time >= date_range.start_date)
+  end
+
   def domain_url
     "#{board.domain.config.url}/browse/#{key}"
   end
@@ -127,8 +160,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
 
   def duration_in_range(date_range)
     return 0 if issue_type == 'Epic' || date_range.nil?
-    overlap = date_range.overlap_with(JiraTeamMetrics::DateRange.new(started_time, completed_time))
-    overlap.nil? ? 0 : overlap.duration
+    JiraTeamMetrics::IssueHistoryAnalyzer.new(self).time_in_category('In Progress', date_range)
+  end
+
+  def transition_ranges
+
+  end
+
+  def time_in_category(status_category, date_range)
+
   end
 
 private

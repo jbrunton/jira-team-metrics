@@ -8,29 +8,29 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def search
-    @boards = JiraTeamMetrics::Board.where('name LIKE ?', "%#{params[:query]}%")
-    respond_to do |format|
-      format.json { render json: @boards.map{ |board| board.as_json.merge(link: board_path( board)) } }
-    end
+    @boards = JiraTeamMetrics::Board.where('lower(name) LIKE ?', "%#{params[:query].downcase}%")
+    render json: @boards.map{ |board| board.as_json.merge(link: board_path( board)) }
   end
 
   def update
-    if readonly?
-      render_unauthorized
-    elsif @board.update(board_params)
-      render json: {}, status: :ok
-    else
-      render partial: 'partials/config_form', status: 400
+    @domain.transaction do
+      if JiraTeamMetrics::ModelUpdater.new(@board).update(board_params)
+        render json: {}, status: :ok
+      else
+        render partial: 'partials/config_form', status: 400
+      end
     end
   end
 
   def sync
-    @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-    if @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
-      render json: {}, status: 200
-    else
-      render partial: 'partials/sync_form', status: 400
+    @domain.transaction do
+      @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+      if JiraTeamMetrics::ModelUpdater.new(@board).can_sync?(@credentials) && @credentials.valid?
+        JiraTeamMetrics::SyncBoardJob.perform_later(@board, @credentials.to_serializable_hash, sync_months)
+        render json: {}, status: 200
+      else
+        render partial: 'partials/sync_form', status: 400
+      end
     end
   end
 

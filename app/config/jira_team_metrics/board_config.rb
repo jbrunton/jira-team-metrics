@@ -12,10 +12,6 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
     config_hash['default_query'] || ''
   end
 
-  def cycle_times
-    config_hash['cycle_times']
-  end
-
   def predictive_scope
     if config_hash['predictive_scope'].nil?
       nil

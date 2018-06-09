@@ -9,7 +9,7 @@ module JiraTeamMetrics::LinkHelper
     if issue.nil?
       "#{issue_key} – #{link['issue']['summary']}".html_safe
     else
-      "<a href='#{url_for(issue)}'>#{issue_key}</a> – #{link['issue']['summary']}".html_safe
+      issue_summary(issue)
     end
   end
 

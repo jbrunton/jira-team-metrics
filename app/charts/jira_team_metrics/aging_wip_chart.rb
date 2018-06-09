@@ -44,31 +44,15 @@ class JiraTeamMetrics::AgingWipChart
 
 private
   def wip_issues
-    @wip_issues ||= begin
-      issues = @board.issues.select do |issue|
-        issue.status_category == 'In Progress' &&
-          issue.started_time
-      end
-      if @params.query.blank?
-        issues
-      else
-        JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
-      end
-    end.sort_by { |issue| issue.started_time }
+    JiraTeamMetrics::MqlInterpreter.new(@board, @board.wip_issues)
+        .eval(@params.query)
+        .sort_by { |issue| issue.started_time }
   end
 
   def completed_issues
-    @completed_issues ||= begin
-      issues = @board.completed_issues.select do |issue|
-        @params.date_range.start_date <= issue.completed_time &&
-          issue.completed_time < @params.date_range.end_date
-      end
-      if @params.query.blank?
-        issues
-      else
-        JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
-      end
-    end.sort_by { |issue| issue.cycle_time }
+    JiraTeamMetrics::MqlInterpreter.new(@board, @board.completed_issues(@params.date_range))
+        .eval(@params.query)
+        .sort_by { |issue| issue.cycle_time }
   end
 
   def percentiles
