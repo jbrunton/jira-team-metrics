@@ -52,33 +52,54 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
     end
   end
 
-  describe "#build" do
+  let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', delivery, my_team_issues + epics) }
+
+  before(:each) { team_report.build }
+
+
+  describe "#team" do
+    it "returns the team" do
+      expect(team_report.team).to eq('My Team')
+    end
+  end
+
+  describe "#increment" do
+    it "returns the increment" do
+      expect(team_report.increment).to eq(delivery)
+    end
+  end
+
+  describe "#epics" do
     context "when given no training data" do
-      let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', delivery, my_team_issues + epics) }
-
-      before(:each) { team_report.build }
-
-      it "describes some basic attributes of the scope" do
-        expect(team_report.team).to eq('My Team')
-        expect(team_report.increment).to eq(delivery)
-      end
-
-      it "describes the epic scope, ignoring epics with no scope" do
+      it "returns the epics with scope" do
         expect(team_report.epics).to eq([scoped_epic])
+      end
+    end
+  end
+
+  describe "#unscoped_epics" do
+    context "when given no training data" do
+      it "returns an empty list" do
         expect(team_report.unscoped_epics).to eq([])
       end
+    end
+  end
 
-      it "describes the total scope" do
-        expect(team_report.scope).to eq(my_team_issues)
-      end
+  describe "#scope" do
+    it "returns the total scope" do
+      expect(team_report.scope).to eq(my_team_issues)
+    end
+  end
 
-      it "describes the completed scope" do
-        expect(team_report.completed_scope).to eq(completed_issues)
-      end
+  describe "#completed_scope" do
+    it "returns the completed scope" do
+      expect(team_report.completed_scope).to eq(completed_issues)
+    end
+  end
 
-      it "describes the remaining scope" do
-        expect(team_report.remaining_scope).to eq(incomplete_issues)
-      end
+  describe "#remaining_scope" do
+    it "returns the remaining scope" do
+      expect(team_report.remaining_scope).to eq(incomplete_issues)
     end
   end
 end
