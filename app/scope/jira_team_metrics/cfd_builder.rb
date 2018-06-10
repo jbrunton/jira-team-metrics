@@ -91,7 +91,7 @@ class JiraTeamMetrics::CfdBuilder
     @increment_report.teams.each do |team|
       team_completion_date = @team_completion_dates[team]
       unless team_completion_date.nil?
-        if date <= team_completion_date && team_completion_date < date + 1.day
+        if date <= team_completion_date && team_completion_date < date + 1
           annotations << JiraTeamMetrics::Domain.get_instance.short_team_name(team)
         end
       end
@@ -142,7 +142,7 @@ class JiraTeamMetrics::CfdBuilder
     unless team_completion_date.nil?
       team_report = @increment_report.team_report_for(team)
       if date < team_completion_date
-        team_rate = team_completion_rate * (date - DateTime.now) / 1.day
+        team_rate = team_completion_rate * (date - DateTime.now)
       else
         team_rate = team_report.remaining_scope.count
       end

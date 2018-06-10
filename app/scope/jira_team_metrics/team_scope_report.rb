@@ -182,7 +182,7 @@ private
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0
-      @predicted_completion_date = DateTime.now + (@remaining_scope.count.to_f / @predicted_throughput).days
+      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
     end
   end
 

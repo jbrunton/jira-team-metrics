@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   let(:now) { DateTime.new(2018, 1, 21, 10, 30) }
-  let(:three_weeks_ago) { now - 21.days }
-  let(:two_weeks_ago) { now - 14.days }
-  let(:one_week_ago) { now - 7.days }
+  let(:three_weeks_ago) { now - 21 }
+  let(:two_weeks_ago) { now - 14 }
+  let(:one_week_ago) { now - 7 }
 
   let(:epics) { [create(:epic), create(:epic)] }
   let(:completed_issues) {
