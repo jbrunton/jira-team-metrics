@@ -114,7 +114,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   def cycle_time
     started = started_time
     completed = completed_time
-    completed && started ? (completed - started) / (60 * 60 * 24) : nil
+    completed && started ? (completed - started).to_f : nil
   end
 
   def started?

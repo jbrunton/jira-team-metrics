@@ -10,7 +10,7 @@ class JiraTeamMetrics::AgingWipChart
       .pick(:key, :summary, :started_time)
       .build
 
-    now = Time.now
+    now = DateTime.now
 
     data_table.add_column('now', Array.new(data_table.rows.count, now))
     data_table.insert_row(0, ['Percentiles', '85th', now - percentiles[85].days, now])
@@ -23,9 +23,9 @@ class JiraTeamMetrics::AgingWipChart
   def chart_opts
     {
       colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (Time.now - issue.started_time) < percentiles[50] * 60 * 60 * 24
+        if (DateTime.now - issue.started_time) < percentiles[50]
           '#03a9f4'
-        elsif (Time.now - issue.started_time) < percentiles[70] * 60 * 60 * 24
+        elsif (DateTime.now - issue.started_time) < percentiles[70]
           '#ff9800'
         else
           '#f44336'

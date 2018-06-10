@@ -71,7 +71,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "started_time" do
     it "returns the time of the first transition to 'In Progress' status category" do
-      expect(issue.started_time).to eq(Time.parse('2017-01-02T12:00:00.000-0000'))
+      expect(issue.started_time).to eq(DateTime.parse('2017-01-02T12:00:00.000-0000'))
     end
 
     context "when never started" do
@@ -81,7 +81,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "completed_time" do
     it "returns the time of the last transition to 'Done' status category" do
-      expect(issue.completed_time).to eq(Time.parse('2017-01-03T18:00:00.000-0000'))
+      expect(issue.completed_time).to eq(DateTime.parse('2017-01-03T18:00:00.000-0000'))
     end
 
     context "when reopened" do
@@ -143,17 +143,17 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "completed_during?" do
     it "returns true if the issue was completed during the given range" do
-      date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,3), Time.new(2017,1,4))
+      date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,3), DateTime.new(2017,1,4))
       expect(issue.completed_during?(date_range)).to eq(true)
     end
 
     it "returns false if the issue was completed outside the given range" do
-      date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,1), Time.new(2017,1,2))
+      date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,1), DateTime.new(2017,1,2))
       expect(issue.completed_during?(date_range)).to eq(false)
     end
 
     it "returns false if the issue is not completed" do
-      date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,3), Time.new(2017,1,4))
+      date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,3), DateTime.new(2017,1,4))
       issue = create(:issue, transitions: [in_progress_transition])
       expect(issue.completed_during?(date_range)).to eq(false)
     end
@@ -162,22 +162,22 @@ RSpec.describe JiraTeamMetrics::Issue do
   describe "#in_progress_during?" do
     context "when the issue is completed" do
       it "returns true if the issue was completed during the given range" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,3), Time.new(2017,1,4))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,3), DateTime.new(2017,1,4))
         expect(issue.in_progress_during?(date_range)).to eq(true)
       end
 
       it "returns true if the issue was completed after the given range but overlaps" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,2), Time.new(2017,1,3))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,2), DateTime.new(2017,1,3))
         expect(issue.in_progress_during?(date_range)).to eq(true)
       end
 
       it "returns false if the issue was started after the given range" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,1), Time.new(2017,1,2))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,1), DateTime.new(2017,1,2))
         expect(issue.in_progress_during?(date_range)).to eq(false)
       end
 
       it "returns false if the issue was completed before the given range" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,4,1), Time.new(2017,5,2))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,4,1), DateTime.new(2017,5,2))
         expect(issue.in_progress_during?(date_range)).to eq(false)
       end
     end
@@ -186,17 +186,17 @@ RSpec.describe JiraTeamMetrics::Issue do
       let(:issue) { create(:issue, transitions: [in_progress_transition]) }
 
       it "returns true if the issue was started before the range start date" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,3), Time.new(2017,1,4))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,3), DateTime.new(2017,1,4))
         expect(issue.in_progress_during?(date_range)).to eq(true)
       end
 
       it "returns true if the issue was started before the range end date" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,2), Time.new(2017,1,3))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,2), DateTime.new(2017,1,3))
         expect(issue.in_progress_during?(date_range)).to eq(true)
       end
 
       it "returns false if the issue was started after the given range" do
-        date_range = JiraTeamMetrics::DateRange.new(Time.new(2017,1,1), Time.new(2017,1,2))
+        date_range = JiraTeamMetrics::DateRange.new(DateTime.new(2017,1,1), DateTime.new(2017,1,2))
         expect(issue.in_progress_during?(date_range)).to eq(false)
       end
     end

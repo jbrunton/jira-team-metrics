@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:key) { |k| "ISSUE-#{k + 100}" }
     summary "Some Issue"
     board
-    fields {}
+    fields { {} }
     transitions []
     status 'Done'
 
