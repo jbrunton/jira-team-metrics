@@ -8,13 +8,13 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
   def history_as_ranges
     issue.transitions.each_cons(2).map do |t1, t2|
       date_range = JiraTeamMetrics::DateRange.new(
-          Time.parse(t1['date']),
-          Time.parse(t2['date'])
+        DateTime.parse(t1['date']),
+        DateTime.parse(t2['date'])
       )
       StatusHistory.new(
-          t1['toStatus'],
-          t1['toStatusCategory'],
-          date_range
+        t1['toStatus'],
+        t1['toStatusCategory'],
+        date_range
       )
     end
   end

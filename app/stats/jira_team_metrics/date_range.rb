@@ -19,7 +19,7 @@ class JiraTeamMetrics::DateRange
     next_date = dates.last || start_date
     while next_date < end_date
       dates << next_date
-      next_date = next_date + 1.day
+      next_date = next_date + 1
     end
     dates
   end
@@ -52,6 +52,6 @@ class JiraTeamMetrics::DateRange
   end
 
   def duration
-    ((end_date - start_date) / 1.day).to_f.abs
+    (end_date - start_date).to_f.abs
   end
 end

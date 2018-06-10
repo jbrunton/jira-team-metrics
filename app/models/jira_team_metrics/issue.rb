@@ -45,7 +45,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   def target_date
     if is_increment?
       # TODO: get this field name from config
-      fields['Target Date'] ? Time.parse(fields['Target Date']) : nil
+      fields['Target Date'] ? DateTime.parse(fields['Target Date']) : nil
     end
   end
 
@@ -100,7 +100,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
       t['toStatusCategory'] == 'In Progress'
     end
 
-    first_transition ? Time.parse(first_transition['date']) : nil
+    first_transition ? DateTime.parse(first_transition['date']) : nil
   end
 
   def completed_time
@@ -108,13 +108,13 @@ class JiraTeamMetrics::Issue < ApplicationRecord
       t['toStatusCategory'] == 'Done'
     end
 
-    last_transition ? Time.parse(last_transition['date']) : nil
+    last_transition ? DateTime.parse(last_transition['date']) : nil
   end
 
   def cycle_time
     started = started_time
     completed = completed_time
-    completed && started ? (completed - started) / (60 * 60 * 24) : nil
+    completed && started ? (completed - started).to_f : nil
   end
 
   def started?

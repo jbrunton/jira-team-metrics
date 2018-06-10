@@ -10,7 +10,7 @@ class JiraTeamMetrics::CfdBuilder
 
     def to_array(date, annotation, annotation_text)
       date_string = date_as_string(date)
-      today_annotation = date.to_date == Time.now.to_date ? 'today' : nil
+      today_annotation = date.to_date == DateTime.now.to_date ? 'today' : nil
       [date_string, today_annotation, done, annotation, annotation_text, in_progress, to_do, predicted]
     end
   end
@@ -22,7 +22,7 @@ class JiraTeamMetrics::CfdBuilder
   def build(cfd_type)
     lookup_team_completion_rates(cfd_type, @increment_report)
 
-    completion_date = @team_completion_dates.values.compact.max || Time.now
+    completion_date = @team_completion_dates.values.compact.max || DateTime.now
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(@increment_report.second_percentile_started_date, completion_date).to_a
@@ -77,7 +77,7 @@ class JiraTeamMetrics::CfdBuilder
       end
     end
 
-    if date > Time.now
+    if date > DateTime.now
       adjust_row_with_predictions(row, date)
     end
 
@@ -91,7 +91,7 @@ class JiraTeamMetrics::CfdBuilder
     @increment_report.teams.each do |team|
       team_completion_date = @team_completion_dates[team]
       unless team_completion_date.nil?
-        if date <= team_completion_date && team_completion_date < date + 1.day
+        if date <= team_completion_date && team_completion_date < date + 1
           annotations << JiraTeamMetrics::Domain.get_instance.short_team_name(team)
         end
       end
@@ -142,7 +142,7 @@ class JiraTeamMetrics::CfdBuilder
     unless team_completion_date.nil?
       team_report = @increment_report.team_report_for(team)
       if date < team_completion_date
-        team_rate = team_completion_rate * (date - Time.now) / 1.day
+        team_rate = team_completion_rate * (date - DateTime.now)
       else
         team_rate = team_report.remaining_scope.count
       end

@@ -140,21 +140,24 @@ private
 
   def at_risk?
     forecast_completion_date &&
-      (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+      (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now) < 0.2
   end
 
   def over_target_by
     if forecast_completion_date.nil?
       'Inf'
     else
-      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now)).round
+      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now)).round
     end
   end
 
   def build_predicted_scope
     training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
     training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
-    return if training_epic_count == 0
+    if training_epic_count == 0
+      zero_predicted_scope
+      return
+    end
 
     @trained_epic_scope = training_scope / training_epic_count
     @adjusted_epic_scope = @increment.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
@@ -179,7 +182,7 @@ private
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0
-      @predicted_completion_date = Time.now + (@remaining_scope.count.to_f / @predicted_throughput).days
+      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
     end
   end
 
@@ -192,7 +195,7 @@ private
           summary: "Predicted scope #{k + 1}",
           fields: { 'Epic Link' => epic.key },
           transitions: [],
-          issue_created: Time.now.to_date,
+          issue_created: DateTime.now.to_date,
           status: 'Predicted'
         })
       end
