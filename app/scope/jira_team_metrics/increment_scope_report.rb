@@ -38,7 +38,7 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
     predicted_throughputs = @team_reports.values.map{ |team_report| team_report.predicted_throughput }.compact
     @predicted_throughput = predicted_throughputs.empty? ? 0 : predicted_throughputs.sum
     if @predicted_throughput > 0
-      @predicted_completion_date = Time.now + (@remaining_scope.count.to_f / @predicted_throughput).days
+      @predicted_completion_date = DateTime.now + (@remaining_scope.count.to_f / @predicted_throughput).days
     end
 
     self

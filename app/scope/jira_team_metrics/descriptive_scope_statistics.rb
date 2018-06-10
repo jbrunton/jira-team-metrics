@@ -9,7 +9,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
 
   def started_date
     # TODO: trunc to date
-    @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || Time.now
+    @started_date ||= scope.map{ |issue| issue.started_time }.compact.min || DateTime.now
   end
 
   def second_percentile_started_date
@@ -36,7 +36,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
   # TODO: rename this to last_completed_issue_date or something
   def completed_date
     # TODO: trunc to date
-    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || Time.now + 90.days
+    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || DateTime.now + 90.days
   end
 
   def completed_scope_between(from_date, to_date)
@@ -49,7 +49,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
 
   def rolling_completed_issues(days)
     @rolling_completed_issues ||= {}
-    @rolling_completed_issues[days] ||= completed_scope_between(Time.now - days.days, Time.now)
+    @rolling_completed_issues[days] ||= completed_scope_between (DateTime.now - days.days, DateTime.now)
   end
 
   def rolling_throughput(days)
@@ -69,7 +69,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
     if throughput == 0
       nil
     else
-      Time.now + (remaining_scope.count.to_f / throughput).days
+      DateTime.now + (remaining_scope.count.to_f / throughput).days
     end
   end
 end

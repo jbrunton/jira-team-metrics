@@ -68,32 +68,32 @@ RSpec.describe JiraTeamMetrics::Issue do
               'Analysis',
               'To Do',
               JiraTeamMetrics::DateRange.new(
-                  Time.parse('2017-01-01T12:00:00.000-0000'),
-                  Time.parse('2017-01-02T12:00:00.000-0000')
+                  DateTime.parse('2017-01-01T12:00:00.000-0000'),
+                  DateTime.parse('2017-01-02T12:00:00.000-0000')
               )
           ),
           JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
               'In Progress',
               'In Progress',
               JiraTeamMetrics::DateRange.new(
-                  Time.parse('2017-01-02T12:00:00.000-0000'),
-                  Time.parse('2017-01-03T12:00:00.000-0000')
+                  DateTime.parse('2017-01-02T12:00:00.000-0000'),
+                  DateTime.parse('2017-01-03T12:00:00.000-0000')
               )
           ),
           JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
               'Blocked',
               'To Do',
               JiraTeamMetrics::DateRange.new(
-                  Time.parse('2017-01-03T12:00:00.000-0000'),
-                  Time.parse('2017-01-04T12:00:00.000-0000')
+                  DateTime.parse('2017-01-03T12:00:00.000-0000'),
+                  DateTime.parse('2017-01-04T12:00:00.000-0000')
               )
           ),
           JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
               'In Progress',
               'In Progress',
               JiraTeamMetrics::DateRange.new(
-                  Time.parse('2017-01-04T12:00:00.000-0000'),
-                  Time.parse('2017-01-04T18:00:00.000-0000')
+                  DateTime.parse('2017-01-04T12:00:00.000-0000'),
+                  DateTime.parse('2017-01-04T18:00:00.000-0000')
               )
           )
       ])
@@ -110,8 +110,8 @@ RSpec.describe JiraTeamMetrics::Issue do
     context "when given a date range" do
       it "returns the total time in the given category in that range" do
         date_range = JiraTeamMetrics::DateRange.new(
-            Time.parse('2017-01-02T00:00:00.000-0000'),
-            Time.parse('2017-01-04T00:00:00.000-0000')
+            DateTime.parse('2017-01-02T00:00:00.000-0000'),
+            DateTime.parse('2017-01-04T00:00:00.000-0000')
         )
         expect(analyzer.time_in_category('In Progress', date_range)).to eq(1.0)
       end

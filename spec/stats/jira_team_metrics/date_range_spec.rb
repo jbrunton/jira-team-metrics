@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::DateRange do
-  let(:start_date) { Time.new(2001, 1, 1) }
+  let(:start_date) { DateTime.new(2001, 1, 1) }
 
   describe "#to_a" do
     context "if the range is empty" do

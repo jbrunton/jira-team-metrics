@@ -6,7 +6,7 @@
   <table class="issue-details ui table">
     <% issue.transitions.each do |t| %>
         <tr>
-          <td><%= pretty_print_time(Time.parse(t['date'])) %></td>
+          <td><%= pretty_print_time(DateTime.parse(t['date'])) %></td>
           <td class="right-align <%= @domain.status_color_for(t['fromStatus']) %> lighten-4"><%= t['fromStatus'] %></td>
           <td>&rarr;</td>
           <td class="<%= @domain.status_color_for(t['toStatus']) %> lighten-4"><%= t['toStatus'] %></td>

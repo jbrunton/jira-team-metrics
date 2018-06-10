@@ -140,14 +140,14 @@ private
 
   def at_risk?
     forecast_completion_date &&
-      (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now) < 0.2
+      (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now) < 0.2
   end
 
   def over_target_by
     if forecast_completion_date.nil?
       'Inf'
     else
-      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - Time.now)).round
+      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now)).round
     end
   end
 
@@ -182,7 +182,7 @@ private
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0
-      @predicted_completion_date = Time.now + (@remaining_scope.count.to_f / @predicted_throughput).days
+      @predicted_completion_date = DateTime.now + (@remaining_scope.count.to_f / @predicted_throughput).days
     end
   end
 
@@ -195,7 +195,7 @@ private
           summary: "Predicted scope #{k + 1}",
           fields: { 'Epic Link' => epic.key },
           transitions: [],
-          issue_created: Time.now.to_date,
+          issue_created: DateTime.now.to_date,
           status: 'Predicted'
         })
       end
