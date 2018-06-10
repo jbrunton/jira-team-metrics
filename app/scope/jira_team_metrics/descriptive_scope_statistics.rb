@@ -55,7 +55,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
   def rolling_throughput(days)
     @rolling_completion_date ||= {}
     @rolling_completion_date[days] ||=
-      rolling_completed_issues(days).count.to_f
+      rolling_completed_issues(days).count.to_f / days
   end
 
   def throughput

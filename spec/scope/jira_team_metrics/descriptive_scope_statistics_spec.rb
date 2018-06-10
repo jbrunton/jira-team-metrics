@@ -31,6 +31,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
     end.new(epics, issues, completed_issues)
   end
 
+  before(:each) { travel_to now }
 
   describe "#epic_scope" do
     context "if epics.count > 0" do
@@ -65,9 +66,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
       before(:each) { allow(instance).to receive(:scope).and_return(other_issues) }
 
       it "returns the current time" do
-        travel_to now do
-          expect(instance.started_date).to eq(now)
-        end
+        expect(instance.started_date).to eq(now)
       end
     end
   end
@@ -87,9 +86,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
       before(:each) { allow(instance).to receive(:completed_scope).and_return([]) }
 
       it "returns the current time + 90 days" do
-        travel_to now do
-          expect(instance.completed_date).to eq(now + 90)
-        end
+        expect(instance.completed_date).to eq(now + 90)
       end
     end
   end
@@ -103,6 +100,18 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   describe "#throughput_between" do
     it "returns the throughput in days between two dates" do
       expect(instance.throughput_between(two_weeks_ago, two_weeks_ago + 10)).to eq(0.2)
+    end
+  end
+
+  describe "#rolling_completed_issues" do
+    it "returns the issues completed in recent days" do
+      expect(instance.rolling_completed_issues(5)).to eq([issue_three])
+    end
+  end
+
+  describe "#rolling_throughput" do
+    it "returns the throughput in recent days" do
+      expect(instance.rolling_throughput(5)).to eq(0.2)
     end
   end
 end
