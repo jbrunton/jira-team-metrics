@@ -84,6 +84,26 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       end
     end
 
+    context "#timesheets_config" do
+      it "returns nil if no details are given" do
+        board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+        expect(board_config.timesheets_config).to eq(nil)
+      end
+
+      it "returns timesheets config when specified" do
+        config_hash['timesheets'] = {
+          'reporting_period' => {
+            'day_of_week' => 2,
+            'duration' => {
+              'days' => 7
+            }
+          }
+        }
+        board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+        expect(board_config.timesheets_config).to eq(JiraTeamMetrics::BoardConfig::TimesheetsConfig.new(2, 7, []))
+      end
+    end
+
     context "#sync_months" do
       it "returns nil if no sync options are given" do
         board_config = JiraTeamMetrics::BoardConfig.new(config_hash)

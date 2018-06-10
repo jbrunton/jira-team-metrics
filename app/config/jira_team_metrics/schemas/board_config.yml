@@ -28,6 +28,20 @@ optional:
     required:
       board_id: "//int"
       adjustments_field: "//str"
+  timesheets:
+    type: "//rec"
+    optional:
+      additional_columns:
+        type: "//arr"
+        contents: "//str"
+      reporting_period:
+        type: "//rec"
+        required:
+          day_of_week: "//int"
+          duration:
+            type: "//rec"
+            required:
+              days: "//int"
   rolling_window:
     type: "//rec"
     required:

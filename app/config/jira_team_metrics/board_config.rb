@@ -3,6 +3,7 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
   QueryFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)
   PredictiveScope = Struct.new(:board_id, :adjustments_field)
+  TimesheetsConfig = Struct.new(:day_of_week, :duration, :additional_columns)
 
   def initialize(config_hash)
     super(config_hash, 'board_config')
@@ -21,6 +22,16 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
         config_hash['predictive_scope']['adjustments_field']
       )
     end
+  end
+
+  def timesheets_config
+    return nil if config_hash['timesheets'].nil?
+
+    TimesheetsConfig.new(
+      config_hash['timesheets']['reporting_period']['day_of_week'],
+      config_hash['timesheets']['reporting_period']['duration']['days'],
+      config_hash['timesheets']['additional_columns'] || []
+    )
   end
 
   def filters
