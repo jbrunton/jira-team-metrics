@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   let(:issue_one) { create(:issue, started_time: three_weeks_ago, completed_time: three_weeks_ago + 3) }
   let(:issue_two) { create(:issue, started_time: two_weeks_ago, completed_time: two_weeks_ago + 3) }
-  let(:issue_three) { create(:issue, started_time: one_week_ago, completed_time: one_week_ago + 3) }
+  let(:issue_three) { create(:issue, started_time: one_week_ago, completed_time: one_week_ago + 6) }
 
   let(:now) { DateTime.new(2018, 1, 21, 10, 30) }
   let(:three_weeks_ago) { now - 21 }
@@ -99,7 +99,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
 
   describe "#throughput_between" do
     it "returns the throughput in days between two dates" do
-      expect(instance.throughput_between(two_weeks_ago, two_weeks_ago + 10)).to eq(0.2)
+      expect(instance.throughput_between(two_weeks_ago, two_weeks_ago + 5)).to eq(0.2)
     end
   end
 
@@ -112,6 +112,22 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   describe "#rolling_throughput" do
     it "returns the throughput in recent days" do
       expect(instance.rolling_throughput(5)).to eq(0.2)
+    end
+  end
+
+  describe "#throughput" do
+    context "if completed_scope.empty?" do
+      before(:each) { allow(instance).to receive(:completed_scope).and_return([]) }
+
+      it "returns 0" do
+        expect(instance.throughput).to eq(0)
+      end
+    end
+
+    context "if completed_scope if not empty" do
+      it "returns the total throughput between started_date and completed_date" do
+        expect(instance.throughput).to eq(0.15)
+      end
     end
   end
 end
