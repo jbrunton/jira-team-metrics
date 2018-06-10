@@ -1,5 +1,17 @@
 <% breadcrumb :report, @board, :timesheets, 'Timesheets' %>
 
+<h3>Quick Links</h3>
+
+<table>
+  <% @month_periods.each do |label, date_range| %>
+    <tr>
+      <td>
+      <%= link_to label, timesheets_report_path(@board, date_range) %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
 <h3>Issues for <%= @board.name %></h3>
 
 <%= render partial: 'partials/cycle_time_form' %>

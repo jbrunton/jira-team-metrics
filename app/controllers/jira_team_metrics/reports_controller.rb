@@ -3,6 +3,16 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_board
 
   def timesheets
+    now = DateTime.now
+    month = this_month = now.beginning_of_month
+    @month_periods = [
+      ['This Month', JiraTeamMetrics::DateRange.new(this_month, now)]
+    ]
+    while month > this_month - 180
+      month = month.prev_month
+      @month_periods << [month.strftime('%b %Y'),
+        JiraTeamMetrics::DateRange.new(month, month.next_month)]
+    end
   end
 
   def throughput
