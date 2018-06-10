@@ -12,23 +12,25 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
 
   let(:epics) { [create(:epic), create(:epic)] }
   let(:completed_issues) { [issue_one, issue_two, issue_three] }
-  let(:other_issues) { [create(:issue), create(:issue)] }
-  let(:issues) { completed_issues + other_issues }
+  let(:remaining_issues) { [create(:issue), create(:issue)] }
+  let(:issues) { completed_issues + remaining_issues }
 
   let(:instance) do
     Class.new do
       include JiraTeamMetrics::DescriptiveScopeStatistics
 
-      def initialize(epics, issues, completed_issues)
+      def initialize(epics, issues, completed_issues, remaining_issues)
         @epics = epics
         @issues = issues
         @completed_issues = completed_issues
+        @remaining_issues = remaining_issues
       end
 
       def scope; @issues; end
       def completed_scope; @completed_issues; end
+      def remaining_scope; @remaining_issues; end
       def epics; @epics; end
-    end.new(epics, issues, completed_issues)
+    end.new(epics, issues, completed_issues, remaining_issues)
   end
 
   before(:each) { travel_to now }
@@ -63,7 +65,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
     end
 
     context "if no issues are started" do
-      before(:each) { allow(instance).to receive(:scope).and_return(other_issues) }
+      before(:each) { allow(instance).to receive(:scope).and_return(remaining_issues) }
 
       it "returns the current time" do
         expect(instance.started_date).to eq(now)
@@ -72,7 +74,21 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   end
 
 
-  describe "#second_percentile_started_date"
+  describe "#duration_excl_outliers" do
+    context "given completed_scope.empty?" do
+      before(:each) { allow(instance).to receive(:completed_scope).and_return([]) }
+
+      it "returns nil" do
+        expect(instance.duration_excl_outliers).to eq(nil)
+      end
+    end
+
+    context "given completed_scope.count < 10" do
+      it "returns nil" do
+        expect(instance.duration_excl_outliers).to eq(20)
+      end
+    end
+  end
 
 
   describe "#completed_date" do
@@ -111,7 +127,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
 
   describe "#rolling_throughput" do
     it "returns the throughput in recent days" do
-      expect(instance.rolling_throughput(5)).to eq(0.2)
+      expect(instance.rolling_throughput(5)).to eq(0.2) # 1 issue in 5 days
     end
   end
 
@@ -126,7 +142,23 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
 
     context "if completed_scope if not empty" do
       it "returns the total throughput between started_date and completed_date" do
-        expect(instance.throughput).to eq(0.15)
+        expect(instance.throughput).to eq(0.15) # 3 issues / 20 days
+      end
+    end
+  end
+
+  describe "#rolling_forecast_completion_date" do
+    context "if the throughput is 0" do
+      before(:each) { allow(instance).to receive(:completed_scope).and_return([]) }
+
+      it "returns nil" do
+        expect(instance.rolling_forecast_completion_date(1)).to eq(nil)
+      end
+    end
+
+    context "if the throughput is non-zero" do
+      it "returns a linear projection for completion" do
+        expect(instance.rolling_forecast_completion_date(5)).to eq(now + 10)
       end
     end
   end

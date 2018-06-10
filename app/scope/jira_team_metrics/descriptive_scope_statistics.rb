@@ -28,8 +28,10 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
       fifth_percentile_index = (completed_scope.count.to_f / 100.0 * 5.0).round
       ninetyfith_percentile_index = (completed_scope.count) - fifth_percentile_index
       (completion_times[ninetyfith_percentile_index - 1] - completion_times[fifth_percentile_index + 1]).to_f
-    else
+    elsif completed_scope.count > 1
       (completed_date - started_date).to_f
+    else
+      nil
     end
   end
 
