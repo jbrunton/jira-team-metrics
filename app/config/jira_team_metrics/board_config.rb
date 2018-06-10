@@ -28,7 +28,7 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
     return nil if config_hash['timesheets'].nil?
 
     TimesheetsConfig.new(
-      config_hash['timesheets']['reporting_period']['day_of_week'],
+      config_hash['timesheets']['reporting_period']['day_of_week'].to_i,
       config_hash['timesheets']['reporting_period']['duration']['days'],
       config_hash['timesheets']['additional_columns'] || []
     )

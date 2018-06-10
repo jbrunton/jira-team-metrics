@@ -14,9 +14,23 @@
   </div>
 </div>
 
+<% unless @timesheet_periods.nil? %>
+<div id="timesheet-dropdown" class="ui selection dropdown">
+  <div class="text">Select Timesheet Period</div>
+  <i class="dropdown icon"></i>
+  <div class="menu">
+    <% @timesheet_periods.each do |label, date_range| %>
+        <div class="item" data-url="<%= timesheets_report_path(@board, date_range) %>">
+          <%= label %>
+        </div>
+    <% end %>
+  </div>
+</div>
+<% end %>
+
 <script>
   $(function() {
-    $('#month-dropdown').dropdown({
+    $('#month-dropdown, #timesheet-dropdown').dropdown({
       onChange: function(value, text, $selectedItem) {
         console.log('hey');
         window.location = $selectedItem.data('url');

@@ -18,6 +18,12 @@ module JiraTeamMetrics::FormattingHelper
     end
   end
 
+  def pretty_print_date_range(date_range)
+    start_date_fm = pretty_print_date(date_range.start_date, show_tz: false, hide_year: true)
+    end_date_fm = pretty_print_date(date_range.end_date, show_tz: false, hide_year: true)
+    "#{start_date_fm} - #{end_date_fm}"
+  end
+
 private
   def date_format_for(opts)
     opts ||= {}
