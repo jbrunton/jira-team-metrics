@@ -88,6 +88,29 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
         expect(instance.duration_excl_outliers).to eq(20)
       end
     end
+
+    context "given completed_scope.count > 10" do
+      before(:each) do
+        completed_issues = (1..20).map do |k|
+          create(:issue,
+            completed_time: case
+              when k == 1
+                three_weeks_ago
+              when k <= 10
+                two_weeks_ago
+              when k <= 19
+                one_week_ago
+              when k == 20
+                now
+            end)
+        end
+        allow(instance).to receive(:completed_scope).and_return(completed_issues)
+      end
+
+      it "excludes outliers at the 5th and 95th percentiles" do
+        expect(instance.duration_excl_outliers).to eq(7)
+      end
+    end
   end
 
 
