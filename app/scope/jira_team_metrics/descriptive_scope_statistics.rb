@@ -36,7 +36,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
   # TODO: rename this to last_completed_issue_date or something
   def completed_date
     # TODO: trunc to date
-    @completed_date ||= scope.map{ |issue| issue.completed_time }.compact.max || DateTime.now + 90
+    @completed_date ||= completed_scope.map{ |issue| issue.completed_time }.max || DateTime.now + 90
   end
 
   def completed_scope_between(from_date, to_date)

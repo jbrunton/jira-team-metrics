@@ -1,19 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
+  let(:issue_one) { create(:issue, started_time: three_weeks_ago, completed_time: three_weeks_ago + 3) }
+  let(:issue_two) { create(:issue, started_time: two_weeks_ago, completed_time: two_weeks_ago + 3) }
+  let(:issue_three) { create(:issue, started_time: one_week_ago, completed_time: one_week_ago + 3) }
+
   let(:now) { DateTime.new(2018, 1, 21, 10, 30) }
   let(:three_weeks_ago) { now - 21 }
   let(:two_weeks_ago) { now - 14 }
   let(:one_week_ago) { now - 7 }
 
   let(:epics) { [create(:epic), create(:epic)] }
-  let(:completed_issues) {
-    [
-      create(:issue, started_time: three_weeks_ago, completed_time: two_weeks_ago),
-      create(:issue, started_time: two_weeks_ago, completed_time: one_week_ago),
-      create(:issue, started_time: one_week_ago, completed_time: now)
-    ]
-  }
+  let(:completed_issues) { [issue_one, issue_two, issue_three] }
   let(:other_issues) { [create(:issue), create(:issue)] }
   let(:issues) { completed_issues + other_issues }
 
@@ -59,7 +57,7 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
   describe "#started_date" do
     context "if any issues are completed" do
       it "returns the time the first issue was started" do
-        expect(instance.started_date).to eq(three_weeks_ago)
+        expect(instance.started_date).to eq(issue_one.started_time)
       end
     end
 
@@ -74,5 +72,37 @@ RSpec.describe JiraTeamMetrics::DescriptiveScopeStatistics do
     end
   end
 
+
   describe "#second_percentile_started_date"
+
+
+  describe "#completed_date" do
+    context "if any issues are completed" do
+      it "returns the time the last issue was completed" do
+        expect(instance.completed_date).to eq(issue_three.completed_time)
+      end
+    end
+
+    context "if no issues are completed" do
+      before(:each) { allow(instance).to receive(:completed_scope).and_return([]) }
+
+      it "returns the current time + 90 days" do
+        travel_to now do
+          expect(instance.completed_date).to eq(now + 90)
+        end
+      end
+    end
+  end
+
+  describe "#completed_scope_between" do
+    it "returns the completed issues between two dates" do
+      expect(instance.completed_scope_between(two_weeks_ago, now)).to eq([issue_two, issue_three])
+    end
+  end
+
+  describe "#throughput_between" do
+    it "returns the throughput in days between two dates" do
+      expect(instance.throughput_between(two_weeks_ago, two_weeks_ago + 10)).to eq(0.2)
+    end
+  end
 end
