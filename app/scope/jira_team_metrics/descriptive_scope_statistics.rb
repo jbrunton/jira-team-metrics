@@ -49,7 +49,7 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
 
   def rolling_completed_issues(days)
     @rolling_completed_issues ||= {}
-    @rolling_completed_issues[days] ||= completed_scope_between (DateTime.now - days.days, DateTime.now)
+    @rolling_completed_issues[days] ||= completed_scope_between(DateTime.now - days.days, DateTime.now)
   end
 
   def rolling_throughput(days)

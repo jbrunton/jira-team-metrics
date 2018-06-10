@@ -52,6 +52,6 @@ class JiraTeamMetrics::DateRange
   end
 
   def duration
-    ((end_date - start_date) / 1.day).to_f.abs
+    (end_date - start_date).to_f.abs
   end
 end
