@@ -14,7 +14,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       label = month.strftime('%b %Y')
       selected = @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
         @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
-      @selected_month_value = label if selected
+      @selected_month_period = label if selected
       @month_periods << [label, date_range]
       month = month.prev_month
     end
