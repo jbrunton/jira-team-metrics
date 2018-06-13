@@ -6,7 +6,16 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
   end
 
   def history_as_ranges
-    issue.transitions.each_cons(2).map do |t1, t2|
+    if issue.transitions.any?
+      virtual_transitions = issue.transitions + [{
+        'date' => DateTime.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z'),
+        'toStatus' => issue.transitions.last['toStatus'],
+        'toStatusCategory' => issue.transitions.last['toStatusCategory'],
+      }]
+    else
+      virtual_transitions = issue.transitions
+    end
+    ranges = virtual_transitions.each_cons(2).map do |t1, t2|
       date_range = JiraTeamMetrics::DateRange.new(
         DateTime.parse(t1['date']),
         DateTime.parse(t2['date'])
@@ -17,6 +26,7 @@ class JiraTeamMetrics::IssueHistoryAnalyzer
         date_range
       )
     end
+    ranges
   end
 
   def time_in_category(status_category, date_range = nil)

@@ -55,6 +55,8 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   let(:analyzer) { JiraTeamMetrics::IssueHistoryAnalyzer.new(issue) }
 
+  before(:each) { travel_to DateTime.parse('2017-01-05T12:00:00.000-0000') }
+
   describe "#issue" do
     it "returns the issue" do
       expect(analyzer.issue).to eq(issue)
@@ -94,6 +96,14 @@ RSpec.describe JiraTeamMetrics::Issue do
               JiraTeamMetrics::DateRange.new(
                   DateTime.parse('2017-01-04T12:00:00.000-0000'),
                   DateTime.parse('2017-01-04T18:00:00.000-0000')
+              )
+          ),
+          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+              'Done',
+              'Done',
+              JiraTeamMetrics::DateRange.new(
+                  DateTime.parse('2017-01-04T18:00:00.000-0000'),
+                  DateTime.parse('2017-01-05T12:00:00.000-0000')
               )
           )
       ])
