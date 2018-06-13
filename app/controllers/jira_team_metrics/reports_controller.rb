@@ -10,8 +10,12 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     month = this_month = now.beginning_of_month
     @month_periods = []
     while month > this_month - 180
-      @month_periods << [month.strftime('%b %Y'),
-        JiraTeamMetrics::DateRange.new(month, month.next_month)]
+      date_range = JiraTeamMetrics::DateRange.new(month, month.next_month)
+      label = month.strftime('%b %Y')
+      selected = @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
+        @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
+      @selected_month_value = label if selected
+      @month_periods << [label, date_range]
       month = month.prev_month
     end
 
@@ -21,11 +25,14 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       while timesheet_start.wday != timesheets_config.day_of_week
         timesheet_start = timesheet_start - 1
       end
-      puts "TIMESHEET_START: #{timesheet_start}"
       @timesheet_periods = []
       5.times do
-        timesheet_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)
-        @timesheet_periods << [pretty_print_date_range(timesheet_range), timesheet_range]
+        date_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)
+        label = pretty_print_date_range(date_range)
+        selected = @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
+          @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
+        @selected_timesheet_period = label if selected
+        @timesheet_periods << [label, date_range]
         timesheet_start = timesheet_start - timesheets_config.duration
       end
     end
