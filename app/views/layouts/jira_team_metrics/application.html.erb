@@ -53,10 +53,14 @@
       <% end %>
 
     <footer class="ui basic center aligned segment">
+      <div class="ui divider"></div>
       <% unless @board.nil? %>
-          <div class="ui divider"></div>
           <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>
       <% end %>
+      <p>
+        Jira Team Metrics v<%= JiraTeamMetrics::VERSION %> &middot;
+        <a href="https://github.com/jbrunton/jira-team-metrics/blob/master/CHANGELOG.md">Changelog</a>
+      </p>
     </footer>
 
   </body>
