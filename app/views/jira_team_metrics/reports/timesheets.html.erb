@@ -39,7 +39,6 @@
       onChange: function(value, text, $selectedItem) {
         console.log('hey');
         window.location = $selectedItem.data('url');
-        // custom action
       }
     });
   });
@@ -52,8 +51,8 @@
 <script>
   $(function() {
     fetchData();
-    $('input').change(fetchData);
-    $('textarea').change(fetchData);
+    $('#ct-states input').change(fetchData);
+    $('#ct-states textarea').change(fetchData);
   })
 
   function fetchData() {
