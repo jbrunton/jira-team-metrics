@@ -8,28 +8,25 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     now = DateTime.now.beginning_of_day
 
     month = this_month = now.beginning_of_month
-    @month_periods = [
-      ['This Month', JiraTeamMetrics::DateRange.new(this_month, now)]
-    ]
+    @month_periods = []
     while month > this_month - 180
-      month = month.prev_month
       @month_periods << [month.strftime('%b %Y'),
         JiraTeamMetrics::DateRange.new(month, month.next_month)]
+      month = month.prev_month
     end
 
     timesheets_config = @board.config.timesheets_config
     unless timesheets_config.nil?
       timesheet_start = now
-      while timesheet_start.day != timesheets_config.day_of_week
+      while timesheet_start.wday != timesheets_config.day_of_week
         timesheet_start = timesheet_start - 1
       end
-      @timesheet_periods = [
-        ['Current Period', JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)]
-      ]
+      puts "TIMESHEET_START: #{timesheet_start}"
+      @timesheet_periods = []
       5.times do
-        timesheet_start = timesheet_start - timesheets_config.duration
         timesheet_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)
         @timesheet_periods << [pretty_print_date_range(timesheet_range), timesheet_range]
+        timesheet_start = timesheet_start - timesheets_config.duration
       end
     end
   end
