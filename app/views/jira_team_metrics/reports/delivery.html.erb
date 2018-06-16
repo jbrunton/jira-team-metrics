@@ -95,7 +95,7 @@
   </tr>
 
 <% team_dashboard_data[:teams].each do |team, team_data| %>
-    <tr class="<%= team_data[:remaining_scope] == 0 ? 'complete' : '' %>">
+    <tr data-team="<%= team %>">
       <td class="center aligned">
         <% if @increment.target_date %>
             <span class="ui <%= team_data[:status_color] %> circular label"
@@ -180,22 +180,44 @@
 
 </table>
 
-  <div class="ui center aligned basic segment">
-    <p>Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.</p>
-<form action="#">
-    <input type="checkbox" id="hide_complete" name="hide_completed" checked />
-    <label for="hide_complete">Hide teams with no remaining scope</label>
-</form>
+<div class="ui center aligned basic segment">
+  <p>
+    Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.
+  </p>
+  <a id="show-teams-popup">Show Teams <i class="dropdown icon"></i></a>
+  <div class="ui popup">
+  <form action="#">
+    <div class="ui multiple selection dropdown" id="selected-teams">
+      <div class="text"></div>
+      <i class="dropdown icon"></i>
+    </div>
+  </form>
   </div>
+</div>
 
 <script>
   $(function() {
-    $('tr.complete').hide();
-    $('#hide_complete').click(function(event) {
-      if (event.currentTarget.checked) {
-        $('tr.complete').hide();
-      } else {
-        $('tr.complete').show();
+    $('tr[data-team]').hide();
+    $('#show-teams-popup').popup({
+      inline: true,
+      hoverable: true,
+      position: 'bottom center'
+    });
+    $('#selected-teams').dropdown({
+      values: [
+          <% team_dashboard_data[:teams].each do |team, team_data| %>
+            {
+              name: '<%= team %>',
+              value: '<%= team.html_safe %>',
+              selected: <%= team_data[:remaining_scope] > 0 %>
+            },
+        <% end %>
+      ],
+      onAdd: function(value, text, $selectedItem) {
+        $('tr[data-team="' + value + '"]').show();
+      },
+      onRemove: function(value, text, $selectedItem) {
+        $('tr[data-team="' + value + '"]').hide();
       }
     });
   });
