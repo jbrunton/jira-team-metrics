@@ -73,7 +73,22 @@
   <thead>
     <tr>
       <th class="center aligned">Status</th>
-      <th class="center aligned">Team</th>
+      <th class="center aligned">Team
+        <div class="ui simple dropdown item">
+          <a><i class="filter icon"></i></a>
+          <div class="menu">
+            <% team_dashboard_data[:teams].each do |team, team_data| %>
+                <div class="item">
+                  <span class="description"><div class="ui <%= team_data[:status_color] %> empty circular label"></div> </span>
+                  <div class="ui checkbox">
+                    <input type="checkbox" data-team="<%= team %>" <%= 'checked=""' if team_data[:remaining_scope] > 0 %>>
+                    <label><%= team %></label>
+                  </div>
+                </div>
+            <% end %>
+          </div>
+        </div>
+      </th>
       <th class="center aligned">Target</th>
       <th class="center aligned" colspan="2">Remaining</th>
       <th class="center aligned" colspan="2">Completed</th>
@@ -83,7 +98,8 @@
     </tr>
   </thead>
   <tr>
-    <td colspan="3"></td>
+    <td colspan="3">
+    </td>
     <td>Total</td>
     <td>[Predicted]</td>
     <td colspan="2"></td>
@@ -95,7 +111,7 @@
   </tr>
 
 <% team_dashboard_data[:teams].each do |team, team_data| %>
-    <tr data-team="<%= team %>">
+    <tr data-team="<%= team %>" data-completed="<%= team_data[:remaining_scope] == 0 %>">
       <td class="center aligned">
         <% if @increment.target_date %>
             <span class="ui <%= team_data[:status_color] %> circular label"
@@ -184,40 +200,17 @@
   <p>
     Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.
   </p>
-  <a id="show-teams-popup">Show Teams <i class="dropdown icon"></i></a>
-  <div class="ui popup">
-  <form action="#">
-    <div class="ui multiple selection dropdown" id="selected-teams">
-      <div class="text"></div>
-      <i class="dropdown icon"></i>
-    </div>
-  </form>
-  </div>
 </div>
 
 <script>
   $(function() {
-    $('tr[data-team]').hide();
-    $('#show-teams-popup').popup({
-      inline: true,
-      hoverable: true,
-      position: 'bottom center'
-    });
-    $('#selected-teams').dropdown({
-      values: [
-          <% team_dashboard_data[:teams].each do |team, team_data| %>
-            {
-              name: '<%= team %>',
-              value: '<%= team.html_safe %>',
-              selected: <%= team_data[:remaining_scope] > 0 %>
-            },
-        <% end %>
-      ],
-      onAdd: function(value, text, $selectedItem) {
-        $('tr[data-team="' + value + '"]').show();
-      },
-      onRemove: function(value, text, $selectedItem) {
-        $('tr[data-team="' + value + '"]').hide();
+    $('tr[data-completed=true]').hide();
+    $('input[data-team]').change(function() {
+      var team = $(this).data('team');
+      if ($(this).prop('checked')) {
+        $('tr[data-team="' + team + '"]').show();
+      } else {
+        $('tr[data-team="' + team + '"]').hide();
       }
     });
   });
