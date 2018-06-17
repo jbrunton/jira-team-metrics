@@ -37,7 +37,6 @@
   $(function() {
     $('#month-dropdown, #timesheet-dropdown').dropdown({
       onChange: function(value, text, $selectedItem) {
-        console.log('hey');
         window.location = $selectedItem.data('url');
       }
     });
