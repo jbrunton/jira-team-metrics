@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.1.0](https://github.com/jbrunton/jira-team-metrics/tree/0.1.0) (2018-06-17)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.16...0.1.0)
+
+**Merged pull requests:**
+
+- update to version 0.1 [\#313](https://github.com/jbrunton/jira-team-metrics/pull/313) ([jbrunton](https://github.com/jbrunton))
+- set default from\_date to -30 days for charts [\#312](https://github.com/jbrunton/jira-team-metrics/pull/312) ([jbrunton](https://github.com/jbrunton))
+- Don't hide completed teams on Delivery dashboard by default [\#311](https://github.com/jbrunton/jira-team-metrics/pull/311) ([jbrunton](https://github.com/jbrunton))
+- Filter to show and hide teams on delivery dashboard [\#310](https://github.com/jbrunton/jira-team-metrics/pull/310) ([jbrunton](https://github.com/jbrunton))
+- Show version number in footer, link to changelog [\#309](https://github.com/jbrunton/jira-team-metrics/pull/309) ([jbrunton](https://github.com/jbrunton))
+- add changelog [\#308](https://github.com/jbrunton/jira-team-metrics/pull/308) ([jbrunton](https://github.com/jbrunton))
+- Timesheet links [\#306](https://github.com/jbrunton/jira-team-metrics/pull/306) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.0.16](https://github.com/jbrunton/jira-team-metrics/tree/0.0.16) (2018-06-11)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.14...0.0.16)
 
