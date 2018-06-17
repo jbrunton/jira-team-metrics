@@ -9,7 +9,7 @@ class JiraTeamMetrics::ChartParams
     @team = values[:team]
   end
 
-  def self.from_params(board, params)
+  def self.from_params(params)
     if params[:from_date].blank?
       from_date = DateTime.now - 30
     else
