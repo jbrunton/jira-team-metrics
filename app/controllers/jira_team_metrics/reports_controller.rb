@@ -2,40 +2,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_domain
   before_action :set_board
 
-  include JiraTeamMetrics::FormattingHelper
-
   def timesheets
-    now = DateTime.now.beginning_of_day
-
-    month = this_month = now.beginning_of_month
-    @month_periods = []
-    while month > this_month - 180
-      date_range = JiraTeamMetrics::DateRange.new(month, month.next_month)
-      label = month.strftime('%b %Y')
-      selected = @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
-        @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
-      @selected_month_period = label if selected
-      @month_periods << [label, date_range]
-      month = month.prev_month
-    end
-
-    timesheets_config = @board.config.timesheets_config
-    unless timesheets_config.nil?
-      timesheet_start = now
-      while timesheet_start.wday != timesheets_config.day_of_week
-        timesheet_start = timesheet_start - 1
-      end
-      @timesheet_periods = []
-      5.times do
-        date_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)
-        label = pretty_print_date_range(date_range)
-        selected = @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
-          @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
-        @selected_timesheet_period = label if selected
-        @timesheet_periods << [label, date_range]
-        timesheet_start = timesheet_start - timesheets_config.duration
-      end
-    end
+    @timesheet_options = JiraTeamMetrics::TimesheetOptions.new(@board, @chart_params).build
   end
 
   def throughput

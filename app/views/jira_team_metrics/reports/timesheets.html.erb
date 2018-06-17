@@ -4,10 +4,10 @@
 
 <div id="month-dropdown" class="ui selection dropdown">
   <div class="text">Select Month</div>
-  <input type="hidden" value="<%= @selected_month_period %>" />
+  <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
   <i class="dropdown icon"></i>
   <div class="menu">
-    <% @month_periods.each do |label, date_range| %>
+    <% @timesheet_options.month_periods.each do |label, date_range| %>
         <div class="item"
              data-value="<%= label %>"
              data-url="<%= timesheets_report_path(@board, date_range) %>"
@@ -18,13 +18,13 @@
   </div>
 </div>
 
-<% unless @timesheet_periods.nil? %>
+<% unless @timesheet_options.timesheet_periods.nil? %>
 <div id="timesheet-dropdown" class="ui selection dropdown">
   <div class="text">Select Timesheet Period</div>
-  <input type="hidden" value="<%= @selected_timesheet_period %>" />
+  <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
   <i class="dropdown icon"></i>
   <div class="menu">
-    <% @timesheet_periods.each do |label, date_range| %>
+    <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
         <div class="item" data-url="<%= timesheets_report_path(@board, date_range) %>">
           <%= label %>
         </div>
