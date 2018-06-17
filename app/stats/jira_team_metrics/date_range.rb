@@ -54,4 +54,10 @@ class JiraTeamMetrics::DateRange
   def duration
     (end_date - start_date).to_f.abs
   end
+
+  def to_query
+    start_date_fm = start_date.strftime('%Y-%m-%d')
+    end_date_fm = end_date.strftime('%Y-%m-%d')
+    "from_date=#{start_date_fm}&to_date=#{end_date_fm}"
+  end
 end

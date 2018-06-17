@@ -33,9 +33,9 @@ module JiraTeamMetrics::PathHelper
 
   def timesheets_report_path(board, date_range = nil)
     url = "#{reports_path(board)}/timesheets"
-    url += "?" unless date_range.nil?
-    url += "from_date=#{date_range.start_date.strftime('%Y-%m-%d')}&" unless date_range.nil?
-    url += "to_date=#{date_range.end_date.strftime('%Y-%m-%d')}" unless date_range.nil?
+    unless date_range.nil?
+      url += "?#{date_range.to_query}"
+    end
     url
   end
 
