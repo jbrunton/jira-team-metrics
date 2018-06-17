@@ -4,7 +4,9 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
   def timesheets
     issues = @board.issues.select do |issue|
-      issue.in_progress_during?(@chart_params.date_range)
+      issue.is_scope? &&
+        issue.in_progress_during?(@chart_params.date_range) &&
+        issue.duration_in_range(@chart_params.date_range) > 0
     end
     @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
 

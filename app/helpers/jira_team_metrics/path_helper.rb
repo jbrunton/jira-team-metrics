@@ -31,8 +31,12 @@ module JiraTeamMetrics::PathHelper
     "#{delivery_report_path(board, issue)}/throughput/#{team}"
   end
 
-  def timesheets_report_path(board)
-    "#{reports_path(board)}/timesheets"
+  def timesheets_report_path(board, date_range = nil)
+    url = "#{reports_path(board)}/timesheets"
+    unless date_range.nil?
+      url += "?#{date_range.to_query}"
+    end
+    url
   end
 
   def board_components_path(board)

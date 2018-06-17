@@ -42,6 +42,12 @@ RSpec.describe JiraTeamMetrics::PathHelper do
     expect(helper.timesheets_report_path(board)).to eq('/metrics/reports/boards/101/timesheets')
   end
 
+  it "defines #timesheets_report_path for a given date range" do
+    start_date = DateTime.new(2001, 1, 1)
+    date_range = JiraTeamMetrics::DateRange.new(start_date, start_date + 1)
+    expect(helper.timesheets_report_path(board, date_range)).to eq('/metrics/reports/boards/101/timesheets?from_date=2001-01-01&to_date=2001-01-02')
+  end
+
   it "defines #board_components_path" do
     expect(helper.board_components_path(board)).to eq('/metrics/components/boards/101')
   end

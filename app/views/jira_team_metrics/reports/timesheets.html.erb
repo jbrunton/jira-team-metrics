@@ -1,5 +1,48 @@
 <% breadcrumb :report, @board, :timesheets, 'Timesheets' %>
 
+<h3>Quick Links</h3>
+
+<div id="month-dropdown" class="ui selection dropdown">
+  <div class="text">Select Month</div>
+  <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
+  <i class="dropdown icon"></i>
+  <div class="menu">
+    <% @timesheet_options.month_periods.each do |label, date_range| %>
+        <div class="item"
+             data-value="<%= label %>"
+             data-url="<%= timesheets_report_path(@board, date_range) %>"
+        >
+          <%= label %>
+        </div>
+    <% end %>
+  </div>
+</div>
+
+<% unless @timesheet_options.timesheet_periods.nil? %>
+<div id="timesheet-dropdown" class="ui selection dropdown">
+  <div class="text">Select Timesheet Period</div>
+  <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
+  <i class="dropdown icon"></i>
+  <div class="menu">
+    <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
+        <div class="item" data-url="<%= timesheets_report_path(@board, date_range) %>">
+          <%= label %>
+        </div>
+    <% end %>
+  </div>
+</div>
+<% end %>
+
+<script>
+  $(function() {
+    $('#month-dropdown, #timesheet-dropdown').dropdown({
+      onChange: function(value, text, $selectedItem) {
+        window.location = $selectedItem.data('url');
+      }
+    });
+  });
+</script>
+
 <h3>Issues for <%= @board.name %></h3>
 
 <%= render partial: 'partials/cycle_time_form' %>
@@ -7,8 +50,8 @@
 <script>
   $(function() {
     fetchData();
-    $('input').change(fetchData);
-    $('textarea').change(fetchData);
+    $('#ct-states input').change(fetchData);
+    $('#ct-states textarea').change(fetchData);
   })
 
   function fetchData() {

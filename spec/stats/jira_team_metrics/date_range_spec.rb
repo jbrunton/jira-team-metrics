@@ -104,4 +104,11 @@ RSpec.describe JiraTeamMetrics::DateRange do
       expect(range.duration).to eq(1.5)
     end
   end
+
+  describe "#to_query" do
+    it "returns a string that represents the range as query parameters" do
+      range = JiraTeamMetrics::DateRange.new(start_date, start_date + 1)
+      expect(range.to_query).to eq("from_date=2001-01-01&to_date=2001-01-02")
+    end
+  end
 end
