@@ -6,16 +6,16 @@ class JiraTeamMetrics::TimesheetOptions
   attr_reader :timesheet_periods
   attr_reader :selected_timesheet_period
 
-  def initialize(board, chart_params)
-    @board = board
+  def initialize(chart_params, timesheets_config)
     @chart_params = chart_params
+    @timesheets_config = timesheets_config
   end
 
   def build
     today = DateTime.now.beginning_of_day
 
     enumerate_month_periods(today)
-    enumerate_timesheet_periods(today) unless @board.config.timesheets_config.nil?
+    enumerate_timesheet_periods(today) unless @timesheets_config.nil?
 
     self
   end
@@ -34,19 +34,17 @@ private
   end
 
   def enumerate_timesheet_periods(today)
-    timesheets_config = @board.config.timesheets_config
-
     timesheet_start = today
-    while timesheet_start.wday != timesheets_config.day_of_week
+    while timesheet_start.wday != @timesheets_config.day_of_week
       timesheet_start = timesheet_start - 1
     end
     @timesheet_periods = []
     6.times do
-      date_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + timesheets_config.duration)
+      date_range = JiraTeamMetrics::DateRange.new(timesheet_start, timesheet_start + @timesheets_config.duration)
       label = pretty_print_date_range(date_range)
       @selected_timesheet_period = label if selected_range?(date_range)
       @timesheet_periods << [label, date_range]
-      timesheet_start = timesheet_start - timesheets_config.duration
+      timesheet_start = timesheet_start - @timesheets_config.duration
     end
   end
 
