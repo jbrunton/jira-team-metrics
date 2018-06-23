@@ -4,14 +4,14 @@
 
 class JiraTeamMetrics::CfdBuilder
   include JiraTeamMetrics::FormattingHelper
+  include JiraTeamMetrics::ChartsHelper
 
   CfdRow = Struct.new(:predicted, :to_do, :in_progress, :done) do
     include JiraTeamMetrics::ChartsHelper
 
     def to_array(date, annotation, annotation_text)
       date_string = date_as_string(date)
-      today_annotation = date.to_date == DateTime.now.to_date ? 'today' : nil
-      [date_string, today_annotation, done, annotation, annotation_text, in_progress, to_do, predicted]
+      [date_string, nil, done, annotation, annotation_text, in_progress, to_do, predicted]
     end
   end
 
@@ -29,6 +29,13 @@ class JiraTeamMetrics::CfdBuilder
     dates.each do |date|
       annotation, annotation_text = annotation_for(date)
       data << cfd_row_for(date).to_array(date, annotation, annotation_text)
+    end
+
+    today = DateTime.now.to_date
+    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
+    target_date = @increment_report.increment.target_date
+    unless target_date.nil?
+      data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil]
     end
 
     data
