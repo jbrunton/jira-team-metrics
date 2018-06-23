@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.2.0](https://github.com/jbrunton/jira-team-metrics/tree/0.2.0) (2018-06-23)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.1.0...0.2.0)
+
+**Merged pull requests:**
+
+- Config options to specify short team names [\#317](https://github.com/jbrunton/jira-team-metrics/pull/317) ([jbrunton](https://github.com/jbrunton))
+- Update URL with state of filtered teams on Delivery report [\#316](https://github.com/jbrunton/jira-team-metrics/pull/316) ([jbrunton](https://github.com/jbrunton))
+- Show target date on CFDs [\#315](https://github.com/jbrunton/jira-team-metrics/pull/315) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#314](https://github.com/jbrunton/jira-team-metrics/pull/314) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.1.0](https://github.com/jbrunton/jira-team-metrics/tree/0.1.0) (2018-06-17)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.16...0.1.0)
 
@@ -26,11 +36,17 @@
 - fix error when team has no training data [\#304](https://github.com/jbrunton/jira-team-metrics/pull/304) ([jbrunton](https://github.com/jbrunton))
 
 ## [0.0.14](https://github.com/jbrunton/jira-team-metrics/tree/0.0.14) (2018-06-05)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.13...0.0.14)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.15...0.0.14)
 
 **Merged pull requests:**
 
 - more robust handling of short team names [\#303](https://github.com/jbrunton/jira-team-metrics/pull/303) ([jbrunton](https://github.com/jbrunton))
+
+## [0.0.15](https://github.com/jbrunton/jira-team-metrics/tree/0.0.15) (2018-06-03)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.0.13...0.0.15)
+
+**Merged pull requests:**
+
 - fix readonly mode when CONFIG\_URL is set [\#302](https://github.com/jbrunton/jira-team-metrics/pull/302) ([jbrunton](https://github.com/jbrunton))
 - Fix CFD trend lines [\#301](https://github.com/jbrunton/jira-team-metrics/pull/301) ([jbrunton](https://github.com/jbrunton))
 - Sync loader [\#300](https://github.com/jbrunton/jira-team-metrics/pull/300) ([jbrunton](https://github.com/jbrunton))
