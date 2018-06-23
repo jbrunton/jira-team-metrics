@@ -13,13 +13,20 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       'config_url' => board_config_url
     }]
   end
+  let(:teams) do
+    [{
+      'name' => 'Data & Analytics',
+      'short_name' => 'dat'
+    }]
+  end
 
   let(:config_hash) do
     {
       'fields' => custom_fields,
       'url' => domain_url,
       'name' => domain_name,
-      'boards' => boards
+      'boards' => boards,
+      'teams' => teams
     }
   end
 
@@ -104,6 +111,21 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       expect(domain_config.boards).to eq([
         JiraTeamMetrics::DomainConfig::BoardDetails.new(board_id, board_config_url)
       ])
+    end
+  end
+
+  context "#teams" do
+    it "returns the given teams" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.teams).to eq([
+        JiraTeamMetrics::DomainConfig::TeamDetails.new('Data & Analytics', 'dat')
+      ])
+    end
+
+    it "returns an empty array if no teams are given" do
+      config_hash.delete('teams')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.teams).to eq([])
     end
   end
 end
