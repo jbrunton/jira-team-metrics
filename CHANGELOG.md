@@ -5,6 +5,7 @@
 
 **Merged pull requests:**
 
+- update version [\#318](https://github.com/jbrunton/jira-team-metrics/pull/318) ([jbrunton](https://github.com/jbrunton))
 - Config options to specify short team names [\#317](https://github.com/jbrunton/jira-team-metrics/pull/317) ([jbrunton](https://github.com/jbrunton))
 - Update URL with state of filtered teams on Delivery report [\#316](https://github.com/jbrunton/jira-team-metrics/pull/316) ([jbrunton](https://github.com/jbrunton))
 - Show target date on CFDs [\#315](https://github.com/jbrunton/jira-team-metrics/pull/315) ([jbrunton](https://github.com/jbrunton))
