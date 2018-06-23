@@ -5,6 +5,8 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
     end
   end
 
+  TeamDetails = Struct.new(:name, :short_name)
+
   IncrementType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
   def initialize(config_hash)
@@ -33,6 +35,12 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   def boards
     (config_hash['boards'] || []).map do |config_hash|
       BoardDetails.new(config_hash['board_id'], config_hash['config_url'])
+    end
+  end
+
+  def teams
+    (config_hash['teams'] || []).map do |team_hash|
+      TeamDetails.new(team_hash['name'], team_hash['short_name'])
     end
   end
 
