@@ -16,8 +16,12 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def delivery
     @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-    @remaining_teams = team_dashboard_data[:teams].select do |_, team_data|
-      team_data[:remaining_scope] > 0
+    if params[:show_teams].nil?
+      @show_teams = team_dashboard_data[:teams].map do |team, _|
+        @domain.short_team_name(team)
+      end
+    else
+      @show_teams = params[:show_teams].split(',')
     end
   end
 

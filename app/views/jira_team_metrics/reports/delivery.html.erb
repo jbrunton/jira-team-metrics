@@ -82,7 +82,8 @@
                 <div class="item">
                   <span class="description"><div class="ui <%= team_data[:status_color] %> empty circular label"></div> </span>
                   <div class="ui checkbox">
-                    <input type="checkbox" data-team="<%= team %>" checked="checked">
+                    <input type="checkbox" data-team="<%= @domain.short_team_name(team) %>"
+                           <%= 'checked="checked"' if @show_teams.include?(@domain.short_team_name(team)) %>>
                     <label><%= team %></label>
                   </div>
                 </div>
@@ -113,7 +114,8 @@
   </tr>
 
 <% team_dashboard_data[:teams].each do |team, team_data| %>
-    <tr data-team="<%= team %>">
+    <tr data-team="<%= @domain.short_team_name(team) %>"
+        style="<%= 'display: none;' unless @show_teams.include?(@domain.short_team_name(team)) %>">
       <td class="center aligned">
         <% if @increment.target_date %>
             <span class="ui <%= team_data[:status_color] %> circular label"
