@@ -1,10 +1,12 @@
 # Change Log
 
-## [0.2.0](https://github.com/jbrunton/jira-team-metrics/tree/0.2.0) (2018-06-23)
+## [0.2.0](https://github.com/jbrunton/jira-team-metrics/tree/0.2.0) (2018-06-24)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.1.0...0.2.0)
 
 **Merged pull requests:**
 
+- autoload engine version [\#320](https://github.com/jbrunton/jira-team-metrics/pull/320) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#319](https://github.com/jbrunton/jira-team-metrics/pull/319) ([jbrunton](https://github.com/jbrunton))
 - update version [\#318](https://github.com/jbrunton/jira-team-metrics/pull/318) ([jbrunton](https://github.com/jbrunton))
 - Config options to specify short team names [\#317](https://github.com/jbrunton/jira-team-metrics/pull/317) ([jbrunton](https://github.com/jbrunton))
 - Update URL with state of filtered teams on Delivery report [\#316](https://github.com/jbrunton/jira-team-metrics/pull/316) ([jbrunton](https://github.com/jbrunton))
