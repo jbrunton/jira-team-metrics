@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.0](https://github.com/jbrunton/jira-team-metrics/tree/0.3.0) (2018-06-24)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.2.1...0.3.0)
+
+**Merged pull requests:**
+
+-  Show when teams are filtered on Delivery report [\#324](https://github.com/jbrunton/jira-team-metrics/pull/324) ([jbrunton](https://github.com/jbrunton))
+- update changelog for 0.2.1 [\#323](https://github.com/jbrunton/jira-team-metrics/pull/323) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.2.1](https://github.com/jbrunton/jira-team-metrics/tree/0.2.1) (2018-06-24)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.2.0...0.2.1)
 
