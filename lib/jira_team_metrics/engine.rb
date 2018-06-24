@@ -16,7 +16,7 @@ module JiraTeamMetrics
     require 'parslet'
     require 'pickadate-rails'
     require 'gretel'
-    
+
     config.after_initialize do
       unless ENV['CONFIG_URL'].nil?
         log_message = "CONFIG_URL defined. Setting config from #{ENV['CONFIG_URL']}"
