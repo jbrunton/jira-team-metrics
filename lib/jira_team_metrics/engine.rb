@@ -17,12 +17,6 @@ module JiraTeamMetrics
     require 'pickadate-rails'
     require 'gretel'
 
-    config.autoload_paths += %W(#{config.root}/lib/jira_team_metrics/version)
-    #config.autoload_paths << File.expand_path("../../../app/jira", __FILE__)
-    #config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats", __FILE__)
-    #config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/stats/scope", __FILE__)
-    #config.autoload_paths << File.expand_path("../../../app/models/jira_team_metrics/reports", __FILE__)
-
     config.after_initialize do
       unless ENV['CONFIG_URL'].nil?
         log_message = "CONFIG_URL defined. Setting config from #{ENV['CONFIG_URL']}"
