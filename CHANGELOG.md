@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.2.1](https://github.com/jbrunton/jira-team-metrics/tree/0.2.1) (2018-06-24)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.2.0...0.2.1)
+
+**Merged pull requests:**
+
+- Require engine version [\#322](https://github.com/jbrunton/jira-team-metrics/pull/322) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#321](https://github.com/jbrunton/jira-team-metrics/pull/321) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.2.0](https://github.com/jbrunton/jira-team-metrics/tree/0.2.0) (2018-06-24)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.1.0...0.2.0)
 
