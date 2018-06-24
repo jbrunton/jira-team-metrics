@@ -20,8 +20,10 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @show_teams = team_dashboard_data[:teams].map do |team, _|
         @domain.short_team_name(team)
       end
+      @filter_applied = false
     else
       @show_teams = params[:show_teams].split(',')
+      @filter_applied = true
     end
   end
 
