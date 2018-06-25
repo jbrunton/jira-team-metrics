@@ -42,6 +42,10 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
+
+    @status_categories = ['To Do', 'In Progress', 'Done', 'Predicted']
+    @filter_applied = false
+    @show_categories = @status_categories
   end
 
   def delivery_throughput
