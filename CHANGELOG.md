@@ -1,5 +1,21 @@
 # Change Log
 
+## [Unreleased](https://github.com/jbrunton/jira-team-metrics/tree/HEAD)
+
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.4.0...HEAD)
+
+**Merged pull requests:**
+
+- Clearer CFDs [\#326](https://github.com/jbrunton/jira-team-metrics/pull/326) ([jbrunton](https://github.com/jbrunton))
+
+## [0.4.0](https://github.com/jbrunton/jira-team-metrics/tree/0.4.0) (2018-06-25)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.3.0...0.4.0)
+
+**Merged pull requests:**
+
+- Filter issues by status category on Delivery Scope reports [\#327](https://github.com/jbrunton/jira-team-metrics/pull/327) ([jbrunton](https://github.com/jbrunton))
+- Update changelog [\#325](https://github.com/jbrunton/jira-team-metrics/pull/325) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.3.0](https://github.com/jbrunton/jira-team-metrics/tree/0.3.0) (2018-06-24)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.2.1...0.3.0)
 
