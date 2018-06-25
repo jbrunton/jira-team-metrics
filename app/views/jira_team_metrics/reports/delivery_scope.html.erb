@@ -133,7 +133,8 @@
       </tr>
 
       <% issues.each do |issue| %>
-          <tr class="story" data-status-category="<%= issue.status_category %>">
+          <tr class="story" data-status-category="<%= issue.status_category %>"
+              style="<%= 'display: none;' unless @show_categories.include?(issue.status_category) %>">
             <td>
               <% if issue.persisted? %>
                   <%= link_to(issue.key, issue) %>
@@ -180,7 +181,7 @@
       }).toArray();
       if (unselectedStatusCategories.length > 0) {
         $('#status-filter-icon').removeClass('disabled');
-        history.pushState({}, "", "?show_status_categories=" + selectedStatusCategories.join(','))
+        history.pushState({}, "", "?filter_status=" + selectedStatusCategories.join(','))
       } else {
         $('#status-filter-icon').addClass('disabled');
         history.pushState({}, "", "?");

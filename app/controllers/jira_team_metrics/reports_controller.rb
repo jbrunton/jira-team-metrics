@@ -16,13 +16,13 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def delivery
     @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
     @increment = @board.issues.find_by(key: params[:issue_key])
-    if params[:show_teams].nil?
+    if (params[:show_teams] || params[:filter_teams]).nil?
       @show_teams = team_dashboard_data[:teams].map do |team, _|
         @domain.short_team_name(team)
       end
       @filter_applied = false
     else
-      @show_teams = params[:show_teams].split(',')
+      @show_teams = (params[:show_teams] || params[:filter_teams]).split(',')
       @filter_applied = true
     end
   end
@@ -44,8 +44,13 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       .to_h
 
     @status_categories = ['To Do', 'In Progress', 'Done', 'Predicted']
-    @filter_applied = false
-    @show_categories = @status_categories
+    if params[:filter_status].nil?
+      @show_categories = @status_categories
+      @filter_applied = false
+    else
+      @show_categories = params[:filter_status].split(',')
+      @filter_applied = true
+    end
   end
 
   def delivery_throughput
