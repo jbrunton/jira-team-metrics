@@ -233,7 +233,7 @@
       }).toArray();
       if (unselectedTeams.length > 0) {
         $('#team-filter-icon').removeClass('disabled');
-        history.pushState({}, "", "?show_teams=" + selectedTeams.join(','))
+        history.pushState({}, "", "?filter_teams=" + selectedTeams.join(','))
       } else {
         $('#team-filter-icon').addClass('disabled');
         history.pushState({}, "", "?");
