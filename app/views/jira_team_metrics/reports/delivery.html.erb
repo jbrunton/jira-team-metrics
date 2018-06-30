@@ -26,7 +26,7 @@
         3: { color: 'orange' }
       },
       chartArea: {
-        width: '95%',
+        width: '94%',
         height: '75%',
         top: 40
       },
@@ -75,7 +75,7 @@
       <th class="center aligned">Status</th>
       <th class="center aligned">Team
         <div class="ui dropdown" id="teams-dropdown">
-          <a><i class="filter icon"></i></a>
+          <a><i id="team-filter-icon" class="<%= 'disabled' unless @filter_applied %> filter icon"></i></a>
           <div class="menu">
             <div class="scrolling menu">
             <% team_dashboard_data[:teams].each do |team, team_data| %>
@@ -232,8 +232,10 @@
         return $(el).data('team');
       }).toArray();
       if (unselectedTeams.length > 0) {
-        history.pushState({}, "", "?show_teams=" + selectedTeams.join(','))
+        $('#team-filter-icon').removeClass('disabled');
+        history.pushState({}, "", "?filter_teams=" + selectedTeams.join(','))
       } else {
+        $('#team-filter-icon').addClass('disabled');
         history.pushState({}, "", "?");
       }
     });
