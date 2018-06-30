@@ -138,16 +138,18 @@ class JiraTeamMetrics::MqlInterpreter
 
   Comparison = Struct.new(:field, :value) do
     def eval(_, issues)
-      issues.select do |issue|
-        if object_field?
-          compare_object_field(issue)
-        elsif jira_field?(issue)
-          compare_jira_field(issue)
-        elsif increment_field?
-          compare_increment(issue)
-        else
-          false
-        end
+      issues.select { |issue| compare_with(issue) }
+    end
+
+    def compare_with(issue)
+      if object_field?
+        compare_object_field(issue)
+      elsif jira_field?(issue)
+        compare_jira_field(issue)
+      elsif increment_field?
+        compare_increment(issue)
+      else
+        false
       end
     end
 
