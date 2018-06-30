@@ -139,17 +139,52 @@ class JiraTeamMetrics::MqlInterpreter
   Comparison = Struct.new(:field, :value) do
     def eval(_, issues)
       issues.select do |issue|
-        field_name = field[:identifier].to_s
-        if ['key', 'issue_type', 'summary', 'status', 'status_category'].include?(field_name)
-          issue.send(field_name) == value[:value].to_s
-        elsif ['increment'].include?(field_name)
-          issue.increment.try(:[], 'issue').try(:[], 'key') == value[:value]
-        elsif !issue.fields[field_name].nil?
-          issue.fields[field_name] == value[:value].to_s
+        if object_field?
+          compare_object_field(issue)
+        elsif jira_field?(issue)
+          compare_jira_field(issue)
+        elsif increment_field?
+          compare_increment(issue)
         else
           false
         end
       end
     end
+
+    def field_name
+      @field_name ||= field[:identifier].to_s
+    end
+
+    def object_field?
+      OBJECT_FIELDS.keys.include?(field_name)
+    end
+
+    def compare_object_field(issue)
+      issue.send(field_name) == value[:value].to_s
+    end
+
+    def jira_field?(issue)
+      !issue.fields[field_name].nil?
+    end
+
+    def compare_jira_field(issue)
+      issue.fields[field_name] == value[:value].to_s
+    end
+
+    def increment_field?
+      field_name == 'increment'
+    end
+
+    def compare_increment(issue)
+      issue.increment.try(:[], 'issue').try(:[], 'key') == value[:value]
+    end
+
+    OBJECT_FIELDS = {
+      'key' => 'key',
+      'issuetype' => 'issue_type',
+      'summary' => 'summary',
+      'status' => 'status',
+      'statusCategory' => 'status_category'
+    }
   end
 end
