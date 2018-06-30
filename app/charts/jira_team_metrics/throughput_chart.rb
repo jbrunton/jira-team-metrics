@@ -56,6 +56,9 @@ class JiraTeamMetrics::ThroughputChart
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
             1 => { lineWidth: 2, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
+        },
+        vAxis: {
+          minValue: 0
         }
     }
   end
