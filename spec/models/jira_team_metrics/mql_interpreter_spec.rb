@@ -108,5 +108,19 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(issues).to eq([issue_c])
       end
     end
+
+    context "when given an includes expression" do
+      let(:issue) { create(:issue, fields: {'Teams' => ['Android']}, board: board) }
+
+      it "returns issues that match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'Android'")
+        expect(issues).to eq([issue])
+      end
+
+      it "filters out issues that do not match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'iOS'")
+        expect(issues).to be_empty
+      end
+    end
   end
 end
