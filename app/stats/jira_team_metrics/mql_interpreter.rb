@@ -25,16 +25,17 @@ class JiraTeamMetrics::MqlInterpreter
     rule(:comma)  { str(",") >> space? }
 
     rule(:identifier) { match('[a-zA-Z_]').repeat(1).as(:identifier) >> space? }
-    rule(:operator)   { (str('=') | str('and')).as(:op) >> space? }
+    rule(:operator)   { (str('=') | str('and') | str('includes')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
     rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
+    rule(:contains) { identifier.as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between }
+    rule(:expression) { filter | comparison | not_expression | between | contains }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -70,6 +71,10 @@ class JiraTeamMetrics::MqlInterpreter
       :field => subtree(:field),
       :op => '=',
       :string => subtree(:string)) { Comparison.new(field, string) }
+    rule(
+      :field => subtree(:field),
+      :op => 'includes',
+      :string => subtree(:string)) { Includes.new(field, string) }
     rule(
       :or => { :left => subtree(:left), :right => subtree(:right) }
     ) { OrExpr.new(left, right) }
@@ -133,6 +138,22 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(board, issues)
       exclude_issues = expr.eval(board, issues)
       issues.select{ |issue| !exclude_issues.include?(issue) }
+    end
+  end
+
+  Includes = Struct.new(:field, :value) do
+    def eval(_, issues)
+      issues.select do |issue|
+        (issue.fields[field_name] || []).include?(field_value)
+      end
+    end
+
+    def field_name
+      @field_name ||= field[:identifier].to_s
+    end
+
+    def field_value
+      @field_value ||= value[:value].to_s
     end
   end
 
