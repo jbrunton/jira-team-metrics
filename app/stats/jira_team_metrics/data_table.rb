@@ -66,6 +66,7 @@ class JiraTeamMetrics::DataTable
   end
 
   def insert_if_missing(column_values, default_values, &block)
+    block ||= IDENT
     InsertIfMissingOp.new(self).apply(column_values, default_values, block)
     self
   end
@@ -228,4 +229,6 @@ private
       end
     end
   end
+
+  IDENT = Proc.new{ |x| x }
 end
