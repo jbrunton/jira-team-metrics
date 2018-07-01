@@ -1,6 +1,6 @@
 class JiraTeamMetrics::Filter < ApplicationRecord
   belongs_to :board
-  enum filter_type: [:query_filter, :config_filter]
+  enum filter_type: [:jql_filter, :mql_filter, :config_filter]
 
   def include?(issue)
     @issue_keys ||= begin
