@@ -6,7 +6,12 @@ class JiraTeamMetrics::QueryBuilder
   end
 
   def and(query)
-    @query = "(#{@query}) AND (#{clean(query)})"
+    clean_query = clean(query)
+    if @query.blank?
+      @query = clean_query
+    elsif !clean_query.blank?
+      @query = "(#{@query}) AND (#{clean_query})"
+    end
     self
   end
 

@@ -19,6 +19,17 @@
                  data-value="<%= @chart_params.date_range.end_date.strftime('%Y-%m-%d') %>">
         </div>
       </div>
+      <div class="fields">
+        <div class="eight wide field">
+          <label for="filter">Filter</label>
+          <select name="filter" class="ui dropdown" id="filter">
+            <option value="">None</option>
+            <% @board.filters.each do |filter| %>
+              <option value="<%= filter.name %>"><%= filter.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
       <div class="ui styled accordion">
         <div class="title">
           <i class="dropdown icon"></i>
@@ -55,6 +66,9 @@
 
 <script>
   $(function() {
+    $('#filter').dropdown({
+      placeholder: false
+    });
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month
       selectYears: 15, // Creates a dropdown of 15 years to control year,

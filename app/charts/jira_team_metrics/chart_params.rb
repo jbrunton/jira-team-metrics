@@ -7,6 +7,7 @@ class JiraTeamMetrics::ChartParams
     @date_range = values[:date_range]
     @query = values[:query]
     @team = values[:team]
+    @filter = values[:filter]
   end
 
   def self.from_params(params)
@@ -26,9 +27,12 @@ class JiraTeamMetrics::ChartParams
         from_date.at_beginning_of_day,
         to_date.at_beginning_of_day)
 
+    query_builder = JiraTeamMetrics::QueryBuilder.new(params[:query])
+    query_builder.and("filter = '#{params[:filter]}'") unless params[:filter].blank?
+
     JiraTeamMetrics::ChartParams.new({
         date_range: date_range,
-        query: params[:query],
+        query: query_builder.query,
         team: params[:team]
     })
   end
