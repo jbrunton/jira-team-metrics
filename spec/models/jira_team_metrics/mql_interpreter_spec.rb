@@ -27,7 +27,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       end
     end
 
-    context "when given a custom field comparison" do
+    context "when given a jira field comparison" do
       let(:issue) { create(:issue, fields: {'MyField' => 'foo'}, board: board) }
 
       it "returns issues that match the given value" do
@@ -39,6 +39,25 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'bar'")
         expect(issues).to be_empty
       end
+    end
+
+    context "when given an object field comparison" do
+      let(:issue) { create(:issue, status: 'Some Status', board: board) }
+
+      it "returns issues that match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("status = 'Some Status'")
+        expect(issues).to eq([issue])
+      end
+
+      it "filters out issues that do not match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("status = 'Done'")
+        expect(issues).to be_empty
+      end
+    end
+
+    context "when given an increment comparison" do
+      xit "returns issues that match the given value"
+      xit "filters out issues that do not match the given value"
     end
 
     context "when given a disjunction" do
@@ -87,6 +106,20 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       it "negates compound expressions" do
         issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not (MyField = 'A' or MyField = 'B')")
         expect(issues).to eq([issue_c])
+      end
+    end
+
+    context "when given an includes expression" do
+      let(:issue) { create(:issue, fields: {'Teams' => ['Android']}, board: board) }
+
+      it "returns issues that match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'Android'")
+        expect(issues).to eq([issue])
+      end
+
+      it "filters out issues that do not match the given value" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'iOS'")
+        expect(issues).to be_empty
       end
     end
   end

@@ -25,16 +25,17 @@ class JiraTeamMetrics::MqlInterpreter
     rule(:comma)  { str(",") >> space? }
 
     rule(:identifier) { match('[a-zA-Z_]').repeat(1).as(:identifier) >> space? }
-    rule(:operator)   { (str('=') | str('and')).as(:op) >> space? }
+    rule(:operator)   { (str('=') | str('and') | str('includes')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
     rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
+    rule(:contains) { identifier.as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between }
+    rule(:expression) { filter | comparison | not_expression | between | contains }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -70,6 +71,10 @@ class JiraTeamMetrics::MqlInterpreter
       :field => subtree(:field),
       :op => '=',
       :string => subtree(:string)) { Comparison.new(field, string) }
+    rule(
+      :field => subtree(:field),
+      :op => 'includes',
+      :string => subtree(:string)) { Includes.new(field, string) }
     rule(
       :or => { :left => subtree(:left), :right => subtree(:right) }
     ) { OrExpr.new(left, right) }
@@ -136,18 +141,62 @@ class JiraTeamMetrics::MqlInterpreter
     end
   end
 
-  Comparison = Struct.new(:field, :value) do
+  Includes = Struct.new(:field, :value) do
     def eval(_, issues)
       issues.select do |issue|
-        field_name = field[:identifier].to_s
-        if ['key', 'issue_type', 'summary', 'status', 'status_category'].include?(field_name)
-          issue.send(field_name) == value[:value].to_s
-        elsif !issue.fields[field_name].nil?
-          issue.fields[field_name] == value[:value].to_s
-        else
-          false
-        end
+        (issue.fields[field_name] || []).include?(field_value)
       end
     end
+
+    def field_name
+      @field_name ||= field[:identifier].to_s
+    end
+
+    def field_value
+      @field_value ||= value[:value].to_s
+    end
+  end
+
+  Comparison = Struct.new(:field, :value) do
+    def eval(_, issues)
+      issues.select { |issue| compare_with(issue) }
+    end
+
+    def compare_with(issue)
+      compare_object_field(issue) ||
+        compare_jira_field(issue) ||
+        compare_increment(issue)
+    end
+
+    def field_name
+      @field_name ||= field[:identifier].to_s
+    end
+
+    def field_value
+      @field_value ||= value[:value].to_s
+    end
+
+    def compare_object_field(issue)
+      OBJECT_FIELDS.keys.include?(field_name) &&
+        issue.send(field_name) == field_value
+    end
+
+    def compare_jira_field(issue)
+      !issue.fields[field_name].nil? &&
+        issue.fields[field_name] == field_value
+    end
+
+    def compare_increment(issue)
+      field_name == 'increment' &&
+        issue.increment.try(:[], 'issue').try(:[], 'key') == field_value
+    end
+
+    OBJECT_FIELDS = {
+      'key' => 'key',
+      'issuetype' => 'issue_type',
+      'summary' => 'summary',
+      'status' => 'status',
+      'statusCategory' => 'status_category'
+    }
   end
 end

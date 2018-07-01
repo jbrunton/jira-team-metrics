@@ -1,13 +1,14 @@
 class JiraTeamMetrics::ThroughputChart
   include JiraTeamMetrics::FormattingHelper
 
-  def initialize(board, chart_params)
+  def initialize(board, chart_params, increment = nil)
     @board = board
     @params = chart_params
+    @increment = increment
   end
 
   def data_table
-    issues = @board.completed_issues(@params.date_range)
+    issues = @board.completed_issues(@params.date_range).select{ |issue| issue.is_scope? }
     issues = JiraTeamMetrics::TeamScopeReport.issues_for_team(issues, @params.team) if @params.team
     issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
 
@@ -18,7 +19,8 @@ class JiraTeamMetrics::ThroughputChart
         .select('completed_time').count('key', as: 'Count')
         .group(if_nil: 0) { |completed_time| completed_time.to_date }
         .sort_by('completed_time')
-        .insert_if_missing(@params.date_range.to_a, [0])
+
+    data_table.insert_if_missing(@params.date_range.to_a, [0]) { |date| date.to_date }
 
     th_counts = data_table.column_values('Count')
     th_averages = th_counts.count.times.map do |index|
@@ -53,6 +55,9 @@ class JiraTeamMetrics::ThroughputChart
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
             1 => { lineWidth: 2, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
+        },
+        vAxis: {
+          minValue: 0
         }
     }
   end

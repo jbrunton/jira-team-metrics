@@ -217,6 +217,10 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
+  describe "#increment" do
+    xit "returns the increment for the issue"
+  end
+
   describe "#teams" do
     context "for epics" do
       let(:epic) { create(:issue, board: board, issue_type: 'Epic', fields: { 'Teams' => ['Android', 'iOS']}) }

@@ -261,19 +261,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
       end
     end
 
-    context "given a table that starts with some existing values" do
+    context "given a block that adjusts the inputs" do
       let(:data_table) do
         JiraTeamMetrics::DataTable.new(
             ['index', 'count'],
-            [[0, 4]])
+            [[0.1, 4], [3.9, 4]])
       end
 
       it "fills in the missing rows" do
-        data_table.insert_if_missing(indexes, [0])
+        data_table.insert_if_missing([0, 2, 4], [0]) { |x| (x / 2.0).round * 2 }
         expect(data_table.rows).to eq([
-                                          [0, 4],
-                                          [1, 0],
-                                          [2, 0]])
+                                          [0.1, 4],
+                                          [2,   0],
+                                          [3.9, 4]])
       end
     end
   end
