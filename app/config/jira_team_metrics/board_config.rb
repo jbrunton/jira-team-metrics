@@ -1,6 +1,7 @@
 class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
 
-  QueryFilter = Struct.new(:name, :query)
+  JqlFilter = Struct.new(:name, :query)
+  MqlFilter = Struct.new(:name, :query)
   ConfigFilter = Struct.new(:name, :issues)
   PredictiveScope = Struct.new(:board_id, :adjustments_field)
   TimesheetsConfig = Struct.new(:day_of_week, :duration, :additional_columns)
@@ -36,8 +37,10 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
 
   def filters
     (config_hash['filters'] || []).map do |filter_hash|
-      if filter_hash.key?('query')
-        QueryFilter.new(filter_hash['name'], filter_hash['query'])
+      if filter_hash.key?('jql')
+        JqlFilter.new(filter_hash['name'], filter_hash['query'])
+      elsif filter_hash.key?('mql')
+        MqlFilter.new(filter_hash['name'], filter_hash['query'])
       else
         ConfigFilter.new(filter_hash['name'], filter_hash['issues'])
       end

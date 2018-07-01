@@ -53,7 +53,7 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       }]
       board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
       expect(board_config.filters).to eq([
-        JiraTeamMetrics::BoardConfig::QueryFilter.new('Releases', "summary ~ 'Release'")
+        JiraTeamMetrics::BoardConfig::JqlFilter.new('Releases', "summary ~ 'Release'")
       ])
     end
 
