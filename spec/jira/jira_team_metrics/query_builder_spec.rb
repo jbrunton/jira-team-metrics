@@ -24,5 +24,14 @@ RSpec.describe JiraTeamMetrics::QueryBuilder do
     it "strips the query of any order by clauses" do
       expect(builder.and("#{another_query} ORDER BY Rank ASC").query).to eq('(some query) AND (another query)')
     end
+
+    it "ignores blank queries appended to the first" do
+      expect(builder.and('').query).to eq('some query')
+    end
+
+    it "ignores the first query if it was blank" do
+      builder = JiraTeamMetrics::QueryBuilder.new('').and(some_query)
+      expect(builder.query).to eq('some query')
+    end
   end
 end
