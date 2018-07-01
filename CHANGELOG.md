@@ -1,5 +1,28 @@
 # Change Log
 
+## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.6.0)
+
+**Merged pull requests:**
+
+- Add filter dropdown [\#336](https://github.com/jbrunton/jira-team-metrics/pull/336) ([jbrunton](https://github.com/jbrunton))
+- Add support for mql filters [\#335](https://github.com/jbrunton/jira-team-metrics/pull/335) ([jbrunton](https://github.com/jbrunton))
+- add an includes operation to mql [\#333](https://github.com/jbrunton/jira-team-metrics/pull/333) ([jbrunton](https://github.com/jbrunton))
+
+## [0.5.0](https://github.com/jbrunton/jira-team-metrics/tree/0.5.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.4.0...0.5.0)
+
+**Closed issues:**
+
+- Improve test coverage [\#269](https://github.com/jbrunton/jira-team-metrics/issues/269)
+
+**Merged pull requests:**
+
+- limit counts on throughput chart to actual scope [\#331](https://github.com/jbrunton/jira-team-metrics/pull/331) ([jbrunton](https://github.com/jbrunton))
+- bump to v0.5.0 [\#330](https://github.com/jbrunton/jira-team-metrics/pull/330) ([jbrunton](https://github.com/jbrunton))
+- Fix throughput charts [\#329](https://github.com/jbrunton/jira-team-metrics/pull/329) ([jbrunton](https://github.com/jbrunton))
+- Update changelog [\#328](https://github.com/jbrunton/jira-team-metrics/pull/328) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.4.0](https://github.com/jbrunton/jira-team-metrics/tree/0.4.0) (2018-06-25)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.3.0...0.4.0)
 
