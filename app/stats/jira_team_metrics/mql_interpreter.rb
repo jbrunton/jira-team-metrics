@@ -142,43 +142,32 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def compare_with(issue)
-      if object_field?
-        compare_object_field(issue)
-      elsif jira_field?(issue)
-        compare_jira_field(issue)
-      elsif increment_field?
+      compare_object_field(issue) ||
+        compare_jira_field(issue) ||
         compare_increment(issue)
-      else
-        false
-      end
     end
 
     def field_name
       @field_name ||= field[:identifier].to_s
     end
 
-    def object_field?
-      OBJECT_FIELDS.keys.include?(field_name)
+    def field_value
+      @field_value ||= value[:value].to_s
     end
 
     def compare_object_field(issue)
-      issue.send(field_name) == value[:value].to_s
-    end
-
-    def jira_field?(issue)
-      !issue.fields[field_name].nil?
+      OBJECT_FIELDS.keys.include?(field_name) &&
+        issue.send(field_name) == field_value
     end
 
     def compare_jira_field(issue)
-      issue.fields[field_name] == value[:value].to_s
-    end
-
-    def increment_field?
-      field_name == 'increment'
+      !issue.fields[field_name].nil? &&
+        issue.fields[field_name] == field_value
     end
 
     def compare_increment(issue)
-      issue.increment.try(:[], 'issue').try(:[], 'key') == value[:value]
+      field_name == 'increment' &&
+        issue.increment.try(:[], 'issue').try(:[], 'key') == field_value
     end
 
     OBJECT_FIELDS = {
