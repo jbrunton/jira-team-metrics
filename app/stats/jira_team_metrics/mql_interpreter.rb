@@ -138,16 +138,44 @@ class JiraTeamMetrics::MqlInterpreter
 
   Comparison = Struct.new(:field, :value) do
     def eval(_, issues)
-      issues.select do |issue|
-        field_name = field[:identifier].to_s
-        if ['key', 'issue_type', 'summary', 'status', 'status_category'].include?(field_name)
-          issue.send(field_name) == value[:value].to_s
-        elsif !issue.fields[field_name].nil?
-          issue.fields[field_name] == value[:value].to_s
-        else
-          false
-        end
-      end
+      issues.select { |issue| compare_with(issue) }
     end
+
+    def compare_with(issue)
+      compare_object_field(issue) ||
+        compare_jira_field(issue) ||
+        compare_increment(issue)
+    end
+
+    def field_name
+      @field_name ||= field[:identifier].to_s
+    end
+
+    def field_value
+      @field_value ||= value[:value].to_s
+    end
+
+    def compare_object_field(issue)
+      OBJECT_FIELDS.keys.include?(field_name) &&
+        issue.send(field_name) == field_value
+    end
+
+    def compare_jira_field(issue)
+      !issue.fields[field_name].nil? &&
+        issue.fields[field_name] == field_value
+    end
+
+    def compare_increment(issue)
+      field_name == 'increment' &&
+        issue.increment.try(:[], 'issue').try(:[], 'key') == field_value
+    end
+
+    OBJECT_FIELDS = {
+      'key' => 'key',
+      'issuetype' => 'issue_type',
+      'summary' => 'summary',
+      'status' => 'status',
+      'statusCategory' => 'status_category'
+    }
   end
 end

@@ -1,7 +1,7 @@
 <script>
   $(function() {
     var chartBuilder = new ChartBuilder('<%= chart_id %>')
-        .url('<%= url %>')
+        .url("<%= url %>")
         .chartType('<%= chart_type %>');
 
     <% if defined?(chart_opts) %>

@@ -5,7 +5,7 @@
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
-    url: "#{board_api_path(@board)}/throughput/#{@team}.json".html_safe
+    url: "#{board_api_path(@board)}/throughput/#{@team}.json?query=increment='#{@increment.key}'".html_safe
 } %>
 
 <script>
