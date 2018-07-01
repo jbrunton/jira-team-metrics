@@ -38,9 +38,9 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
   def filters
     (config_hash['filters'] || []).map do |filter_hash|
       if filter_hash.key?('jql')
-        JqlFilter.new(filter_hash['name'], filter_hash['query'])
+        JqlFilter.new(filter_hash['name'], filter_hash['jql'])
       elsif filter_hash.key?('mql')
-        MqlFilter.new(filter_hash['name'], filter_hash['query'])
+        MqlFilter.new(filter_hash['name'], filter_hash['mql'])
       else
         ConfigFilter.new(filter_hash['name'], filter_hash['issues'])
       end
