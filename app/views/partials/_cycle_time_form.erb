@@ -38,11 +38,8 @@
         <div class="content">
           <p><strong>Select by field:</strong>
             <br><span class="mono">key = 'ISSUE-101'</span>
-            <br><span class="mono">issue_type = 'Story'</span>
+            <br><span class="mono">issuetype = 'Story'</span>
             <br><span class="mono">Teams includes 'Android'</span>
-          </p>
-          <p><strong>Applying filters:</strong>
-            <br><span class="mono">filter = 'MyFilter'</span>
           </p>
           <p><strong>Set operations:</strong>
             <br><span class="mono">not filter = 'MyFilter'</span>
@@ -51,6 +48,9 @@
           </p>
           <p><strong>Date ranges (end-exclusive):</strong>
             <br><span class="mono">between ('2018-01-01', '2018-06-01')</span>
+          </p>
+          <p><strong>Applying filters:</strong>
+            <br><span class="mono">filter = 'MyFilter'</span>
           </p>
           <p><strong>Filters for this board:</strong>
             <br><span class="mono"><%= @board.filters.map{ |filter| filter.name }.join(', ') %></span>
