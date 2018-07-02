@@ -9,7 +9,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def throughput
   end
 
-  def deliveries
+  def projects
     @projects = @board.projects
   end
 

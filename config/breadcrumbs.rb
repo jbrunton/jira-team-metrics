@@ -21,14 +21,14 @@ crumb :report do |board, report_key, report_name|
   parent :board, board
 end
 
-crumb :deliveries do |board|
-  link "Deliveries", deliveries_report_path(board)
+crumb :projects do |board|
+  link "Projects", projects_report_path(board)
   parent :board, board
 end
 
 crumb :project do |project|
   link project.key, project_report_path(project.board, project)
-  parent :deliveries, project.board
+  parent :projects, project.board
 end
 
 crumb :project_scope_report do |project, team|

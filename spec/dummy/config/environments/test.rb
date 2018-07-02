@@ -31,7 +31,7 @@ Rails.application.configure do
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test project method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.
+  # ActionMailer::Base.projects array.
   config.action_mailer.project_method = :test
 
   # Print deprecation notices to the stderr.

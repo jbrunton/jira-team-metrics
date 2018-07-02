@@ -15,12 +15,12 @@ module JiraTeamMetrics::PathHelper
     "#{root_path}reports/boards/#{board.jira_id}"
   end
 
-  def deliveries_report_path(board)
-    "#{reports_path(board)}/deliveries"
+  def projects_report_path(board)
+    "#{reports_path(board)}/projects"
   end
 
   def project_report_path(board, issue)
-    "#{deliveries_report_path(board)}/#{issue.key}"
+    "#{projects_report_path(board)}/#{issue.key}"
   end
 
   def project_scope_report_path(board, issue, team)

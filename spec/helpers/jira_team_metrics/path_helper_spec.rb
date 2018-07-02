@@ -22,20 +22,20 @@ RSpec.describe JiraTeamMetrics::PathHelper do
     expect(helper.reports_path(board)).to eq('/metrics/reports/boards/101')
   end
 
-  it "defines #deliveries_report_path" do
-    expect(helper.deliveries_report_path(board)).to eq('/metrics/reports/boards/101/deliveries')
+  it "defines #projects_report_path" do
+    expect(helper.projects_report_path(board)).to eq('/metrics/reports/boards/101/projects')
   end
 
   it "defines #project_report_path" do
-    expect(helper.project_report_path(board, project)).to eq('/metrics/reports/boards/101/deliveries/DELIVERY-1')
+    expect(helper.project_report_path(board, project)).to eq('/metrics/reports/boards/101/projects/DELIVERY-1')
   end
 
   it "defines #project_scope_report_path" do
-    expect(helper.project_scope_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/deliveries/DELIVERY-1/scope/MyTeam')
+    expect(helper.project_scope_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/scope/MyTeam')
   end
 
   it "defines #project_throughput_report_path" do
-    expect(helper.project_throughput_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/deliveries/DELIVERY-1/throughput/MyTeam')
+    expect(helper.project_throughput_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/throughput/MyTeam')
   end
 
   it "defines #timesheets_report_path" do
