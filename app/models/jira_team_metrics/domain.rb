@@ -28,8 +28,8 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     team.nil? ? full_team_name[0..2].downcase : team.short_name
   end
 
-  def status_color_for(status)
-    case status_category_for(status)
+  def status_color_for(status_category)
+    case status_category
       when 'To Do'
         'red'
       when 'Predicted'
