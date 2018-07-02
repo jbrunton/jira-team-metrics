@@ -1,7 +1,21 @@
 # Change Log
 
+## [0.7.1](https://github.com/jbrunton/jira-team-metrics/tree/0.7.1) (2018-07-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.1)
+
+**Merged pull requests:**
+
+- set version to 0.7.1 [\#341](https://github.com/jbrunton/jira-team-metrics/pull/341) ([jbrunton](https://github.com/jbrunton))
+- Fix help section for MQL [\#340](https://github.com/jbrunton/jira-team-metrics/pull/340) ([jbrunton](https://github.com/jbrunton))
+- bump to version 0.8.0 [\#339](https://github.com/jbrunton/jira-team-metrics/pull/339) ([jbrunton](https://github.com/jbrunton))
+- fix object field comparisons [\#338](https://github.com/jbrunton/jira-team-metrics/pull/338) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#337](https://github.com/jbrunton/jira-team-metrics/pull/337) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.6.0)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.6.0)
+
+## [0.7.0](https://github.com/jbrunton/jira-team-metrics/tree/0.7.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.7.0)
 
 **Merged pull requests:**
 
