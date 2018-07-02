@@ -42,15 +42,15 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     end
 
     context "when given an object field comparison" do
-      let(:issue) { create(:issue, status: 'Some Status', board: board) }
+      let(:issue) { create(:issue, issue_type: 'Bug', board: board) }
 
       it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("status = 'Some Status'")
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Bug'")
         expect(issues).to eq([issue])
       end
 
       it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("status = 'Done'")
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Story'")
         expect(issues).to be_empty
       end
     end

@@ -178,7 +178,7 @@ class JiraTeamMetrics::MqlInterpreter
 
     def compare_object_field(issue)
       OBJECT_FIELDS.keys.include?(field_name) &&
-        issue.send(field_name) == field_value
+        issue.send(OBJECT_FIELDS[field_name]) == field_value
     end
 
     def compare_jira_field(issue)
