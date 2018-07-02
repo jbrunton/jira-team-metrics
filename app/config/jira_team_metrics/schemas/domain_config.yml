@@ -7,7 +7,7 @@ optional:
   fields:
     type: "//arr"
     contents: "//str"
-  increments:
+  projects:
     type: "//arr"
     contents:
       type: "//rec"

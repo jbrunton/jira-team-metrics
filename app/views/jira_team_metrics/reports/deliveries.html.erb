@@ -2,12 +2,12 @@
 
 <h3>Deliveries</h3>
 
-<% @increments.each do |increment| %>
+<% @projects.each do |project| %>
     <h5>
-      <a href="<%= "#{reports_path(@board)}/deliveries/#{increment.key}" %>">
-        <%= increment.key %>
+      <a href="<%= "#{reports_path(@board)}/deliveries/#{project.key}" %>">
+        <%= project.key %>
       </a>
       &mdash;
-      <%= increment.summary %>
+      <%= project.summary %>
     </h5>
 <% end %>

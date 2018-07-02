@@ -20,9 +20,9 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
   end
 
-  def increments
-    @increments ||= issues.select do |issue|
-      domain.config.increment_types.any?{ |increment| issue.issue_type == increment.issue_type }
+  def projects
+    @projects ||= issues.select do |issue|
+      domain.config.project_types.any?{ |project| issue.issue_type == project.issue_type }
     end
   end
 
@@ -30,9 +30,9 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     issues.select{ |issue| issue.fields['Epic Link'] == epic.key }
   end
 
-  def issues_in_increment(increment, opts)
-    included_issues = increment.links.map do |link|
-      if domain.config.increment_types.any? { |increment_type| increment_type.outward_link_type == link['outward_link_type'] }
+  def issues_in_project(project, opts)
+    included_issues = project.links.map do |link|
+      if domain.config.project_types.any? { |project_type| project_type.outward_link_type == link['outward_link_type'] }
         issues.find_by(key: link['issue']['key'])
       else
         nil
@@ -87,9 +87,9 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  def training_increments
+  def training_projects
     if config.predictive_scope
-      training_board.increments
+      training_board.projects
     else
       []
     end

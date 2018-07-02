@@ -20,9 +20,9 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/throughput', to: 'reports#throughput'
   get '/reports/boards/:board_id/deliveries', to: 'reports#deliveries'
-  get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#delivery'
-  get '/reports/boards/:board_id/deliveries/:issue_key/scope/:team', to: 'reports#delivery_scope'
-  get '/reports/boards/:board_id/deliveries/:issue_key/throughput/:team', to: 'reports#delivery_throughput'
+  get '/reports/boards/:board_id/deliveries/:issue_key', to: 'reports#project'
+  get '/reports/boards/:board_id/deliveries/:issue_key/scope/:team', to: 'reports#project_scope'
+  get '/reports/boards/:board_id/deliveries/:issue_key/throughput/:team', to: 'reports#project_throughput'
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
 

@@ -165,7 +165,7 @@ class JiraTeamMetrics::MqlInterpreter
     def compare_with(issue)
       compare_object_field(issue) ||
         compare_jira_field(issue) ||
-        compare_increment(issue)
+        compare_project(issue)
     end
 
     def field_name
@@ -186,9 +186,9 @@ class JiraTeamMetrics::MqlInterpreter
         issue.fields[field_name] == field_value
     end
 
-    def compare_increment(issue)
-      field_name == 'increment' &&
-        issue.increment.try(:[], 'issue').try(:[], 'key') == field_value
+    def compare_project(issue)
+      field_name == 'project' &&
+        issue.project.try(:[], 'issue').try(:[], 'key') == field_value
     end
 
     OBJECT_FIELDS = {

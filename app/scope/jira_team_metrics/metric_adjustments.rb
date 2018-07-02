@@ -13,8 +13,8 @@ class JiraTeamMetrics::MetricAdjustments
     team_adjustment.adjusted_throughput(trained_throughput)
   end
 
-  def as_string(increment, short_team_name)
-    yaml_string = increment.fields[increment.board.config.predictive_scope.adjustments_field]
+  def as_string(project, short_team_name)
+    yaml_string = project.fields[project.board.config.predictive_scope.adjustments_field]
     YAML.load(yaml_string)[short_team_name].to_yaml.gsub("---\n", '').gsub("\n", '<br>').html_safe
   end
 

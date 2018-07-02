@@ -19,16 +19,16 @@ module JiraTeamMetrics::PathHelper
     "#{reports_path(board)}/deliveries"
   end
 
-  def delivery_report_path(board, issue)
+  def project_report_path(board, issue)
     "#{deliveries_report_path(board)}/#{issue.key}"
   end
 
-  def delivery_scope_report_path(board, issue, team)
-    "#{delivery_report_path(board, issue)}/scope/#{team}"
+  def project_scope_report_path(board, issue, team)
+    "#{project_report_path(board, issue)}/scope/#{team}"
   end
 
-  def delivery_throughput_report_path(board, issue, team)
-    "#{delivery_report_path(board, issue)}/throughput/#{team}"
+  def project_throughput_report_path(board, issue, team)
+    "#{project_report_path(board, issue)}/throughput/#{team}"
   end
 
   def timesheets_report_path(board, date_range = nil)

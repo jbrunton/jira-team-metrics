@@ -217,8 +217,8 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
-  describe "#increment" do
-    xit "returns the increment for the issue"
+  describe "#project" do
+    xit "returns the project for the issue"
   end
 
   describe "#teams" do

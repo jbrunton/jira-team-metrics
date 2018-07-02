@@ -15,16 +15,16 @@ class JiraTeamMetrics::CfdBuilder
     end
   end
 
-  def initialize(increment_report)
-    @increment_report = increment_report
+  def initialize(project_report)
+    @project_report = project_report
   end
 
   def build(cfd_type)
-    lookup_team_completion_rates(cfd_type, @increment_report)
+    lookup_team_completion_rates(cfd_type, @project_report)
 
     today = DateTime.now.to_date
     completion_date = @team_completion_dates.values.compact.max || today
-    start_date = [@increment_report.second_percentile_started_date, today - 60].max
+    start_date = [@project_report.second_percentile_started_date, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(start_date, completion_date).to_a
@@ -34,7 +34,7 @@ class JiraTeamMetrics::CfdBuilder
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
-    target_date = @increment_report.increment.target_date
+    target_date = @project_report.project.target_date
     unless target_date.nil?
       data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil]
     end
@@ -42,25 +42,25 @@ class JiraTeamMetrics::CfdBuilder
     data
   end
 
-  def lookup_team_completion_rates(cfd_type, increment_report)
-    rolling_window_days = increment_report.increment.board.config.rolling_window_days
+  def lookup_team_completion_rates(cfd_type, project_report)
+    rolling_window_days = project_report.project.board.config.rolling_window_days
     case cfd_type
       when :raw
-        @team_completion_dates = increment_report.teams.map do |team|
-          team_report = increment_report.team_report_for(team)
+        @team_completion_dates = project_report.teams.map do |team|
+          team_report = project_report.team_report_for(team)
           [team, team_report.rolling_forecast_completion_date(rolling_window_days)]
         end.to_h
-        @team_completion_rates = increment_report.teams.map do |team|
-          team_report = increment_report.team_report_for(team)
+        @team_completion_rates = project_report.teams.map do |team|
+          team_report = project_report.team_report_for(team)
           [team, team_report.rolling_throughput(rolling_window_days)]
         end.to_h
       when :trained
-        @team_completion_dates = increment_report.teams.map do |team|
-          team_report = increment_report.team_report_for(team)
+        @team_completion_dates = project_report.teams.map do |team|
+          team_report = project_report.team_report_for(team)
           [team, team_report.predicted_completion_date]
         end.to_h
-        @team_completion_rates = increment_report.teams.map do |team|
-          team_report = increment_report.team_report_for(team)
+        @team_completion_rates = project_report.teams.map do |team|
+          team_report = project_report.team_report_for(team)
           [team, team_report.predicted_throughput]
         end.to_h
       else
@@ -72,7 +72,7 @@ class JiraTeamMetrics::CfdBuilder
   def cfd_row_for(date)
     row = CfdRow.new(0, 0, 0, 0)
 
-    @increment_report.scope.each do |issue|
+    @project_report.scope.each do |issue|
       case issue.status_category_on(date)
         when 'To Do'
           row.to_do += 1
@@ -96,7 +96,7 @@ class JiraTeamMetrics::CfdBuilder
     annotation = annotation_text = nil
     annotations = []
 
-    @increment_report.teams.each do |team|
+    @project_report.teams.each do |team|
       team_completion_date = @team_completion_dates[team]
       unless team_completion_date.nil?
         if date <= team_completion_date && team_completion_date < date + 1
@@ -136,7 +136,7 @@ class JiraTeamMetrics::CfdBuilder
   end
 
   def predicted_rate_on_date(date)
-    @increment_report.teams
+    @project_report.teams
       .map { |team| predicted_rate_for_team(date, team) }
       .sum
   end
@@ -148,7 +148,7 @@ class JiraTeamMetrics::CfdBuilder
     team_completion_date = @team_completion_dates[team]
 
     unless team_completion_date.nil?
-      team_report = @increment_report.team_report_for(team)
+      team_report = @project_report.team_report_for(team)
       if date < team_completion_date
         team_rate = team_completion_rate * (date - DateTime.now)
       else

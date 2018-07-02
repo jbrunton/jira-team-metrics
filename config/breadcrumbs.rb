@@ -26,19 +26,19 @@ crumb :deliveries do |board|
   parent :board, board
 end
 
-crumb :delivery do |delivery|
-  link delivery.key, delivery_report_path(delivery.board, delivery)
-  parent :deliveries, delivery.board
+crumb :project do |project|
+  link project.key, project_report_path(project.board, project)
+  parent :deliveries, project.board
 end
 
-crumb :delivery_scope_report do |delivery, team|
-  link "#{team} Scope", delivery_scope_report_path(delivery.board, delivery, team)
-  parent :delivery, delivery
+crumb :project_scope_report do |project, team|
+  link "#{team} Scope", project_scope_report_path(project.board, project, team)
+  parent :project, project
 end
 
-crumb :delivery_throughput_report do |delivery, team|
-  link "#{team} Throughput", delivery_throughput_report_path(delivery.board, delivery, team)
-  parent :delivery, delivery
+crumb :project_throughput_report do |project, team|
+  link "#{team} Throughput", project_throughput_report_path(project.board, project, team)
+  parent :project, project
 end
 
 

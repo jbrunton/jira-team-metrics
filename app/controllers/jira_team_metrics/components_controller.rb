@@ -10,15 +10,15 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
     end
     @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.query)
 
-    epics_by_increment = @filtered_issues
-      .group_by{ |issue| issue.increment }
-      .sort_by{|increment, _| increment.nil? ? 1 : 0 }
-      .map do |increment, issues_for_increment|
-        [increment, issues_for_increment.group_by{ |issue| issue.epic }
+    epics_by_project = @filtered_issues
+      .group_by{ |issue| issue.project }
+      .sort_by{|project, _| project.nil? ? 1 : 0 }
+      .map do |project, issues_for_project|
+        [project, issues_for_project.group_by{ |issue| issue.epic }
           .sort_by{|epic, _| epic.nil? ? 1 : 0 }
           .to_h]
       end.to_h
 
-    render 'partials/timesheets', locals: {board: @board, epics_by_increment: epics_by_increment}, layout: false
+    render 'partials/timesheets', locals: {board: @board, epics_by_project: epics_by_project}, layout: false
   end
 end
