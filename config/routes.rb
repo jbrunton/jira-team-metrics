@@ -22,12 +22,14 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/throughput', to: 'reports#throughput'
 
-  project_type = JiraTeamMetrics::Domain.get_instance.config.project_type
-  unless project_type.nil?
-    get "/reports/boards/:board_id/#{projects_path_plural}", to: 'reports#projects'
-    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key", to: 'reports#project'
-    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/scope/:team", to: 'reports#project_scope'
-    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/throughput/:team", to: 'reports#project_throughput'
+  unless ActiveRecord::Base.connection.migration_context.needs_migration?
+    project_type = JiraTeamMetrics::Domain.get_instance.config.project_type
+    unless project_type.nil?
+      get "/reports/boards/:board_id/#{projects_path_plural}", to: 'reports#projects'
+      get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key", to: 'reports#project'
+      get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/scope/:team", to: 'reports#project_scope'
+      get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/throughput/:team", to: 'reports#project_throughput'
+    end
   end
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
