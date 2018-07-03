@@ -58,12 +58,12 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def is_project?
-    board.domain.config.project_types.any?{ |project| issue_type == project.issue_type }
+    [board.domain.config.project_type].compact.any?{ |project| issue_type == project.issue_type }
   end
 
   def project
     incr = links.find do |link|
-      board.domain.config.project_types.any? do |project|
+      [board.domain.config.project_type].flatten.any? do |project|
         link['inward_link_type'] == project.inward_link_type &&
           link['issue']['issue_type'] == project.issue_type
       end

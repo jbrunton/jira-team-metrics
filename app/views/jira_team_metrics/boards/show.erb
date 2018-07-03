@@ -48,11 +48,11 @@
         <tr>
           <td>Portfolio management</td>
           <td>
-            <a href="<%= reports_path(@board) %>/projects">Projects</a>
+            <a href="<%= projects_report_path(@board) %>"><%= projects_name_plural %></a>
           </td>
           <td>
             <span class="ui blue horizontal label">Beta</span>
-            Predictive reports for Projects
+            Predictive reports for <%= projects_name_plural %>
           </td>
         </tr>
       </tbody>

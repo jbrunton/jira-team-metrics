@@ -22,7 +22,7 @@ crumb :report do |board, report_key, report_name|
 end
 
 crumb :projects do |board|
-  link "Projects", projects_report_path(board)
+  link projects_name_plural, projects_report_path(board)
   parent :board, board
 end
 

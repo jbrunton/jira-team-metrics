@@ -1,3 +1,5 @@
+include JiraTeamMetrics::ProjectsHelper
+
 JiraTeamMetrics::Engine.routes.draw do
   mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
@@ -19,10 +21,14 @@ JiraTeamMetrics::Engine.routes.draw do
 
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/throughput', to: 'reports#throughput'
-  get '/reports/boards/:board_id/projects', to: 'reports#projects'
-  get '/reports/boards/:board_id/projects/:issue_key', to: 'reports#project'
-  get '/reports/boards/:board_id/projects/:issue_key/scope/:team', to: 'reports#project_scope'
-  get '/reports/boards/:board_id/projects/:issue_key/throughput/:team', to: 'reports#project_throughput'
+
+  project_type = JiraTeamMetrics::Domain.get_instance.config.project_type
+  unless project_type.nil?
+    get "/reports/boards/:board_id/#{projects_path_plural}", to: 'reports#projects'
+    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key", to: 'reports#project'
+    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/scope/:team", to: 'reports#project_scope'
+    get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/throughput/:team", to: 'reports#project_throughput'
+  end
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
 

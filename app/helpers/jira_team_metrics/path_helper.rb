@@ -1,4 +1,6 @@
 module JiraTeamMetrics::PathHelper
+  include JiraTeamMetrics::ProjectsHelper
+
   def domain_path
     "#{root_path}domain"
   end
@@ -16,7 +18,7 @@ module JiraTeamMetrics::PathHelper
   end
 
   def projects_report_path(board)
-    "#{reports_path(board)}/projects"
+    "#{reports_path(board)}/#{projects_path_plural}"
   end
 
   def project_report_path(board, issue)

@@ -22,7 +22,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
 
   def projects
     @projects ||= issues.select do |issue|
-      domain.config.project_types.any?{ |project| issue.issue_type == project.issue_type }
+      [domain.config.project_type].compact.any?{ |project| issue.issue_type == project.issue_type }
     end
   end
 
@@ -32,7 +32,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
 
   def issues_in_project(project, opts)
     included_issues = project.links.map do |link|
-      if domain.config.project_types.any? { |project_type| project_type.outward_link_type == link['outward_link_type'] }
+      if [domain.config.project_type].compact.any? { |project_type| project_type.outward_link_type == link['outward_link_type'] }
         issues.find_by(key: link['issue']['key'])
       else
         nil

@@ -1,10 +1,10 @@
 <% breadcrumb :projects, @board %>
 
-<h3>Projects</h3>
+<h3><%= projects_name_plural %></h3>
 
 <% @projects.each do |project| %>
     <h5>
-      <a href="<%= "#{reports_path(@board)}/projects/#{project.key}" %>">
+      <a href="<%= project_report_path(@board, project) %>">
         <%= project.key %>
       </a>
       &mdash;

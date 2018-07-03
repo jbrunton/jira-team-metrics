@@ -26,10 +26,10 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
     config_hash['fields'] || []
   end
 
-  def project_types
-    (config_hash['projects'] || []).map do |project_hash|
-      ProjectType.new(project_hash['issue_type'], project_hash['outward_link_type'], project_hash['inward_link_type'])
-    end
+  def project_type
+    project_hash = config_hash['projects']
+    return nil if project_hash.nil?
+    ProjectType.new(project_hash['issue_type'], project_hash['outward_link_type'], project_hash['inward_link_type'])
   end
 
   def boards
