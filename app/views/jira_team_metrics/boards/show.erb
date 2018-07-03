@@ -4,13 +4,17 @@
 
 <div class="ui grid">
   <div class="ten wide column">
-    <table class="ui celled structured table">
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th colspan="2">
+            Manage flow
+          </th>
+        </tr>
+      </thead>
       <tbody>
         <tr>
-          <td rowspan="4">
-            Manage flow
-          </td>
-          <td>
+          <td class="four wide">
             <a href="<%= reports_path(@board) %>/scatterplot">Scatterplot</a>
           </td>
           <td>
@@ -19,7 +23,7 @@
           </td>
         </tr>
         <tr>
-          <td>
+          <td class="four wide">
             <a href="<%= reports_path(@board) %>/aging_wip">Aging WIP</a>
           </td>
           <td>
@@ -28,16 +32,7 @@
           </td>
         </tr>
         <tr>
-          <td>
-            <a href="<%= reports_path(@board) %>/timesheets">Timesheets</a>
-          </td>
-          <td>
-            <span class="ui orange horizontal label">Prototype</span>
-            How the teams' time was allocated across projects
-          </td>
-        </tr>
-        <tr>
-          <td>
+          <td class="four wide">
             <a href="<%= reports_path(@board) %>/throughput">Throughput</a>
           </td>
           <td>
@@ -45,9 +40,29 @@
             Visualize throughput over time
           </td>
         </tr>
+      </tbody>
+    </table>
+    <table class="ui celled table">
+      <thead>
         <tr>
-          <td>Portfolio management</td>
+          <th colspan="2">
+            Portfolio Management
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="four wide">
+            <a href="<%= reports_path(@board) %>/timesheets">Timesheets</a>
+          </td>
           <td>
+            <span class="ui orange horizontal label">Prototype</span>
+            How the teams' time was allocated across projects
+          </td>
+        </tr>
+        <% unless @domain.config.project_type.nil? %>
+        <tr>
+          <td class="four wide">
             <a href="<%= projects_report_path(@board) %>"><%= projects_name_plural %></a>
           </td>
           <td>
@@ -55,6 +70,7 @@
             Predictive reports for <%= projects_name_plural %>
           </td>
         </tr>
+        <% end %>
       </tbody>
     </table>
   </div>
