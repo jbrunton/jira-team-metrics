@@ -48,7 +48,7 @@ class JiraTeamMetrics::ChartParams
     end
 
     def build_query
-      query_builder = JiraTeamMetrics::QueryBuilder.new(@params[:query])
+      query_builder = JiraTeamMetrics::QueryBuilder.new(@params[:query], :mql)
       query_builder.and("filter = '#{@params[:filter]}'") unless @params[:filter].blank?
       query_builder.query
     end

@@ -6,6 +6,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   def eval(query)
+    Rails.logger.info "Evaluating query: #{query}"
     return @issues if query.blank?
 
     parser = MqlParser.new
