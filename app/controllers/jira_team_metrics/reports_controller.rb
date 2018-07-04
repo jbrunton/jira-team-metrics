@@ -9,13 +9,13 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def throughput
   end
 
-  def deliveries
-    @increments = @board.increments
+  def projects
+    @projects = @board.projects
   end
 
-  def delivery
+  def project
     @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
-    @increment = @board.issues.find_by(key: params[:issue_key])
+    @project = @board.issues.find_by(key: params[:issue_key])
     if (params[:show_teams] || params[:filter_teams]).nil?
       @show_teams = team_dashboard_data[:teams].map do |team, _|
         @domain.short_team_name(team)
@@ -33,11 +33,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def aging_wip
   end
 
-  def delivery_scope
+  def project_scope
     @team = params[:team]
-    @increment = @board.issues.find_by(key: params[:issue_key])
+    @project = @board.issues.find_by(key: params[:issue_key])
 
-    @report = JiraTeamMetrics::TeamScopeReport.for(@increment, @team)
+    @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
     @issues_by_epic = @report.scope
       .group_by{ |issue| issue.epic }
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
@@ -53,28 +53,28 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     end
   end
 
-  def delivery_throughput
+  def project_throughput
     @team = params[:team]
-    @increment = @board.issues.find_by(key: params[:issue_key])
+    @project = @board.issues.find_by(key: params[:issue_key])
   end
 
-  def increment_report
-    @increment_report ||= JiraTeamMetrics::IncrementScopeReport.new(@increment).build
+  def project_report
+    @project_report ||= JiraTeamMetrics::ProjectScopeReport.new(@project).build
   end
 
   helper_method :cfd_data
   helper_method :team_dashboard_data
-  helper_method :increment_report
+  helper_method :project_report
 
   def cfd_data(cfd_type)
-    JiraTeamMetrics::ReportFragment.fetch_contents(@increment.board, report_key, "cfd:#{cfd_type}")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "cfd:#{cfd_type}")
   end
 
   def team_dashboard_data
-    JiraTeamMetrics::ReportFragment.fetch_contents(@increment.board, report_key, "team_dashboard")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "team_dashboard")
   end
 
   def report_key
-    "delivery/#{@increment.key}"
+    "project/#{@project.key}"
   end
 end

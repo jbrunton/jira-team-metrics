@@ -1,4 +1,6 @@
 module JiraTeamMetrics::PathHelper
+  include JiraTeamMetrics::ProjectsHelper
+
   def domain_path
     "#{root_path}domain"
   end
@@ -15,20 +17,20 @@ module JiraTeamMetrics::PathHelper
     "#{root_path}reports/boards/#{board.jira_id}"
   end
 
-  def deliveries_report_path(board)
-    "#{reports_path(board)}/deliveries"
+  def projects_report_path(board)
+    "#{reports_path(board)}/#{projects_path_plural}"
   end
 
-  def delivery_report_path(board, issue)
-    "#{deliveries_report_path(board)}/#{issue.key}"
+  def project_report_path(board, issue)
+    "#{projects_report_path(board)}/#{issue.key}"
   end
 
-  def delivery_scope_report_path(board, issue, team)
-    "#{delivery_report_path(board, issue)}/scope/#{team}"
+  def project_scope_report_path(board, issue, team)
+    "#{project_report_path(board, issue)}/scope/#{team}"
   end
 
-  def delivery_throughput_report_path(board, issue, team)
-    "#{delivery_report_path(board, issue)}/throughput/#{team}"
+  def project_throughput_report_path(board, issue, team)
+    "#{project_report_path(board, issue)}/throughput/#{team}"
   end
 
   def timesheets_report_path(board, date_range = nil)

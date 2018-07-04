@@ -55,7 +55,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       end
     end
 
-    context "when given an increment comparison" do
+    context "when given an project comparison" do
       xit "returns issues that match the given value"
       xit "filters out issues that do not match the given value"
     end

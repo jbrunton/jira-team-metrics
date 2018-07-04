@@ -23,14 +23,14 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def build_reports(board)
-    board.increments.each_with_index do |increment, index|
-      progress = (100.0 * (index + 1) / board.increments.count).to_i
+    board.projects.each_with_index do |project, index|
+      progress = (100.0 * (index + 1) / board.projects.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
       begin
-        JiraTeamMetrics::DeliveryReportBuilder.new(increment).build
+        JiraTeamMetrics::ProjectReportBuilder.new(project).build
       rescue StandardError => e
         logger.error [
-          "Error building reports for #{increment.key}:",
+          "Error building reports for #{project.key}:",
           e.message,
           e.backtrace
         ].join("\n")

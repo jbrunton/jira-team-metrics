@@ -1,4 +1,4 @@
-<% breadcrumb :delivery_scope_report, @increment, @team %>
+<% breadcrumb :project_scope_report, @project, @team %>
 
 <% if @report.has_training_data? %>
     <div class="ui grid">
@@ -10,7 +10,7 @@
     <table class="ui very compact table">
       <thead>
         <tr>
-          <th>Delivery</th>
+          <th>Project</th>
           <th>Scope</th>
           <th>Epics</th>
           <th colspan="2" class="center aligned">Issues / Epic</th>
@@ -20,14 +20,14 @@
       </thead>
       <% @report.training_team_reports.each do |training_report| %>
           <tr>
-            <td><%= training_report.increment.key %></td>
+            <td><%= training_report.project.key %></td>
             <td><%= training_report.scope.count %></td>
             <td><%= training_report.epics.count %></td>
             <td class="right aligned"><%= pretty_print_number(training_report.epic_scope) %></td>
             <td></td>
             <td></td>
             <td>
-              <a href="<%= delivery_scope_report_path(@board.training_board, training_report.increment, @team) %>" target="_blank">
+              <a href="<%= project_scope_report_path(@board.training_board, training_report.project, @team) %>" target="_blank">
                 <i class="external alternate icon"></i>
               </a>
             </td>
@@ -47,7 +47,7 @@
           <th><strong>Adjusted</strong>
             <% if @report.adjusted_epic_scope || @report.adjusted_throughput %>
                 <a id="adjustments-popup"
-                   data-html="<%= @increment.metric_adjustments.as_string(@increment, @domain.short_team_name(@team)) %>"
+                   data-html="<%= @project.metric_adjustments.as_string(@project, @domain.short_team_name(@team)) %>"
                    data-position="right center">
                   <i class="ellipsis horizontal icon"></i>
                 </a>

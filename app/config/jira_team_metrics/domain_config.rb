@@ -7,7 +7,7 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
 
   TeamDetails = Struct.new(:name, :short_name)
 
-  IncrementType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
+  ProjectType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
   def initialize(config_hash)
     super(config_hash, 'domain_config')
@@ -26,10 +26,10 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
     config_hash['fields'] || []
   end
 
-  def increment_types
-    (config_hash['increments'] || []).map do |increment_hash|
-      IncrementType.new(increment_hash['issue_type'], increment_hash['outward_link_type'], increment_hash['inward_link_type'])
-    end
+  def project_type
+    project_hash = config_hash['projects']
+    return nil if project_hash.nil?
+    ProjectType.new(project_hash['issue_type'], project_hash['outward_link_type'], project_hash['inward_link_type'])
   end
 
   def boards

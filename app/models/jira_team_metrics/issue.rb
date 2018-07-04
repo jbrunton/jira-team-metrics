@@ -25,15 +25,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   def issues(opts)
     if is_epic?
       board.issues_in_epic(self)
-    elsif is_increment?
-      board.issues_in_increment(self, opts)
+    elsif is_project?
+      board.issues_in_project(self, opts)
     else
       []
     end
   end
 
   def teams
-    if is_increment?
+    if is_project?
       []
     elsif is_epic?
       fields['Teams'] || []
@@ -43,40 +43,40 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def target_date
-    if is_increment?
+    if is_project?
       # TODO: get this field name from config
       fields['Target Date'] ? DateTime.parse(fields['Target Date']) : nil
     end
   end
 
   def is_scope?
-    !is_epic? && !is_increment?
+    !is_epic? && !is_project?
   end
 
   def is_epic?
     issue_type == 'Epic'
   end
 
-  def is_increment?
-    board.domain.config.increment_types.any?{ |increment| issue_type == increment.issue_type }
+  def is_project?
+    [board.domain.config.project_type].compact.any?{ |project| issue_type == project.issue_type }
   end
 
-  def increment
+  def project
     incr = links.find do |link|
-      board.domain.config.increment_types.any? do |increment|
-        link['inward_link_type'] == increment.inward_link_type &&
-          link['issue']['issue_type'] == increment.issue_type
+      [board.domain.config.project_type].flatten.any? do |project|
+        link['inward_link_type'] == project.inward_link_type &&
+          link['issue']['issue_type'] == project.issue_type
       end
     end
     if incr.nil?
-      incr = epic.try(:increment)
+      incr = epic.try(:project)
     end
     incr
   end
 
   def metric_adjustments
     @metric_adjustments ||= begin
-      if is_increment?
+      if is_project?
         yaml_string = fields[board.config.predictive_scope.adjustments_field]
         JiraTeamMetrics::MetricAdjustments.parse(yaml_string)
       end
