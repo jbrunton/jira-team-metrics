@@ -18,7 +18,7 @@ class JiraTeamMetrics::QueryBuilder
           'and'
         else
           raise "Invalid language: #{@language}"
-        end
+      end
       @query = "(#{@query}) #{op} (#{clean_query})"
     end
     self

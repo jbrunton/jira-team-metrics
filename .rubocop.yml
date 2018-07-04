@@ -43,6 +43,7 @@ Lint/Debugger:
 
 Lint/DefEndAlignment:
   Description: 'Align ends corresponding to defs correctly.'
+  EnforcedStyleAlignWith: variable
   Enabled: true
 
 Lint/DeprecatedClassMethods:
