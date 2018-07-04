@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::Issue do
+  before(:each) { create(:domain) }
+
   let(:analysis_transition) {
     {
       'date' => '2017-01-01T12:00:00.000-0000',
@@ -67,6 +69,78 @@ RSpec.describe JiraTeamMetrics::Issue do
       in_test_transition,
       done_transition
     ])
+  end
+
+  describe "#is_epic?" do
+    it "returns true iff issue_type == 'Epic'" do
+      expect(create(:epic).is_epic?).to eq(true)
+      expect(create(:issue).is_epic?).to eq(false)
+    end
+  end
+
+  describe "#is_project?" do
+    it "returns true iff the issue_type matches the project type" do
+      expect(create(:project).is_project?).to eq(true)
+      expect(create(:issue).is_project?).to eq(false)
+    end
+  end
+
+  describe "#is_scope?" do
+    it "returns true iff the issue_type is scope" do
+      expect(create(:issue).is_scope?).to eq(true)
+      expect(create(:epic).is_scope?).to eq(false)
+      expect(create(:project).is_scope?).to eq(false)
+    end
+  end
+
+  describe "#epic" do
+    let(:epic) { create(:epic) }
+    let(:issue) { create(:issue, board: epic.board, epic: epic) }
+
+    it "returns the epic the issue is linked to" do
+      expect(issue.epic).to eq(epic)
+    end
+  end
+
+  describe "#project" do
+    let(:project) { create(:project) }
+    let(:epic) { create(:epic, project: project) }
+
+    context "when given an issue included in a project" do
+      it "returns the project" do
+        expect(epic.project).to eq({
+          'inward_link_type' => 'is included in',
+          'issue' => {
+            'issue_type' => 'Project',
+            'key' => project.key,
+            'summary' => project.summary
+          }
+        })
+      end
+    end
+
+    context "when given an issue linked to an epic in a project" do
+      let(:issue) { create(:issue, board: epic.board, epic: epic) }
+
+      it "returns the project" do
+        expect(issue.project).to eq({
+          'inward_link_type' => 'is included in',
+          'issue' => {
+            'issue_type' => 'Project',
+            'key' => project.key,
+            'summary' => project.summary
+          }
+        })
+      end
+    end
+
+    context "if the issue isn't included in a project" do
+      let(:issue) { create(:issue) }
+
+      it "returns nil" do
+        expect(issue.project).to eq(nil)
+      end
+    end
   end
 
   describe "started_time" do
