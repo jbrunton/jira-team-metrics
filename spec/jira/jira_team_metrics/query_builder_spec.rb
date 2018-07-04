@@ -34,4 +34,12 @@ RSpec.describe JiraTeamMetrics::QueryBuilder do
       expect(builder.query).to eq('some query')
     end
   end
+
+  context "when the specified language is mql" do
+    let(:builder) { JiraTeamMetrics::QueryBuilder.new(some_query, :mql) }
+
+    it "uses lowercase and" do
+      expect(builder.and('another query').query).to eq('(some query) and (another query)')
+    end
+  end
 end
