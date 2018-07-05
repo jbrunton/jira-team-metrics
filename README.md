@@ -27,9 +27,9 @@ Then navigate to http://localhost:3000/metrics.
 
 ## Server options
 
-To use a remote config file, set a `CONFIG_URL` environment variable pointing to the file:
+To specify a config file (either remote or local), set a `CONFIG_FILE` environment variable pointing to the file:
 
-    CONFIG_URL=https://my.config.yml bundle exec rails s
+    CONFIG_FILE=https://my.config.yml bundle exec rails s
 
 To start the server in read-only mode, set a `READONLY` environment variable:
 
