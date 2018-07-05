@@ -1,7 +1,7 @@
 class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
-  BoardDetails = Struct.new(:board_id, :config_url) do
+  BoardDetails = Struct.new(:board_id, :config_file) do
     def fetch_config_string
-      open(config_url).read unless config_url.nil?
+      open(config_file).read unless config_file.nil?
     end
   end
 
@@ -34,7 +34,7 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
 
   def boards
     (config_hash['boards'] || []).map do |config_hash|
-      BoardDetails.new(config_hash['board_id'], config_hash['config_url'])
+      BoardDetails.new(config_hash['board_id'], config_hash['config_file'])
     end
   end
 

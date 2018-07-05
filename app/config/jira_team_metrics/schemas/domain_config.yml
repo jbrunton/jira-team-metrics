@@ -27,7 +27,7 @@ optional:
       required:
         board_id: "//int"
       optional:
-        config_url: "//str"
+        config_file: "//str"
   teams:
     type: "//arr"
     contents:
