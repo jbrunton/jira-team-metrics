@@ -44,6 +44,6 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def self.get_instance
-    JiraTeamMetrics::Domain.first_or_create unless ActiveRecord::Base.connection.migration_context.needs_migration?
+    JiraTeamMetrics::Domain.first_or_create
   end
 end

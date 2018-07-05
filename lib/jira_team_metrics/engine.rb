@@ -18,7 +18,9 @@ module JiraTeamMetrics
     require 'gretel'
 
     config.after_initialize do
-      JiraTeamMetrics::ConfigFileService.new(ENV['CONFIG_FILE']).load_config
+      unless ActiveRecord::Base.connection.migration_context.needs_migration?
+        JiraTeamMetrics::ConfigFileService.new(ENV['CONFIG_FILE']).load_config
+      end
     end
   end
 end
