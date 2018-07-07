@@ -34,9 +34,9 @@ function defineChart(opts) {
 
   $(function () {
     google.charts.setOnLoadCallback(updateChart);
-    $('#ct-states select').change(updateChart);
-    $('#ct-states input').change(updateChart);
-    $('#ct-states textarea').change(updateChart);
+    $('#search-form select').change(updateChart);
+    $('#search-form input').change(updateChart);
+    $('#search-form textarea').change(updateChart);
   });
 }
 
