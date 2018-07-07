@@ -16,16 +16,20 @@
         <select name="filter" class="ui dropdown" id="filter">
           <option value="">None</option>
           <% @board.filters.each do |filter| %>
-              <option value="<%= filter.name %>"><%= filter.name %></option>
+              <option value="<%= filter.name %>" <%= 'selected' if @chart_params.filter == filter.name %>>
+                <%= filter.name %>
+              </option>
           <% end %>
         </select>
       </div>
       <div class="four wide field">
         <label for="hierarchy_level">Hierarchy Level</label>
         <select name="hierarchy_level" class="ui dropdown" id="hierarchy_level">
-          <option value="Scope">Scope</option>
-          <option value="Epic">Epic</option>
-          <option value="Project"><%= projects_name_singular %></option>
+          <% [['Scope', 'Scope'], ['Epic', 'Epic'], ['Project', projects_name_singular]].each do |level, level_name| %>
+              <option value="<%= level %>" <%= 'selected' if @chart_params.hierarchy_level == level %>>
+                <%= level_name %>
+              </option>
+          <% end %>
         </select>
       </div>
     </div>
