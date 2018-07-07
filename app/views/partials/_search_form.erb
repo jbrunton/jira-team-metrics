@@ -9,6 +9,7 @@
         <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
         <i class="dropdown icon"></i>
         <div class="menu">
+          <div class="header">Months</div>
           <% @timesheet_options.month_periods.each do |label, date_range| %>
               <a class="item quicklink"
                  data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
@@ -26,6 +27,7 @@
         <input type="hidden" value="<%= @timesheet_options.selected_relative_period %>" />
         <i class="dropdown icon"></i>
         <div class="menu">
+          <div class="header">Relative Timeframes</div>
           <% @timesheet_options.relative_periods.each do |label, date_range| %>
               <a class="item quicklink"
                  data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
@@ -44,6 +46,7 @@
             <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
             <i class="dropdown icon"></i>
             <div class="menu">
+              <div class="header">Timesheet Periods</div>
               <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
                   <a class="item quicklink"
                      data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
