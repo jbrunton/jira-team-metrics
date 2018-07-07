@@ -197,7 +197,8 @@ class JiraTeamMetrics::MqlInterpreter
       'issuetype' => 'issue_type',
       'summary' => 'summary',
       'status' => 'status',
-      'statusCategory' => 'status_category'
+      'statusCategory' => 'status_category',
+      'hierarchyLevel' => 'hierarchy_level'
     }
   end
 end

@@ -25,8 +25,16 @@
           <select name="filter" class="ui dropdown" id="filter">
             <option value="">None</option>
             <% @board.filters.each do |filter| %>
-              <option value="<%= filter.name %>"><%= filter.name %></option>
+                <option value="<%= filter.name %>"><%= filter.name %></option>
             <% end %>
+          </select>
+        </div>
+        <div class="eight wide field">
+          <label for="hierarchy_level">Hierarchy Level</label>
+          <select name="hierarchy_level" class="ui dropdown" id="hierarchy_level">
+            <option value="Scope">Scope</option>
+            <option value="Epic">Epic</option>
+            <option value="Project"><%= projects_name_singular %></option>
           </select>
         </div>
       </div>
@@ -66,7 +74,7 @@
 
 <script>
   $(function() {
-    $('#filter').dropdown({
+    $('#filter, #hierarchy_level').dropdown({
       placeholder: false
     });
     $('.datepicker').pickadate({

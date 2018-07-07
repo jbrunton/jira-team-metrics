@@ -50,6 +50,7 @@ class JiraTeamMetrics::ChartParams
     def build_query
       query_builder = JiraTeamMetrics::QueryBuilder.new(@params[:query], :mql)
       query_builder.and("filter = '#{@params[:filter]}'") unless @params[:filter].blank?
+      query_builder.and("hierarchyLevel = '#{@params[:hierarchy_level]}'") unless @params[:hierarchy_level].blank?
       query_builder.query
     end
   end
