@@ -35,7 +35,11 @@
     </div>
     <div class="fields">
       <div class="sixteen wide field">
-        <label>Query</label>
+        <label>Query <a id="query-help"><i class="question circle outline icon"></i></a>
+          <div class="ui fluid popup">
+            <%= render partial: 'partials/query_help' %>
+          </div>
+        </label>
         <div class="ui action input">
           <input type="text" class="mono" id="query" name="query" value="<%= @chart_params.query %>"/>
           <button class="ui button" type="submit" id="search-submit">Submit</button>
@@ -43,36 +47,6 @@
       </div>
     </div>
   </form>
-  <div class="ui styled accordion">
-    <div class="title">
-      <i class="dropdown icon"></i>
-      Help with query language
-    </div>
-    <div class="content">
-      <p><strong>Select by field:</strong>
-        <br><span class="mono">key = 'ISSUE-101'</span>
-        <br><span class="mono">issuetype = 'Story'</span>
-        <br><span class="mono">Teams includes 'Android'</span>
-      </p>
-      <p><strong>Set operations:</strong>
-        <br><span class="mono">not filter = 'MyFilter'</span>
-        <br><span class="mono">filter = 'MyFilter' and issue_type = 'Bug'</span>
-        <br><span class="mono">not (filter = 'MyFilter' or issue_type = 'Bug')</span>
-      </p>
-      <p><strong>Date ranges (end-exclusive):</strong>
-        <br><span class="mono">between ('2018-01-01', '2018-06-01')</span>
-      </p>
-      <p><strong>Applying filters:</strong>
-        <br><span class="mono">filter = 'MyFilter'</span>
-      </p>
-      <p><strong>Filters for this board:</strong>
-        <br><span class="mono"><%= @board.filters.map{ |filter| filter.name }.join(', ') %></span>
-      </p>
-      <p><strong>Issue types for this board:</strong>
-        <br><span class="mono"><%= @board.issue_types.join(', ') %></span>
-      </p>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -94,6 +68,9 @@
       {
         this.$holder.blur();
       }
+    });
+    $('#query-help').popup({
+      inline: true
     });
   });
 
