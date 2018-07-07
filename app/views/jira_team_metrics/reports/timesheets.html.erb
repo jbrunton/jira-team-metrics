@@ -1,57 +1,63 @@
 <% breadcrumb :report, @board, :timesheets, 'Timesheets' %>
 
-<h3>Quick Links</h3>
+<h3>Timesheets for <%= @board.name %></h3>
 
-<div id="month-dropdown" class="ui selection dropdown">
-  <div class="text">Select Month</div>
-  <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
-  <i class="dropdown icon"></i>
-  <div class="menu">
-    <% @timesheet_options.month_periods.each do |label, date_range| %>
-        <div class="item"
-             data-value="<%= label %>"
-             data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
-             data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
-        >
-          <%= label %>
+<div style="width: 50%;">
+  <div class="ui text menu">
+    <a class="browse item" id="jump-to">
+      Jump to time period...
+      <i class="dropdown icon"></i>
+    </a>
+  </div>
+  <div class="ui basic fluid popup">
+    <div class="ui two column relaxed divided grid">
+      <div class="column">
+        <h4 class="ui header">Month</h4>
+        <div class="ui link list">
+          <% @timesheet_options.month_periods.each do |label, date_range| %>
+              <a class="item quicklink"
+                   data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                   data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+              >
+                <%= label %>
+              </a>
+          <% end %>
         </div>
-    <% end %>
+      </div>
+      <div class="column">
+        <h4 class="ui header">Timesheet period</h4>
+        <div class="ui link list">
+          <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
+              <a class="item quicklink"
+                   data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                   data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+              >
+                <%= label %>
+              </a>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<% unless @timesheet_options.timesheet_periods.nil? %>
-<div id="timesheet-dropdown" class="ui selection dropdown">
-  <div class="text">Select Timesheet Period</div>
-  <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
-  <i class="dropdown icon"></i>
-  <div class="menu">
-    <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
-        <div class="item"
-             data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
-             data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
-        >
-          <%= label %>
-        </div>
-    <% end %>
-  </div>
-</div>
-<% end %>
 
 <script>
   $(function() {
-    $('#month-dropdown, #timesheet-dropdown').dropdown({
-      onChange: function(value, text, $selectedItem) {
-        var startPicker = $('#from_date').pickadate('picker');
-        startPicker.set('select', $selectedItem.data('start'), {format: 'yyyy-mm-dd'});
+    $('.quicklink').click(function() {
+      var startPicker = $('#from_date').pickadate('picker');
+      startPicker.set('select', $(this).data('start'), {format: 'yyyy-mm-dd'});
 
-        var endPicker = $('#to_date').pickadate('picker');
-        endPicker.set('select', $selectedItem.data('end'), {format: 'yyyy-mm-dd'});
-      }
+      var endPicker = $('#to_date').pickadate('picker');
+      endPicker.set('select', $(this).data('end'), {format: 'yyyy-mm-dd'});
+
+      $('#search-submit').click();
+    });
+
+    $('.menu').popup({
+      hoverable: true
     });
   });
 </script>
-
-<h3>Issues for <%= @board.name %></h3>
 
 <%= render partial: 'partials/search_form' %>
 
