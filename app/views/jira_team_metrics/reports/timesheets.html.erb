@@ -1,59 +1,71 @@
 <% breadcrumb :report, @board, :timesheets, 'Timesheets' %>
 
-<h3>Quick Links</h3>
+<h3>Timesheets for <%= @board.name %></h3>
 
-<div id="month-dropdown" class="ui selection dropdown">
-  <div class="text">Select Month</div>
-  <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
-  <i class="dropdown icon"></i>
-  <div class="menu">
-    <% @timesheet_options.month_periods.each do |label, date_range| %>
-        <div class="item"
-             data-value="<%= label %>"
-             data-url="<%= timesheets_report_path(@board, date_range) %>"
-        >
-          <%= label %>
-        </div>
-    <% end %>
+<div class="ui menu">
+  <span class="item">
+    Jump to time period
+  </span>
+  <div class="item">
+    <div id="month-dropdown" class="ui selection dropdown">
+      <div class="text">Select Month</div>
+      <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <% @timesheet_options.month_periods.each do |label, date_range| %>
+            <a class="item quicklink"
+               data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+               data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+            >
+              <%= label %>
+            </a>
+        <% end %>
+      </div>
+    </div>
   </div>
-</div>
-
-<% unless @timesheet_options.timesheet_periods.nil? %>
-<div id="timesheet-dropdown" class="ui selection dropdown">
-  <div class="text">Select Timesheet Period</div>
-  <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
-  <i class="dropdown icon"></i>
-  <div class="menu">
-    <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
-        <div class="item" data-url="<%= timesheets_report_path(@board, date_range) %>">
-          <%= label %>
+  <% unless @timesheet_options.timesheet_periods.nil? %>
+      <div class="item">
+        <div id="timesheet-dropdown" class="ui selection dropdown">
+          <div class="text">Select Timesheet Period</div>
+          <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
+                <a class="item quicklink"
+                     data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                     data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+                >
+                  <%= label %>
+                </a>
+            <% end %>
+          </div>
         </div>
-    <% end %>
-  </div>
+      </div>
+  <% end %>
 </div>
-<% end %>
 
 <script>
   $(function() {
-    $('#month-dropdown, #timesheet-dropdown').dropdown({
-      onChange: function(value, text, $selectedItem) {
-        window.location = $selectedItem.data('url');
-      }
+    $('.quicklink').click(function() {
+      var startPicker = $('#from_date').pickadate('picker');
+      startPicker.set('select', $(this).data('start'), {format: 'yyyy-mm-dd'});
+
+      var endPicker = $('#to_date').pickadate('picker');
+      endPicker.set('select', $(this).data('end'), {format: 'yyyy-mm-dd'});
+
+      $('#search-submit').click();
     });
+
+    $('.dropdown').dropdown();
   });
 </script>
 
-<h3>Issues for <%= @board.name %></h3>
-
-<%= render partial: 'partials/cycle_time_form' %>
+<%= render partial: 'partials/search_form' %>
 
 <script>
   $(function() {
     fetchData();
-    $('#ct-states input').change(fetchData);
-    $('#ct-states select').change(fetchData);
-    $('#ct-states textarea').change(fetchData);
-  })
+  });
 
   function fetchData() {
     var url = buildComponentUrl('<%= board_components_path(@board) %>/timesheets');

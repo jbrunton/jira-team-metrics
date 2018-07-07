@@ -20,9 +20,7 @@
       _charts = {};
     }
     _charts['<%= chart_id %>'] = chart;
-
-    $('#ct-states input, #ct-states textarea, #ct-states select').change(chart.refresh);
-  })();
+  });
 </script>
 
 <div id="<%= chart_id %>">

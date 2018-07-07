@@ -1,17 +1,27 @@
 class JiraTeamMetrics::ChartParams
   attr_reader :date_range
   attr_reader :query
+  attr_reader :filter
+  attr_reader :hierarchy_level
   attr_reader :team
 
   def initialize(values)
     @date_range = values[:date_range]
     @query = values[:query]
-    @team = values[:team]
     @filter = values[:filter]
+    @hierarchy_level = values[:hierarchy_level]
+    @team = values[:team]
   end
 
   def self.from_params(params)
     Builder.new(params).build
+  end
+
+  def to_query
+    query_builder = JiraTeamMetrics::QueryBuilder.new(@query, :mql)
+    query_builder.and("filter = '#{@filter}'") unless @filter.blank?
+    query_builder.and("hierarchyLevel = '#{@hierarchy_level}'") unless @hierarchy_level.blank?
+    query_builder.query
   end
 
   class Builder
@@ -22,7 +32,9 @@ class JiraTeamMetrics::ChartParams
     def build
       JiraTeamMetrics::ChartParams.new({
         date_range: build_date_range,
-        query: build_query,
+        query: @params[:query],
+        filter: @params[:filter],
+        hierarchy_level: @params[:hierarchy_level],
         team: @params[:team]
       })
     end
@@ -45,12 +57,6 @@ class JiraTeamMetrics::ChartParams
       JiraTeamMetrics::DateRange.new(
         from_date.at_beginning_of_day,
         to_date.at_beginning_of_day)
-    end
-
-    def build_query
-      query_builder = JiraTeamMetrics::QueryBuilder.new(@params[:query], :mql)
-      query_builder.and("filter = '#{@params[:filter]}'") unless @params[:filter].blank?
-      query_builder.query
     end
   end
 end

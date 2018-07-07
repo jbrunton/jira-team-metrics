@@ -19,13 +19,13 @@
   }
 </script>
 
+<%= render partial: 'partials/search_form' %>
+
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
     select_handler: 'selectHandler',
     url: "#{board_api_path(@board)}/scatterplot.json"
 } %>
-
-<%= render partial: 'partials/cycle_time_form' %>
 
 <div id="selected_content"></div>

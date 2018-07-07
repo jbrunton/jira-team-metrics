@@ -7,8 +7,8 @@ class JiraTeamMetrics::ScatterplotChart
   end
 
   def data_table
-    completed_issues = @board.completed_issues(@params.date_range).select{ |issue| issue.is_scope? }
-    filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, completed_issues).eval(@params.query)
+    completed_issues = @board.completed_issues(@params.date_range)
+    filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, completed_issues).eval(@params.to_query)
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(filtered_issues)
       .pick(:completed_time, :cycle_time, :key)

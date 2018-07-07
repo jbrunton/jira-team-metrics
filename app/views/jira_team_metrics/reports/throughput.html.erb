@@ -4,10 +4,11 @@
 
 <% chart_id = generate_id %>
 
+<%= render partial: 'partials/search_form' %>
+
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
     url: "#{board_api_path(@board)}/throughput.json"
 } %>
 
-<%= render partial: 'partials/cycle_time_form' %>

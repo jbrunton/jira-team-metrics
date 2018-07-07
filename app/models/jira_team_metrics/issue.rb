@@ -32,6 +32,17 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     end
   end
 
+  def hierarchy_level
+    case
+      when is_epic?
+        'Epic'
+      when is_project?
+        'Project'
+      when is_scope?
+        'Scope'
+    end
+  end
+
   def teams
     if is_project?
       []
