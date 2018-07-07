@@ -42,7 +42,7 @@
         </label>
         <div class="ui action input">
           <input type="text" class="mono" id="query" name="query" value="<%= @chart_params.query %>"/>
-          <button class="ui button" type="submit" id="search-submit" name="search-submit">Submit</button>
+          <button class="ui button" type="submit" id="search-submit" name="search-submit">Search</button>
         </div>
       </div>
     </div>
@@ -72,6 +72,9 @@
     $('#query-help').popup({
       inline: true
     });
+  });
+  $('#from_date, #to_date, #filter, #hierarchy_level').change(function() {
+    $('#search-submit').click();
   });
 
   function buildComponentUrl(path) {
