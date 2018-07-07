@@ -10,7 +10,8 @@
     <% @timesheet_options.month_periods.each do |label, date_range| %>
         <div class="item"
              data-value="<%= label %>"
-             data-url="<%= timesheets_report_path(@board, date_range) %>"
+             data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+             data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
         >
           <%= label %>
         </div>
@@ -25,7 +26,10 @@
   <i class="dropdown icon"></i>
   <div class="menu">
     <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
-        <div class="item" data-url="<%= timesheets_report_path(@board, date_range) %>">
+        <div class="item"
+             data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+             data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+        >
           <%= label %>
         </div>
     <% end %>
@@ -37,7 +41,11 @@
   $(function() {
     $('#month-dropdown, #timesheet-dropdown').dropdown({
       onChange: function(value, text, $selectedItem) {
-        window.location = $selectedItem.data('url');
+        var startPicker = $('#from_date').pickadate('picker');
+        startPicker.set('select', $selectedItem.data('start'), {format: 'yyyy-mm-dd'});
+
+        var endPicker = $('#to_date').pickadate('picker');
+        endPicker.set('select', $selectedItem.data('end'), {format: 'yyyy-mm-dd'});
       }
     });
   });
