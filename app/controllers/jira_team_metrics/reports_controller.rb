@@ -3,7 +3,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_board
 
   def timesheets
-    @timesheet_options = JiraTeamMetrics::TimesheetOptions.new(@chart_params, @board.config.timesheets_config).build
   end
 
   def throughput

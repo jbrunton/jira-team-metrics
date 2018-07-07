@@ -1,4 +1,62 @@
 <div id="search-form">
+  <div class="ui tiny menu">
+    <span class="item">
+      Jump to time period
+    </span>
+    <div class="item">
+      <div id="month-dropdown" class="ui selection dropdown">
+        <div class="text">Select Month</div>
+        <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <% @timesheet_options.month_periods.each do |label, date_range| %>
+              <a class="item quicklink"
+                 data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                 data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+              >
+                <%= label %>
+              </a>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <div id="relative-dropdown" class="ui selection dropdown">
+        <div class="text">Select Relative Timeframe</div>
+        <input type="hidden" value="<%= @timesheet_options.selected_relative_period %>" />
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <% @timesheet_options.relative_periods.each do |label, date_range| %>
+              <a class="item quicklink"
+                 data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                 data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+              >
+                <%= label %>
+              </a>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <% unless @timesheet_options.timesheet_periods.nil? %>
+        <div class="item">
+          <div id="timesheet-dropdown" class="ui selection dropdown">
+            <div class="text">Select Timesheet Period</div>
+            <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
+                  <a class="item quicklink"
+                     data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                     data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+                  >
+                    <%= label %>
+                  </a>
+              <% end %>
+            </div>
+          </div>
+        </div>
+    <% end %>
+  </div>
   <form id="filter-params" class="ui form">
     <div class="fields">
       <div class="four wide field">
@@ -54,6 +112,7 @@
     $('#filter, #hierarchy_level').dropdown({
       placeholder: false
     });
+
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month
       selectYears: 15, // Creates a dropdown of 15 years to control year,
@@ -69,12 +128,28 @@
         this.$holder.blur();
       }
     });
+
     $('#query-help').popup({
       inline: true
     });
-  });
-  $('#from_date, #to_date, #filter, #hierarchy_level').change(function() {
-    $('#search-submit').click();
+
+    $('#from_date, #to_date, #filter, #hierarchy_level').change(function() {
+      $('#search-submit').click();
+    });
+
+    $(function() {
+      $('.quicklink').click(function() {
+        var startPicker = $('#from_date').pickadate('picker');
+        startPicker.set('select', $(this).data('start'), {format: 'yyyy-mm-dd'});
+
+        var endPicker = $('#to_date').pickadate('picker');
+        endPicker.set('select', $(this).data('end'), {format: 'yyyy-mm-dd'});
+
+        $('#search-submit').click();
+      });
+
+      $('.dropdown').dropdown();
+    });
   });
 
   function buildComponentUrl(path) {
