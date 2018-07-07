@@ -2,43 +2,46 @@
 
 <h3>Timesheets for <%= @board.name %></h3>
 
-<div style="width: 50%;">
-  <div class="ui text menu">
-    <a class="browse item" id="jump-to">
-      Jump to time period...
+<div class="ui menu">
+  <span class="item">
+    Jump to time period
+  </span>
+  <div class="item">
+    <div id="month-dropdown" class="ui selection dropdown">
+      <div class="text">Select Month</div>
+      <input type="hidden" value="<%= @timesheet_options.selected_month_period %>" />
       <i class="dropdown icon"></i>
-    </a>
-  </div>
-  <div class="ui basic fluid popup">
-    <div class="ui two column relaxed divided grid">
-      <div class="column">
-        <h4 class="ui header">Month</h4>
-        <div class="ui link list">
-          <% @timesheet_options.month_periods.each do |label, date_range| %>
-              <a class="item quicklink"
-                   data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
-                   data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
-              >
-                <%= label %>
-              </a>
-          <% end %>
-        </div>
-      </div>
-      <div class="column">
-        <h4 class="ui header">Timesheet period</h4>
-        <div class="ui link list">
-          <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
-              <a class="item quicklink"
-                   data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
-                   data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
-              >
-                <%= label %>
-              </a>
-          <% end %>
-        </div>
+      <div class="menu">
+        <% @timesheet_options.month_periods.each do |label, date_range| %>
+            <a class="item quicklink"
+               data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+               data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+            >
+              <%= label %>
+            </a>
+        <% end %>
       </div>
     </div>
   </div>
+  <% unless @timesheet_options.timesheet_periods.nil? %>
+      <div class="item">
+        <div id="timesheet-dropdown" class="ui selection dropdown">
+          <div class="text">Select Timesheet Period</div>
+          <input type="hidden" value="<%= @timesheet_options.selected_timesheet_period %>" />
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <% @timesheet_options.timesheet_periods.each do |label, date_range| %>
+                <a class="item quicklink"
+                     data-start="<%= date_range.start_date.strftime('%Y-%m-%d') %>"
+                     data-end="<%= date_range.end_date.strftime('%Y-%m-%d') %>"
+                >
+                  <%= label %>
+                </a>
+            <% end %>
+          </div>
+        </div>
+      </div>
+  <% end %>
 </div>
 
 <script>
@@ -53,9 +56,7 @@
       $('#search-submit').click();
     });
 
-    $('.menu').popup({
-      hoverable: true
-    });
+    $('.dropdown').dropdown();
   });
 </script>
 
@@ -64,7 +65,7 @@
 <script>
   $(function() {
     fetchData();
-  })
+  });
 
   function fetchData() {
     var url = buildComponentUrl('<%= board_components_path(@board) %>/timesheets');
