@@ -8,9 +8,9 @@ class JiraTeamMetrics::ThroughputChart
   end
 
   def data_table
-    issues = @board.completed_issues(@params.date_range).select{ |issue| issue.is_scope? }
+    issues = @board.completed_issues(@params.date_range)
     issues = JiraTeamMetrics::TeamScopeReport.issues_for_team(issues, @params.team) if @params.team
-    issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.query)
+    issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@params.to_query)
 
     data_table = JiraTeamMetrics::DataTableBuilder.new
         .data(issues)
