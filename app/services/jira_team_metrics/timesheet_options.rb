@@ -5,6 +5,8 @@ class JiraTeamMetrics::TimesheetOptions
   attr_reader :selected_month_period
   attr_reader :timesheet_periods
   attr_reader :selected_timesheet_period
+  attr_reader :relative_periods
+  attr_reader :selected_relative_period
 
   def initialize(chart_params, timesheets_config)
     @chart_params = chart_params
@@ -16,6 +18,7 @@ class JiraTeamMetrics::TimesheetOptions
 
     enumerate_month_periods(today)
     enumerate_timesheet_periods(today) unless @timesheets_config.nil?
+    enumerate_relative_periods(today)
 
     self
   end
@@ -45,6 +48,18 @@ private
       @selected_timesheet_period = label if selected_range?(date_range)
       @timesheet_periods << [label, date_range]
       timesheet_start = timesheet_start - @timesheets_config.duration
+    end
+  end
+
+  def enumerate_relative_periods(today)
+    @relative_periods = [
+      ['Last 7 days', JiraTeamMetrics::DateRange.new(today - 7, today)],
+      ['Last 30 days', JiraTeamMetrics::DateRange.new(today - 30, today)],
+      ['Last 90 days', JiraTeamMetrics::DateRange.new(today - 90, today)],
+      ['Last 180 days', JiraTeamMetrics::DateRange.new(today - 180, today)]
+    ]
+    @relative_periods.each do |label, date_range|
+      @selected_relative_period = label if selected_range?(date_range)
     end
   end
 
