@@ -3,6 +3,7 @@ class JiraTeamMetrics::ChartParams
   attr_reader :query
   attr_reader :filter
   attr_reader :hierarchy_level
+  attr_reader :step_interval
   attr_reader :team
 
   def initialize(values)
@@ -10,6 +11,7 @@ class JiraTeamMetrics::ChartParams
     @query = values[:query]
     @filter = values[:filter]
     @hierarchy_level = values[:hierarchy_level]
+    @step_interval = values[:step_interval]
     @team = values[:team]
   end
 
@@ -35,6 +37,7 @@ class JiraTeamMetrics::ChartParams
         query: @params[:query],
         filter: @params[:filter],
         hierarchy_level: @params[:hierarchy_level],
+        step_interval: @params[:step_interval],
         team: @params[:team]
       })
     end
