@@ -6,6 +6,7 @@ RSpec.describe JiraTeamMetrics::ChartParams do
   let(:query) { 'some query' }
   let(:filter) { 'My Filter' }
   let(:hierarchy_level) { 'Scope' }
+  let(:step_interval) { 'Weekly' }
   let(:team) { 'My Team' }
 
   describe ".from_params" do
@@ -16,6 +17,7 @@ RSpec.describe JiraTeamMetrics::ChartParams do
         query: query,
         filter: filter,
         hierarchy_level: hierarchy_level,
+        step_interval: step_interval,
         team: team
       })
 
@@ -26,6 +28,7 @@ RSpec.describe JiraTeamMetrics::ChartParams do
       expect(chart_params.query).to eq(query)
       expect(chart_params.filter).to eq(filter)
       expect(chart_params.hierarchy_level).to eq(hierarchy_level)
+      expect(chart_params.step_interval).to eq(step_interval)
       expect(chart_params.team).to eq(team)
     end
   end
@@ -38,6 +41,7 @@ RSpec.describe JiraTeamMetrics::ChartParams do
         query: query,
         filter: filter,
         hierarchy_level: hierarchy_level,
+        step_interval: step_interval,
         team: team
       })
       expect(chart_params.to_query).to eq("((some query) and (filter = 'My Filter')) and (hierarchyLevel = 'Scope')")

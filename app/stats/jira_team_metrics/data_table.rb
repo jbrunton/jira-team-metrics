@@ -7,6 +7,13 @@ class JiraTeamMetrics::DataTable
     @rows = rows
   end
 
+  def ==(other)
+    self.class == other.class &&
+      columns == other.columns &&
+      rows == other.rows
+  end
+  alias :eql? :==
+
   def select(*opts)
     if opts.empty?
       columns = {}
