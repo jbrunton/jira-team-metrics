@@ -107,19 +107,29 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def started_time
-    first_transition = transitions.find do |t|
-      t['toStatusCategory'] == 'In Progress'
-    end
+    if is_scope?
+      first_transition = transitions.find do |t|
+        t['toStatusCategory'] == 'In Progress'
+      end
 
-    first_transition ? DateTime.parse(first_transition['date']) : nil
+      first_transition ? DateTime.parse(first_transition['date']) : nil
+    else
+      started_times = issues(recursive: true).map{ |issue| issue.started_time }
+      started_times.compact.min
+    end
   end
 
   def completed_time
-    last_transition = transitions.reverse.find do |t|
-      t['toStatusCategory'] == 'Done'
-    end
+    if is_scope?
+      last_transition = transitions.reverse.find do |t|
+        t['toStatusCategory'] == 'Done'
+      end
 
-    last_transition ? DateTime.parse(last_transition['date']) : nil
+      last_transition ? DateTime.parse(last_transition['date']) : nil
+    else
+      completed_times = issues(recursive: true).map{ |issue| issue.completed_time }
+      completed_times.any?{ |time| time.nil? } ? nil : completed_times.max
+    end
   end
 
   def cycle_time
