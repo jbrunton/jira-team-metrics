@@ -17,10 +17,10 @@ class JiraTeamMetrics::ThroughputChart
         .pick(:completed_time, :key)
         .build
         .select('completed_time').count('key', as: 'Count')
-        .group(if_nil: 0) { |completed_time| completed_time.to_date }
+        .group(if_nil: 0, &method(:group_by))
         .sort_by('completed_time')
 
-    data_table.insert_if_missing(@params.date_range.to_a, [0]) { |date| date.to_date }
+    data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
     th_counts = data_table.column_values('Count')
     th_averages = th_counts.count.times.map do |index|
@@ -60,5 +60,16 @@ class JiraTeamMetrics::ThroughputChart
           minValue: 0
         }
     }
+  end
+
+  def group_by(date)
+    case @params.step_interval
+      when 'Daily'
+        date.to_date
+      when 'Weekly'
+        date.to_date.beginning_of_week
+      when 'Monthly'
+        date.to_date.beginning_of_month
+    end
   end
 end

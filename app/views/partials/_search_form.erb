@@ -94,8 +94,8 @@
         </select>
       </div>
       <div class="four wide field">
-        <label for="step_internal">Step Interval</label>
-        <select name="step_internal" class="ui dropdown" id="step_internal">
+        <label for="step_interval">Step Interval</label>
+        <select name="step_interval" class="ui dropdown" id="step_interval">
           <% ['Daily', 'Weekly', 'Monthly'].each do |interval| %>
               <option value="<%= interval %>" <%= 'selected' if @chart_params.step_interval == interval %>>
                 <%= interval %>
@@ -146,7 +146,7 @@
       inline: true
     });
 
-    $('#from_date, #to_date, #filter, #hierarchy_level').change(function() {
+    $('#from_date, #to_date, #filter, #hierarchy_level, #step_interval').change(function() {
       $('#search-submit').click();
     });
 

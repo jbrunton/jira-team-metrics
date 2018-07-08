@@ -14,12 +14,26 @@ class JiraTeamMetrics::DateRange
   end
   alias :eql? :==
 
-  def to_a
+  def to_a(interval_step = 'Daily')
     dates = []
-    next_date = dates.last || start_date
+    case interval_step
+      when 'Daily'
+        next_date = start_date
+      when 'Weekly'
+        next_date = start_date.beginning_of_week
+      when 'Monthly'
+        next_date = start_date.beginning_of_month
+    end
     while next_date < end_date
       dates << next_date
-      next_date = next_date + 1
+      case interval_step
+        when 'Daily'
+          next_date = next_date + 1
+        when 'Weekly'
+          next_date = next_date.next_week
+        when 'Monthly'
+          next_date = next_date.next_month
+      end
     end
     dates
   end
