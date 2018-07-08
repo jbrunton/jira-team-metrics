@@ -1,10 +1,10 @@
-class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
+class JiraTeamMetrics::ProjectScopeReport < JiraTeamMetrics::TeamScopeReport
   include JiraTeamMetrics::DescriptiveScopeStatistics
   include JiraTeamMetrics::ChartsHelper
 
 
 
-  attr_reader :increment
+  attr_reader :project
   attr_reader :epics
   attr_reader :unscoped_epics
   attr_reader :scope
@@ -16,20 +16,20 @@ class JiraTeamMetrics::IncrementScopeReport < JiraTeamMetrics::TeamScopeReport
 
   attr_reader :teams
 
-  def initialize(increment)
-    @increment = increment
+  def initialize(project)
+    @project = project
   end
 
   def build
-    increment_issues = @increment.issues(recursive: true)
+    project_issues = @project.issues(recursive: true)
 
-    @teams = increment_issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq + ['None']
+    @teams = project_issues.map{ |issue| issue.fields['Teams'] }.compact.flatten.uniq + ['None']
     @team_reports = @teams.map do |team|
-      [team, JiraTeamMetrics::TeamScopeReport.for(@increment, team)]
+      [team, JiraTeamMetrics::TeamScopeReport.for(@project, team)]
     end.to_h
-    @team_reports['None'] = JiraTeamMetrics::TeamScopeReport.for(@increment, 'None').build
+    @team_reports['None'] = JiraTeamMetrics::TeamScopeReport.for(@project, 'None').build
 
-    @epics = increment_issues.select{ |issue| issue.is_epic? }
+    @epics = project_issues.select{ |issue| issue.is_epic? }
     @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @team_reports.values.map{ |team_report| team_report.scope }.flatten.uniq
     @completed_scope = @team_reports.values.map{ |team_report| team_report.completed_scope }.flatten.uniq

@@ -1,9 +1,9 @@
-class JiraTeamMetrics::DeliveryReportBuilder < JiraTeamMetrics::ReportBuilder
-  def initialize(increment)
-    super(increment.board,
-      "delivery/#{increment.key}",
+class JiraTeamMetrics::ProjectReportBuilder < JiraTeamMetrics::ReportBuilder
+  def initialize(project)
+    super(project.board,
+      "project/#{project.key}",
       %w(team_dashboard cfd:raw cfd:trained))
-    @increment = increment
+    @project = project
   end
 
   def fragment_data_for(fragment_key)
@@ -20,24 +20,24 @@ class JiraTeamMetrics::DeliveryReportBuilder < JiraTeamMetrics::ReportBuilder
   end
 
 private
-  def increment_report
-    @increment_report ||= JiraTeamMetrics::IncrementScopeReport.new(@increment).build
+  def project_report
+    @project_report ||= JiraTeamMetrics::ProjectScopeReport.new(@project).build
   end
 
   def rolling_window_days
-    @increment.board.config.rolling_window_days
+    @project.board.config.rolling_window_days
   end
 
   def cfd_data(cfd_type)
-    increment_report.cfd_data(cfd_type)
+    project_report.cfd_data(cfd_type)
   end
 
   def team_dashboard_data
     {
       rolling_window_days: rolling_window_days,
-      totals: aggregate_data_for(increment_report),
-      teams: increment_report.teams.map do |team|
-        team_report = @increment_report.team_report_for(team)
+      totals: aggregate_data_for(project_report),
+      teams: project_report.teams.map do |team|
+        team_report = @project_report.team_report_for(team)
         [team, aggregate_data_for(team_report).merge(team_data_for(team_report))]
       end.to_h
     }
@@ -46,8 +46,8 @@ private
   def team_data_for(team_report)
     rounded_epic_scope = team_report.predicted_epic_scope.round
     {
-      status_color: @increment.target_date ? team_report.status_color : nil,
-      status_reason: @increment.target_date ? team_report.status_reason : nil,
+      status_color: @project.target_date ? team_report.status_color : nil,
+      status_reason: @project.target_date ? team_report.status_reason : nil,
       rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
       predicted_completion_date: team_report.predicted_completion_date,
       predicted_scope_tooltip: "#{team_report.unscoped_epics.count} unscoped epics, predicting #{rounded_epic_scope || 0} #{'issue'.pluralize(rounded_epic_scope)} / epic."

@@ -7,6 +7,13 @@ class JiraTeamMetrics::DataTable
     @rows = rows
   end
 
+  def ==(other)
+    self.class == other.class &&
+      columns == other.columns &&
+      rows == other.rows
+  end
+  alias :eql? :==
+
   def select(*opts)
     if opts.empty?
       columns = {}
@@ -65,8 +72,9 @@ class JiraTeamMetrics::DataTable
     self
   end
 
-  def insert_if_missing(column_values, default_values)
-    InsertIfMissingOp.new(self).apply(column_values, default_values)
+  def insert_if_missing(column_values, default_values, &block)
+    block ||= IDENT
+    InsertIfMissingOp.new(self).apply(column_values, default_values, block)
     self
   end
 
@@ -198,14 +206,14 @@ private
       @data_table = data_table
     end
 
-    def apply(column_values, default_values)
+    def apply(column_values, default_values, block)
       remaining_values = column_values.clone
       row_index = 0
       while remaining_values.any?
         if row_index >= data_table.rows.count
           insert_remaining_values(remaining_values, default_values)
         else
-          insert_next_value(row_index, remaining_values, default_values)
+          insert_next_value(row_index, remaining_values, default_values, block)
           row_index += 1
         end
       end
@@ -217,15 +225,17 @@ private
       remaining_values.clear
     end
 
-    def insert_next_value(row_index, remaining_values, default_values)
+    def insert_next_value(row_index, remaining_values, default_values, block)
       value_to_insert = remaining_values.first
       value_at_index = data_table.rows.count > row_index ? data_table.rows[row_index][0] : nil
-      if value_to_insert < value_at_index
+      if block.call(value_to_insert) < block.call(value_at_index)
         data_table.insert_row(row_index, [value_to_insert] + default_values)
         remaining_values.shift
-      elsif value_to_insert == value_at_index
+      elsif block.call(value_to_insert) == block.call(value_at_index)
         remaining_values.shift
       end
     end
   end
+
+  IDENT = Proc.new{ |x| x }
 end

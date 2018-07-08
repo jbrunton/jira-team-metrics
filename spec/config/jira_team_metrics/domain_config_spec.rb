@@ -6,11 +6,11 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
   let(:domain_name) { 'My Domain' }
 
   let(:board_id) { 123 }
-  let(:board_config_url) { 'https://example.com/board-config.yml' }
+  let(:board_config_file) { 'https://example.com/board-config.yml' }
   let(:boards) do
     [{
       'board_id' => board_id,
-      'config_url' => board_config_url
+      'config_file' => board_config_file
     }]
   end
   let(:teams) do
@@ -109,7 +109,7 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
     it "returns the board configs" do
       domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
       expect(domain_config.boards).to eq([
-        JiraTeamMetrics::DomainConfig::BoardDetails.new(board_id, board_config_url)
+        JiraTeamMetrics::DomainConfig::BoardDetails.new(board_id, board_config_file)
       ])
     end
   end

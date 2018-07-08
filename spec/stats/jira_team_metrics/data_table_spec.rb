@@ -20,6 +20,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#eql?" do
+    it "returns true if the rows and columns are the same" do
+      data_table_2 = JiraTeamMetrics::DataTable.new(columns.clone, rows.clone)
+      expect(data_table.eql?(data_table_2)).to eq(true)
+    end
+
+    it "returns false if the rows and columns are not the same" do
+      columns = ['Issue Key', 'Issue Type', 'Developer', 'Cycle Time']
+      data_table_2 = JiraTeamMetrics::DataTable.new(columns, rows.clone)
+      expect(data_table.eql?(data_table_2)).to eq(false)
+    end
+  end
+
   describe "#select" do
     context "when given varargs" do
       it "returns a query selector for the given args" do
@@ -261,19 +274,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
       end
     end
 
-    context "given a table that starts with some existing values" do
+    context "given a block that adjusts the inputs" do
       let(:data_table) do
         JiraTeamMetrics::DataTable.new(
             ['index', 'count'],
-            [[0, 4]])
+            [[0.1, 4], [3.9, 4]])
       end
 
       it "fills in the missing rows" do
-        data_table.insert_if_missing(indexes, [0])
+        data_table.insert_if_missing([0, 2, 4], [0]) { |x| (x / 2.0).round * 2 }
         expect(data_table.rows).to eq([
-                                          [0, 4],
-                                          [1, 0],
-                                          [2, 0]])
+                                          [0.1, 4],
+                                          [2,   0],
+                                          [3.9, 4]])
       end
     end
   end

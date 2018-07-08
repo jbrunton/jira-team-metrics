@@ -6,33 +6,33 @@
   <thead>
     <tr>
       <th style="width: 90%">Issue</th>
-      <th colspan="2" style="width: 10%">Developer Days</th>
+      <th colspan="2" style="width: 10%">Days in status</th>
     </tr>
   </thead>
 
-  <% epics_by_increment.each do |increment, issues_by_epic| %>
-      <% increment_duration = issues_by_epic.values.flatten.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
-      <tr class="delivery">
+  <% epics_by_project.each do |project, issues_by_epic| %>
+      <% project_duration = issues_by_epic.values.flatten.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
+      <tr class="project">
         <td>
-          <% if increment.nil? %>
+          <% if project.nil? %>
               None
           <% else %>
-              <%= increment['issue']['key'] %>
-              (<a href="<%= external_link_url(increment, @domain) %>" target="_blank">
+              <%= project['issue']['key'] %>
+              (<a href="<%= external_link_url(project, @domain) %>" target="_blank">
                 <i class="external alternate icon"></i></a>)
-              &mdash; <%= increment['issue']['summary'] %>
+              &mdash; <%= project['issue']['summary'] %>
           <% end %>
         </td>
         <td class="effort-stats">
-          <%= pretty_print_number(increment_duration) %>
+          <%= pretty_print_number(project_duration) %>
         </td>
         <td class="effort-stats">
-          (<%= pretty_print_number(increment_duration / total_duration * 100) %>%)</span>
+          (<%= pretty_print_number(project_duration / total_duration * 100) %>%)</span>
         </td>
       </tr>
 
       <% issues_by_epic.each do |epic, issues| %>
-          <% unless increment.nil? %>
+          <% unless project.nil? %>
               <% epic_duration = issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
               <tr class="epic">
                 <td>

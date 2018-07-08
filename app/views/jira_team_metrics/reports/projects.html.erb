@@ -1,0 +1,13 @@
+<% breadcrumb :projects, @board %>
+
+<h3><%= projects_name_plural %></h3>
+
+<% @projects.each do |project| %>
+    <h5>
+      <a href="<%= project_report_path(@board, project) %>">
+        <%= project.key %>
+      </a>
+      &mdash;
+      <%= project.summary %>
+    </h5>
+<% end %>

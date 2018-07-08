@@ -1,0 +1,13 @@
+---
+timesheets:
+  reporting_period:
+    day_of_week: 6
+    duration:
+      days: 7
+sync:
+  months: 6
+filters:
+- name: Android
+  mql: Teams includes 'Android'
+- name: iOS
+  mql: Teams includes 'iOS' or not Teams includes 'Android'

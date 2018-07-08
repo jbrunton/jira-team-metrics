@@ -71,6 +71,7 @@ Lint/EmptyInterpolation:
 
 Lint/EndAlignment:
   Description: 'Align ends correctly.'
+  EnforcedStyleAlignWith: variable
   Enabled: true
 
 Lint/EndInMethod:
