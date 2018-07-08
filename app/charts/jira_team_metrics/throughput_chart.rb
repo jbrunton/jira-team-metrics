@@ -22,17 +22,22 @@ class JiraTeamMetrics::ThroughputChart
 
     data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
-    th_counts = data_table.column_values('Count')
-    th_averages = th_counts.count.times.map do |index|
-      if index >= 13
-        start = index - 13
-        length = 14
-        th_counts.slice(start, length).mean
-      else
-        nil
+    unless @params.step_interval == 'Monthly'
+      th_counts = data_table.column_values('Count')
+      th_slice_size = @params.step_interval == 'Daily' ? 14 : 4
+      th_averages = th_counts.count.times.map do |index|
+        if index >= th_slice_size - 1
+          start = index - (th_slice_size - 1)
+          length = th_slice_size
+          th_counts.slice(start, length).mean * (@params.step_interval == 'Daily' ? 7.0 : 1.0)
+        else
+          nil
+        end
       end
+      avg_column_name = 'Rolling Avg / Week ' + (@params.step_interval == 'Daily' ? '(last 14 days)' : '(prev. 4 weeks)')
+      data_table.add_column(avg_column_name, th_averages)
     end
-    data_table.add_column('Avg / Week', th_averages.map{ |x| x.try(:*, 7.0) })
+
     data_table
   end
 
@@ -51,10 +56,13 @@ class JiraTeamMetrics::ThroughputChart
             height: '80%',
             top: '5%'
         },
+        legend: {
+          position: 'top'
+        },
         height: 500,
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
-            1 => { lineWidth: 2, pointSize: 0, color: 'steelblue', targetAxisIndex: 1 }
+            1 => { lineWidth: 2, pointSize: 0, color: 'steelblue' }
         },
         vAxis: {
           minValue: 0
