@@ -16,24 +16,10 @@ class JiraTeamMetrics::DateRange
 
   def to_a(interval_step = 'Daily')
     dates = []
-    case interval_step
-      when 'Daily'
-        next_date = start_date
-      when 'Weekly'
-        next_date = start_date.beginning_of_week
-      when 'Monthly'
-        next_date = start_date.beginning_of_month
-    end
+    next_date = get_start_date(interval_step)
     while next_date < end_date
       dates << next_date
-      case interval_step
-        when 'Daily'
-          next_date = next_date + 1
-        when 'Weekly'
-          next_date = next_date.next_week
-        when 'Monthly'
-          next_date = next_date.next_month
-      end
+      next_date = get_next_date(next_date, interval_step)
     end
     dates
   end
@@ -73,5 +59,28 @@ class JiraTeamMetrics::DateRange
     start_date_fm = start_date.strftime('%Y-%m-%d')
     end_date_fm = end_date.strftime('%Y-%m-%d')
     "from_date=#{start_date_fm}&to_date=#{end_date_fm}"
+  end
+
+private
+  def get_start_date(interval_step)
+    case interval_step
+      when 'Daily'
+        start_date
+      when 'Weekly'
+        start_date.beginning_of_week
+      when 'Monthly'
+        start_date.beginning_of_month
+    end
+  end
+
+  def get_next_date(date, interval_step)
+    case interval_step
+      when 'Daily'
+        date + 1
+      when 'Weekly'
+        date.next_week
+      when 'Monthly'
+        date.next_month
+    end
   end
 end
