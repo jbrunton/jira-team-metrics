@@ -22,21 +22,7 @@ class JiraTeamMetrics::ThroughputChart
 
     data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
-    unless @params.step_interval == 'Monthly'
-      th_counts = data_table.column_values('Count')
-      th_slice_size = @params.step_interval == 'Daily' ? 14 : 4
-      th_averages = th_counts.count.times.map do |index|
-        if index >= th_slice_size - 1
-          start = index - (th_slice_size - 1)
-          length = th_slice_size
-          th_counts.slice(start, length).mean * (@params.step_interval == 'Daily' ? 7.0 : 1.0)
-        else
-          nil
-        end
-      end
-      avg_column_name = 'Rolling Avg / Week ' + (@params.step_interval == 'Daily' ? '(last 14 days)' : '(prev. 4 weeks)')
-      data_table.add_column(avg_column_name, th_averages)
-    end
+    add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
 
     data_table
   end
@@ -79,5 +65,22 @@ class JiraTeamMetrics::ThroughputChart
       when 'Monthly'
         date.to_date.beginning_of_month
     end
+  end
+
+private
+  def add_rolling_averages(data_table)
+    counts = data_table.column_values('Count')
+    slice_size = @params.step_interval == 'Daily' ? 14 : 4
+    averages = counts.count.times.map do |index|
+      if index >= slice_size - 1
+        start = index - (slice_size - 1)
+        length = slice_size
+        counts.slice(start, length).mean * (@params.step_interval == 'Daily' ? 7.0 : 1.0)
+      else
+        nil
+      end
+    end
+    column_name = 'Rolling Avg / Week ' + (@params.step_interval == 'Daily' ? '(last 14 days)' : '(prev. 4 weeks)')
+    data_table.add_column(column_name, averages)
   end
 end
