@@ -20,6 +20,19 @@ RSpec.describe JiraTeamMetrics::DataTable do
     end
   end
 
+  describe "#eql?" do
+    it "returns true if the rows and columns are the same" do
+      data_table_2 = JiraTeamMetrics::DataTable.new(columns.clone, rows.clone)
+      expect(data_table.eql?(data_table_2)).to eq(true)
+    end
+
+    it "returns false if the rows and columns are not the same" do
+      columns = ['Issue Key', 'Issue Type', 'Developer', 'Cycle Time']
+      data_table_2 = JiraTeamMetrics::DataTable.new(columns, rows.clone)
+      expect(data_table.eql?(data_table_2)).to eq(false)
+    end
+  end
+
   describe "#select" do
     context "when given varargs" do
       it "returns a query selector for the given args" do
