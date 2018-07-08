@@ -93,16 +93,18 @@
           <% end %>
         </select>
       </div>
-      <div class="four wide field">
-        <label for="step_interval">Step Interval</label>
-        <select name="step_interval" class="ui dropdown" id="step_interval">
-          <% ['Daily', 'Weekly', 'Monthly'].each do |interval| %>
-              <option value="<%= interval %>" <%= 'selected' if @chart_params.step_interval == interval %>>
-                <%= interval %>
-              </option>
-          <% end %>
-        </select>
-      </div>
+      <% if defined?(show_step_interval) && show_step_interval %>
+          <div class="four wide field">
+            <label for="step_interval">Step Interval</label>
+            <select name="step_interval" class="ui dropdown" id="step_interval">
+              <% ['Daily', 'Weekly', 'Monthly'].each do |interval| %>
+                  <option value="<%= interval %>" <%= 'selected' if @chart_params.step_interval == interval %>>
+                    <%= interval %>
+                  </option>
+              <% end %>
+            </select>
+          </div>
+      <% end %>
     </div>
     <div class="fields">
       <div class="sixteen wide field">
