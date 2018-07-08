@@ -70,17 +70,43 @@ class JiraTeamMetrics::ThroughputChart
 private
   def add_rolling_averages(data_table)
     counts = data_table.column_values('Count')
-    slice_size = @params.step_interval == 'Daily' ? 14 : 4
+    slice_size = avg_sample_size
     averages = counts.count.times.map do |index|
       if index >= slice_size - 1
         start = index - (slice_size - 1)
         length = slice_size
-        counts.slice(start, length).mean * (@params.step_interval == 'Daily' ? 7.0 : 1.0)
+        counts.slice(start, length).mean * avg_scale_factor
       else
         nil
       end
     end
-    column_name = 'Rolling Avg / Week ' + (@params.step_interval == 'Daily' ? '(last 14 days)' : '(prev. 4 weeks)')
-    data_table.add_column(column_name, averages)
+    data_table.add_column(avg_column_name, averages)
+  end
+
+  def avg_sample_size
+    case @params.step_interval
+      when 'Daily'
+        14 # i.e. prev 2 weeks
+      when 'Weekly'
+        4 # i.e. prev 4 weeks
+    end
+  end
+
+  def avg_scale_factor
+    case @params.step_interval
+      when 'Daily'
+        7.0 # i.e. scale to a weekly figure
+      when 'Weekly'
+        1.0 # i.e. keep it at weekly
+    end
+  end
+
+  def avg_column_name
+    case @params.step_interval
+      when 'Daily'
+        'Rolling Avg / Week (prev 14 days)'
+      when 'Weekly'
+        'Rolling Avg / Week (prev 4 weeks)'
+    end
   end
 end
