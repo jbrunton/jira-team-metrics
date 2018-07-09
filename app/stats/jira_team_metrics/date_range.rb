@@ -17,6 +17,7 @@ class JiraTeamMetrics::DateRange
   def to_a(interval_step = 'Daily')
     dates = []
     next_date = get_start_date(interval_step)
+    byebug if next_date.nil?
     while next_date < end_date
       dates << next_date
       next_date = get_next_date(next_date, interval_step)
