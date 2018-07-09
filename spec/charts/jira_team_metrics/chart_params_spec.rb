@@ -9,6 +9,14 @@ RSpec.describe JiraTeamMetrics::ChartParams do
   let(:step_interval) { 'Weekly' }
   let(:team) { 'My Team' }
 
+  describe "#initialize" do
+    it "sets default values if not given" do
+      chart_params = JiraTeamMetrics::ChartParams.new({})
+      expect(chart_params.hierarchy_level).to eq('Scope')
+      expect(chart_params.step_interval).to eq('Daily')
+    end
+  end
+
   describe ".from_params" do
     it "returns an instance built from the given request params" do
       chart_params = JiraTeamMetrics::ChartParams.from_params({

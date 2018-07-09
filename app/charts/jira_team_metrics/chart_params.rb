@@ -10,8 +10,8 @@ class JiraTeamMetrics::ChartParams
     @date_range = values[:date_range]
     @query = values[:query]
     @filter = values[:filter]
-    @hierarchy_level = values[:hierarchy_level]
-    @step_interval = values[:step_interval]
+    @hierarchy_level = values[:hierarchy_level] || 'Scope'
+    @step_interval = values[:step_interval] || 'Daily'
     @team = values[:team]
   end
 
