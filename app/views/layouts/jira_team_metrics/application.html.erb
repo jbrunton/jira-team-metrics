@@ -55,7 +55,38 @@
     <footer class="ui basic center aligned segment">
       <div class="ui divider"></div>
       <% unless @board.nil? %>
-          <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>
+          <span>
+            <%= @board.name %>
+            &middot;
+            Last synchronized: <%= pretty_print_time(@board.last_synced) %>
+            &middot;
+            <div class="ui inline dropdown" id="board-jira-links">
+              <a class="text">Jira</a>
+              <i class="dropdown icon"></i>
+              <div class="menu">
+                <div class="item">
+                  <a target="_blank" href="<%= jira_board_url(@board) %>">
+                    <i class="external alternate icon"></i>
+                    Open Board
+                  </a>
+                </div>
+                <div class="item">
+                  <a target="_blank" href="<%= jira_board_issues_url(@board) %>">
+                    <i class="external alternate icon"></i>
+                    View Issues
+                  </a>
+                </div>
+              </div>
+            </div>
+          </span>
+
+          <script>
+            $(function() {
+              $('#board-jira-links').dropdown({
+                action: 'nothing'
+              });
+            });
+          </script>
       <% end %>
       <p>
         Jira Team Metrics v<%= JiraTeamMetrics::VERSION %> &middot;
