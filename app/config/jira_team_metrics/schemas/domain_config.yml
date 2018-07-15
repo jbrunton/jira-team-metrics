@@ -7,14 +7,12 @@ optional:
   fields:
     type: "//arr"
     contents: "//str"
-  increments:
-    type: "//arr"
-    contents:
-      type: "//rec"
-      required:
-        issue_type: "//str"
-        inward_link_type: "//str"
-        outward_link_type: "//str"
+  projects:
+    type: "//rec"
+    required:
+      issue_type: "//str"
+      inward_link_type: "//str"
+      outward_link_type: "//str"
   status_category_overrides:
     type: "//arr"
     contents:
@@ -29,7 +27,7 @@ optional:
       required:
         board_id: "//int"
       optional:
-        config_url: "//str"
+        config_file: "//str"
   teams:
     type: "//arr"
     contents:

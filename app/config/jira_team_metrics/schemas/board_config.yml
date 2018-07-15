@@ -11,7 +11,11 @@ optional:
         - type: "//rec"
           required:
             name: "//str"
-            query: "//str"
+            jql: "//str"
+        - type: "//rec"
+          required:
+            name: "//str"
+            mql: "//str"
         - type: "//rec"
           required:
             name: "//str"

@@ -45,13 +45,13 @@ class JiraTeamMetrics::AgingWipChart
 private
   def wip_issues
     JiraTeamMetrics::MqlInterpreter.new(@board, @board.wip_issues)
-        .eval(@params.query)
+        .eval(@params.to_query)
         .sort_by { |issue| issue.started_time }
   end
 
   def completed_issues
     JiraTeamMetrics::MqlInterpreter.new(@board, @board.completed_issues(@params.date_range))
-        .eval(@params.query)
+        .eval(@params.to_query)
         .sort_by { |issue| issue.cycle_time }
   end
 

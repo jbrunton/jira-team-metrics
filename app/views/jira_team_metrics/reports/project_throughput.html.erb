@@ -1,11 +1,11 @@
-<% breadcrumb :delivery_throughput_report, @increment, @team %>
+<% breadcrumb :project_throughput_report, @project, @team %>
 
 <% chart_id = generate_id %>
 
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
-    url: "#{board_api_path(@board)}/throughput/#{@team}.json".html_safe
+    url: "#{board_api_path(@board)}/throughput/#{@team}.json?query=project='#{@project.key}'".html_safe
 } %>
 
 <script>

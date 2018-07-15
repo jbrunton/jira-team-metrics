@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::TeamScopeReport do
   let(:board) { create(:board) }
 
-  let(:delivery) { create(:issue, board: board) }
+  let(:project) { create(:issue, board: board) }
 
   let(:scoped_epic) { create(:issue, issue_type: 'Epic', board: board, fields: { 'Teams' => ['My Team'] }) }
   let(:unscoped_epic) { create(:issue, issue_type: 'Epic', board: board, fields: { 'Teams' => ['My Team'] }) }
@@ -52,7 +52,7 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
     end
   end
 
-  let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', delivery, my_team_issues + epics) }
+  let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics) }
 
   before(:each) { team_report.build }
 
@@ -63,9 +63,9 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
     end
   end
 
-  describe "#increment" do
-    it "returns the increment" do
-      expect(team_report.increment).to eq(delivery)
+  describe "#project" do
+    it "returns the project" do
+      expect(team_report.project).to eq(project)
     end
   end
 

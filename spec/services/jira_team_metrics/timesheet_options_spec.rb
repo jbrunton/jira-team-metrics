@@ -26,7 +26,7 @@ RSpec.describe JiraTeamMetrics::TimesheetOptions do
       expect(timesheet_options.selected_month_period).to eq('Jan 2001')
     end
 
-    it "enumerates timesheet options" do
+    it "enumerates timesheet period options" do
       expect(timesheet_options.timesheet_periods).to eq([
         ['13 Jan - 20 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  13), DateTime.new(2001, 1,  20))],
         ['06 Jan - 13 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  6),  DateTime.new(2001, 1,  13))],
@@ -34,6 +34,15 @@ RSpec.describe JiraTeamMetrics::TimesheetOptions do
         ['23 Dec - 30 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 23), DateTime.new(2000, 12, 30))],
         ['16 Dec - 23 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 16), DateTime.new(2000, 12, 23))],
         ['09 Dec - 16 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 9),  DateTime.new(2000, 12, 16))]
+      ])
+    end
+
+    it "enumerates relative period options" do
+      expect(timesheet_options.relative_periods).to eq([
+        ['Last 7 days', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  8),    DateTime.new(2001, 1,  15))],
+        ['Last 30 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12,  16), DateTime.new(2001, 1,  15))],
+        ['Last 90 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 10,  17), DateTime.new(2001, 1,  15))],
+        ['Last 180 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 7,  19), DateTime.new(2001, 1,  15))]
       ])
     end
   end

@@ -1,4 +1,4 @@
-<% breadcrumb :delivery_scope_report, @increment, @team %>
+<% breadcrumb :project_scope_report, @project, @team %>
 
 <% if @report.has_training_data? %>
     <div class="ui grid">
@@ -10,7 +10,7 @@
     <table class="ui very compact table">
       <thead>
         <tr>
-          <th>Delivery</th>
+          <th>Project</th>
           <th>Scope</th>
           <th>Epics</th>
           <th colspan="2" class="center aligned">Issues / Epic</th>
@@ -20,14 +20,14 @@
       </thead>
       <% @report.training_team_reports.each do |training_report| %>
           <tr>
-            <td><%= training_report.increment.key %></td>
+            <td><%= training_report.project.key %></td>
             <td><%= training_report.scope.count %></td>
             <td><%= training_report.epics.count %></td>
             <td class="right aligned"><%= pretty_print_number(training_report.epic_scope) %></td>
             <td></td>
             <td></td>
             <td>
-              <a href="<%= delivery_scope_report_path(@board.training_board, training_report.increment, @team) %>" target="_blank">
+              <a href="<%= project_scope_report_path(@board.training_board, training_report.project, @team) %>" target="_blank">
                 <i class="external alternate icon"></i>
               </a>
             </td>
@@ -47,7 +47,7 @@
           <th><strong>Adjusted</strong>
             <% if @report.adjusted_epic_scope || @report.adjusted_throughput %>
                 <a id="adjustments-popup"
-                   data-html="<%= @increment.metric_adjustments.as_string(@increment, @domain.short_team_name(@team)) %>"
+                   data-html="<%= @project.metric_adjustments.as_string(@project, @domain.short_team_name(@team)) %>"
                    data-position="right center">
                   <i class="ellipsis horizontal icon"></i>
                 </a>
@@ -89,9 +89,28 @@
 <table class="ui table jira-tree">
   <thead>
     <tr>
-      <th style="width: 90%">Issue</th>
-      <th>Scope</th>
-      <th>Status</th>
+      <th style="width: 80%">Issue</th>
+      <th style="width: 6%">Scope</th>
+      <th style="width: 10%">
+        Status
+        <div class="ui dropdown" id="status-dropdown">
+          <a><i id="status-filter-icon" class="<%= 'disabled' unless @filter_applied %> filter icon"></i></a>
+          <div class="menu">
+            <div class="scrolling menu">
+              <% @status_categories.each do |status_category| %>
+                  <div class="item">
+                    <span class="description"><div class="ui <%= @domain.status_color_for(status_category) %> empty circular label"></div> </span>
+                    <div class="ui checkbox">
+                      <input type="checkbox" data-status-category="<%= status_category %>"
+                             <%= 'checked' if @show_categories.include?(status_category) %>>
+                      <label><%= status_category %></label>
+                    </div>
+                  </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </th>
     </tr>
   </thead>
 
@@ -114,7 +133,8 @@
       </tr>
 
       <% issues.each do |issue| %>
-          <tr class="story">
+          <tr class="story" data-status-category="<%= issue.status_category %>"
+              style="<%= 'display: none;' unless @show_categories.include?(issue.status_category) %>">
             <td>
               <% if issue.persisted? %>
                   <%= link_to(issue.key, issue) %>
@@ -126,10 +146,46 @@
               <% end %>
             </td>
             <td></td>
-            <td class="red <%= @domain.status_color_for(issue.status) %>">
+            <td class="<%= @domain.status_color_for(issue.status_category) %>">
               <%= issue.status %>
             </td>
           </tr>
       <% end %>
   <% end %>
 </table>
+
+<script>
+  $(function() {
+    $('#status-dropdown').dropdown({
+      on: 'hover',
+      action: 'nothing'
+    });
+    $('input[data-status-category]').change(function() {
+      var statusCategory = $(this).data('status-category');
+      if ($(this).prop('checked')) {
+        $('tr[data-status-category="' + statusCategory + '"]').show();
+      } else {
+        $('tr[data-status-category="' + statusCategory + '"]').hide();
+      }
+
+      var $statusCategoryOptions = $('input[data-status-category]');
+      var selectedStatusCategories = $statusCategoryOptions.filter(function(_, el) {
+        return $(el).prop('checked');
+      }).map(function(_, el) {
+        return $(el).data('status-category');
+      }).toArray();
+      var unselectedStatusCategories = $statusCategoryOptions.filter(function(_, el) {
+        return !$(el).prop('checked');
+      }).map(function(_, el) {
+        return $(el).data('status-category');
+      }).toArray();
+      if (unselectedStatusCategories.length > 0) {
+        $('#status-filter-icon').removeClass('disabled');
+        history.pushState({}, "", "?filter_status=" + selectedStatusCategories.join(','))
+      } else {
+        $('#status-filter-icon').addClass('disabled');
+        history.pushState({}, "", "?");
+      }
+    });
+  });
+</script>

@@ -3,20 +3,28 @@ FactoryBot.define do
     sequence(:key) { |k| "ISSUE-#{k + 100}" }
     summary "Some Issue"
     board
+    issue_type 'Story'
     fields { {} }
     transitions []
+    links []
     status 'Done'
 
     transient do
       started_time nil
       completed_time nil
+      epic nil
+      project nil
     end
 
     factory :epic do
       issue_type 'Epic'
     end
 
-    after(:create) do |issue, evaluator|
+    factory :project do
+      issue_type 'Project'
+    end
+
+    before(:create) do |issue, evaluator|
       if evaluator.started_time
         issue.transitions << {
           'fromStatusCategory' => 'To Do',
@@ -31,6 +39,22 @@ FactoryBot.define do
           'toStatusCategory' => 'Done',
           'date' => evaluator.completed_time.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
         }
+      end
+
+      if evaluator.project
+        issue.links << {
+          'inward_link_type' => 'is included in',
+          'issue' => {
+            'issue_type' => evaluator.project.issue_type,
+            'key' => evaluator.project.key,
+            'summary' => evaluator.project.summary
+          }
+        }
+      end
+
+      if evaluator.epic
+        issue.fields['Epic Link'] = evaluator.epic.key
+        issue.board = evaluator.epic.board
       end
     end
   end

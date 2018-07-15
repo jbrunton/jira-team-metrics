@@ -1,7 +1,7 @@
 <script>
   $(function() {
     var chartBuilder = new ChartBuilder('<%= chart_id %>')
-        .url('<%= url %>')
+        .url("<%= url %>")
         .chartType('<%= chart_type %>');
 
     <% if defined?(chart_opts) %>
@@ -20,9 +20,7 @@
       _charts = {};
     }
     _charts['<%= chart_id %>'] = chart;
-
-    $('#ct-states input, #ct-states textarea').change(chart.refresh);
-  })();
+  });
 </script>
 
 <div id="<%= chart_id %>">

@@ -18,16 +18,8 @@ module JiraTeamMetrics
     require 'gretel'
 
     config.after_initialize do
-      unless ENV['CONFIG_URL'].nil?
-        log_message = "CONFIG_URL defined. Setting config from #{ENV['CONFIG_URL']}"
-        Rails.logger.info log_message
-        puts log_message # Rails doesn't print to stdout during boot
-
-        domain = JiraTeamMetrics::Domain.get_instance
-        domain.config_string = open(ENV['CONFIG_URL']).read
-        unless domain.save
-          raise 'Invalid config: ' + domain.errors.full_messages.join(',')
-        end
+      unless ActiveRecord::Base.connection.migration_context.needs_migration?
+        JiraTeamMetrics::ConfigFileService.new(ENV['CONFIG_FILE']).load_config
       end
     end
   end

@@ -46,14 +46,25 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       expect(board_config.filters).to eq([])
     end
 
-    it "returns query filters if specified" do
+    it "returns jql filters if specified" do
       config_hash['filters'] = [{
         'name' => 'Releases',
-        'query' => "summary ~ 'Release'"
+        'jql' => "summary ~ 'Release'"
       }]
       board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
       expect(board_config.filters).to eq([
-        JiraTeamMetrics::BoardConfig::QueryFilter.new('Releases', "summary ~ 'Release'")
+        JiraTeamMetrics::BoardConfig::JqlFilter.new('Releases', "summary ~ 'Release'")
+      ])
+    end
+
+    it "returns mql filters if specified" do
+      config_hash['filters'] = [{
+        'name' => 'Completed',
+        'mql' => "status_category = 'Done'"
+      }]
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.filters).to eq([
+        JiraTeamMetrics::BoardConfig::MqlFilter.new('Completed', "status_category = 'Done'")
       ])
     end
 

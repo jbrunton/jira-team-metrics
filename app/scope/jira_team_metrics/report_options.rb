@@ -11,7 +11,7 @@ class JiraTeamMetrics::ReportOptions
     @report_type = report_type
   end
 
-  def self.for(increment_report, report_type)
+  def self.for(project_report, report_type)
     # figure out start, end dates
   end
 end

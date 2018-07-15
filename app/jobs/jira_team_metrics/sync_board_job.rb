@@ -23,14 +23,14 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def build_reports(board)
-    board.increments.each_with_index do |increment, index|
-      progress = (100.0 * (index + 1) / board.increments.count).to_i
+    board.projects.each_with_index do |project, index|
+      progress = (100.0 * (index + 1) / board.projects.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
       begin
-        JiraTeamMetrics::DeliveryReportBuilder.new(increment).build
+        JiraTeamMetrics::ProjectReportBuilder.new(project).build
       rescue StandardError => e
         logger.error [
-          "Error building reports for #{increment.key}:",
+          "Error building reports for #{project.key}:",
           e.message,
           e.backtrace
         ].join("\n")
@@ -83,10 +83,14 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   def create_filters(board, credentials)
     board.config.filters.each do |filter|
       case filter
-        when JiraTeamMetrics::BoardConfig::QueryFilter
+        when JiraTeamMetrics::BoardConfig::JqlFilter
           issues = fetch_issues_for_query(board, filter.query, credentials, 'syncing ' + filter.name + ' filter')
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
-          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :query_filter)
+          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :jql_filter)
+        when JiraTeamMetrics::BoardConfig::MqlFilter
+          issues = JiraTeamMetrics::MqlInterpreter.new(board, board.issues).eval(filter.query)
+          issue_keys = issues.map { |issue| issue['key'] }.join(' ')
+          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :mql_filter)
         when JiraTeamMetrics::BoardConfig::ConfigFilter
           issue_keys = filter.issues.map{ |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :config_filter)

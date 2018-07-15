@@ -1,4 +1,4 @@
-<% breadcrumb :delivery, @increment %>
+<% breadcrumb :project, @project %>
 
 <script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});
@@ -26,7 +26,7 @@
         3: { color: 'orange' }
       },
       chartArea: {
-        width: '95%',
+        width: '94%',
         height: '75%',
         top: 40
       },
@@ -75,7 +75,7 @@
       <th class="center aligned">Status</th>
       <th class="center aligned">Team
         <div class="ui dropdown" id="teams-dropdown">
-          <a><i class="filter icon"></i></a>
+          <a><i id="team-filter-icon" class="<%= 'disabled' unless @filter_applied %> filter icon"></i></a>
           <div class="menu">
             <div class="scrolling menu">
             <% team_dashboard_data[:teams].each do |team, team_data| %>
@@ -117,7 +117,7 @@
     <tr data-team="<%= @domain.short_team_name(team) %>"
         style="<%= 'display: none;' unless @show_teams.include?(@domain.short_team_name(team)) %>">
       <td class="center aligned">
-        <% if @increment.target_date %>
+        <% if @project.target_date %>
             <span class="ui <%= team_data[:status_color] %> circular label"
                   data-tooltip="<%= team_data[:status_reason] %>"
                   data-position="bottom left"></span>
@@ -127,7 +127,7 @@
         <%= team %>
       </td>
       <td>
-        <%= pretty_print_date(@increment.target_date, show_tz: false) %>
+        <%= pretty_print_date(@project.target_date, show_tz: false) %>
       </td>
       <td class="right aligned">
         <%= team_data[:remaining_scope] %>
@@ -146,7 +146,7 @@
       </td>
       <td class="right aligned highlight">
         <%= link_to pretty_print_number(team_data[:rolling_throughput] * 7),
-            delivery_throughput_report_path(@board, @increment, team) %>
+            project_throughput_report_path(@board, @project, team) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
@@ -158,7 +158,7 @@
         <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
       </td>
       <td>
-        <a href="<%= delivery_scope_report_path(@board, @increment, team) %>">Details</a>
+        <a href="<%= project_scope_report_path(@board, @project, team) %>">Details</a>
       </td>
     </tr>
 <% end %>
@@ -170,7 +170,7 @@
       Totals
     </th>
     <th>
-      <%= pretty_print_date(@increment.target_date, show_tz: false) %>
+      <%= pretty_print_date(@project.target_date, show_tz: false) %>
     </th>
     <th class="right aligned">
       <%= team_dashboard_data[:totals][:remaining_scope] %>
@@ -232,8 +232,10 @@
         return $(el).data('team');
       }).toArray();
       if (unselectedTeams.length > 0) {
-        history.pushState({}, "", "?show_teams=" + selectedTeams.join(','))
+        $('#team-filter-icon').removeClass('disabled');
+        history.pushState({}, "", "?filter_teams=" + selectedTeams.join(','))
       } else {
+        $('#team-filter-icon').addClass('disabled');
         history.pushState({}, "", "?");
       }
     });

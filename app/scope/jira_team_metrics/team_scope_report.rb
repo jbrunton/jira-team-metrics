@@ -2,7 +2,7 @@ class JiraTeamMetrics::TeamScopeReport
   include JiraTeamMetrics::DescriptiveScopeStatistics
 
   attr_reader :team
-  attr_reader :increment
+  attr_reader :project
   attr_reader :epics
   attr_reader :unscoped_epics
   attr_reader :scope
@@ -20,10 +20,10 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :status_color
   attr_reader :status_reason
 
-  def initialize(team, increment, issues, training_team_reports = [])
+  def initialize(team, project, issues, training_team_reports = [])
     @team = team
-    @short_team_name = increment.board.domain.short_team_name(team)
-    @increment = increment
+    @short_team_name = project.board.domain.short_team_name(team)
+    @project = project
     @issues = issues
     @training_team_reports = training_team_reports
   end
@@ -38,7 +38,7 @@ class JiraTeamMetrics::TeamScopeReport
 
     analyze_scope
     build_trained_forecasts if has_training_data?
-    analyze_status if @increment.target_date
+    analyze_status if @project.target_date
 
     zero_predicted_scope unless has_training_data?
 
@@ -55,15 +55,29 @@ class JiraTeamMetrics::TeamScopeReport
     end
   end
 
-  def self.for(increment, team)
-    issues_for_team = self.issues_for_team(increment.issues(recursive: true), team)
+  def self.for(project, team)
+    issues_for_team = self.issues_for_team(project.issues(recursive: true), team)
 
-    training_team_reports = increment.board.training_increments.map do |training_increment|
-      training_issues_for_team = self.issues_for_team(training_increment.issues(recursive: true), team)
-      JiraTeamMetrics::TeamScopeReport.new(team, training_increment, training_issues_for_team).build
+    training_team_reports = project.board.training_projects.map do |training_project|
+      training_issues_for_team = self.issues_for_team(training_project.issues(recursive: true), team)
+      JiraTeamMetrics::TeamScopeReport.new(team, training_project, training_issues_for_team).build
     end
 
-    JiraTeamMetrics::TeamScopeReport.new(team, increment, issues_for_team, training_team_reports).build
+    JiraTeamMetrics::TeamScopeReport.new(team, project, issues_for_team, training_team_reports).build
+  end
+
+  def forecast_completion_date
+    @forecast_completion_date ||= begin
+      if use_rolling_forecast?
+        rolling_forecast_completion_date(@project.board.config.rolling_window_days)
+      else
+        predicted_completion_date
+      end
+    end
+  end
+
+  def use_rolling_forecast?
+    completed_scope.count >= 5
   end
 
 private
@@ -89,66 +103,9 @@ private
   end
 
   def analyze_status
-    if done?
-      @status_color = 'blue'
-      @status_reason = "Done."
-    else
-      analyze_progress
-    end
-  end
-
-  def analyze_progress
-    if on_track?
-      @status_color = 'green'
-      status_risk = 'on target'
-    elsif at_risk?
-      @status_color = 'yellow'
-      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-    else
-      @status_color = 'red'
-      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-    end
-    if use_rolling_forecast?
-      @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
-    else
-      @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
-    end
-  end
-
-  def use_rolling_forecast?
-    completed_scope.count >= 5
-  end
-
-  def forecast_completion_date
-    @forecast_completion_date ||= begin
-      if use_rolling_forecast?
-        rolling_forecast_completion_date(@increment.board.config.rolling_window_days)
-      else
-        predicted_completion_date
-      end
-    end
-  end
-
-  def done?
-    @remaining_scope.empty?
-  end
-
-  def on_track?
-    forecast_completion_date &&
-      forecast_completion_date <= @increment.target_date
-  end
-
-  def at_risk?
-    forecast_completion_date &&
-      (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now) < 0.2
-  end
-
-  def over_target_by
-    if forecast_completion_date.nil?
-      'Inf'
-    else
-      (100.0 * (forecast_completion_date - @increment.target_date) / (@increment.target_date - DateTime.now)).round
-    end
+    status_analyzer = JiraTeamMetrics::StatusAnalyzer.new(self).analyze
+    @status_color = status_analyzer.status_color
+    @status_reason = status_analyzer.status_reason
   end
 
   def build_predicted_scope
@@ -160,7 +117,7 @@ private
     end
 
     @trained_epic_scope = training_scope / training_epic_count
-    @adjusted_epic_scope = @increment.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
     @predicted_epic_scope = @adjusted_epic_scope || @trained_epic_scope
     @epics.each do |epic|
       build_predicted_scope_for(epic)
@@ -178,7 +135,7 @@ private
       @trained_throughput = 0
     end
 
-    @adjusted_throughput = @increment.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0
