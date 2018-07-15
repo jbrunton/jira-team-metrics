@@ -91,32 +91,30 @@ private
   def analyze_status
     if done?
       @status_color = 'blue'
-      @status_reason = "Done."
+      @status_reason = 'Done.'
+    elsif late?
+      @status_color = 'red'
+      @status_reason = 'Target date is in the past.'
     else
       analyze_progress
     end
   end
 
   def analyze_progress
-    if late?
-      @status_color = 'red'
-      @status_reason = 'Target date is in the past.'
+    if on_track?
+      @status_color = 'green'
+      status_risk = 'on target'
+    elsif at_risk?
+      @status_color = 'yellow'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     else
-      if on_track?
-        @status_color = 'green'
-        status_risk = 'on target'
-      elsif at_risk?
-        @status_color = 'yellow'
-        status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-      else
-        @status_color = 'red'
-        status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-      end
-      if use_rolling_forecast?
-        @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
-      else
-        @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
-      end
+      @status_color = 'red'
+      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
+    end
+    if use_rolling_forecast?
+      @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
+    else
+      @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
     end
   end
 
