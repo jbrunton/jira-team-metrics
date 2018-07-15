@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::PathHelper do
   before(:each) { helper.define_singleton_method(:root_path) { '/metrics/' } }
 
-  let(:board) { create(:board, jira_id: 101) }
+  let(:board) { create(:board, jira_id: 101, query: "project=MY-PROJ") }
   let(:project) { board.issues.create(attributes_for(:issue, key: 'DELIVERY-1')) }
 
   it "defines #domain path" do
@@ -62,5 +62,13 @@ RSpec.describe JiraTeamMetrics::PathHelper do
 
   it "defines #path_for" do
     expect(helper.path_for(project)).to eq('/metrics/domain/boards/101/issues/DELIVERY-1')
+  end
+
+  it "defines #jira_board_url" do
+    expect(helper.jira_board_url(board)).to eq('https://jira.example.com/secure/RapidBoard.jspa?rapidView=101')
+  end
+
+  it "defines #jira_board_issues_url" do
+    expect(helper.jira_board_issues_url(board)).to eq('https://jira.example.com/issues/?jql=project=MY-PROJ')
   end
 end
