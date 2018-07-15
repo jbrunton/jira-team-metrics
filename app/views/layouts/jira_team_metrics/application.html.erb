@@ -55,11 +55,7 @@
     <footer class="ui basic center aligned segment">
       <div class="ui divider"></div>
       <% unless @board.nil? %>
-          <span>
-            <%= @board.name %>
-            &middot;
-            Last synchronized: <%= pretty_print_time(@board.last_synced) %>
-          </span>
+          <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>
       <% end %>
       <p>
         Jira Team Metrics v<%= JiraTeamMetrics::VERSION %> &middot;
