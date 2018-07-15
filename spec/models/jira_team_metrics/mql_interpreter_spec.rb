@@ -55,9 +55,14 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       end
     end
 
-    context "when given an project comparison" do
-      xit "returns issues that match the given value"
-      xit "filters out issues that do not match the given value"
+    context "when given a project comparison" do
+      xit "returns issues in the given project"
+      xit "filters out issues that aren't in the given project"
+    end
+
+    context "when given an epic comparison" do
+      xit "returns issues in the given epic"
+      xit "filters out issues that aren't in the given epic"
     end
 
     context "when given a disjunction" do

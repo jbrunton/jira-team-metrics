@@ -166,7 +166,8 @@ class JiraTeamMetrics::MqlInterpreter
     def compare_with(issue)
       compare_object_field(issue) ||
         compare_jira_field(issue) ||
-        compare_project(issue)
+        compare_project(issue) ||
+        compare_epic(issue)
     end
 
     def field_name
@@ -190,6 +191,11 @@ class JiraTeamMetrics::MqlInterpreter
     def compare_project(issue)
       field_name == 'project' &&
         issue.project.try(:[], 'issue').try(:[], 'key') == field_value
+    end
+
+    def compare_epic(issue)
+      field_name == 'epic' &&
+        issue.epic.try('key') == field_value
     end
 
     OBJECT_FIELDS = {
