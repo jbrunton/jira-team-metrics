@@ -200,8 +200,9 @@ private
   end
 
   def jira_completed_time
-    last_transition = transitions.last if transitions.last['toStatusCategory'] == 'Done'
-    last_transition ? DateTime.parse(last_transition['date']) : nil
+    if transitions.any? && transitions.last['toStatusCategory'] == 'Done'
+      DateTime.parse(transitions.last['date'])
+    end
   end
 
   def scope_started_time
