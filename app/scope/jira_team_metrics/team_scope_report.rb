@@ -76,6 +76,10 @@ class JiraTeamMetrics::TeamScopeReport
     end
   end
 
+  def use_rolling_forecast?
+    completed_scope.count >= 5
+  end
+
 private
   def build_scope
     if has_training_data?

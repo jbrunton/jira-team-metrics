@@ -41,8 +41,7 @@ RSpec.describe JiraTeamMetrics::StatusAnalyzer do
 
     context "when using rolling forecasts" do
       before(:each) do
-        completed_scope = 5.times.map{ create(:issue) }
-        expect(team_report).to receive(:completed_scope).and_return(completed_scope)
+        expect(team_report).to receive(:use_rolling_forecast?).and_return(true)
       end
 
       context "when on target" do
@@ -87,7 +86,7 @@ RSpec.describe JiraTeamMetrics::StatusAnalyzer do
 
     context "when using trained forecasts" do
       before(:each) do
-        expect(team_report).to receive(:completed_scope).and_return([])
+        expect(team_report).to receive(:use_rolling_forecast?).and_return(false)
         allow(team_report).to receive(:remaining_scope).and_return([create(:issue)])
         allow(team_report).to receive(:forecast_completion_date).and_return(today + 15)
       end

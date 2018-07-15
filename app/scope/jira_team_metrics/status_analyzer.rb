@@ -31,15 +31,11 @@ private
       @status_color = 'red'
       status_risk = "at risk, over target by #{over_target_by}% of time remaining"
     end
-    if use_rolling_forecast?
+    if @team_report.use_rolling_forecast?
       @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
     else
       @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
     end
-  end
-
-  def use_rolling_forecast?
-    completed_scope.count >= 5
   end
 
   def done?
