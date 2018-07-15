@@ -61,15 +61,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def is_scope?
-    !is_epic? && !is_project?
+    @is_scope ||= !is_epic? && !is_project?
   end
 
   def is_epic?
-    issue_type == 'Epic'
+    @is_epic ||= issue_type == 'Epic'
   end
 
   def is_project?
-    [board.domain.config.project_type].compact.any?{ |project| issue_type == project.issue_type }
+    @is_project ||= JiraTeamMetrics::Domain.get_instance.is_project?(self)
   end
 
   def project
