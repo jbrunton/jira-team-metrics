@@ -1,25 +1,32 @@
 <div class="ui fluid card">
   <div class="content">
     <div class="header">
-    <% if object.class == JiraTeamMetrics::Domain %>
-        Domain Status
-    <% elsif object.class == JiraTeamMetrics::Board %>
-        Board Status
-    <% end %>
+    <%= object.class.name.demodulize %> Status
     </div>
+  </div>
+  <div class="content">
     <p>Last synced: <%= pretty_print_time(object.last_synced) %></p>
     <% if object.class == JiraTeamMetrics::Domain %>
         <p>Synced boards: <%= object.synced_boards.count %> of <%= object.boards.count %></p>
     <% elsif object.class == JiraTeamMetrics::Board %>
         <p>Synced from: <%= pretty_print_time(object.synced_from) %></p>
+        <p>
+          <a class="item" target="_blank" href="<%= jira_board_url(@board) %>">
+            <i class="external alternate icon"></i>
+            Open board in Jira
+          </a>
+        </p>
+        <p>
+          <a class="item" target="_blank" href="<%= jira_board_issues_url(@board) %>">
+            <i class="external alternate icon"></i>
+            View issues in Jira
+          </a>
+        </p>
     <% end %>
   </div>
   <div class="extra content">
     <a class="ui button" href="#" onclick="showSyncModal();">Sync</a>
     <a class="ui button" href="#" onclick="showConfigModal();">Config</a>
-    <% if object.class == JiraTeamMetrics::Domain %>
-        <a class="ui button" href="<%= domain_metadata_path %>">Metadata</a>
-  <% end %>
   </div>
 </div>
 

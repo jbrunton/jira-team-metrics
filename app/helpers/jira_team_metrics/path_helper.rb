@@ -58,4 +58,12 @@ module JiraTeamMetrics::PathHelper
       issue_path(object)
     end
   end
+
+  def jira_board_url(board)
+    "#{board.domain.config.url}/secure/RapidBoard.jspa?rapidView=#{board.jira_id}"
+  end
+
+  def jira_board_issues_url(board)
+    "#{board.domain.config.url}/issues/?jql=#{board.query}"
+  end
 end
