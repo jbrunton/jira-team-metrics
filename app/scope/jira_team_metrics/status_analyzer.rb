@@ -19,7 +19,6 @@ class JiraTeamMetrics::StatusAnalyzer
     self
   end
 
-
 private
   def analyze_progress
     if on_track?
