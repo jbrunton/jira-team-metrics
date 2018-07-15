@@ -1,5 +1,23 @@
 # Change Log
 
+## [0.10.0](https://github.com/jbrunton/jira-team-metrics/tree/0.10.0) (2018-07-15)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.9.1...0.10.0)
+
+**Merged pull requests:**
+
+- bump version [\#357](https://github.com/jbrunton/jira-team-metrics/pull/357) ([jbrunton](https://github.com/jbrunton))
+- Fix status indicators when project is late [\#356](https://github.com/jbrunton/jira-team-metrics/pull/356) ([jbrunton](https://github.com/jbrunton))
+- Add links to open board and issues in Jira [\#355](https://github.com/jbrunton/jira-team-metrics/pull/355) ([jbrunton](https://github.com/jbrunton))
+- Compute epic cycle times based on stories in epic [\#353](https://github.com/jbrunton/jira-team-metrics/pull/353) ([jbrunton](https://github.com/jbrunton))
+
+## [0.9.1](https://github.com/jbrunton/jira-team-metrics/tree/0.9.1) (2018-07-09)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.9.0...0.9.1)
+
+**Merged pull requests:**
+
+- fix delivery throughput charts [\#354](https://github.com/jbrunton/jira-team-metrics/pull/354) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#352](https://github.com/jbrunton/jira-team-metrics/pull/352) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.9.0](https://github.com/jbrunton/jira-team-metrics/tree/0.9.0) (2018-07-08)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.8.0...0.9.0)
 
@@ -22,7 +40,7 @@
 - update changelog [\#342](https://github.com/jbrunton/jira-team-metrics/pull/342) ([jbrunton](https://github.com/jbrunton))
 
 ## [0.7.1](https://github.com/jbrunton/jira-team-metrics/tree/0.7.1) (2018-07-02)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.7.1)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.1)
 
 **Merged pull requests:**
 
@@ -32,11 +50,11 @@
 - fix object field comparisons [\#338](https://github.com/jbrunton/jira-team-metrics/pull/338) ([jbrunton](https://github.com/jbrunton))
 - update changelog [\#337](https://github.com/jbrunton/jira-team-metrics/pull/337) ([jbrunton](https://github.com/jbrunton))
 
-## [0.7.0](https://github.com/jbrunton/jira-team-metrics/tree/0.7.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.0)
-
 ## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.6.0)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.6.0)
+
+## [0.7.0](https://github.com/jbrunton/jira-team-metrics/tree/0.7.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.7.0)
 
 **Merged pull requests:**
 
