@@ -43,6 +43,14 @@ RSpec.describe JiraTeamMetrics::Issue do
     }
   }
 
+  let (:reopened_transition) {
+    {
+      'date' => '2017-01-04T18:00:00.000-0000',
+      'toStatus' => 'In Progress',
+      'toStatusCategory' => 'In Progress'
+    }
+  }
+
   let(:board) { create(:board) }
 
   let(:issue) {
@@ -95,7 +103,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   describe "#epic" do
     let(:epic) { create(:epic) }
-    let(:issue) { create(:issue, board: epic.board, epic: epic) }
+    let(:issue) { create(:issue, epic: epic) }
 
     it "returns the epic the issue is linked to" do
       expect(issue.epic).to eq(epic)
@@ -120,7 +128,7 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
 
     context "when given an issue linked to an epic in a project" do
-      let(:issue) { create(:issue, board: epic.board, epic: epic) }
+      let(:issue) { create(:issue, epic: epic) }
 
       it "returns the project" do
         expect(issue.project).to eq({
@@ -144,22 +152,59 @@ RSpec.describe JiraTeamMetrics::Issue do
   end
 
   describe "started_time" do
-    it "returns the time of the first transition to 'In Progress' status category" do
-      expect(issue.started_time).to eq(DateTime.parse('2017-01-02T12:00:00.000-0000'))
+    context "if is_scope? is true" do
+      it "returns the time of the first transition to 'In Progress' status category" do
+        expect(issue.started_time).to eq(DateTime.parse(in_progress_transition['date']))
+      end
+
+      it "returns nil if not started" do
+        issue.transitions = []
+        expect(issue.started_time).to eq(nil)
+      end
     end
 
-    context "when never started" do
-      it "returns nil"
+    context "if is_epic? is true" do
+      let(:epic) { create(:epic) }
+      let(:started_time) { DateTime.new(2018, 6, 1) }
+
+      it "returns the time of the first started issue in the epic" do
+        create(:issue, epic: epic, started_time: started_time + 1)
+        create(:issue, epic: epic, started_time: started_time)
+        expect(epic.started_time).to eq(started_time)
+      end
+
+      it "returns nil if no issues have been started" do
+        expect(epic.started_time).to eq(nil)
+      end
     end
   end
 
   describe "completed_time" do
-    it "returns the time of the last transition to 'Done' status category" do
-      expect(issue.completed_time).to eq(DateTime.parse('2017-01-03T18:00:00.000-0000'))
+    context "if is_scope? is true" do
+      it "returns the time of the last transition to 'Done' status category" do
+        expect(issue.completed_time).to eq(DateTime.parse(done_transition['date']))
+      end
+
+      it "returns nil if the issue was reopened" do
+        issue.transitions << reopened_transition
+        expect(issue.completed_time).to eq(nil)
+      end
     end
 
-    context "when reopened" do
-      it "returns nil"
+    context "if is_epic? is true" do
+      let(:epic) { create(:epic) }
+      let(:started_time) { DateTime.new(2018, 6, 1) }
+      let(:completed_time) { DateTime.new(2018, 7, 1) }
+
+      it "returns the time of the first started issue in the epic" do
+        create(:issue, epic: epic, started_time: started_time, completed_time: started_time + 1)
+        create(:issue, epic: epic, started_time: completed_time - 1, completed_time: completed_time)
+        expect(epic.completed_time).to eq(completed_time)
+      end
+
+      it "returns nil if no issues have been completed" do
+        expect(epic.started_time).to eq(nil)
+      end
     end
   end
 

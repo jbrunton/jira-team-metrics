@@ -54,6 +54,7 @@ FactoryBot.define do
 
       if evaluator.epic
         issue.fields['Epic Link'] = evaluator.epic.key
+        issue.board = evaluator.epic.board
       end
     end
   end
