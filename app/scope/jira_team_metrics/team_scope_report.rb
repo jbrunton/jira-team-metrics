@@ -66,6 +66,16 @@ class JiraTeamMetrics::TeamScopeReport
     JiraTeamMetrics::TeamScopeReport.new(team, project, issues_for_team, training_team_reports).build
   end
 
+  def forecast_completion_date
+    @forecast_completion_date ||= begin
+      if use_rolling_forecast?
+        rolling_forecast_completion_date(@project.board.config.rolling_window_days)
+      else
+        predicted_completion_date
+      end
+    end
+  end
+
 private
   def build_scope
     if has_training_data?
@@ -93,17 +103,6 @@ private
     @status_color = status_analyzer.status_color
     @status_reason = status_analyzer.status_reason
   end
-
-  def forecast_completion_date
-    @forecast_completion_date ||= begin
-      if use_rolling_forecast?
-        rolling_forecast_completion_date(@project.board.config.rolling_window_days)
-      else
-        predicted_completion_date
-      end
-    end
-  end
-
 
   def build_predicted_scope
     training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
