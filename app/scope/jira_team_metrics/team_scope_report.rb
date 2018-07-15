@@ -89,37 +89,9 @@ private
   end
 
   def analyze_status
-    if done?
-      @status_color = 'blue'
-      @status_reason = 'Done.'
-    elsif late?
-      @status_color = 'red'
-      @status_reason = 'Target date is in the past.'
-    else
-      analyze_progress
-    end
-  end
-
-  def analyze_progress
-    if on_track?
-      @status_color = 'green'
-      status_risk = 'on target'
-    elsif at_risk?
-      @status_color = 'yellow'
-      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-    else
-      @status_color = 'red'
-      status_risk = "at risk, over target by #{over_target_by}% of time remaining"
-    end
-    if use_rolling_forecast?
-      @status_reason = "Using rolling forecast. Forecast is #{status_risk}."
-    else
-      @status_reason = "< 5 issues completed, using predicted forecast. Forecast is #{status_risk}."
-    end
-  end
-
-  def use_rolling_forecast?
-    completed_scope.count >= 5
+    status_analyzer = JiraTeamMetrics::StatusAnalyzer.new(self).analyze
+    @status_color = status_analyzer.status_color
+    @status_reason = status_analyzer.status_reason
   end
 
   def forecast_completion_date
@@ -132,31 +104,6 @@ private
     end
   end
 
-  def done?
-    @remaining_scope.empty?
-  end
-
-  def on_track?
-    forecast_completion_date &&
-      forecast_completion_date <= @project.target_date
-  end
-
-  def at_risk?
-    forecast_completion_date &&
-      (forecast_completion_date - @project.target_date) / (@project.target_date - DateTime.now) < 0.2
-  end
-
-  def over_target_by
-    if forecast_completion_date.nil?
-      'Inf'
-    else
-      (100.0 * (forecast_completion_date - @project.target_date) / (@project.target_date - DateTime.now)).round
-    end
-  end
-
-  def late?
-    !done? && @project.target_date < DateTime.now
-  end
 
   def build_predicted_scope
     training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
