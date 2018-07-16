@@ -1,24 +1,18 @@
-<div class="<%= 'active' if expand %> title">
-  <i class="dropdown icon"></i>
-  Links
-</div>
-<div class="<%= 'active' if expand %> content">
-  <% if issue.links.any? %>
-      <table class="issue-details ui table">
-        <% issue.links.each do |link| %>
-            <tr>
-              <td><%= link_type(link) %></td>
-              <td>
-                <a class="right floated" href="<%= external_link_url(link, @domain) %>" target="_blank">
-                  <i class="external alternate icon"></i>
-                </a>
-                <%= link_summary(link, @board) %>
-              </td>
-            </tr>
-        <% end %>
-      </table>
-  <% else %>
-      <span>None</span>
-  <% end %>
-</div>
+<% if issue.links.any? %>
+    <table class="ui very basic table issue-fields">
+      <% issue.links.each do |link| %>
+          <tr>
+            <td><%= link_type(link) %></td>
+            <td>
+              <a class="right floated" href="<%= external_link_url(link, @domain) %>" target="_blank">
+                <i class="external alternate icon"></i>
+              </a>
+              <%= link_summary(link, @board) %>
+            </td>
+          </tr>
+      <% end %>
+    </table>
+<% else %>
+    <span>None</span>
+<% end %>
 
