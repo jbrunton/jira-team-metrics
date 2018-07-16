@@ -2,13 +2,20 @@
 
 <% if issues.any? %>
     <table class="ui very basic table issue-fields">
-      <% issues.each do |issue| %>
-          <tr>
+      <% issues.each_with_index do |issue, index| %>
+          <tr class="<%= 'below-fold hidden' if index >= 3 %>">
             <td>
               <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
                 <i class="external alternate icon"></i>
               </a>
               <%= issue.display_name %>
+            </td>
+          </tr>
+      <% end %>
+      <% if issues.length > 3 %>
+          <tr>
+            <td colspan="2">
+              <a href="#" class="show-more">Show <%= issues.length - 3 %> more</a>
             </td>
           </tr>
       <% end %>

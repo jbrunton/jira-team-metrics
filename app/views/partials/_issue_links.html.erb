@@ -1,7 +1,7 @@
 <% if issue.links.any? %>
     <table class="ui very basic table issue-fields">
-      <% issue.links.each do |link| %>
-          <tr>
+      <% issue.links.each_with_index do |link, index| %>
+          <tr class="<%= 'below-fold hidden' if index > 3 %>">
             <td><%= link_type(link) %></td>
             <td>
               <a class="right floated" href="<%= external_link_url(link, @domain) %>" target="_blank">
@@ -10,6 +10,13 @@
               <%= link_summary(link, @board) %>
             </td>
           </tr>
+      <% end %>
+      <% if issue.links.length > 3 %>
+        <tr>
+          <td colspan="2">
+            <a href="#" class="show-more">Show <%= issue.links.length - 3 %> more</a>
+          </td>
+        </tr>
       <% end %>
     </table>
 <% else %>
