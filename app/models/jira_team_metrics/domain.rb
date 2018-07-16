@@ -43,6 +43,11 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def is_project?(issue)
+    @project_type ||= config.project_type.try(:issue_type)
+    @project_type == issue.issue_type
+  end
+
   def self.get_instance
     JiraTeamMetrics::Domain.first_or_create
   end

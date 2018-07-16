@@ -185,6 +185,11 @@ RSpec.describe JiraTeamMetrics::Issue do
         expect(issue.completed_time).to eq(DateTime.parse(done_transition['date']))
       end
 
+      it "returns nil if there are no transitions" do
+        issue.transitions = []
+        expect(issue.completed_time).to eq(nil)
+      end
+
       it "returns nil if the issue was reopened" do
         issue.transitions << reopened_transition
         expect(issue.completed_time).to eq(nil)
