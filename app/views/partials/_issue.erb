@@ -1,3 +1,57 @@
+<h3 class="ui header">
+  <span><%= "#{@issue.key} - #{@issue.summary}" %></span>
+  <span class="ui right floated large <%= @domain.status_color_for(@issue.status_category) %> horizontal label">
+    <%= issue.status %>
+  </span>
+  <span class="inline sub header">
+    &middot;
+    <%= @issue.issue_type %>
+  </span>
+</h3>
+<div class="ui stackable two column grid">
+  <div class="column">
+    <h4 class="ui top attached header">
+      Summary
+    </h4>
+    <div class="ui attached segment">
+      <table class="ui very basic table issue-details">
+        <tr>
+          <td>Created</td>
+          <td><%= pretty_print_date(issue.issue_created) %></td>
+        </tr>
+        <tr>
+          <td>Labels</td>
+          <td>
+            <% issue.labels.each do |label| %>
+                <div class="chip"><%= label %></div>
+            <% end %>
+          </td>
+        </tr>
+
+        <% issue.fields.keys.each do |field_name| %>
+            <tr>
+              <td><%= field_name %></td>
+              <% if field_name == 'Epic Link' %>
+                  <td>
+                    <a class="right floated" href="<%= issue.epic.domain_url %>" target="_blank">
+                      <i class="external alternate icon"></i>
+                    </a>
+                    <%= issue_summary(issue.epic) %>
+                  </td>
+              <% else %>
+                  <td><%= issue_field(issue, field_name) %></td>
+              <% end %>
+            </tr>
+        <% end %>
+
+      </table>
+    </div>
+  </div>
+  <div class="column">
+there
+  </div>
+</div>
+
 <div class="issue-details ui grid">
   <div class="eight wide column">
     <div class="ui styled accordion" data-exclusive="false">
