@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.1](https://github.com/jbrunton/jira-team-metrics/tree/0.10.1) (2018-07-16)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.10.0...0.10.1)
+
+**Merged pull requests:**
+
+- Fix error when computing completed times [\#359](https://github.com/jbrunton/jira-team-metrics/pull/359) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#358](https://github.com/jbrunton/jira-team-metrics/pull/358) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.10.0](https://github.com/jbrunton/jira-team-metrics/tree/0.10.0) (2018-07-15)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.9.1...0.10.0)
 
