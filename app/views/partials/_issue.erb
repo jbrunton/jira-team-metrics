@@ -16,8 +16,16 @@
     <div class="ui attached segment">
       <%= render partial: 'partials/issue_summary', locals: { issue: issue } %>
     </div>
+    <% if @issue.is_epic? %>
+        <h4 class="ui attached block header">
+          Issues in Epic
+        </h4>
+        <div class="ui attached segment">
+          <%= render partial: 'partials/issues_in_epic', locals: { epic: issue } %>
+        </div>
+    <% end %>
     <h4 class="ui attached block header">
-      Links
+      Issue Links
     </h4>
     <div class="ui bottom attached segment">
       <%= render partial: 'partials/issue_links', locals: { issue: issue } %>
@@ -27,9 +35,15 @@
     <h4 class="ui top attached block header">
       Flow Metrics
     </h4>
-    <div class="ui bottom attached segment">
+    <div class="ui attached segment">
       <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue } %>
-      <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
+    </div>
+    <h4 class="ui attached block header">
+      Transitions
+    </h4>
+    <div class="ui bottom attached segment">
+      <%= render partial: 'partials/issue_transitions', locals: { issue: issue } %>
+      </div>
     </div>
   </div>
 </div>

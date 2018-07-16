@@ -1,0 +1,19 @@
+<% issues = epic.issues(recursive: false) %>
+
+<% if issues.any? %>
+    <table class="ui very basic table issue-fields">
+      <% issues.each do |issue| %>
+          <tr>
+            <td>
+              <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
+                <i class="external alternate icon"></i>
+              </a>
+              <%= issue.display_name %>
+            </td>
+          </tr>
+      <% end %>
+    </table>
+<% else %>
+    <span>None</span>
+<% end %>
+
