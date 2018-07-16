@@ -51,7 +51,7 @@ $(function() {
     })
   });
 
-  $('.show-more').click(function() {
+  $(document).on('click', '.show-more', function() {
     $(this).closest('table').find('tr.below-fold').removeClass('hidden');
     $(this).remove();
     return false;

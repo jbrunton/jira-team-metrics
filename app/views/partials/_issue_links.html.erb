@@ -1,7 +1,7 @@
 <% if issue.links.any? %>
     <table class="ui very basic table issue-fields">
       <% issue.links.each_with_index do |link, index| %>
-          <tr class="<%= 'below-fold hidden' if index > 3 %>">
+          <tr class="<%= 'below-fold hidden' if index >= 3 %>">
             <td><%= link_type(link) %></td>
             <td>
               <a class="right floated" href="<%= external_link_url(link, @domain) %>" target="_blank">
