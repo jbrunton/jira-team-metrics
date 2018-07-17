@@ -31,6 +31,11 @@ crumb :project do |project|
   parent :projects, project.board
 end
 
+crumb :epics do |board|
+  link 'Epics', epics_report_path(board)
+  parent :board, board
+end
+
 crumb :project_scope_report do |project, team|
   link "#{team} Scope", project_scope_report_path(project.board, project, team)
   parent :project, project

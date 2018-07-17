@@ -21,9 +21,11 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def projects
-    @projects ||= issues.select do |issue|
-      [domain.config.project_type].compact.any?{ |project| issue.issue_type == project.issue_type }
-    end
+    @projects ||= issues.select { |issue| issue.is_project? }
+  end
+
+  def epics
+    @epics ||= issues.select{ |issue| issue.is_epic? }
   end
 
   def issues_in_epic(epic)

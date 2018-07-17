@@ -17,6 +17,14 @@ module JiraTeamMetrics::PathHelper
     "#{root_path}reports/boards/#{board.jira_id}"
   end
 
+  def epics_report_path(board)
+    "#{reports_path(board)}/epics"
+  end
+
+  def epic_report_path(epic)
+    "#{reports_path(epic.board)}/epics/#{epic.key}"
+  end
+
   def projects_report_path(board)
     "#{reports_path(board)}/#{projects_path_plural}"
   end

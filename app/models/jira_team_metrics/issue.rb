@@ -155,6 +155,14 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     "#{board.domain.config.url}/browse/#{key}"
   end
 
+  def percent_done
+    unless is_scope?
+      total_issues = issues(recursive: true)
+      completed_issues = total_issues.select{ |issue| issue.completed? }
+      completed_issues.count * 100.0 / total_issues.count
+    end
+  end
+
   def status_category_on(date)
     if date < issue_created
       nil

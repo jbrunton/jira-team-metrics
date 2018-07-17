@@ -1,0 +1,32 @@
+<% breadcrumb :epics, @board %>
+
+<h1>In Progress Epics</h1>
+
+<div class="ui grid">
+  <div class="ten wide column">
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Epic</th>
+          <th>Started</th>
+          <th>% Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @in_progress_epics.each do |epic| %>
+            <tr>
+              <td class="eight wide">
+                <%= issue_summary(epic) %>
+              </td>
+              <td>
+                <%= pretty_print_date(epic.started_time, show_tz: false) %>
+              </td>
+              <td>
+                <%= pretty_print_number(epic.percent_done, round: true) %>%
+              </td>
+            </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
