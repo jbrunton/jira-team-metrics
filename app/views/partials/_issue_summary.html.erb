@@ -6,8 +6,12 @@
   <tr>
     <td>Labels</td>
     <td>
-      <% issue.labels.each do |label| %>
-          <span class="ui label"><%= label %></span>
+      <% if issue.labels.any? %>
+        <% issue.labels.each do |label| %>
+            <span class="ui label"><%= label %></span>
+        <% end %>
+      <% else %>
+        None
       <% end %>
     </td>
   </tr>

@@ -8,42 +8,39 @@
     <%= @issue.issue_type %>
   </span>
 </h3>
-<div class="ui stackable two column grid">
-  <div class="column">
+<div class="ui grid">
+  <div class="nine wide column">
     <h4 class="ui top attached block header">
       Summary
     </h4>
-    <div class="ui attached segment">
+    <div class="ui bottom attached segment">
       <%= render partial: 'partials/issue_summary', locals: { issue: issue } %>
     </div>
     <% if @issue.is_epic? %>
-        <h4 class="ui attached block header">
+        <h4 class="ui top attached block header">
           Issues in Epic
         </h4>
-        <div class="ui attached segment">
+        <div class="ui bottom attached segment">
           <%= render partial: 'partials/issues_in_epic', locals: { epic: issue } %>
         </div>
     <% end %>
-    <h4 class="ui attached block header">
+    <h4 class="ui top attached block header">
       Issue Links
     </h4>
     <div class="ui bottom attached segment">
       <%= render partial: 'partials/issue_links', locals: { issue: issue } %>
     </div>
   </div>
-  <div class="column">
+  <div class="seven wide column">
     <h4 class="ui top attached block header">
-      Flow Metrics
-    </h4>
-    <div class="ui attached segment">
-      <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue } %>
-    </div>
-    <h4 class="ui attached block header">
-      Transitions
+      Status Changes
     </h4>
     <div class="ui bottom attached segment">
-      <%= render partial: 'partials/issue_transitions', locals: { issue: issue } %>
+      <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue } %>
+      <div class="ui horizontal divider">
+        Transitions
       </div>
+      <%= render partial: 'partials/issue_transitions', locals: { issue: issue } %>
     </div>
   </div>
 </div>
