@@ -10,6 +10,7 @@
           <th>Epic</th>
           <th>Started</th>
           <th>% Done</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +24,9 @@
               </td>
               <td>
                 <%= pretty_print_number(epic.percent_done, round: true) %>%
+              </td>
+              <td>
+                <%= link_to 'Progress Report', epic_report_path(epic) %>
               </td>
             </tr>
         <% end %>

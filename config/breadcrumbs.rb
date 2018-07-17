@@ -21,6 +21,16 @@ crumb :report do |board, report_key, report_name|
   parent :board, board
 end
 
+crumb :epics do |board|
+  link 'Epics', epics_report_path(board)
+  parent :board, board
+end
+
+crumb :epic do |epic|
+  link epic.key, epic_report_path(epic)
+  parent :epics, epic.board
+end
+
 crumb :projects do |board|
   link projects_name_plural, projects_report_path(board)
   parent :board, board
@@ -29,11 +39,6 @@ end
 crumb :project do |project|
   link project.key, project_report_path(project.board, project)
   parent :projects, project.board
-end
-
-crumb :epics do |board|
-  link 'Epics', epics_report_path(board)
-  parent :board, board
 end
 
 crumb :project_scope_report do |project, team|

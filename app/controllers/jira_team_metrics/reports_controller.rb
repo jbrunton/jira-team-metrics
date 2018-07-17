@@ -32,6 +32,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epic
+    @epic = @board.issues.find_by(key: params[:issue_key])
   end
 
   def scatterplot
