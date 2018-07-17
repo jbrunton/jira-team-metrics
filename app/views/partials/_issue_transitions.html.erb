@@ -1,10 +1,18 @@
 <table class="ui very basic table issue-transitions">
-  <% issue.transitions.each do |t| %>
-      <tr>
+  <% issue.transitions.each_with_index do |t, index| %>
+      <tr class="<%= 'below-fold hidden' if index >= 3 %>">
         <td><%= pretty_print_time(DateTime.parse(t['date'])) %></td>
         <td class="right-align <%= @domain.status_color_for(t['fromStatusCategory']) %> lighten-4"><%= t['fromStatus'] %></td>
         <td>&rarr;</td>
         <td class="<%= @domain.status_color_for(t['toStatusCategory']) %> lighten-4"><%= t['toStatus'] %></td>
       </tr>
   <% end %>
+  <% if issue.transitions.length > 3 %>
+      <tr>
+        <td colspan="2">
+          <a href="#" class="show-more">Show <%= issue.transitions.length - 3 %> more</a>
+        </td>
+      </tr>
+  <% end %>
+
 </table>
