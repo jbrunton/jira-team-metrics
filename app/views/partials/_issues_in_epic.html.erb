@@ -1,24 +1,40 @@
 <% issues = epic.issues(recursive: false) %>
 
 <% if issues.any? %>
-    <table class="ui very basic table issue-fields">
-      <% issues.each_with_index do |issue, index| %>
+    <table class="ui very basic table issues-in-epic">
+      <thead>
+        <th></th>
+        <th>Started</th>
+        <th></th>
+        <th>Completed</th>
+        <th></th>
+      </thead>
+      <tbody>
+      <% issues.sort_by{ |issue| issue.started_time }.each_with_index do |issue, index| %>
           <tr class="<%= 'below-fold hidden' if index >= 3 %>">
+            <td>
+              <%= issue_summary(issue) %>
+            </td>
+            <td><%= pretty_print_date(issue.started_time, show_tz: false) %></td>
+            <td>&rarr;</td>
+            <td>
+              <%= pretty_print_date(issue.completed_time, show_tz: false) %>
+            </td>
             <td>
               <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
                 <i class="external alternate icon"></i>
               </a>
-              <%= issue.display_name %>
             </td>
           </tr>
       <% end %>
       <% if issues.length > 3 %>
           <tr>
-            <td colspan="1">
+            <td colspan="5">
               <a href="#" class="show-more">Show <%= issues.length - 3 %> more</a>
             </td>
           </tr>
       <% end %>
+      </tbody>
     </table>
 <% else %>
     <span>None</span>
