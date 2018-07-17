@@ -1,16 +1,46 @@
-<div class="issue-details ui grid">
-  <div class="eight wide column">
-    <div class="ui styled accordion" data-exclusive="false">
-      <%= render partial: 'partials/issue_summary', locals: { issue: issue, expand: expand } %>
-      <%= render partial: 'partials/issue_fields', locals: { issue: issue, expand: expand } %>
-      <%= render partial: 'partials/issue_links', locals: { issue: issue, expand: expand } %>
+<h3 class="ui header">
+  <span><%= "#{@issue.key} - #{@issue.summary}" %></span>
+  <span class="ui right floated large <%= @domain.status_color_for(@issue.status_category) %> horizontal label">
+    <%= issue.status %>
+  </span>
+  <span class="inline sub header">
+    &middot;
+    <%= @issue.issue_type %>
+  </span>
+</h3>
+<div class="ui grid">
+  <div class="nine wide column">
+    <h4 class="ui top attached block header">
+      Summary
+    </h4>
+    <div class="ui bottom attached segment">
+      <%= render partial: 'partials/issue_summary', locals: { issue: issue } %>
+    </div>
+    <% if @issue.is_epic? %>
+        <h4 class="ui top attached block header">
+          Issues in Epic
+        </h4>
+        <div class="ui bottom attached segment">
+          <%= render partial: 'partials/issues_in_epic', locals: { epic: issue } %>
+        </div>
+    <% end %>
+    <h4 class="ui top attached block header">
+      Issue Links
+    </h4>
+    <div class="ui bottom attached segment">
+      <%= render partial: 'partials/issue_links', locals: { issue: issue } %>
     </div>
   </div>
-  <div class="eight wide column">
-    <div class="ui styled accordion">
-      <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue, expand: expand } %>
-      <%= render partial: 'partials/issue_transitions', locals: { issue: issue, expand: expand } %>
-      <%= render partial: 'partials/issue_filters', locals: { issue: issue, expand: expand } %>
+  <div class="seven wide column">
+    <h4 class="ui top attached block header">
+      Status Changes
+    </h4>
+    <div class="ui bottom attached segment">
+      <%= render partial: 'partials/issue_cycle_times', locals: { issue: issue } %>
+      <div class="ui horizontal divider">
+        Transitions
+      </div>
+      <%= render partial: 'partials/issue_transitions', locals: { issue: issue } %>
     </div>
   </div>
 </div>

@@ -50,6 +50,12 @@ $(function() {
       }
     })
   });
+
+  $(document).on('click', '.show-more', function() {
+    $(this).closest('table').find('tr.below-fold').removeClass('hidden');
+    $(this).closest('tr').remove();
+    return false;
+  });
 });
 
 $.urlParam = function (name) {

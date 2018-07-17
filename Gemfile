@@ -14,5 +14,6 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 group :development, :test do
-  gem "teaspoon-jasmine"
+  gem 'teaspoon-jasmine'
+  gem 'autoprefixer-rails', '8.6.5'
 end
