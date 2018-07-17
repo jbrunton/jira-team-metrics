@@ -10,7 +10,7 @@
         <th></th>
       </thead>
       <tbody>
-      <% issues.sort_by{ |issue| issue.started_time }.each_with_index do |issue, index| %>
+      <% issues.sort_by{ |issue| issue.started_time || DateTime.now }.each_with_index do |issue, index| %>
           <tr class="<%= 'below-fold hidden' if index >= 3 %>">
             <td>
               <%= issue_summary(issue) %>
