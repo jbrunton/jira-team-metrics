@@ -5,6 +5,7 @@
 
 **Merged pull requests:**
 
+- update version [\#364](https://github.com/jbrunton/jira-team-metrics/pull/364) ([jbrunton](https://github.com/jbrunton))
 - Epic reports [\#362](https://github.com/jbrunton/jira-team-metrics/pull/362) ([jbrunton](https://github.com/jbrunton))
 - Show links to issues in epic [\#361](https://github.com/jbrunton/jira-team-metrics/pull/361) ([jbrunton](https://github.com/jbrunton))
 - update changelog [\#360](https://github.com/jbrunton/jira-team-metrics/pull/360) ([jbrunton](https://github.com/jbrunton))
