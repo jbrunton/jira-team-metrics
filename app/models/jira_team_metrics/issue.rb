@@ -18,6 +18,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def as_epic
+    JiraTeamMetrics::Epic.decorate(self)
+  end
+
   def status_category
     board.domain.status_category_for(status)
   end
@@ -153,14 +157,6 @@ class JiraTeamMetrics::Issue < ApplicationRecord
 
   def domain_url
     "#{board.domain.config.url}/browse/#{key}"
-  end
-
-  def percent_done
-    unless is_scope?
-      total_issues = issues(recursive: true)
-      completed_issues = total_issues.select{ |issue| issue.completed? }
-      completed_issues.count * 100.0 / total_issues.count
-    end
   end
 
   def status_category_on(date)

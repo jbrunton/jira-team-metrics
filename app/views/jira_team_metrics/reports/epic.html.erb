@@ -72,7 +72,7 @@
     <div class="ui three statistics">
       <div class="statistic">
         <div class="value">
-          <%= @total_issues.count %>
+          <%= @epic.scope.count %>
         </div>
         <div class="label">
           Total
@@ -80,7 +80,7 @@
       </div>
       <div class="blue statistic">
         <div class="value">
-          <%= @completed_issues.count %>
+          <%= @epic.completed_scope.count %>
         </div>
         <div class="label">
           Completed
@@ -88,7 +88,7 @@
       </div>
       <div class="green statistic">
         <div class="value">
-          <%= @in_progress_issues.count %>
+          <%= @epic.in_progress_scope.count %>
         </div>
         <div class="label">
           In Progress
@@ -105,7 +105,7 @@
     <div class="ui three statistics">
       <div class="statistic">
         <div class="text value">
-          20 June
+          <%= pretty_print_date(@epic.started_time, show_tz: false, hide_year: true) %>
         </div>
         <div class="label">
           Started
@@ -113,7 +113,7 @@
       </div>
       <div class="statistic">
         <div class="text value">
-          20
+          <%= pretty_print_number(@epic.throughput * 7.0) %>
         </div>
         <div class="label">
           Avg. Issues / Week
@@ -121,7 +121,7 @@
       </div>
       <div class="statistic">
         <div class="text value">
-          20 July
+          <%= pretty_print_date(@epic.forecast, show_tz: false, hide_year: true) %>
         </div>
         <div class="label">
           Forecast

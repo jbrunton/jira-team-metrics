@@ -32,10 +32,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epic
-    @epic = @board.issues.find_by(key: params[:issue_key])
-    @total_issues = @epic.issues(recursive: true)
-    @in_progress_issues = @total_issues.select{ |issue| issue.in_progress? }
-    @completed_issues = @total_issues.select{ |issue| issue.completed? }
+    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
   end
 
   def scatterplot
