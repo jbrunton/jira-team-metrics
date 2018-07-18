@@ -22,7 +22,7 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def remaining_scope
-    @remaining_scope ||= scope.select{ |issue| issue.completed? }
+    @remaining_scope ||= scope.select{ |issue| !issue.completed? }
   end
 
   def throughput
@@ -30,6 +30,6 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def forecast
-    started_time + remaining_scope.count / throughput
+    @forecast ||= completed? ? completed_time : DateTime.now + remaining_scope.count / throughput
   end
 end
