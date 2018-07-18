@@ -7,6 +7,7 @@
         <th>Started</th>
         <th></th>
         <th>Completed</th>
+        <th>Status</th>
         <th></th>
       </thead>
       <tbody>
@@ -19,6 +20,11 @@
             <td>&rarr;</td>
             <td>
               <%= pretty_print_date(issue.completed_time, show_tz: false) %>
+            </td>
+            <td>
+              <div class="ui <%= @domain.status_color_for(issue.status_category) %> label">
+                <%= issue.status %>
+              </div>
             </td>
             <td>
               <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
