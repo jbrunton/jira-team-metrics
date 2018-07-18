@@ -2,7 +2,7 @@
 # 1. simulate based on team closure rates
 # 2. for teams with zero closure rate, don't add scope
 
-class JiraTeamMetrics::CfdBuilder
+class JiraTeamMetrics::ProjectCfdBuilder
   include JiraTeamMetrics::FormattingHelper
   include JiraTeamMetrics::ChartsHelper
 
