@@ -11,9 +11,114 @@
   });
 </script>
 
+<script>
+  google.charts.load('current', {'packages':['corechart', 'timeline']});
+
+  $(function() {
+    google.charts.setOnLoadCallback(updateChart);
+  });
+
+  function updateChart() {
+
+    var rawData = google.visualization.arrayToDataTable(<%= epic_cfd_data.to_json.html_safe %>);
+
+    var options = {
+      hAxis: {titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0, textPosition: 'none'},
+      isStacked: true,
+      lineWidth: 1,
+      areaOpacity: 0.4,
+      legend: { position: 'top' },
+      series: {
+        0: { color: 'blue' },
+        1: { color: 'green' },
+        2: { color: 'red' },
+        3: { color: 'orange' }
+      },
+      chartArea: {
+        width: '94%',
+        height: '80%',
+        top: 20
+      },
+      annotations: {
+        textStyle: {
+          color: 'black'
+        },
+        domain: {
+          style: 'line',
+          stem: {
+            color: 'red',
+          }
+        },
+        datum: {
+          style: 'point',
+          stem: {
+            color: 'black',
+            length: '12'
+          }
+        }
+      }
+    };
+
+    var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+    rawCfdChart.draw(rawData, options);
+  }
+</script>
+
+<div class="ui divider"></div>
+
 <div class="ui centered grid">
   <div class="eight wide column">
-    <div class="ui one statistics">
+    <div class="ui three statistics">
+      <div class="statistic">
+        <div class="value">
+          <%= @total_issues.count %>
+        </div>
+        <div class="label">
+          Total
+        </div>
+      </div>
+      <div class="blue statistic">
+        <div class="value">
+          <%= @completed_issues.count %>
+        </div>
+        <div class="label">
+          Completed
+        </div>
+      </div>
+      <div class="green statistic">
+        <div class="value">
+          <%= @in_progress_issues.count %>
+        </div>
+        <div class="label">
+          In Progress
+        </div>
+      </div>
+    </div>
+
+    <div class="ui blue progress" id="progress" style="margin-top: 30px;">
+      <div class="bar">
+        <div class="progress"></div>
+      </div>
+    </div>
+
+    <div class="ui three statistics">
+      <div class="statistic">
+        <div class="text value">
+          20 June
+        </div>
+        <div class="label">
+          Started
+        </div>
+      </div>
+      <div class="statistic">
+        <div class="text value">
+          20
+        </div>
+        <div class="label">
+          Avg. Issues / Week
+        </div>
+      </div>
       <div class="statistic">
         <div class="text value">
           20 July
@@ -23,41 +128,10 @@
         </div>
       </div>
     </div>
-    <div class="ui blue progress" id="progress" style="margin-top: 30px;">
-      <div class="bar">
-        <div class="progress"></div>
-      </div>
-    </div>
-    <div class="ui three statistics">
-      <div class="statistic">
-        <div class="value">
-          <%= @total_issues.count %>
-        </div>
-        <div class="label">
-          Total Issues
-        </div>
-      </div>
-      <div class="blue statistic">
-        <div class="value">
-          <%= @completed_issues.count %>
-        </div>
-        <div class="label">
-          Completed Issues
-        </div>
-      </div>
-      <div class="green statistic">
-        <div class="value">
-          <%= @in_progress_issues.count %>
-        </div>
-        <div class="label">
-          In Progress Issues
-        </div>
-      </div>
-    </div>
   </div>
   <div class="eight wide column">
-    <div style="border: 1px solid black; text-align: center; vertical-align: middle; height: 250px;">
-      CFD
+    <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
+
     </div>
   </div>
   <div class="sixteen wide column ui divider">

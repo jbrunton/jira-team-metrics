@@ -9,8 +9,8 @@
 
   function updateChart() {
 
-    var rawData = google.visualization.arrayToDataTable(<%= cfd_data(:raw).to_json.html_safe %>);
-    var trainedData = google.visualization.arrayToDataTable(<%= cfd_data(:trained).to_json.html_safe %>);
+    var rawData = google.visualization.arrayToDataTable(<%= project_cfd_data(:raw).to_json.html_safe %>);
+    var trainedData = google.visualization.arrayToDataTable(<%= project_cfd_data(:trained).to_json.html_safe %>);
 
     var options = {
       hAxis: {titleTextStyle: {color: '#333'}},

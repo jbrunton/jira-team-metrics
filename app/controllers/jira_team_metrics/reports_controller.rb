@@ -73,12 +73,17 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @project_report ||= JiraTeamMetrics::ProjectScopeReport.new(@project).build
   end
 
-  helper_method :cfd_data
+  helper_method :project_cfd_data
+  helper_method :epic_cfd_data
   helper_method :team_dashboard_data
   helper_method :project_report
 
-  def cfd_data(cfd_type)
+  def project_cfd_data(cfd_type)
     JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "cfd:#{cfd_type}")
+  end
+
+  def epic_cfd_data
+    JiraTeamMetrics::EpicCfdBuilder.new(@epic).build
   end
 
   def team_dashboard_data
