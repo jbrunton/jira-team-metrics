@@ -4,9 +4,11 @@
     <table class="ui very basic table issues-in-epic">
       <thead>
         <th></th>
-        <th>Started</th>
-        <th></th>
-        <th>Completed</th>
+        <% if show_dates %>
+            <th>Started</th>
+            <th></th>
+            <th>Completed</th>
+        <% end %>
         <th>Status</th>
         <th></th>
       </thead>
@@ -16,17 +18,19 @@
             <td>
               <%= issue_summary(issue) %>
             </td>
-            <td><%= pretty_print_date(issue.started_time, show_tz: false) %></td>
-            <td>&rarr;</td>
-            <td>
-              <%= pretty_print_date(issue.completed_time, show_tz: false) %>
-            </td>
-            <td>
+            <% if show_dates %>
+                <td class="collapsing"><%= pretty_print_date(issue.started_time, show_tz: false) %></td>
+                <td>&rarr;</td>
+                <td class="collapsing">
+                  <%= pretty_print_date(issue.completed_time, show_tz: false) %>
+                </td>
+            <% end %>
+            <td class="collapsing">
               <div class="ui <%= @domain.status_color_for(issue.status_category) %> label">
                 <%= issue.status %>
               </div>
             </td>
-            <td>
+            <td class="collapsing">
               <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
                 <i class="external alternate icon"></i>
               </a>
