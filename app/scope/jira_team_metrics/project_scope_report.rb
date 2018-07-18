@@ -49,6 +49,6 @@ class JiraTeamMetrics::ProjectScopeReport < JiraTeamMetrics::TeamScopeReport
   end
 
   def cfd_data(cfd_type)
-    JiraTeamMetrics::CfdBuilder.new(self).build(cfd_type)
+    JiraTeamMetrics::ProjectCfdBuilder.new(self).build(cfd_type)
   end
 end

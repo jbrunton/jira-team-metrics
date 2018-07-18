@@ -27,6 +27,9 @@
   <div class="extra content">
     <a class="ui button" href="#" onclick="showSyncModal();">Sync</a>
     <a class="ui button" href="#" onclick="showConfigModal();">Config</a>
+    <% if object.class == JiraTeamMetrics::Domain %>
+        <a class="ui button" href="<%= domain_metadata_path %>">Metadata</a>
+    <% end %>
   </div>
 </div>
 

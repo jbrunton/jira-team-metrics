@@ -22,6 +22,9 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/throughput', to: 'reports#throughput'
 
+  get '/reports/boards/:board_id/epics', to: 'reports#epics'
+  get '/reports/boards/:board_id/epics/:issue_key', to: 'reports#epic'
+
   unless ActiveRecord::Base.connection.migration_context.needs_migration?
     project_type = JiraTeamMetrics::Domain.get_instance.config.project_type
     unless project_type.nil?

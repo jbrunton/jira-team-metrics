@@ -13,7 +13,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def project
-    @board = JiraTeamMetrics::Board.find_by(jira_id: @board.jira_id)
     @project = @board.issues.find_by(key: params[:issue_key])
     if (params[:show_teams] || params[:filter_teams]).nil?
       @show_teams = team_dashboard_data[:teams].map do |team, _|
@@ -24,6 +23,16 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @show_teams = (params[:show_teams] || params[:filter_teams]).split(',')
       @filter_applied = true
     end
+  end
+
+  def epics
+    @in_progress_epics = @board.epics
+      .select{ |epic| epic.in_progress? }
+      .sort_by{ |epic| epic.started_time }
+  end
+
+  def epic
+    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
   end
 
   def scatterplot
@@ -61,12 +70,17 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @project_report ||= JiraTeamMetrics::ProjectScopeReport.new(@project).build
   end
 
-  helper_method :cfd_data
+  helper_method :project_cfd_data
+  helper_method :epic_cfd_data
   helper_method :team_dashboard_data
   helper_method :project_report
 
-  def cfd_data(cfd_type)
+  def project_cfd_data(cfd_type)
     JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "cfd:#{cfd_type}")
+  end
+
+  def epic_cfd_data
+    JiraTeamMetrics::EpicCfdBuilder.new(@epic).build
   end
 
   def team_dashboard_data

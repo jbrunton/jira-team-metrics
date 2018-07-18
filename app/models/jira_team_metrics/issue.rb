@@ -18,6 +18,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     board.issues.where(key: fields['Epic Link']).first
   end
 
+  def as_epic
+    JiraTeamMetrics::Epic.decorate(self)
+  end
+
   def status_category
     board.domain.status_category_for(status)
   end
