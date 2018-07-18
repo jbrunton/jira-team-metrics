@@ -50,19 +50,14 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
 
     if date > DateTime.now
-      adjust_row_with_predictions(row, date)
+      adjust_row_with_forecasts(row, date)
     end
 
     row
   end
 
-  def adjust_row_with_predictions(row, date)
-    if date < @epic.forecast
-      adjusted_scope = @epic.throughput * (date - DateTime.now)
-    else
-      adjusted_scope = @epic.remaining_scope.count
-    end
-
+  def adjust_row_with_forecasts(row, date)
+    adjusted_scope = adjusted_scope_for(date)
 
     row.done += adjusted_scope
 
@@ -74,6 +69,14 @@ class JiraTeamMetrics::EpicCfdBuilder
 
     if row.in_progress > 0 && adjusted_scope > 0
       row.in_progress -= [row.in_progress, adjusted_scope].min
+    end
+  end
+
+  def adjusted_scope_for(date)
+    if date < @epic.forecast
+      @epic.throughput * (date - DateTime.now)
+    else
+      @epic.remaining_scope.count
     end
   end
 end
