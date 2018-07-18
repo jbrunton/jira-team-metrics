@@ -47,7 +47,7 @@ RSpec.describe JiraTeamMetrics::LinkHelper do
       let(:issue) { board.issues.create(attributes_for(:issue, key: 'ISSUE-2', summary: 'Issue 2 summary')) }
       let(:issue_url) { '/boards/1/issues/ISSUE-2' }
 
-      before(:each) { allow(helper).to receive(:url_for).with(issue).and_return(issue_url) }
+      before(:each) { allow(helper).to receive(:path_for).with(issue).and_return(issue_url) }
 
       it "generates a hyperlink to the linked issue" do
         expected_html = "<a href='/boards/1/issues/ISSUE-2'>ISSUE-2</a> – Issue 2 summary".html_safe
@@ -60,7 +60,7 @@ RSpec.describe JiraTeamMetrics::LinkHelper do
     let(:issue) { create(:issue, key: 'ISSUE-2', summary: 'Issue 2 summary') }
     let(:issue_url) { '/boards/1/issues/ISSUE-2' }
 
-    before(:each) { allow(helper).to receive(:url_for).with(issue).and_return(issue_url) }
+    before(:each) { allow(helper).to receive(:path_for).with(issue).and_return(issue_url) }
 
     it "returns an html link for the issue" do
       expected_html = "<a href='/boards/1/issues/ISSUE-2'>ISSUE-2</a> – Issue 2 summary".html_safe
