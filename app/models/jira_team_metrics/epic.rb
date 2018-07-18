@@ -2,11 +2,9 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   delegate_all
 
   def percent_done
-    unless is_scope?
-      total_issues = issues(recursive: true)
-      completed_issues = total_issues.select{ |issue| issue.completed? }
-      completed_issues.count * 100.0 / total_issues.count
-    end
+    total_issues = issues(recursive: true)
+    completed_issues = total_issues.select{ |issue| issue.completed? }
+    completed_issues.count * 100.0 / total_issues.count
   end
 
   def scope
