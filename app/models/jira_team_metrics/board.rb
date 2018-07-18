@@ -25,7 +25,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def epics
-    @epics ||= issues.select{ |issue| issue.is_epic? }
+    @epics ||= begin
+      epics = issues.select{ |issue| issue.is_epic? }
+      JiraTeamMetrics::Epic.decorate_collection(epics)
+    end
   end
 
   def issues_in_epic(epic)
