@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.11.0](https://github.com/jbrunton/jira-team-metrics/tree/0.11.0) (2018-07-18)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.10.1...0.11.0)
+
+**Merged pull requests:**
+
+- Epic reports [\#362](https://github.com/jbrunton/jira-team-metrics/pull/362) ([jbrunton](https://github.com/jbrunton))
+- Show links to issues in epic [\#361](https://github.com/jbrunton/jira-team-metrics/pull/361) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#360](https://github.com/jbrunton/jira-team-metrics/pull/360) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.10.1](https://github.com/jbrunton/jira-team-metrics/tree/0.10.1) (2018-07-16)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.10.0...0.10.1)
 
