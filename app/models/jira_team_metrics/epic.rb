@@ -26,10 +26,16 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def throughput
-    completed_scope.count.to_f / (completed_time || DateTime.now - started_time)
+    @throughput ||= completed_scope.count.to_f / (completed_time || DateTime.now - started_time)
   end
 
   def forecast
-    @forecast ||= completed? ? completed_time : DateTime.now + remaining_scope.count / throughput
+    @forecast ||= begin
+      if completed?
+        completed_time
+      else
+        DateTime.now + remaining_scope.count / throughput if throughput > 0
+      end
+    end
   end
 end

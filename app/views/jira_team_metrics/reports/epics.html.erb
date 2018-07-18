@@ -4,33 +4,48 @@
 
 <div class="ui grid">
   <div class="ten wide column">
-    <table class="ui celled table">
-      <thead>
-        <tr>
-          <th>Epic</th>
-          <th>Started</th>
-          <th>% Done</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @in_progress_epics.each do |epic| %>
-            <tr>
-              <td class="eight wide">
+    <div class="ui two column cards">
+      <% @in_progress_epics.each do |epic| %>
+          <div class="ui card">
+            <div class="content">
+              <div class="header">
                 <%= issue_summary(epic) %>
-              </td>
-              <td>
-                <%= pretty_print_date(epic.started_time, show_tz: false) %>
-              </td>
-              <td>
-                <%= pretty_print_number(epic.percent_done, round: true) %>%
-              </td>
-              <td>
-                <%= link_to 'Progress Report', epic_report_path(epic) %>
-              </td>
-            </tr>
-        <% end %>
-      </tbody>
-    </table>
+              </div>
+            </div>
+            <div class="content">
+              <div class="ui three tiny statistics">
+                <div class="statistic">
+                  <div class="value">
+                    <%= epic.scope.count %>
+                  </div>
+                  <div class="label">
+                    Issues
+                  </div>
+                </div>
+                <div class="blue statistic">
+                  <div class="value">
+                    <%= pretty_print_number(epic.percent_done, round: true) %>%
+                  </div>
+                  <div class="label">
+                    Progress
+                  </div>
+                </div>
+                <div class="statistic">
+                  <div class="text value">
+                    <%= pretty_print_date(epic.forecast, show_tz: false, hide_year: true) %>
+                  </div>
+                  <div class="label">
+                    Forecast
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="ui bottom attached button" href="<%= epic_report_path(epic) %>">
+              <i class="chart line icon"></i>
+              Progress Report
+            </a>
+          </div>
+      <% end %>
+    </div>
   </div>
 </div>
