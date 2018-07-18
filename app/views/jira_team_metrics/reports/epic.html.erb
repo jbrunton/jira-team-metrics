@@ -1,3 +1,73 @@
 <% breadcrumb :epic, @epic %>
 
 <h1>Progress Report for <%= @epic.key %></h1>
+
+<script>
+  $(function() {
+    $('#progress').progress({
+      percent: <%= @epic.percent_done %>,
+      showActivity: false
+    });
+  });
+</script>
+
+<div class="ui centered grid">
+  <div class="eight wide column">
+    <div class="ui one statistics">
+      <div class="statistic">
+        <div class="text value">
+          20 July
+        </div>
+        <div class="label">
+          Forecast
+        </div>
+      </div>
+    </div>
+    <div class="ui blue progress" id="progress" style="margin-top: 30px;">
+      <div class="bar">
+        <div class="progress"></div>
+      </div>
+    </div>
+    <div class="ui three statistics">
+      <div class="statistic">
+        <div class="value">
+          <%= @total_issues.count %>
+        </div>
+        <div class="label">
+          Total Issues
+        </div>
+      </div>
+      <div class="blue statistic">
+        <div class="value">
+          <%= @completed_issues.count %>
+        </div>
+        <div class="label">
+          Completed Issues
+        </div>
+      </div>
+      <div class="green statistic">
+        <div class="value">
+          <%= @in_progress_issues.count %>
+        </div>
+        <div class="label">
+          In Progress Issues
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="eight wide column">
+    <div style="border: 1px solid black; text-align: center; vertical-align: middle; height: 250px;">
+      CFD
+    </div>
+  </div>
+  <div class="sixteen wide column ui divider">
+  </div>
+  <div class="ten wide column">
+    <div class="ui top attached block header">
+      Issues in Epic
+    </div>
+    <div class="ui bottom attached segment">
+      <%= render partial: 'partials/issues_in_epic', locals: { epic: @epic } %>
+    </div>
+  </div>
+</div>
