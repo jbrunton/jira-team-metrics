@@ -32,27 +32,25 @@
       </tr>
 
       <% issues_by_epic.each do |epic, issues| %>
-          <% unless project.nil? %>
-              <% epic_duration = issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
-              <tr class="epic">
-                <td>
-                  <% if epic.nil? %>
-                      None
-                  <% else %>
-                      <%= link_to(epic.key, epic) %>
-                      (<a href="<%= epic.domain_url %>" target="_blank">
-                        <i class="external alternate icon"></i></a>)
-                      &mdash; <%= epic.summary %>
-                  <% end %>
-                </td>
-                <td class="effort-stats">
-                  <%= pretty_print_number(epic_duration) %>
-                </td>
-                <td class="effort-stats">
-                  (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)</span>
-                </td>
-              </tr>
-          <% end %>
+          <% epic_duration = issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
+          <tr class="epic">
+            <td>
+              <% if epic.nil? %>
+                  None
+              <% else %>
+                  <%= link_to(epic.key, epic) %>
+                  (<a href="<%= epic.domain_url %>" target="_blank">
+                    <i class="external alternate icon"></i></a>)
+                  &mdash; <%= epic.summary %>
+              <% end %>
+            </td>
+            <td class="effort-stats">
+              <%= pretty_print_number(epic_duration) %>
+            </td>
+            <td class="effort-stats">
+              (<%= pretty_print_number(epic_duration / total_duration * 100) %>%)</span>
+            </td>
+          </tr>
 
           <% issues.each do |issue| %>
               <tr class="story">
