@@ -39,6 +39,13 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'bar'")
         expect(issues).to be_empty
       end
+
+      it "filters names with spaces" do
+        issue2 = create(:issue, fields: {'My Field' => 'foo'}, board: board)
+        issue3 = create(:issue, fields: {'My Field' => 'bar'}, board: board)
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue2, issue3]).eval("'My Field' = 'foo'")
+        expect(issues).to eq([issue2])
+      end
     end
 
     context "when given an object field comparison" do

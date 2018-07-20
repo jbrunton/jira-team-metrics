@@ -29,8 +29,8 @@ class JiraTeamMetrics::MqlInterpreter
     rule(:operator)   { (str('=') | str('and') | str('includes')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
-    rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
-    rule(:contains) { identifier.as(:field) >> operator >> string.as(:string) }
+    rule(:comparison) { (string | identifier).as(:field) >> operator >> string.as(:string) }
+    rule(:contains) { (string | identifier).as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
@@ -53,7 +53,7 @@ class JiraTeamMetrics::MqlInterpreter
         and_operation }
 
     rule(:sort_clause) {
-      str('sort by') >> space? >> identifier.as(:sort_by) >> space? >> (str('desc') | str('asc')).as(:order)
+      str('sort by') >> space? >> (string | identifier).as(:sort_by) >> space? >> (str('desc') | str('asc')).as(:order)
     }
 
     rule(:sort_expression) { or_operation.as(:expression) >> space? >> sort_clause | or_operation }
@@ -161,7 +161,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def field_name
-      @field_name ||= sort_by[:identifier].to_s
+      @field_name ||= (sort_by[:identifier] || sort_by[:value]).to_s
     end
   end
 
@@ -173,7 +173,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def field_name
-      @field_name ||= field[:identifier].to_s
+      @field_name ||= (field[:identifier] || field[:value]).to_s
     end
 
     def field_value
@@ -191,7 +191,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def field_name
-      @field_name ||= field[:identifier].to_s
+      @field_name ||= (field[:identifier] || field[:value]).to_s
     end
 
     def field_value
