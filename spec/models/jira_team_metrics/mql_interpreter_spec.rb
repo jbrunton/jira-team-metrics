@@ -127,5 +127,21 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(issues).to be_empty
       end
     end
+
+    context "when given a sort clause" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
+      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
+
+      it "sorts the return values by the sort clause, ascending" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key asc")
+        expect(issues).to eq([issue1, issue2])
+      end
+
+      it "sorts the return values by the sort clause, descending" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
+        expect(issues).to eq([issue1, issue2])
+      end
+    end
   end
 end

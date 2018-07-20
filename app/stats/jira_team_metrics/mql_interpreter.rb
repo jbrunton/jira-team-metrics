@@ -36,7 +36,7 @@ class JiraTeamMetrics::MqlInterpreter
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between | contains }
+    rule(:expression) { filter | comparison | not_expression | between | contains | sort_expression }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -52,7 +52,13 @@ class JiraTeamMetrics::MqlInterpreter
         or_operation.as(:right)).as(:or) |
         and_operation }
 
-    root(:or_operation)
+    rule(:sort_clause) {
+      str('sort by') >> space? >> identifier.as(:sort_by) >> space? >> (str('desc') | str('asc')).as(:order)
+    }
+
+    rule(:sort_expression) { or_operation.as(:expression) >> space? >> sort_clause | or_operation }
+
+    root(:sort_expression)
   end
 
   class MqlTransform < Parslet::Transform
@@ -85,6 +91,11 @@ class JiraTeamMetrics::MqlInterpreter
     rule(
       :not => subtree(:expression)
     ) { NotExpr.new(expression) }
+    rule(
+      :expression => subtree(:expression),
+      :sort_by => subtree(:sort_by),
+      :order => subtree(:order)
+    ) { SortExpr.new(expression, sort_by, order) }
     # ... other rules
   end
 
@@ -139,6 +150,18 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(board, issues)
       exclude_issues = expr.eval(board, issues)
       issues.select{ |issue| !exclude_issues.include?(issue) }
+    end
+  end
+
+  SortExpr = Struct.new(:expr, :sort_by, :order) do
+    def eval(board, issues)
+      expr
+        .eval(board, issues)
+        .sort_by{ |issue| FieldResolver.field_by_name(issue, field_name) }
+    end
+
+    def field_name
+      @field_name ||= sort_by[:identifier].to_s
     end
   end
 
@@ -206,5 +229,30 @@ class JiraTeamMetrics::MqlInterpreter
       'statusCategory' => 'status_category',
       'hierarchyLevel' => 'hierarchy_level'
     }
+  end
+
+  class FieldResolver
+    def self.field_by_name(issue, field_name)
+      object_field_by_name(issue, field_name) ||
+        jira_field_by_name(issue, field_name) ||
+        project_key_by_name(issue, field_name) ||
+        epic_key_by_name(issue, field_name)
+    end
+  private
+    def self.object_field_by_name(issue, field_name)
+      issue.send(OBJECT_FIELDS[field_name]) if OBJECT_FIELDS.keys.include?(field_name)
+    end
+
+    def self.jira_field_by_name(issue, field_name)
+      issue.fields[field_name] unless issue.fields[field_name].nil?
+    end
+
+    def self.project_key_by_name(issue, field_name)
+      issue.project.try(:[], 'issue').try(:[], 'key') if field_name == 'project'
+    end
+
+    def self.epic_key_by_name(issue, field_name)
+      issue.epic.try('key') if field_name == 'epic'
+    end
   end
 end
