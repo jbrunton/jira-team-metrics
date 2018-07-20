@@ -19,6 +19,18 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       'short_name' => 'dat'
     }]
   end
+  let(:reports) do
+    {
+      'epics' => {
+        'sections' => [
+          {
+            'title' => 'In Progress',
+            'mql' => "status = 'In Progress'"
+          }
+        ]
+      }
+    }
+  end
 
   let(:config_hash) do
     {
@@ -26,7 +38,8 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       'url' => domain_url,
       'name' => domain_name,
       'boards' => boards,
-      'teams' => teams
+      'teams' => teams,
+      'reports' => reports
     }
   end
 
@@ -126,6 +139,31 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       config_hash.delete('teams')
       domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
       expect(domain_config.teams).to eq([])
+    end
+  end
+
+  context "#epics_report_options" do
+    it "is optional" do
+      config_hash.delete('reports')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+
+      domain_config.validate
+
+      expect(domain_config.epics_report_options.sections).to eq([])
+    end
+
+    it "returns an array of sections when defined" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.epics_report_options).to eq(
+        JiraTeamMetrics::DomainConfig::EpicsReportOptions.new(
+          [
+            JiraTeamMetrics::DomainConfig::EpicsReportSection.new(
+              'In Progress',
+              "status = 'In Progress'"
+            )
+          ]
+        )
+      )
     end
   end
 end
