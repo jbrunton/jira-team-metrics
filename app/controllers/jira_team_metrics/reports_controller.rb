@@ -27,10 +27,17 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def epics
     mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.epics)
-    @sections = @domain.config.epics_report_options.sections.map do |section|
-      {
-        title: section.title,
-        epics: mql_interpreter.eval(section.mql)
+    if @domain.config.epics_report_options.sections.any?
+      @sections = @domain.config.epics_report_options.sections.map do |section|
+        {
+          title: section.title,
+          epics: mql_interpreter.eval(section.mql)
+        }
+      end
+    else
+      @sections = {
+        title: 'In Progress',
+        epics: @board.epics
       }
     end
   end
