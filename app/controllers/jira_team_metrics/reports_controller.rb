@@ -35,10 +35,10 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
         }
       end
     else
-      @sections = {
+      @sections = [{
         title: 'In Progress',
         epics: @board.epics
-      }
+      }]
     end
   end
 
