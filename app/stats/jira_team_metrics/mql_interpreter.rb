@@ -157,7 +157,7 @@ class JiraTeamMetrics::MqlInterpreter
     def eval(board, issues)
       expr
         .eval(board, issues)
-        .sort_by{ |issue| FieldResolver.field_by_name(issue, field_name) }
+        .sort_by{ |issue| JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) }
     end
 
     def field_name
@@ -187,10 +187,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def compare_with(issue)
-      compare_object_field(issue) ||
-        compare_jira_field(issue) ||
-        compare_project(issue) ||
-        compare_epic(issue)
+      JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) == field_value
     end
 
     def field_name
@@ -199,60 +196,6 @@ class JiraTeamMetrics::MqlInterpreter
 
     def field_value
       @field_value ||= value[:value].to_s
-    end
-
-    def compare_object_field(issue)
-      OBJECT_FIELDS.keys.include?(field_name) &&
-        issue.send(OBJECT_FIELDS[field_name]) == field_value
-    end
-
-    def compare_jira_field(issue)
-      !issue.fields[field_name].nil? &&
-        issue.fields[field_name] == field_value
-    end
-
-    def compare_project(issue)
-      field_name == 'project' &&
-        issue.project.try(:[], 'issue').try(:[], 'key') == field_value
-    end
-
-    def compare_epic(issue)
-      field_name == 'epic' &&
-        issue.epic.try('key') == field_value
-    end
-
-    OBJECT_FIELDS = {
-      'key' => 'key',
-      'issuetype' => 'issue_type',
-      'summary' => 'summary',
-      'status' => 'status',
-      'statusCategory' => 'status_category',
-      'hierarchyLevel' => 'hierarchy_level'
-    }
-  end
-
-  class FieldResolver
-    def self.field_by_name(issue, field_name)
-      object_field_by_name(issue, field_name) ||
-        jira_field_by_name(issue, field_name) ||
-        project_key_by_name(issue, field_name) ||
-        epic_key_by_name(issue, field_name)
-    end
-  private
-    def self.object_field_by_name(issue, field_name)
-      issue.send(OBJECT_FIELDS[field_name]) if OBJECT_FIELDS.keys.include?(field_name)
-    end
-
-    def self.jira_field_by_name(issue, field_name)
-      issue.fields[field_name] unless issue.fields[field_name].nil?
-    end
-
-    def self.project_key_by_name(issue, field_name)
-      issue.project.try(:[], 'issue').try(:[], 'key') if field_name == 'project'
-    end
-
-    def self.epic_key_by_name(issue, field_name)
-      issue.epic.try('key') if field_name == 'epic'
     end
   end
 end
