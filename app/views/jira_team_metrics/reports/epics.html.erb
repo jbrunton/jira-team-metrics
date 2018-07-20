@@ -1,47 +1,56 @@
 <% breadcrumb :epics, @board %>
 
-<h1>In Progress Epics</h1>
+<h1>Epics</h1>
 
-<div class="ui three column cards">
-  <% @in_progress_epics.each do |epic| %>
-      <div class="ui card">
-        <div class="content">
-          <div class="header">
-            <%= issue_summary(epic) %>
+<% @sections.each do |section| %>
+    <div class="ui horizontal divider">
+      <h3><%= section[:title] %></h3>
+    </div>
+    <div class="ui three column cards">
+      <% section[:epics].each do |epic| %>
+          <div class="ui card">
+            <div class="content">
+              <div class="header">
+                <%= issue_summary(epic) %>
+              </div>
+            </div>
+            <div class="content">
+              <div class="ui three tiny statistics">
+                <div class="statistic">
+                  <div class="value">
+                    <%= epic.scope.count %>
+                  </div>
+                  <div class="label">
+                    Issues
+                  </div>
+                </div>
+                <div class="statistic">
+                  <div class="value">
+                    <%= pretty_print_number(epic.percent_done, round: true) %>%
+                  </div>
+                  <div class="label">
+                    Progress
+                  </div>
+                </div>
+                <div class="statistic">
+                  <div class="text value">
+                    <%= pretty_print_date(epic.forecast, show_tz: false, hide_year: true) %>
+                  </div>
+                  <div class="label">
+                    <% if epic.completed? %>
+                        Completed
+                    <% else %>
+                        Forecast
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="ui bottom attached button" href="<%= epic_report_path(epic) %>">
+              <i class="chart line icon"></i>
+              Progress Report
+            </a>
           </div>
-        </div>
-        <div class="content">
-          <div class="ui three tiny statistics">
-            <div class="statistic">
-              <div class="value">
-                <%= epic.scope.count %>
-              </div>
-              <div class="label">
-                Issues
-              </div>
-            </div>
-            <div class="statistic">
-              <div class="value">
-                <%= pretty_print_number(epic.percent_done, round: true) %>%
-              </div>
-              <div class="label">
-                Progress
-              </div>
-            </div>
-            <div class="statistic">
-              <div class="text value">
-                <%= pretty_print_date(epic.forecast, show_tz: false, hide_year: true) %>
-              </div>
-              <div class="label">
-                Forecast
-              </div>
-            </div>
-          </div>
-        </div>
-        <a class="ui bottom attached button" href="<%= epic_report_path(epic) %>">
-          <i class="chart line icon"></i>
-          Progress Report
-        </a>
-      </div>
-  <% end %>
-</div>
+      <% end %>
+    </div>
+<% end %>

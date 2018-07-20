@@ -24,7 +24,13 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def throughput
-    @throughput ||= completed_scope.count.to_f / (completed_time || DateTime.now - started_time)
+    @throughput ||= begin
+      if started_time
+        completed_scope.count.to_f / (completed_time || DateTime.now - started_time)
+      else
+        0
+      end
+    end
   end
 
   def forecast

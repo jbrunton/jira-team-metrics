@@ -35,3 +35,16 @@ optional:
       required:
         name: "//str"
         short_name: "//str"
+  reports:
+    type: "//rec"
+    optional:
+      epics:
+        type: "//rec"
+        required:
+          sections:
+            type: "//arr"
+            contents:
+              type: "//rec"
+              required:
+                title: "//str"
+                mql: "//str"

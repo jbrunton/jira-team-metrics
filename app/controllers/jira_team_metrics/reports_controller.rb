@@ -26,9 +26,13 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    @in_progress_epics = @board.epics
-      .select{ |epic| epic.in_progress? }
-      .sort_by{ |epic| epic.started_time }
+    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.epics)
+    @sections = @domain.config.epics_report_options.sections.map do |section|
+      {
+        title: section.title,
+        epics: mql_interpreter.eval(section.mql)
+      }
+    end
   end
 
   def epic
