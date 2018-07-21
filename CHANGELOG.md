@@ -6,12 +6,6 @@
 **Closed issues:**
 
 - 'None' section in timesheet reports not grouped by epic [\#365](https://github.com/jbrunton/jira-team-metrics/issues/365)
-- Add drop-downs based on filters defined in config [\#334](https://github.com/jbrunton/jira-team-metrics/issues/334)
-- add rake task to sync domains / boards [\#217](https://github.com/jbrunton/jira-team-metrics/issues/217)
-- Make all reports scope-aware by default [\#200](https://github.com/jbrunton/jira-team-metrics/issues/200)
-- Generalize churn metrics [\#177](https://github.com/jbrunton/jira-team-metrics/issues/177)
-- Fix Compare chart [\#171](https://github.com/jbrunton/jira-team-metrics/issues/171)
-- Look into Semantic UI [\#165](https://github.com/jbrunton/jira-team-metrics/issues/165)
 
 **Merged pull requests:**
 
