@@ -1,5 +1,26 @@
 # Change Log
 
+## [0.12.0](https://github.com/jbrunton/jira-team-metrics/tree/0.12.0) (2018-07-21)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.11.0...0.12.0)
+
+**Closed issues:**
+
+- 'None' section in timesheet reports not grouped by epic [\#365](https://github.com/jbrunton/jira-team-metrics/issues/365)
+- Add drop-downs based on filters defined in config [\#334](https://github.com/jbrunton/jira-team-metrics/issues/334)
+- add rake task to sync domains / boards [\#217](https://github.com/jbrunton/jira-team-metrics/issues/217)
+- Make all reports scope-aware by default [\#200](https://github.com/jbrunton/jira-team-metrics/issues/200)
+- Generalize churn metrics [\#177](https://github.com/jbrunton/jira-team-metrics/issues/177)
+- Fix Compare chart [\#171](https://github.com/jbrunton/jira-team-metrics/issues/171)
+- Look into Semantic UI [\#165](https://github.com/jbrunton/jira-team-metrics/issues/165)
+
+**Merged pull requests:**
+
+- bump version to 0.12.0 [\#369](https://github.com/jbrunton/jira-team-metrics/pull/369) ([jbrunton](https://github.com/jbrunton))
+- Add sort by clause to MQL [\#368](https://github.com/jbrunton/jira-team-metrics/pull/368) ([jbrunton](https://github.com/jbrunton))
+- Config options to group Epics report into sections [\#367](https://github.com/jbrunton/jira-team-metrics/pull/367) ([jbrunton](https://github.com/jbrunton))
+- Show epics without projects on timesheet reports [\#366](https://github.com/jbrunton/jira-team-metrics/pull/366) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#363](https://github.com/jbrunton/jira-team-metrics/pull/363) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.11.0](https://github.com/jbrunton/jira-team-metrics/tree/0.11.0) (2018-07-18)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.10.1...0.11.0)
 
