@@ -29,14 +29,14 @@ class JiraTeamMetrics::MqlInterpreter
     rule(:operator)   { (str('=') | str('and') | str('includes')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
-    rule(:comparison) { identifier.as(:field) >> operator >> string.as(:string) }
-    rule(:contains) { identifier.as(:field) >> operator >> string.as(:string) }
+    rule(:comparison) { (string | identifier).as(:field) >> operator >> string.as(:string) }
+    rule(:contains) { (string | identifier).as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between | contains }
+    rule(:expression) { filter | comparison | not_expression | between | contains | sort_expression }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -52,7 +52,13 @@ class JiraTeamMetrics::MqlInterpreter
         or_operation.as(:right)).as(:or) |
         and_operation }
 
-    root(:or_operation)
+    rule(:sort_clause) {
+      str('sort by') >> space? >> (string | identifier).as(:sort_by) >> space? >> (str('desc') | str('asc')).as(:order)
+    }
+
+    rule(:sort_expression) { or_operation.as(:expression) >> space? >> sort_clause | or_operation }
+
+    root(:sort_expression)
   end
 
   class MqlTransform < Parslet::Transform
@@ -85,6 +91,11 @@ class JiraTeamMetrics::MqlInterpreter
     rule(
       :not => subtree(:expression)
     ) { NotExpr.new(expression) }
+    rule(
+      :expression => subtree(:expression),
+      :sort_by => subtree(:sort_by),
+      :order => subtree(:order)
+    ) { SortExpr.new(expression, sort_by, order) }
     # ... other rules
   end
 
@@ -142,6 +153,18 @@ class JiraTeamMetrics::MqlInterpreter
     end
   end
 
+  SortExpr = Struct.new(:expr, :sort_by, :order) do
+    def eval(board, issues)
+      expr
+        .eval(board, issues)
+        .sort_by{ |issue| JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) }
+    end
+
+    def field_name
+      @field_name ||= (sort_by[:identifier] || sort_by[:value]).to_s
+    end
+  end
+
   Includes = Struct.new(:field, :value) do
     def eval(_, issues)
       issues.select do |issue|
@@ -150,7 +173,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def field_name
-      @field_name ||= field[:identifier].to_s
+      @field_name ||= (field[:identifier] || field[:value]).to_s
     end
 
     def field_value
@@ -164,47 +187,15 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     def compare_with(issue)
-      compare_object_field(issue) ||
-        compare_jira_field(issue) ||
-        compare_project(issue) ||
-        compare_epic(issue)
+      JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) == field_value
     end
 
     def field_name
-      @field_name ||= field[:identifier].to_s
+      @field_name ||= (field[:identifier] || field[:value]).to_s
     end
 
     def field_value
       @field_value ||= value[:value].to_s
     end
-
-    def compare_object_field(issue)
-      OBJECT_FIELDS.keys.include?(field_name) &&
-        issue.send(OBJECT_FIELDS[field_name]) == field_value
-    end
-
-    def compare_jira_field(issue)
-      !issue.fields[field_name].nil? &&
-        issue.fields[field_name] == field_value
-    end
-
-    def compare_project(issue)
-      field_name == 'project' &&
-        issue.project.try(:[], 'issue').try(:[], 'key') == field_value
-    end
-
-    def compare_epic(issue)
-      field_name == 'epic' &&
-        issue.epic.try('key') == field_value
-    end
-
-    OBJECT_FIELDS = {
-      'key' => 'key',
-      'issuetype' => 'issue_type',
-      'summary' => 'summary',
-      'status' => 'status',
-      'statusCategory' => 'status_category',
-      'hierarchyLevel' => 'hierarchy_level'
-    }
   end
 end
