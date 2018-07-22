@@ -1,6 +1,14 @@
 <% breadcrumb :epic, @epic %>
 
-<h1>Progress Report for <%= @epic.key %></h1>
+<h3 class="ui header">
+  <%= link_to @epic.key, path_for(@epic) %>
+  -
+  <%= @epic.summary %>
+  <span class="inline sub header">&middot; Progress Report</span>
+  <span class="ui right floated large <%= @domain.status_color_for(@epic.status_category) %> horizontal label">
+    <%= @epic.status %>
+  </span>
+</h3>
 
 <script>
   $(function() {
