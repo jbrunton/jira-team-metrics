@@ -23,23 +23,23 @@ class JiraTeamMetrics::Epic < Draper::Decorator
     @remaining_scope ||= scope.select{ |issue| !issue.completed? }
   end
 
-  def throughput
-    @throughput ||= begin
-      if started_time
-        completed_scope.count.to_f / (completed_time || DateTime.now - started_time)
-      else
-        0
-      end
+  def throughput(rolling_window)
+    if started_time
+      window_end = completed_time || DateTime.now
+      window_start = window_end - rolling_window
+      completed_count = completed_scope.select{ |issue| window_start <= issue.completed_time && issue.completed_time <= window_end }.count
+      completed_count.to_f / (window_end - window_start)
+    else
+      0
     end
   end
 
-  def forecast
-    @forecast ||= begin
-      if completed?
-        completed_time
-      else
-        DateTime.now + remaining_scope.count / throughput if throughput > 0
-      end
+  def forecast(rolling_window)
+    if completed?
+      completed_time
+    else
+      throughput = self.throughput(rolling_window)
+      DateTime.now + remaining_scope.count / throughput if throughput > 0
     end
   end
 end

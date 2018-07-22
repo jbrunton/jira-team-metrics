@@ -70,14 +70,25 @@
     <div id="epic-progress"></div>
 
     <script>
-      $(function() {
+      function selectWindow(window) {
         $('#epic-progress')
-            .load('<%= board_components_path(@board)%>/epic_progress/<%= @epic.key %>', function() {
+            .html('<div class="ui active loader"></div>')
+            .load('<%= board_components_path(@board)%>/epic_progress/<%= @epic.key %>?rolling_window=' + window, function() {
               $('#progress').progress({
                 percent: <%= @epic.percent_done %>,
                 showActivity: false
               });
             });
+      }
+
+      $(function() {
+        $('#window-options a').click(function() {
+          var window = $(this).data('window');
+          selectWindow(window);
+          $(this).closest('.list').find('a').removeClass('active');
+          $(this).addClass('active');
+        });
+        selectWindow(14);
       });
     </script>
   </div>
@@ -85,6 +96,13 @@
     <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
 
     </div>
+  </div>
+  <div class="ui horizontal link list" id="window-options">
+    <span class="item">Rolling Window:</span>
+    <a class="item" data-window="7">7 Days</a>
+    <a class="active item" data-window="14">14 Days</a>
+    <a class="item" data-window="30">30 Days</a>
+    <a class="item" data-window="">Lifetime</a>
   </div>
   <div class="sixteen wide column ui divider">
   </div>
