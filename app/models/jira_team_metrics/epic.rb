@@ -11,8 +11,12 @@ class JiraTeamMetrics::Epic < Draper::Decorator
     @scope ||= object.issues(recursive: true)
   end
 
-  def completed_scope
-    @completed_scope ||= scope.select{ |issue| issue.completed? }
+  def completed_scope(date_range = nil)
+    if date_range.nil?
+      @completed_scope ||= scope.select{ |issue| issue.completed? }
+    else
+      completed_scope.select{ |issue| date_range.contains?(issue.completed_time) }
+    end
   end
 
   def in_progress_scope
@@ -27,8 +31,8 @@ class JiraTeamMetrics::Epic < Draper::Decorator
     if started_time
       window_end = completed_time || DateTime.now
       window_start = rolling_window.nil? ? started_time : window_end - rolling_window
-      completed_count = completed_scope.select{ |issue| window_start <= issue.completed_time && issue.completed_time <= window_end }.count
-      completed_count.to_f / (window_end - window_start)
+      date_range = JiraTeamMetrics::DateRange.new(window_start, window_end)
+      completed_scope(date_range).count.to_f / (window_end - window_start)
     else
       0
     end
