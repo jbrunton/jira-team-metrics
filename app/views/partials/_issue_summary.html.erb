@@ -4,6 +4,14 @@
     <td><%= issue.issue_type %></td>
   </tr>
   <tr>
+    <td>Status</td>
+    <td>
+      <span class="ui <%= @domain.status_color_for(@issue.status_category) %> horizontal label">
+        <%= issue.status %>
+      </span>
+    </td>
+  </tr>
+  <tr>
     <td>Created</td>
     <td><%= pretty_print_date(issue.issue_created) %></td>
   </tr>
