@@ -43,14 +43,30 @@ describe JiraTeamMetrics::Epic do
   end
 
   describe "#throughput" do
-    it "returns the average throughput for the epic so far" do
-      expect(epic.throughput).to eq(0.2) # 2 issues in 10 days 0.2 / day
+    context "when passed nil" do
+      it "returns the average throughput for the epic so far" do
+        expect(epic.throughput(nil)).to eq(0.2) # 2 issues in 10 days = 0.2 / day
+      end
+    end
+
+    context "when passed an integer" do
+      it "returns the throughput for the given rolling window" do
+        expect(epic.throughput(5)).to eq(0.4) # 2 issues in 5 days = 0.4 / day
+      end
     end
   end
 
   describe "#forecast" do
-    it "forecasts the completion date" do
-      expect(epic.forecast).to eq(today + 10) # 2 remaining issues at 0.2 / day
+    context "when passed nil" do
+      it "forecasts the completion date based on the throughput so far" do
+        expect(epic.forecast(nil)).to eq(today + 10) # 2 remaining issues at 0.2 / day
+      end
+    end
+
+    context "when passed an integer" do
+      it "forecasts the completion date based on the throughput for the given window" do
+        expect(epic.forecast(5)).to eq(today + 5) # 2 remaining issues at 0.4 / day
+      end
     end
   end
 end

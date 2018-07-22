@@ -13,133 +13,101 @@
 </div>
 
 <script>
-  $(function() {
-    $('#progress').progress({
-      percent: <%= @epic.percent_done %>,
-      showActivity: false
-    });
-  });
-</script>
-
-<script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});
 
   $(function() {
-    google.charts.setOnLoadCallback(updateChart);
+    google.charts.setOnLoadCallback(function() {
+      loadChart(14);
+    });
   });
 
-  function updateChart() {
+  function loadChart(window) {
+    $('#raw-cfd').html('<div class="ui active loader"></div>');
+    $.get('<%= board_api_path(@board) %>/epic_cfd/<%= @epic.key %>.json?rolling_window=' + window, function(data) {
+      var rawData = google.visualization.arrayToDataTable(data);
 
-    var rawData = google.visualization.arrayToDataTable(<%= epic_cfd_data.to_json.html_safe %>);
-
-    var options = {
-      hAxis: {titleTextStyle: {color: '#333'}},
-      vAxis: {minValue: 0, textPosition: 'none'},
-      isStacked: true,
-      lineWidth: 1,
-      areaOpacity: 0.4,
-      legend: { position: 'top' },
-      series: {
-        0: { color: 'blue' },
-        1: { color: 'green' },
-        2: { color: 'red' }
-      },
-      chartArea: {
-        width: '94%',
-        height: '80%',
-        top: 20
-      },
-      annotations: {
-        textStyle: {
-          color: 'black'
+      var options = {
+        hAxis: {titleTextStyle: {color: '#333'}},
+        vAxis: {minValue: 0, textPosition: 'none'},
+        isStacked: true,
+        lineWidth: 1,
+        areaOpacity: 0.4,
+        legend: { position: 'top' },
+        series: {
+          0: { color: 'blue' },
+          1: { color: 'green' },
+          2: { color: 'red' }
         },
-        domain: {
-          style: 'line',
-          stem: {
-            color: 'red',
-          }
+        chartArea: {
+          width: '94%',
+          height: '80%',
+          top: 20
         },
-        datum: {
-          style: 'point',
-          stem: {
-            color: 'black',
-            length: '12'
+        annotations: {
+          textStyle: {
+            color: 'black'
+          },
+          domain: {
+            style: 'line',
+            stem: {
+              color: 'red',
+            }
+          },
+          datum: {
+            style: 'point',
+            stem: {
+              color: 'black',
+              length: '12'
+            }
           }
         }
-      }
-    };
+      };
 
-    var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
-    rawCfdChart.draw(rawData, options);
+      var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+      rawCfdChart.draw(rawData, options);
+    });
   }
 </script>
 
 <div class="ui centered grid">
   <div class="eight wide column">
-    <div class="ui three statistics">
-      <div class="statistic">
-        <div class="value">
-          <%= @epic.scope.count %>
-        </div>
-        <div class="label">
-          Total
-        </div>
-      </div>
-      <div class="blue statistic">
-        <div class="value">
-          <%= @epic.completed_scope.count %>
-        </div>
-        <div class="label">
-          Completed
-        </div>
-      </div>
-      <div class="green statistic">
-        <div class="value">
-          <%= @epic.in_progress_scope.count %>
-        </div>
-        <div class="label">
-          In Progress
-        </div>
-      </div>
-    </div>
+    <div id="epic-progress" style="margin-top: 30px;"></div>
 
-    <div class="ui blue progress" id="progress" style="margin-top: 30px;">
-      <div class="bar">
-        <div class="progress"></div>
-      </div>
-    </div>
+    <script>
+      function selectWindow(window) {
+        $('#epic-progress')
+            .html('<div class="ui active loader"></div>')
+            .load('<%= board_components_path(@board)%>/epic_progress/<%= @epic.key %>?rolling_window=' + window, function() {
+              $('#progress').progress({
+                percent: <%= @epic.percent_done %>,
+                showActivity: false
+              });
+            });
+      }
 
-    <div class="ui three statistics">
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_date(@epic.started_time, show_tz: false, hide_year: true) %>
-        </div>
-        <div class="label">
-          Started
-        </div>
-      </div>
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_number(@epic.throughput * 7.0) %>
-        </div>
-        <div class="label">
-          Avg. Issues / Week
-        </div>
-      </div>
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_date(@epic.forecast, show_tz: false, hide_year: true) %>
-        </div>
-        <div class="label">
-          Forecast
-        </div>
-      </div>
-    </div>
+      $(function() {
+        $('#window-options a').click(function() {
+          var window = $(this).data('window');
+          selectWindow(window);
+          loadChart(window);
+          $(this).closest('.list').find('a').removeClass('active');
+          $(this).addClass('active');
+        });
+        selectWindow(14);
+      });
+    </script>
   </div>
   <div class="eight wide column">
     <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
 
     </div>
+  </div>
+  <div class="ui horizontal link list" id="window-options">
+    <span class="item">Rolling Window:</span>
+    <a class="item" data-window="7">7 Days</a>
+    <a class="active item" data-window="14">14 Days</a>
+    <a class="item" data-window="30">30 Days</a>
+    <a class="item" data-window="">Lifetime</a>
   </div>
   <div class="sixteen wide column ui divider">
   </div>

@@ -16,6 +16,12 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart_data_for(:throughput)
   end
 
+  def epic_cfd
+    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+    @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
+    render json: JiraTeamMetrics::EpicCfdBuilder.new(@epic, @rolling_window).build
+  end
+
 private
   def chart_data_for(chart_name)
     chart_class = "JiraTeamMetrics::#{chart_name.to_s.camelize}Chart".constantize

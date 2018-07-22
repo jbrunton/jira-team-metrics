@@ -34,7 +34,7 @@
                 </div>
                 <div class="statistic">
                   <div class="text value">
-                    <%= pretty_print_date(epic.forecast, show_tz: false, hide_year: true) %>
+                    <%= pretty_print_date(epic.forecast(14), show_tz: false, hide_year: true) %>
                   </div>
                   <div class="label">
                     <% if epic.completed? %>
