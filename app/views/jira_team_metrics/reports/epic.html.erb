@@ -13,15 +13,6 @@
 </div>
 
 <script>
-  $(function() {
-    $('#progress').progress({
-      percent: <%= @epic.percent_done %>,
-      showActivity: false
-    });
-  });
-</script>
-
-<script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});
 
   $(function() {
@@ -76,65 +67,19 @@
 
 <div class="ui centered grid">
   <div class="eight wide column">
-    <div class="ui three statistics">
-      <div class="statistic">
-        <div class="value">
-          <%= @epic.scope.count %>
-        </div>
-        <div class="label">
-          Total
-        </div>
-      </div>
-      <div class="blue statistic">
-        <div class="value">
-          <%= @epic.completed_scope.count %>
-        </div>
-        <div class="label">
-          Completed
-        </div>
-      </div>
-      <div class="green statistic">
-        <div class="value">
-          <%= @epic.in_progress_scope.count %>
-        </div>
-        <div class="label">
-          In Progress
-        </div>
-      </div>
-    </div>
+    <div id="epic-progress"></div>
 
-    <div class="ui blue progress" id="progress" style="margin-top: 30px;">
-      <div class="bar">
-        <div class="progress"></div>
-      </div>
-    </div>
-
-    <div class="ui three statistics">
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_date(@epic.started_time, show_tz: false, hide_year: true) %>
-        </div>
-        <div class="label">
-          Started
-        </div>
-      </div>
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_number(@epic.throughput * 7.0) %>
-        </div>
-        <div class="label">
-          Avg. Issues / Week
-        </div>
-      </div>
-      <div class="statistic">
-        <div class="text value">
-          <%= pretty_print_date(@epic.forecast, show_tz: false, hide_year: true) %>
-        </div>
-        <div class="label">
-          Forecast
-        </div>
-      </div>
-    </div>
+    <script>
+      $(function() {
+        $('#epic-progress')
+            .load('<%= board_components_path(@board)%>/epic_progress/<%= @epic.key %>', function() {
+              $('#progress').progress({
+                percent: <%= @epic.percent_done %>,
+                showActivity: false
+              });
+            });
+      });
+    </script>
   </div>
   <div class="eight wide column">
     <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">

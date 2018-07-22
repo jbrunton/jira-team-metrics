@@ -43,4 +43,5 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/api/boards/:board_id/throughput/:team.json', to: 'api#throughput'
 
   get '/components/boards/:board_id/timesheets', to: 'components#timesheets'
+  get '/components/boards/:board_id/epic_progress/:issue_key', to: 'components#epic_progress'
 end
