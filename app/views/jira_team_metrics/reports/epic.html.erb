@@ -16,52 +16,56 @@
   google.charts.load('current', {'packages':['corechart', 'timeline']});
 
   $(function() {
-    google.charts.setOnLoadCallback(updateChart);
+    google.charts.setOnLoadCallback(function() {
+      loadChart(14);
+    });
   });
 
-  function updateChart() {
+  function loadChart(window) {
+    $('#raw-cfd').html('<div class="ui active loader"></div>');
+    $.get('<%= board_api_path(@board) %>/epic_cfd/<%= @epic.key %>.json?rolling_window=' + window, function(data) {
+      var rawData = google.visualization.arrayToDataTable(data);
 
-    var rawData = google.visualization.arrayToDataTable(<%= epic_cfd_data.to_json.html_safe %>);
-
-    var options = {
-      hAxis: {titleTextStyle: {color: '#333'}},
-      vAxis: {minValue: 0, textPosition: 'none'},
-      isStacked: true,
-      lineWidth: 1,
-      areaOpacity: 0.4,
-      legend: { position: 'top' },
-      series: {
-        0: { color: 'blue' },
-        1: { color: 'green' },
-        2: { color: 'red' }
-      },
-      chartArea: {
-        width: '94%',
-        height: '80%',
-        top: 20
-      },
-      annotations: {
-        textStyle: {
-          color: 'black'
+      var options = {
+        hAxis: {titleTextStyle: {color: '#333'}},
+        vAxis: {minValue: 0, textPosition: 'none'},
+        isStacked: true,
+        lineWidth: 1,
+        areaOpacity: 0.4,
+        legend: { position: 'top' },
+        series: {
+          0: { color: 'blue' },
+          1: { color: 'green' },
+          2: { color: 'red' }
         },
-        domain: {
-          style: 'line',
-          stem: {
-            color: 'red',
-          }
+        chartArea: {
+          width: '94%',
+          height: '80%',
+          top: 20
         },
-        datum: {
-          style: 'point',
-          stem: {
-            color: 'black',
-            length: '12'
+        annotations: {
+          textStyle: {
+            color: 'black'
+          },
+          domain: {
+            style: 'line',
+            stem: {
+              color: 'red',
+            }
+          },
+          datum: {
+            style: 'point',
+            stem: {
+              color: 'black',
+              length: '12'
+            }
           }
         }
-      }
-    };
+      };
 
-    var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
-    rawCfdChart.draw(rawData, options);
+      var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+      rawCfdChart.draw(rawData, options);
+    });
   }
 </script>
 
@@ -85,6 +89,7 @@
         $('#window-options a').click(function() {
           var window = $(this).data('window');
           selectWindow(window);
+          loadChart(window);
           $(this).closest('.list').find('a').removeClass('active');
           $(this).addClass('active');
         });
