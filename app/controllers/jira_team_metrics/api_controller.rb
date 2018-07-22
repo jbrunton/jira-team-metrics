@@ -18,7 +18,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
   def epic_cfd
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
-    @rolling_window = params[:rolling_window].to_i
+    @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
     render json: JiraTeamMetrics::EpicCfdBuilder.new(@epic, @rolling_window).build
   end
 

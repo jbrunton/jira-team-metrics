@@ -23,7 +23,7 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
   def epic_progress
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
-    @rolling_window = params[:rolling_window].to_i
+    @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
     render partial: 'partials/epic_progress'
   end
 end

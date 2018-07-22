@@ -32,15 +32,15 @@
 </div>
 
 <div class="ui three statistics">
-  <div class="statistic">
+  <div class="grey statistic">
     <div class="text value">
-      <%= pretty_print_date(@epic.started_time, show_tz: false, hide_year: true) %>
+      <%= @rolling_window.nil? ? 'Lifetime' : "#{@rolling_window} Days" %>
     </div>
     <div class="label">
-      Started
+      Rolling Window
     </div>
   </div>
-  <div class="statistic">
+  <div class="grey statistic">
     <div class="text value">
       <%= pretty_print_number(@epic.throughput(@rolling_window) * 7.0) %>
     </div>
