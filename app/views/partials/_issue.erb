@@ -1,13 +1,14 @@
-<h3 class="ui header">
-  <span><%= "#{@issue.key} - #{@issue.summary}" %></span>
-  <span class="ui right floated large <%= @domain.status_color_for(@issue.status_category) %> horizontal label">
-    <%= issue.status %>
-  </span>
-  <span class="inline sub header">
-    &middot;
-    <%= @issue.issue_type %>
-  </span>
-</h3>
+<div class="issue-header">
+  <h2 class="ui header">
+    <%= issue.key %>
+    -
+    <%= issue.summary %>
+  </h2>
+  <a target="_blank" href="<%= issue.domain_url %>">
+    <i class="external alternate icon"></i>Open in Jira
+  </a>
+</div>
+
 <div class="ui grid">
   <div class="nine wide column">
     <h4 class="ui top attached block header">
@@ -32,6 +33,19 @@
     </div>
   </div>
   <div class="seven wide column">
+    <% if issue.is_epic? %>
+        <h4 class="ui top attached block header">
+          Reports
+        </h4>
+        <div class="ui bottom attached segment">
+          <p>
+            <a class="item" href="<%= epic_report_path(issue) %>">
+              <i class="chart line icon"></i>
+              Progress Report
+            </a>
+          </p>
+        </div>
+    <% end %>
     <h4 class="ui top attached block header">
       Status Changes
     </h4>
