@@ -1,6 +1,16 @@
 <% breadcrumb :epic, @epic %>
 
-<h1>Progress Report for <%= @epic.key %></h1>
+<div class="issue-header">
+  <h2 class="ui header">
+    <%= link_to @epic.key, path_for(@epic) %>
+    -
+    <%= @epic.summary %>
+    <span class="inline sub header">&middot; Progress Report</span>
+  </h2>
+  <a target="_blank" href="<%= @epic.domain_url %>">
+    <i class="external alternate icon"></i>Open in Jira
+  </a>
+</div>
 
 <script>
   $(function() {
@@ -63,8 +73,6 @@
     rawCfdChart.draw(rawData, options);
   }
 </script>
-
-<div class="ui divider"></div>
 
 <div class="ui centered grid">
   <div class="eight wide column">
