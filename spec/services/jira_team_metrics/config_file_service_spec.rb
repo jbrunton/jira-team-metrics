@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::ConfigFileService do
+  describe "#initialize" do
+    context "when given no directory" do
+      it "returns a relative path" do
+        service = JiraTeamMetrics::ConfigFileService.new('config/domain.yml', nil)
+        expect(service.config_file).to eq('config/domain.yml')
+      end
+    end
+  end
+
   describe "#load_config" do
     context "when given a valid path and file" do
       let(:config_path) { "#{fixture_path}/valid_config.yml" }
