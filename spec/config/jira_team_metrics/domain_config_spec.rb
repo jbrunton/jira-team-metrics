@@ -6,7 +6,7 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
   let(:domain_name) { 'My Domain' }
 
   let(:board_id) { 123 }
-  let(:board_config_file) { 'https://example.com/board-config.yml' }
+  let(:board_config_file) { 'valid_config.yml' }
   let(:boards) do
     [{
       'board_id' => board_id,
@@ -124,6 +124,11 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       expect(domain_config.boards).to eq([
         JiraTeamMetrics::DomainConfig::BoardDetails.new(board_id, board_config_file)
       ])
+    end
+
+    it "fetches the config string" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.boards.first.fetch_config_string(fixture_path)).to eq("url: https://jira.valid_config.example.com\n")
     end
   end
 
