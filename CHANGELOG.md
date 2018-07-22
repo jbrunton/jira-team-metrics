@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.12.0](https://github.com/jbrunton/jira-team-metrics/tree/0.12.0) (2018-07-21)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.11.0...0.12.0)
+
+**Closed issues:**
+
+- 'None' section in timesheet reports not grouped by epic [\#365](https://github.com/jbrunton/jira-team-metrics/issues/365)
+
+**Merged pull requests:**
+
+- bump version to 0.12.0 [\#369](https://github.com/jbrunton/jira-team-metrics/pull/369) ([jbrunton](https://github.com/jbrunton))
+- Add sort by clause to MQL [\#368](https://github.com/jbrunton/jira-team-metrics/pull/368) ([jbrunton](https://github.com/jbrunton))
+- Config options to group Epics report into sections [\#367](https://github.com/jbrunton/jira-team-metrics/pull/367) ([jbrunton](https://github.com/jbrunton))
+- Show epics without projects on timesheet reports [\#366](https://github.com/jbrunton/jira-team-metrics/pull/366) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#363](https://github.com/jbrunton/jira-team-metrics/pull/363) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.11.0](https://github.com/jbrunton/jira-team-metrics/tree/0.11.0) (2018-07-18)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.10.1...0.11.0)
 
