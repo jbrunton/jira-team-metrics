@@ -1,3 +1,4 @@
+<% if @epic %>
 <script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});
 
@@ -54,6 +55,7 @@
     });
   }
 </script>
+<% end %>
 
 <div class="ui centered grid">
   <div class="eight wide column">

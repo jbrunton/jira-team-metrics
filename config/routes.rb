@@ -45,4 +45,5 @@ JiraTeamMetrics::Engine.routes.draw do
 
   get '/components/boards/:board_id/timesheets', to: 'components#timesheets'
   get '/components/boards/:board_id/progress_summary/:issue_key', to: 'components#progress_summary'
+  get '/components/boards/:board_id/progress_summary/:issue_key/teams/:team', to: 'components#progress_summary'
 end
