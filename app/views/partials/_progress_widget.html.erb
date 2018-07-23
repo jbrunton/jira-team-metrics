@@ -65,7 +65,7 @@
             .html('<div class="ui active loader"></div>')
             .load('<%= @progress_summary_url %>?rolling_window=' + window, function() {
               $('#progress').progress({
-                percent: <%= @epic.forecaster.percent_done %>,
+                percent: <%= @forecaster.percent_done %>,
                 showActivity: false
               });
             });
