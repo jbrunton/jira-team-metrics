@@ -75,7 +75,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @filter_applied = true
     end
     @forecaster = JiraTeamMetrics::Forecaster.new(@report.scope)
-    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@project.key}/teams/#{@team}"
+    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@project.key}/teams/#{URI.encode(@team)}"
   end
 
   def project_throughput
