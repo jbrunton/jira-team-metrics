@@ -20,4 +20,10 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
     render 'partials/timesheets', locals: {board: @board, epics_by_project: epics_by_project}, layout: false
   end
+
+  def epic_progress
+    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+    @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
+    render partial: 'partials/epic_progress'
+  end
 end

@@ -11,15 +11,16 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
   end
 
-  def initialize(epic)
+  def initialize(epic, rolling_window)
     @epic = epic
+    @rolling_window = rolling_window
   end
 
   def build
     @issues = @epic.issues(recursive: true)
 
     today = DateTime.now.to_date
-    completion_date = @epic.forecast + 10
+    completion_date = @epic.forecast(@rolling_window) + 10
     start_date = [@epic.started_time, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']]
@@ -29,7 +30,7 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil]
-    data << [date_as_string(@epic.forecast), 'forecast', nil, nil, nil, nil, nil]
+    data << [date_as_string(@epic.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
 
     data
   end
@@ -73,8 +74,8 @@ class JiraTeamMetrics::EpicCfdBuilder
   end
 
   def adjusted_scope_for(date)
-    if date < @epic.forecast
-      @epic.throughput * (date - DateTime.now)
+    if date < @epic.forecast(@rolling_window)
+      @epic.throughput(@rolling_window) * (date - DateTime.now)
     else
       @epic.remaining_scope.count
     end

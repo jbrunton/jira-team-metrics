@@ -1,0 +1,59 @@
+<div class="ui three statistics">
+  <div class="blue statistic">
+    <div class="value">
+      <%= @epic.completed_scope.count %>
+    </div>
+    <div class="label">
+      Completed
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <%= @epic.scope.count %>
+    </div>
+    <div class="label">
+      Total
+    </div>
+  </div>
+  <div class="green statistic">
+    <div class="value">
+      <%= @epic.in_progress_scope.count %>
+    </div>
+    <div class="label">
+      In Progress
+    </div>
+  </div>
+</div>
+
+<div class="ui blue progress" id="progress" style="margin-top: 30px;">
+  <div class="bar">
+    <div class="progress"></div>
+  </div>
+</div>
+
+<div class="ui three statistics">
+  <div class="grey statistic">
+    <div class="text value">
+      <%= @rolling_window.nil? ? 'Lifetime' : "#{@rolling_window} Days" %>
+    </div>
+    <div class="label">
+      Rolling Window
+    </div>
+  </div>
+  <div class="grey statistic">
+    <div class="text value">
+      <%= pretty_print_number(@epic.throughput(@rolling_window) * 7.0) %>
+    </div>
+    <div class="label">
+      Avg. Issues / Week
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="text value">
+      <%= pretty_print_date(@epic.forecast(@rolling_window), show_tz: false, hide_year: true) %>
+    </div>
+    <div class="label">
+      Forecast
+    </div>
+  </div>
+</div>

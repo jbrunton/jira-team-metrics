@@ -1,7 +1,12 @@
 class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   BoardDetails = Struct.new(:board_id, :config_file) do
-    def fetch_config_string
-      open(config_file).read unless config_file.nil?
+    def fetch_config_string(config_dir)
+      unless config_file.nil?
+        config_service = JiraTeamMetrics::ConfigFileService.new(config_file, config_dir)
+        log_message = "CONFIG_FILE defined. Fetching config for board #{board_id} from #{config_service.config_file}"
+        Rails.logger.info log_message
+        open(config_service.config_file).read
+      end
     end
   end
 

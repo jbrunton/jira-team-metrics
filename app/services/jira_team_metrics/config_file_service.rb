@@ -2,8 +2,14 @@ class JiraTeamMetrics::ConfigFileService
   attr_reader :domain
   attr_reader :config_file
 
-  def initialize(config_file)
-    @config_file = config_file
+  def initialize(config_file, config_dir)
+    unless config_file.blank?
+      if config_dir.blank?
+        @config_file = config_file
+      else
+        @config_file = File.join(config_dir || '', config_file)
+      end
+    end
     @domain = JiraTeamMetrics::Domain.get_instance
   end
 
