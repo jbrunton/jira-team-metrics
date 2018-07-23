@@ -1,0 +1,98 @@
+<script>
+  google.charts.load('current', {'packages':['corechart', 'timeline']});
+
+  $(function() {
+    google.charts.setOnLoadCallback(function() {
+      loadChart(14);
+    });
+  });
+
+  function loadChart(window) {
+    $('#raw-cfd').html('<div class="ui active loader"></div>');
+    $.get('<%= board_api_path(@board) %>/epic_cfd/<%= @epic.key %>.json?rolling_window=' + window, function(data) {
+      var rawData = google.visualization.arrayToDataTable(data);
+
+      var options = {
+        hAxis: {titleTextStyle: {color: '#333'}},
+        vAxis: {minValue: 0, textPosition: 'none'},
+        isStacked: true,
+        lineWidth: 1,
+        areaOpacity: 0.4,
+        legend: { position: 'top' },
+        series: {
+          0: { color: 'blue' },
+          1: { color: 'green' },
+          2: { color: 'red' }
+        },
+        chartArea: {
+          width: '94%',
+          height: '80%',
+          top: 20
+        },
+        annotations: {
+          textStyle: {
+            color: 'black'
+          },
+          domain: {
+            style: 'line',
+            stem: {
+              color: 'red',
+            }
+          },
+          datum: {
+            style: 'point',
+            stem: {
+              color: 'black',
+              length: '12'
+            }
+          }
+        }
+      };
+
+      var rawCfdChart = new google.visualization.AreaChart(document.getElementById('raw-cfd'));
+      rawCfdChart.draw(rawData, options);
+    });
+  }
+</script>
+
+<div class="ui centered grid">
+  <div class="eight wide column">
+    <div id="epic-progress" style="margin-top: 30px;"></div>
+
+    <script>
+      function selectWindow(window) {
+        $('#epic-progress')
+            .html('<div class="ui active loader"></div>')
+            .load('<%= board_components_path(@board)%>/progress_summary/<%= @epic.key %>?rolling_window=' + window, function() {
+              $('#progress').progress({
+                percent: <%= @epic.forecaster.percent_done %>,
+                showActivity: false
+              });
+            });
+      }
+
+      $(function() {
+        $('#window-options a').click(function() {
+          var window = $(this).data('window');
+          selectWindow(window);
+          loadChart(window);
+          $(this).closest('.list').find('a').removeClass('active');
+          $(this).addClass('active');
+        });
+        selectWindow(14);
+      });
+    </script>
+  </div>
+  <div class="eight wide column">
+    <div id="raw-cfd" class="eight wide column" style="height: 300px; margin-top: 20px;">
+
+    </div>
+  </div>
+  <div class="ui horizontal link list" id="window-options">
+    <span class="item">Rolling Window:</span>
+    <a class="item" data-window="7">7 Days</a>
+    <a class="active item" data-window="14">14 Days</a>
+    <a class="item" data-window="30">30 Days</a>
+    <a class="item" data-window="">Lifetime</a>
+  </div>
+</div>
