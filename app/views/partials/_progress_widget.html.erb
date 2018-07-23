@@ -63,7 +63,7 @@
       function selectWindow(window) {
         $('#epic-progress')
             .html('<div class="ui active loader"></div>')
-            .load('<%= board_components_path(@board)%>/progress_summary/<%= @epic.key %>?rolling_window=' + window, function() {
+            .load('<%= @progress_summary_url %>?rolling_window=' + window, function() {
               $('#progress').progress({
                 percent: <%= @epic.forecaster.percent_done %>,
                 showActivity: false

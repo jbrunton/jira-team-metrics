@@ -2,6 +2,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   before_action :set_domain
   before_action :set_board
 
+  include JiraTeamMetrics::PathHelper
+
   def timesheets
   end
 
@@ -44,6 +46,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def epic
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@epic.key}"
   end
 
   def scatterplot
