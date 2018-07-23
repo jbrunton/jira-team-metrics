@@ -20,7 +20,7 @@ class JiraTeamMetrics::EpicCfdBuilder
     @issues = @epic.issues(recursive: true)
 
     today = DateTime.now.to_date
-    completion_date = @epic.forecast(@rolling_window) + 10
+    completion_date = @epic.forecaster.forecast(@rolling_window) + 10
     start_date = [@epic.started_time, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']]
@@ -30,7 +30,7 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil]
-    data << [date_as_string(@epic.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
+    data << [date_as_string(@epic.forecaster.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
 
     data
   end
@@ -74,10 +74,10 @@ class JiraTeamMetrics::EpicCfdBuilder
   end
 
   def adjusted_scope_for(date)
-    if date < @epic.forecast(@rolling_window)
-      @epic.throughput(@rolling_window) * (date - DateTime.now)
+    if date < @epic.forecaster.forecast(@rolling_window)
+      @epic.forecaster.throughput(@rolling_window) * (date - DateTime.now)
     else
-      @epic.remaining_scope.count
+      @epic.forecaster.remaining_scope.count
     end
   end
 end
