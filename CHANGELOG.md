@@ -1,5 +1,30 @@
 # Change Log
 
+## [0.13.2](https://github.com/jbrunton/jira-team-metrics/tree/0.13.2) (2018-07-23)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.1...0.13.2)
+
+**Merged pull requests:**
+
+- Fix config file lookup when relative path given [\#377](https://github.com/jbrunton/jira-team-metrics/pull/377) ([jbrunton](https://github.com/jbrunton))
+
+## [0.13.1](https://github.com/jbrunton/jira-team-metrics/tree/0.13.1) (2018-07-22)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.0...0.13.1)
+
+**Merged pull requests:**
+
+- Fix loading of CONFIG\_FILE when relative [\#376](https://github.com/jbrunton/jira-team-metrics/pull/376) ([jbrunton](https://github.com/jbrunton))
+
+## [0.13.0](https://github.com/jbrunton/jira-team-metrics/tree/0.13.0) (2018-07-22)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.12.0...0.13.0)
+
+**Merged pull requests:**
+
+- bump version [\#375](https://github.com/jbrunton/jira-team-metrics/pull/375) ([jbrunton](https://github.com/jbrunton))
+- Adjustable rolling window for epic reports [\#374](https://github.com/jbrunton/jira-team-metrics/pull/374) ([jbrunton](https://github.com/jbrunton))
+- Add links between issue details and epic progress reports [\#373](https://github.com/jbrunton/jira-team-metrics/pull/373) ([jbrunton](https://github.com/jbrunton))
+- Lookup config files within CONFIG\_DIR [\#371](https://github.com/jbrunton/jira-team-metrics/pull/371) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#370](https://github.com/jbrunton/jira-team-metrics/pull/370) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.12.0](https://github.com/jbrunton/jira-team-metrics/tree/0.12.0) (2018-07-21)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.11.0...0.12.0)
 
