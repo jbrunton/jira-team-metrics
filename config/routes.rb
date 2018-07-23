@@ -44,5 +44,5 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/api/boards/:board_id/epic_cfd/:issue_key.json', to: 'api#epic_cfd'
 
   get '/components/boards/:board_id/timesheets', to: 'components#timesheets'
-  get '/components/boards/:board_id/epic_progress/:issue_key', to: 'components#epic_progress'
+  get '/components/boards/:board_id/progress_summary/:issue_key', to: 'components#progress_summary'
 end
