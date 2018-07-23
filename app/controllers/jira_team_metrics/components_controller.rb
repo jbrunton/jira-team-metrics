@@ -22,7 +22,8 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
   end
 
   def progress_summary
-    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+    @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true)
+    @forecaster = JiraTeamMetrics::Forecaster.new(@scope)
     @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
     render partial: 'partials/progress_summary'
   end
