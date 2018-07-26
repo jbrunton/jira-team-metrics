@@ -28,20 +28,26 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def throughput(rolling_window)
-    if started_time
-      date_range = window_range(rolling_window)
-      completed_scope(date_range).count.to_f / (date_range.end_date - date_range.start_date)
-    else
-      0
+    @throughput ||= {}
+    @throughput[rolling_window] ||= begin
+      if started_time
+        date_range = window_range(rolling_window)
+        completed_scope(date_range).count.to_f / (date_range.end_date - date_range.start_date)
+      else
+        0
+      end
     end
   end
 
   def forecast(rolling_window)
-    if completed?
-      completed_time
-    else
-      throughput = self.throughput(rolling_window)
-      DateTime.now + remaining_scope.count / throughput if throughput > 0
+    @forecasts ||= {}
+    @forecasts[rolling_window] ||= begin
+      if completed?
+        completed_time
+      else
+        throughput = self.throughput(rolling_window)
+        DateTime.now + remaining_scope.count / throughput if throughput > 0
+      end
     end
   end
 

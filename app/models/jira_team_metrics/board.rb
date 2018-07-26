@@ -32,7 +32,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def issues_in_epic(epic)
-    issues.select{ |issue| issue.fields['Epic Link'] == epic.key }
+    issues.where(epic: epic)
   end
 
   def issues_in_project(project, opts)
