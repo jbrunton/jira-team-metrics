@@ -5,6 +5,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   serialize :links
   belongs_to :board
 
+  belongs_to :epic, optional: true, class_name: 'JiraTeamMetrics::Issue'
+  belongs_to :project, optional: true, class_name: 'JiraTeamMetrics::Issue'
+  belongs_to :parent, optional: true, class_name: 'JiraTeamMetrics::Issue'
+
   def filters
     board.filters
       .select{ |filter| filter.include?(self) }
@@ -14,9 +18,9 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     filters.any?{ |filter| filter.name == 'Outliers' && filter.config_filter? }
   end
 
-  def epic
-    board.issues.where(key: fields['Epic Link']).first
-  end
+  # def epic
+  #   board.issues.where(key: fields['Epic Link']).first
+  # end
 
   def as_epic
     JiraTeamMetrics::Epic.decorate(self)

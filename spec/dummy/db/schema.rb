@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_02_115504) do
+ActiveRecord::Schema.define(version: 2018_07_26_164410) do
 
   create_table "jira_team_metrics_boards", force: :cascade do |t|
     t.string "jira_id"
@@ -59,7 +59,16 @@ ActiveRecord::Schema.define(version: 2018_06_02_115504) do
     t.integer "board_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "epic_id"
+    t.integer "project_id"
+    t.integer "parent_id"
+    t.string "epic_key"
+    t.string "project_key"
+    t.string "parent_key"
     t.index ["board_id"], name: "index_jira_team_metrics_issues_on_board_id"
+    t.index ["epic_id"], name: "index_jira_team_metrics_issues_on_epic_id"
+    t.index ["parent_id"], name: "index_jira_team_metrics_issues_on_parent_id"
+    t.index ["project_id"], name: "index_jira_team_metrics_issues_on_project_id"
   end
 
   create_table "jira_team_metrics_report_fragments", force: :cascade do |t|
