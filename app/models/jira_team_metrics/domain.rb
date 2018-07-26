@@ -49,6 +49,6 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def self.get_instance
-    JiraTeamMetrics::Domain.first_or_create
+    @domain ||= JiraTeamMetrics::Domain.first_or_create
   end
 end
