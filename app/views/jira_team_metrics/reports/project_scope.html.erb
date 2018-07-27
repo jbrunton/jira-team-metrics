@@ -1,5 +1,7 @@
 <% breadcrumb :project_scope_report, @project, @team %>
 
+<%= render partial: 'partials/progress_widget' %>
+
 <% if @report.has_training_data? %>
     <div class="ui grid">
       <div class="eight wide column">

@@ -41,8 +41,10 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/api/boards/:board_id/aging_wip.json', to: 'api#aging_wip'
   get '/api/boards/:board_id/throughput.json', to: 'api#throughput'
   get '/api/boards/:board_id/throughput/:team.json', to: 'api#throughput'
-  get '/api/boards/:board_id/epic_cfd/:issue_key.json', to: 'api#epic_cfd'
+  get '/api/boards/:board_id/progress_cfd/:issue_key.json', to: 'api#progress_cfd'
+  get '/api/boards/:board_id/progress_cfd/:issue_key/teams/:team.json', to: 'api#progress_cfd'
 
   get '/components/boards/:board_id/timesheets', to: 'components#timesheets'
-  get '/components/boards/:board_id/epic_progress/:issue_key', to: 'components#epic_progress'
+  get '/components/boards/:board_id/progress_summary/:issue_key', to: 'components#progress_summary'
+  get '/components/boards/:board_id/progress_summary/:issue_key/teams/:team', to: 'components#progress_summary'
 end

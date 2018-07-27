@@ -137,7 +137,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def completed?
-    started? && !completed_time.nil?
+    !completed_time.nil?
   end
 
   def in_progress?
