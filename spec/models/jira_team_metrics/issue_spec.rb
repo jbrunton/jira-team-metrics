@@ -242,9 +242,9 @@ RSpec.describe JiraTeamMetrics::Issue do
       expect(issue.completed?).to eq(false)
     end
 
-    it "returns false if the issue is completed but never started" do
+    it "returns true if the issue is completed but never started" do
       issue = create(:issue, transitions: [done_transition])
-      expect(issue.completed?).to eq(false)
+      expect(issue.completed?).to eq(true)
     end
   end
 
