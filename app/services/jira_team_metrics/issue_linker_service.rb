@@ -1,4 +1,4 @@
-class JiraTeamMetrics::IssueLinksService
+class JiraTeamMetrics::IssueLinkerService
   def initialize(board)
     @board = board
   end
