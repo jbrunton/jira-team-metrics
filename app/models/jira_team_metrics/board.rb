@@ -36,17 +36,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def issues_in_project(project, opts)
-    included_issues = project.links.map do |link|
-      if [domain.config.project_type].compact.any? { |project_type| project_type.outward_link_type == link['outward_link_type'] }
-        issues.find_by(key: link['issue']['key'])
-      else
-        nil
-      end
-    end.compact
     if opts[:recursive]
-      included_issues.map{ |issue| [issue] + issue.issues(recursive: false) }.flatten.compact.uniq
+      issues.where(project: project)
     else
-      included_issues
+      issue.where(parent: project)
     end
   end
 
