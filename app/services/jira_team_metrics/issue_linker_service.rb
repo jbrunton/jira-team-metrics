@@ -14,7 +14,7 @@ class JiraTeamMetrics::IssueLinkerService
 
 private
   def link_epics
-    @board.issues.each do |issue|
+    @board.issues.reload.each do |issue|
       epic_key = issue.fields['Epic Link']
       unless epic_key.blank?
         issue.epic_key = epic_key
