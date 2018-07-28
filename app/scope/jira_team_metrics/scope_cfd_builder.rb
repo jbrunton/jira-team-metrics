@@ -1,4 +1,4 @@
-class JiraTeamMetrics::EpicCfdBuilder
+class JiraTeamMetrics::ScopeCfdBuilder
   include JiraTeamMetrics::FormattingHelper
   include JiraTeamMetrics::ChartsHelper
 
