@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.14.0](https://github.com/jbrunton/jira-team-metrics/tree/0.14.0) (2018-07-27)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.2...0.14.0)
+
+**Merged pull requests:**
+
+- update version [\#381](https://github.com/jbrunton/jira-team-metrics/pull/381) ([jbrunton](https://github.com/jbrunton))
+- Adjustable project progress window [\#380](https://github.com/jbrunton/jira-team-metrics/pull/380) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#378](https://github.com/jbrunton/jira-team-metrics/pull/378) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.13.2](https://github.com/jbrunton/jira-team-metrics/tree/0.13.2) (2018-07-23)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.1...0.13.2)
 

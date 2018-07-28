@@ -11,17 +11,16 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
   end
 
-  def initialize(epic, rolling_window)
-    @epic = epic
+  def initialize(scope, rolling_window)
+    @scope = scope
+    @forecaster = JiraTeamMetrics::Forecaster.new(scope)
     @rolling_window = rolling_window
   end
 
   def build
-    @issues = @epic.issues(recursive: true)
-
     today = DateTime.now.to_date
-    completion_date = @epic.forecast(@rolling_window) + 10
-    start_date = [@epic.started_time, today - 60].max
+    completion_date = @forecaster.forecast(@rolling_window) + 10
+    start_date = [@forecaster.started_time, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']]
     dates = JiraTeamMetrics::DateRange.new(start_date, completion_date).to_a
@@ -30,7 +29,7 @@ class JiraTeamMetrics::EpicCfdBuilder
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil]
-    data << [date_as_string(@epic.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
+    data << [date_as_string(@forecaster.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
 
     data
   end
@@ -39,7 +38,7 @@ class JiraTeamMetrics::EpicCfdBuilder
   def cfd_row_for(date)
     row = CfdRow.new(0, 0, 0)
 
-    @issues.each do |issue|
+    @scope.each do |issue|
       case issue.status_category_on(date)
         when 'To Do'
           row.to_do += 1
@@ -74,10 +73,10 @@ class JiraTeamMetrics::EpicCfdBuilder
   end
 
   def adjusted_scope_for(date)
-    if date < @epic.forecast(@rolling_window)
-      @epic.throughput(@rolling_window) * (date - DateTime.now)
+    if date < @forecaster.forecast(@rolling_window)
+      @forecaster.throughput(@rolling_window) * (date - DateTime.now)
     else
-      @epic.remaining_scope.count
+      @forecaster.remaining_scope.count
     end
   end
 end
