@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_164410) do
     t.string "epic_key"
     t.string "project_key"
     t.string "parent_key"
+    t.string "parent_issue_type"
     t.index ["board_id"], name: "index_jira_team_metrics_issues_on_board_id"
     t.index ["epic_id"], name: "index_jira_team_metrics_issues_on_epic_id"
     t.index ["parent_id"], name: "index_jira_team_metrics_issues_on_parent_id"

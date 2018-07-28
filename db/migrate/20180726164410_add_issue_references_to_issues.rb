@@ -7,5 +7,6 @@ class AddIssueReferencesToIssues < ActiveRecord::Migration[5.2]
     add_column :jira_team_metrics_issues, :epic_key, :string
     add_column :jira_team_metrics_issues, :project_key, :string
     add_column :jira_team_metrics_issues, :parent_key, :string
+    add_column :jira_team_metrics_issues, :parent_issue_type, :string
   end
 end
