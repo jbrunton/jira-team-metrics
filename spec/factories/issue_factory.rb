@@ -50,11 +50,15 @@ FactoryBot.define do
             'summary' => evaluator.project.summary
           }
         }
+        issue.project_key = evaluator.project.key
+        issue.project = evaluator.project
       end
 
       if evaluator.epic
         issue.fields['Epic Link'] = evaluator.epic.key
         issue.board = evaluator.epic.board
+        issue.epic_key = evaluator.epic.key
+        issue.epic = evaluator.epic
       end
     end
   end
