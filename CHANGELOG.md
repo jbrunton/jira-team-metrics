@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.15.0](https://github.com/jbrunton/jira-team-metrics/tree/0.15.0) (2018-07-29)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.14.0...0.15.0)
+
+**Merged pull requests:**
+
+- update version [\#384](https://github.com/jbrunton/jira-team-metrics/pull/384) ([jbrunton](https://github.com/jbrunton))
+- Follow project links recursively [\#383](https://github.com/jbrunton/jira-team-metrics/pull/383) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#382](https://github.com/jbrunton/jira-team-metrics/pull/382) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.14.0](https://github.com/jbrunton/jira-team-metrics/tree/0.14.0) (2018-07-27)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.2...0.14.0)
 
@@ -107,7 +116,7 @@
 - update changelog [\#342](https://github.com/jbrunton/jira-team-metrics/pull/342) ([jbrunton](https://github.com/jbrunton))
 
 ## [0.7.1](https://github.com/jbrunton/jira-team-metrics/tree/0.7.1) (2018-07-02)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.1)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.7.1)
 
 **Merged pull requests:**
 
@@ -117,11 +126,11 @@
 - fix object field comparisons [\#338](https://github.com/jbrunton/jira-team-metrics/pull/338) ([jbrunton](https://github.com/jbrunton))
 - update changelog [\#337](https://github.com/jbrunton/jira-team-metrics/pull/337) ([jbrunton](https://github.com/jbrunton))
 
-## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.6.0)
-
 ## [0.7.0](https://github.com/jbrunton/jira-team-metrics/tree/0.7.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.7.0)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.0)
+
+## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.6.0)
 
 **Merged pull requests:**
 
