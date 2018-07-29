@@ -47,6 +47,9 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       board.issues.create(i)
     end
 
+    @notifier.notify_status('following issue links')
+    JiraTeamMetrics::IssueLinkerService.new(board).build_graph
+
     epic_keys = board.issues
       .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
       .map { |issue| issue.fields['Epic Link'] }

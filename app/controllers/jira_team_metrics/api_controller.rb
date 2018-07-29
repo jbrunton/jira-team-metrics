@@ -22,7 +22,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
       @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
     end
     @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
-    render json: JiraTeamMetrics::EpicCfdBuilder.new(@scope, @rolling_window).build
+    render json: JiraTeamMetrics::ScopeCfdBuilder.new(@scope, @rolling_window).build
   end
 
 private

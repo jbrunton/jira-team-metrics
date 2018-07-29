@@ -5,10 +5,10 @@ describe JiraTeamMetrics::Epic do
 
   let(:today) { DateTime.new(2016, 6, 1) }
 
-  let!(:issue1) { create(:issue, epic: epic, started_time: today - 10, completed_time: today - 5) }
-  let!(:issue2) { create(:issue, epic: epic, started_time: today - 10, completed_time: today - 5) }
-  let!(:issue3) { create(:issue, epic: epic, started_time: today - 5) }
-  let!(:issue4) { create(:issue, epic: epic) }
+  let!(:issue1) { create(:issue, epic: epic.object, started_time: today - 10, completed_time: today - 5) }
+  let!(:issue2) { create(:issue, epic: epic.object, started_time: today - 10, completed_time: today - 5) }
+  let!(:issue3) { create(:issue, epic: epic.object, started_time: today - 5) }
+  let!(:issue4) { create(:issue, epic: epic.object) }
 
   before(:each) { travel_to today }
 

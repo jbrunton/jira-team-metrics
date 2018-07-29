@@ -5,6 +5,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   serialize :links
   belongs_to :board
 
+  belongs_to :epic, optional: true, class_name: 'JiraTeamMetrics::Issue'
+  belongs_to :project, optional: true, class_name: 'JiraTeamMetrics::Issue'
+  belongs_to :parent, optional: true, class_name: 'JiraTeamMetrics::Issue'
+
   def filters
     board.filters
       .select{ |filter| filter.include?(self) }
@@ -12,10 +16,6 @@ class JiraTeamMetrics::Issue < ApplicationRecord
 
   def outlier?
     filters.any?{ |filter| filter.name == 'Outliers' && filter.config_filter? }
-  end
-
-  def epic
-    board.issues.where(key: fields['Epic Link']).first
   end
 
   def as_epic
@@ -74,19 +74,6 @@ class JiraTeamMetrics::Issue < ApplicationRecord
 
   def is_project?
     @is_project ||= JiraTeamMetrics::Domain.get_instance.is_project?(self)
-  end
-
-  def project
-    incr = links.find do |link|
-      [board.domain.config.project_type].flatten.any? do |project|
-        link['inward_link_type'] == project.inward_link_type &&
-          link['issue']['issue_type'] == project.issue_type
-      end
-    end
-    if incr.nil?
-      incr = epic.try(:project)
-    end
-    incr
   end
 
   def metric_adjustments

@@ -20,7 +20,7 @@ private
   end
 
   def project_key(field_name)
-    @issue.project.try(:[], 'issue').try(:[], 'key') if field_name == 'project'
+    @issue.project.try(:key) if field_name == 'project'
   end
 
   def epic_key(field_name)

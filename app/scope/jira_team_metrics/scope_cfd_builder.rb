@@ -1,4 +1,4 @@
-class JiraTeamMetrics::EpicCfdBuilder
+class JiraTeamMetrics::ScopeCfdBuilder
   include JiraTeamMetrics::FormattingHelper
   include JiraTeamMetrics::ChartsHelper
 
@@ -19,17 +19,18 @@ class JiraTeamMetrics::EpicCfdBuilder
 
   def build
     today = DateTime.now.to_date
-    completion_date = @forecaster.forecast(@rolling_window) + 10
+    forecast_date = @forecaster.forecast(@rolling_window)
+    end_date = (forecast_date || DateTime.now) + 10
     start_date = [@forecaster.started_time, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']]
-    dates = JiraTeamMetrics::DateRange.new(start_date, completion_date).to_a
+    dates = JiraTeamMetrics::DateRange.new(start_date, end_date).to_a
     dates.each do |date|
       data << cfd_row_for(date).to_array(date)
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil]
-    data << [date_as_string(@forecaster.forecast(@rolling_window)), 'forecast', nil, nil, nil, nil, nil]
+    data << [date_as_string(forecast_date), 'forecast', nil, nil, nil, nil, nil] unless forecast_date.nil?
 
     data
   end
@@ -73,10 +74,15 @@ class JiraTeamMetrics::EpicCfdBuilder
   end
 
   def adjusted_scope_for(date)
-    if date < @forecaster.forecast(@rolling_window)
-      @forecaster.throughput(@rolling_window) * (date - DateTime.now)
+    forecast = @forecaster.forecast(@rolling_window)
+    if forecast.nil?
+      0
     else
-      @forecaster.remaining_scope.count
+      if date < forecast
+        @forecaster.throughput(@rolling_window) * (date - DateTime.now)
+      else
+        @forecaster.remaining_scope.count
+      end
     end
   end
 end

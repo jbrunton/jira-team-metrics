@@ -99,7 +99,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epic_cfd_data
-    JiraTeamMetrics::EpicCfdBuilder.new(@epic).build
+    JiraTeamMetrics::ScopeCfdBuilder.new(@epic).build
   end
 
   def team_dashboard_data
