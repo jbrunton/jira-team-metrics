@@ -10,14 +10,14 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
   let(:completed_issues) {
     [
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, project: project),
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, project: project)
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic),
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic)
     ]
   }
 
   let(:incomplete_issues) {
     [
-      create(:issue, board: board, status: 'In Progress', fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, project: project)
+      create(:issue, board: board, status: 'In Progress', fields: { 'Teams' => ['My Team'] }, epic: scoped_epic)
     ]
   }
 
