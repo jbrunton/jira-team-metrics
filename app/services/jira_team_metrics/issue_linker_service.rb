@@ -39,7 +39,9 @@ private
 
   def parent_link_for(issue)
     issue.links
-      .find{ |link| link['inward_link_type'] == @project_type.inward_link_type }
+      .select{ |link| link['inward_link_type'] == @project_type.inward_link_type }
+      .sort_by{ |link| link['issue']['issue_type'] == @project_type.issue_type ? 0 : 1 }
+      .first
   end
 
   def link_projects
