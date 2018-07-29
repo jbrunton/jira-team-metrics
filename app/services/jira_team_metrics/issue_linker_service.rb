@@ -57,8 +57,6 @@ private
   end
 
   def project_key_for(issue, checked_keys = [])
-    return nil if issue.parent_key.nil?
-
     return issue.parent_key if issue.parent_issue_type == @project_type.issue_type
 
     unless issue.parent.nil? || checked_keys.include?(issue.key)
