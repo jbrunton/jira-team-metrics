@@ -16,24 +16,32 @@ private
   def link_epics
     @board.issues.reload.each do |issue|
       epic_key = issue.fields['Epic Link']
-      unless epic_key.blank?
-        issue.epic_key = epic_key
-        issue.epic = @board.issues.find_by(key: epic_key)
-        issue.save
-      end
+      link_epic(issue, epic_key)
+    end
+  end
+
+  def link_epic(issue, epic_key)
+    unless epic_key.blank?
+      issue.epic_key = epic_key
+      issue.epic = @board.issues.find_by(key: epic_key)
+      issue.save
     end
   end
 
   def link_parents
     @board.issues.reload.each do |issue|
       parent_link = parent_link_for(issue)
-      unless parent_link.nil?
-        parent_key = parent_link['issue']['key']
-        issue.parent_key = parent_key
-        issue.parent_issue_type = parent_link['issue']['issue_type']
-        issue.parent = @board.issues.find_by(key: parent_key)
-        issue.save
-      end
+      link_parent(issue, parent_link)
+    end
+  end
+
+  def link_parent(issue, parent_link)
+    unless parent_link.nil?
+      parent_key = parent_link['issue']['key']
+      issue.parent_key = parent_key
+      issue.parent_issue_type = parent_link['issue']['issue_type']
+      issue.parent = @board.issues.find_by(key: parent_key)
+      issue.save
     end
   end
 
@@ -48,11 +56,15 @@ private
     @board.issues.reload.each do |issue|
       project_key = project_key_for(issue)
       project_key ||= project_key_for(issue.epic) unless issue.epic.nil?
-      unless project_key.blank?
-        issue.project_key = project_key
-        issue.project = @board.issues.find_by(key: project_key)
-        issue.save
-      end
+      link_project(issue, project_key)
+    end
+  end
+
+  def link_project(issue, project_key)
+    unless project_key.blank?
+      issue.project_key = project_key
+      issue.project = @board.issues.find_by(key: project_key)
+      issue.save
     end
   end
 
