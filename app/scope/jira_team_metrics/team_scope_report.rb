@@ -117,7 +117,9 @@ private
     end
 
     @trained_epic_scope = training_scope / training_epic_count
-    @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    unless @project.metric_adjustments.nil?
+      @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    end
     @predicted_epic_scope = @adjusted_epic_scope || @trained_epic_scope
     @epics.each do |epic|
       build_predicted_scope_for(epic)
@@ -137,7 +139,9 @@ private
       @trained_throughput = 0
     end
 
-    @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    unless @project.metric_adjustments.nil?
+      @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    end
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0

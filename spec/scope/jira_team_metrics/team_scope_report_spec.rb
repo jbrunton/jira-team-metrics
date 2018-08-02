@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::TeamScopeReport do
+  let(:now) { DateTime.now }
+
   let(:board) { create(:board) }
 
   let(:project) { create(:issue, board: board) }
@@ -10,8 +12,8 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
   let(:completed_issues) {
     [
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic),
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic)
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 8, completed_time: now - 7),
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 7, completed_time: now - 6)
     ]
   }
 
@@ -55,8 +57,7 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
   let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics) }
 
   before(:each) { team_report.build }
-
-
+  
   describe "#team" do
     it "returns the team" do
       expect(team_report.team).to eq('My Team')
@@ -100,6 +101,19 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
   describe "#remaining_scope" do
     it "returns the remaining scope" do
       expect(team_report.remaining_scope).to eq(incomplete_issues)
+    end
+  end
+
+  context "when given training data" do
+    let(:training_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues) }
+    let(:trained_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report]) }
+
+    it "builds predictions" do
+      training_report.build
+      trained_report.build
+
+      expect(trained_report.trained_throughput).to eq(1.0)
+      expect(trained_report.predicted_throughput).to eq(1.0)
     end
   end
 end
