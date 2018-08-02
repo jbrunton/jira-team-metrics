@@ -5,19 +5,19 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
   let(:project) { create(:issue, board: board) }
 
-  let(:scoped_epic) { create(:issue, issue_type: 'Epic', board: board, fields: { 'Teams' => ['My Team'] }) }
-  let(:unscoped_epic) { create(:issue, issue_type: 'Epic', board: board, fields: { 'Teams' => ['My Team'] }) }
+  let(:scoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
+  let(:unscoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
 
   let(:completed_issues) {
     [
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'], 'Epic Link' => scoped_epic.key }),
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'], 'Epic Link' => scoped_epic.key })
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic),
+      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic)
     ]
   }
 
   let(:incomplete_issues) {
     [
-      create(:issue, board: board, status: 'In Progress', fields: { 'Teams' => ['My Team'], 'Epic Link' => scoped_epic.key })
+      create(:issue, board: board, status: 'In Progress', fields: { 'Teams' => ['My Team'] }, epic: scoped_epic)
     ]
   }
 

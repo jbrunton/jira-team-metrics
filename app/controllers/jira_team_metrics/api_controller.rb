@@ -16,10 +16,13 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart_data_for(:throughput)
   end
 
-  def epic_cfd
-    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+  def progress_cfd
+    @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
+    if params[:team]
+      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
+    end
     @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
-    render json: JiraTeamMetrics::EpicCfdBuilder.new(@epic, @rolling_window).build
+    render json: JiraTeamMetrics::ScopeCfdBuilder.new(@scope, @rolling_window).build
   end
 
 private

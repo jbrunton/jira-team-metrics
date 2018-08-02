@@ -8,6 +8,7 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       key: 'ISSUE-101',
       summary: 'Some Issue',
       epic: epic,
+      project: project,
       status: 'In Progress',
       fields: {'MyField' => 'foo'})
   end

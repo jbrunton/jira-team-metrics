@@ -101,56 +101,6 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
-  describe "#epic" do
-    let(:epic) { create(:epic) }
-    let(:issue) { create(:issue, epic: epic) }
-
-    it "returns the epic the issue is linked to" do
-      expect(issue.epic).to eq(epic)
-    end
-  end
-
-  describe "#project" do
-    let(:project) { create(:project) }
-    let(:epic) { create(:epic, project: project) }
-
-    context "when given an issue included in a project" do
-      it "returns the project" do
-        expect(epic.project).to eq({
-          'inward_link_type' => 'is included in',
-          'issue' => {
-            'issue_type' => 'Project',
-            'key' => project.key,
-            'summary' => project.summary
-          }
-        })
-      end
-    end
-
-    context "when given an issue linked to an epic in a project" do
-      let(:issue) { create(:issue, epic: epic) }
-
-      it "returns the project" do
-        expect(issue.project).to eq({
-          'inward_link_type' => 'is included in',
-          'issue' => {
-            'issue_type' => 'Project',
-            'key' => project.key,
-            'summary' => project.summary
-          }
-        })
-      end
-    end
-
-    context "if the issue isn't included in a project" do
-      let(:issue) { create(:issue) }
-
-      it "returns nil" do
-        expect(issue.project).to eq(nil)
-      end
-    end
-  end
-
   describe "started_time" do
     context "if is_scope? is true" do
       it "returns the time of the first transition to 'In Progress' status category" do
@@ -242,9 +192,9 @@ RSpec.describe JiraTeamMetrics::Issue do
       expect(issue.completed?).to eq(false)
     end
 
-    it "returns false if the issue is completed but never started" do
+    it "returns true if the issue is completed but never started" do
       issue = create(:issue, transitions: [done_transition])
-      expect(issue.completed?).to eq(false)
+      expect(issue.completed?).to eq(true)
     end
   end
 
@@ -324,25 +274,6 @@ RSpec.describe JiraTeamMetrics::Issue do
         expect(issue.in_progress_during?(date_range)).to eq(false)
       end
     end
-  end
-
-  describe "#epic" do
-    let(:epic) { create(:issue, board: board, issue_type: 'Epic') }
-
-    before(:each) {
-      issue.fields = {
-        'Epic Link' => epic.key
-      }
-      issue.save
-    }
-
-    it "returns the epic given by the Epic Link field" do
-      expect(issue.epic).to eq(epic)
-    end
-  end
-
-  describe "#project" do
-    xit "returns the project for the issue"
   end
 
   describe "#teams" do

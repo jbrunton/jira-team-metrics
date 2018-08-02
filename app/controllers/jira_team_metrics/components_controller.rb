@@ -21,9 +21,13 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
     render 'partials/timesheets', locals: {board: @board, epics_by_project: epics_by_project}, layout: false
   end
 
-  def epic_progress
-    @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
+  def progress_summary
+    @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
+    if params[:team]
+      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
+    end
+    @forecaster = JiraTeamMetrics::Forecaster.new(@scope)
     @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
-    render partial: 'partials/epic_progress'
+    render partial: 'partials/progress_summary'
   end
 end

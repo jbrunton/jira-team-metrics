@@ -5,6 +5,8 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   serialize :fields
   has_many :boards, :dependent => :delete_all
 
+  after_save :clear_cache
+
   def synced_boards
     boards.where.not(jira_team_metrics_boards: {last_synced: nil})
   end
@@ -49,6 +51,14 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def self.get_instance
-    JiraTeamMetrics::Domain.first_or_create
+    @domain ||= JiraTeamMetrics::Domain.first_or_create
+  end
+
+  def self.clear_cache
+    @domain = nil
+  end
+
+  def clear_cache
+    JiraTeamMetrics::Domain.clear_cache
   end
 end

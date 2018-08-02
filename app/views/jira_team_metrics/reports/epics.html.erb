@@ -26,7 +26,7 @@
                 </div>
                 <div class="statistic">
                   <div class="value">
-                    <%= pretty_print_number(epic.percent_done, round: true) %>%
+                    <%= pretty_print_number(epic.forecaster.percent_done, round: true) %>%
                   </div>
                   <div class="label">
                     Progress
@@ -34,7 +34,7 @@
                 </div>
                 <div class="statistic">
                   <div class="text value">
-                    <%= pretty_print_date(epic.forecast(14), show_tz: false, hide_year: true) %>
+                    <%= pretty_print_date(epic.forecaster.forecast(14), show_tz: false, hide_year: true) %>
                   </div>
                   <div class="label">
                     <% if epic.completed? %>
