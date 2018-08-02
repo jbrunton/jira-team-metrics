@@ -125,7 +125,9 @@ private
   end
 
   def build_trained_forecasts
-    reports_with_completed_scope = @training_team_reports.select { |team_report| team_report.completed_scope.any? }
+    reports_with_completed_scope = @training_team_reports.select do |team_report|
+      team_report.completed_scope.any? && !team_report.duration_excl_outliers.nil?
+    end
 
     if reports_with_completed_scope.any?
       total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
