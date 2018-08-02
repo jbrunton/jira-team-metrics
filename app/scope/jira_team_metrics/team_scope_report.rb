@@ -37,7 +37,6 @@ class JiraTeamMetrics::TeamScopeReport
     build_predicted_scope if has_training_data?
 
     analyze_scope
-    build_trained_throughput if has_training_data?
     build_trained_forecasts if has_training_data?
     analyze_status if @project.target_date
 
@@ -127,6 +126,18 @@ private
     end
   end
 
+  def build_trained_forecasts
+    build_trained_throughput
+    unless @project.metric_adjustments.nil?
+      @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    end
+    @predicted_throughput = @adjusted_throughput || @trained_throughput
+
+    if @predicted_throughput > 0
+      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
+    end
+  end
+
   def build_trained_throughput
     reports_with_completed_scope = @training_team_reports.select do |team_report|
       team_report.completed_scope.any? && !team_report.duration_excl_outliers.nil?
@@ -138,17 +149,6 @@ private
       @trained_throughput = total_completed_scope / total_worked_time
     else
       @trained_throughput = 0
-    end
-  end
-
-  def build_trained_forecasts
-    unless @project.metric_adjustments.nil?
-      @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
-    end
-    @predicted_throughput = @adjusted_throughput || @trained_throughput
-
-    if @predicted_throughput > 0
-      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
     end
   end
 
