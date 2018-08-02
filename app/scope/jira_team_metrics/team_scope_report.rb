@@ -117,7 +117,9 @@ private
     end
 
     @trained_epic_scope = training_scope / training_epic_count
-    @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    unless @project.metric_adjustments.nil?
+      @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
+    end
     @predicted_epic_scope = @adjusted_epic_scope || @trained_epic_scope
     @epics.each do |epic|
       build_predicted_scope_for(epic)
@@ -125,7 +127,21 @@ private
   end
 
   def build_trained_forecasts
-    reports_with_completed_scope = @training_team_reports.select { |team_report| team_report.completed_scope.any? }
+    build_trained_throughput
+    unless @project.metric_adjustments.nil?
+      @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
+    end
+    @predicted_throughput = @adjusted_throughput || @trained_throughput
+
+    if @predicted_throughput > 0
+      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
+    end
+  end
+
+  def build_trained_throughput
+    reports_with_completed_scope = @training_team_reports.select do |team_report|
+      team_report.completed_scope.any? && !team_report.duration_excl_outliers.nil?
+    end
 
     if reports_with_completed_scope.any?
       total_completed_scope = reports_with_completed_scope.map { |team_report| team_report.completed_scope.count }.sum
@@ -133,13 +149,6 @@ private
       @trained_throughput = total_completed_scope / total_worked_time
     else
       @trained_throughput = 0
-    end
-
-    @adjusted_throughput = @project.metric_adjustments.adjusted_throughput(@short_team_name, @trained_throughput)
-    @predicted_throughput = @adjusted_throughput || @trained_throughput
-
-    if @predicted_throughput > 0
-      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
     end
   end
 
