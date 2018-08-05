@@ -23,7 +23,8 @@ class JiraTeamMetrics::ProjectCfdBuilder
     lookup_team_completion_rates(cfd_type, @project_report)
 
     today = DateTime.now.to_date
-    completion_date = @team_completion_dates.values.compact.max || today
+    target_date = @project_report.project.target_date
+    completion_date = ([today, target_date] + @team_completion_dates.values).compact.max
     start_date = [@project_report.second_percentile_started_date, today - 60].max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
@@ -34,7 +35,6 @@ class JiraTeamMetrics::ProjectCfdBuilder
     end
 
     data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
-    target_date = @project_report.project.target_date
     unless target_date.nil?
       data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil]
     end
