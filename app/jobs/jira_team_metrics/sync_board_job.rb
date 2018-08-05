@@ -69,6 +69,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   def clear_cache(board)
     @notifier.notify_status('clearing cache')
 
+    board.issues.update_all(epic_id: nil, project_id: nil, parent_id: nil)
+
     board.issues.destroy_all
     board.filters.destroy_all
     board.report_fragments.destroy_all
