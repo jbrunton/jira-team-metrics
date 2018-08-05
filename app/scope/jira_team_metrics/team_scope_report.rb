@@ -158,6 +158,7 @@ private
         @scope << JiraTeamMetrics::Issue.new({
           issue_type: 'Story',
           board: epic.board,
+          epic: epic,
           summary: "Predicted scope #{k + 1}",
           fields: { 'Epic Link' => epic.key },
           transitions: [],
