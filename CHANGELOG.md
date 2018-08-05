@@ -1,5 +1,38 @@
 # Change Log
 
+## [0.15.3](https://github.com/jbrunton/jira-team-metrics/tree/0.15.3) (2018-08-05)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.2...0.15.3)
+
+**Merged pull requests:**
+
+-  fix raw cfd chart when no teams are closing issues [\#388](https://github.com/jbrunton/jira-team-metrics/pull/388) ([jbrunton](https://github.com/jbrunton))
+
+## [0.15.2](https://github.com/jbrunton/jira-team-metrics/tree/0.15.2) (2018-08-05)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.3...0.15.2)
+
+**Merged pull requests:**
+
+- Fix board sync [\#387](https://github.com/jbrunton/jira-team-metrics/pull/387) ([jbrunton](https://github.com/jbrunton))
+
+## [0.13.3](https://github.com/jbrunton/jira-team-metrics/tree/0.13.3) (2018-08-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.1...0.13.3)
+
+## [0.15.1](https://github.com/jbrunton/jira-team-metrics/tree/0.15.1) (2018-08-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.0...0.15.1)
+
+**Merged pull requests:**
+
+- fix edge case when training data contains only 1 issue [\#386](https://github.com/jbrunton/jira-team-metrics/pull/386) ([jbrunton](https://github.com/jbrunton))
+
+## [0.15.0](https://github.com/jbrunton/jira-team-metrics/tree/0.15.0) (2018-07-29)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.14.0...0.15.0)
+
+**Merged pull requests:**
+
+- update version [\#384](https://github.com/jbrunton/jira-team-metrics/pull/384) ([jbrunton](https://github.com/jbrunton))
+- Follow project links recursively [\#383](https://github.com/jbrunton/jira-team-metrics/pull/383) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#382](https://github.com/jbrunton/jira-team-metrics/pull/382) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.14.0](https://github.com/jbrunton/jira-team-metrics/tree/0.14.0) (2018-07-27)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.13.2...0.14.0)
 
