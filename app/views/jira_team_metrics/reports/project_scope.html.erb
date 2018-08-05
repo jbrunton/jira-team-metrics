@@ -1,6 +1,6 @@
 <% breadcrumb :project_scope_report, @project, @team %>
 
-<%= render partial: 'partials/progress_widget' %>
+<%= render partial: 'partials/progress_widget', locals: { predicted_scope: @report.predicted_scope.count } %>
 
 <% if @report.has_training_data? %>
     <div class="ui grid">

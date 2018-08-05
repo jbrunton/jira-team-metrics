@@ -26,6 +26,18 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
     if params[:team]
       @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
     end
+    if params[:predicted_scope]
+      params[:predicted_scope].to_i.times do |k|
+        @scope << JiraTeamMetrics::Issue.new({
+          issue_type: 'Story',
+          board: @board,
+          summary: "Predicted scope #{k + 1}",
+          transitions: [],
+          issue_created: DateTime.now.to_date,
+          status: 'Predicted'
+        })
+      end
+    end
     @forecaster = JiraTeamMetrics::Forecaster.new(@scope)
     @rolling_window = params[:rolling_window].blank? ? nil : params[:rolling_window].to_i
     render partial: 'partials/progress_summary'

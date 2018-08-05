@@ -10,7 +10,11 @@
 
   function loadChart(window) {
     $('#raw-cfd').html('<div class="ui active loader"></div>');
-    $.get('<%= @progress_cfd_url %>?rolling_window=' + window, function(data) {
+    var url = '<%= @progress_cfd_url %>?rolling_window=' + window;
+    <% if defined?(predicted_scope) %>
+      url += '&predicted_scope=<%= predicted_scope %>';
+    <% end %>
+    $.get(url, function(data) {
       var rawData = google.visualization.arrayToDataTable(data);
 
       var options = {
@@ -63,9 +67,13 @@
 
     <script>
       function selectWindow(window) {
+        var url = '<%= @progress_summary_url %>?rolling_window=' + window;
+        <% if defined?(predicted_scope) %>
+            url += '&predicted_scope=<%= predicted_scope %>';
+        <% end %>
         $('#epic-progress')
             .html('<div class="ui active loader"></div>')
-            .load('<%= @progress_summary_url %>?rolling_window=' + window, function() {
+            .load(url, function() {
               $('#progress').progress({
                 percent: <%= @forecaster.percent_done %>,
                 showActivity: false
