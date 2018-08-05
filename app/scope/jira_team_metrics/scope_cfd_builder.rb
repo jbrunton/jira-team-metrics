@@ -21,7 +21,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
     today = DateTime.now.to_date
     forecast_date = @forecaster.forecast(@rolling_window)
     end_date = (forecast_date || DateTime.now) + 10
-    start_date = [@forecaster.started_time, today - 60].max
+    start_date = [@forecaster.started_time, today - 60].compact.max
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']]
     dates = JiraTeamMetrics::DateRange.new(start_date, end_date).to_a
