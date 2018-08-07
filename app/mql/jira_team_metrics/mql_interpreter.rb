@@ -168,7 +168,7 @@ class JiraTeamMetrics::MqlInterpreter
   Includes = Struct.new(:field, :value) do
     def eval(_, issues)
       issues.select do |issue|
-        (issue.fields[field_name] || []).include?(field_value)
+        (JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) || []).include?(field_value)
       end
     end
 
