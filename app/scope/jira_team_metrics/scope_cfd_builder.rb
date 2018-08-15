@@ -19,9 +19,14 @@ class JiraTeamMetrics::ScopeCfdBuilder
 
   def build
     today = DateTime.now.to_date
-    forecast_date = @forecaster.forecast(@rolling_window)
-    end_date = (forecast_date || DateTime.now) + 10
-    start_date = [@forecaster.started_time, today - 60].compact.max
+    if @forecaster.remaining_scope.any?
+      forecast_date = @forecaster.forecast(@rolling_window)
+      end_date = (forecast_date || DateTime.now) + 10
+      start_date = [@forecaster.started_time, today - 60].compact.max
+    else
+      start_date = @forecaster.started_time - 10
+      end_date = @forecaster.completed_time + 10
+    end
 
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(start_date, end_date).to_a
@@ -29,7 +34,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
       data << cfd_row_for(date).to_array(date)
     end
 
-    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
+    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil] if @forecaster.remaining_scope.any?
     data << [date_as_string(forecast_date), 'forecast', nil, nil, nil, nil, nil, nil] unless forecast_date.nil?
 
     data
