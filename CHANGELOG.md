@@ -1,5 +1,34 @@
 # Change Log
 
+## [0.16.1](https://github.com/jbrunton/jira-team-metrics/tree/0.16.1) (2018-08-15)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.16.0...0.16.1)
+
+**Merged pull requests:**
+
+- Fix CFDs for completed epics [\#396](https://github.com/jbrunton/jira-team-metrics/pull/396) ([jbrunton](https://github.com/jbrunton))
+
+## [0.16.0](https://github.com/jbrunton/jira-team-metrics/tree/0.16.0) (2018-08-05)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.5...0.16.0)
+
+**Merged pull requests:**
+
+- Show predicted scope on CFDs [\#391](https://github.com/jbrunton/jira-team-metrics/pull/391) ([jbrunton](https://github.com/jbrunton))
+
+## [0.15.5](https://github.com/jbrunton/jira-team-metrics/tree/0.15.5) (2018-08-05)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.4...0.15.5)
+
+**Merged pull requests:**
+
+- Fix display of predicted story epics [\#390](https://github.com/jbrunton/jira-team-metrics/pull/390) ([jbrunton](https://github.com/jbrunton))
+
+## [0.15.4](https://github.com/jbrunton/jira-team-metrics/tree/0.15.4) (2018-08-05)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.3...0.15.4)
+
+**Merged pull requests:**
+
+- Fix cfds for teams that haven't started work [\#389](https://github.com/jbrunton/jira-team-metrics/pull/389) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#385](https://github.com/jbrunton/jira-team-metrics/pull/385) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.15.3](https://github.com/jbrunton/jira-team-metrics/tree/0.15.3) (2018-08-05)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.15.2...0.15.3)
 
