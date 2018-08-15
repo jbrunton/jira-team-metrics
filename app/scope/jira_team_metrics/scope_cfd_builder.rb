@@ -39,11 +39,11 @@ class JiraTeamMetrics::ScopeCfdBuilder
   private
   def get_date_range(today, forecast_date)
     if @forecaster.remaining_scope.any?
-      end_date = (forecast_date || DateTime.now) + 10
+      end_date = (forecast_date || DateTime.now) + 2
       start_date = [@forecaster.started_time, today - 60].compact.max
     else
-      start_date = @forecaster.started_time - 10
-      end_date = @forecaster.completed_time + 10
+      start_date = @forecaster.started_time - 2
+      end_date = @forecaster.completed_time + 2
     end
     JiraTeamMetrics::DateRange.new(start_date, end_date)
   end

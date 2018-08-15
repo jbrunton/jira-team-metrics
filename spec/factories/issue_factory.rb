@@ -31,6 +31,7 @@ FactoryBot.define do
           'toStatusCategory' => 'In Progress',
           'date' => evaluator.started_time.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
         }
+        issue.issue_created = evaluator.started_time - 1 unless issue.issue_created
       end
 
       if evaluator.completed_time
