@@ -24,21 +24,15 @@ class JiraTeamMetrics::ScopeCfdBuilder
     forecast_date = @forecaster.forecast(@rolling_window)
     date_range = get_date_range(today, forecast_date)
 
-    include_predicted = @scope.any?{ |issue| issue.status_category == 'Predicted' }
-
-    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
-    header << 'Predicted' if include_predicted
-
-    data = [header]
+    data = [build_header]
     dates = JiraTeamMetrics::DateRange.new(date_range.start_date, date_range.end_date).to_a
     dates.each do |date|
-      data << cfd_row_for(date).to_array(date, include_predicted)
+      data << cfd_row_for(date).to_array(date, predicted_scope?)
     end
 
     if @forecaster.remaining_scope.any?
-      padding = Array.new(include_predicted ? 6 : 5)
-      data << ([date_as_string(today), 'today'] + padding)
-      data << ([date_as_string(forecast_date), 'forecast'] + padding) unless forecast_date.nil?
+      data << build_annotation(today, 'today')
+      data << build_annotation(forecast_date, 'forecast') unless forecast_date.nil?
     end
 
     data
@@ -112,5 +106,20 @@ class JiraTeamMetrics::ScopeCfdBuilder
         @forecaster.remaining_scope.count
       end
     end
+  end
+
+  def build_header
+    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
+    header << 'Predicted' if predicted_scope?
+    header
+  end
+
+  def build_annotation(date, annotation_text)
+    padding = Array.new(predicted_scope? ? 6 : 5)
+    [date_as_string(date), annotation_text] + padding
+  end
+
+  def predicted_scope?
+    @predicted_scope ||= @scope.any?{ |issue| issue.status_category == 'Predicted' }
   end
 end
