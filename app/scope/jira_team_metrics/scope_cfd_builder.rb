@@ -5,9 +5,11 @@ class JiraTeamMetrics::ScopeCfdBuilder
   CfdRow = Struct.new(:to_do, :in_progress, :done, :predicted) do
     include JiraTeamMetrics::ChartsHelper
 
-    def to_array(date)
+    def to_array(date, include_predicted)
       date_string = date_as_string(date)
-      [date_string, nil, done, nil, nil, in_progress, to_do, predicted]
+      row = [date_string, nil, done, nil, nil, in_progress, to_do]
+      row << predicted if include_predicted
+      row
     end
   end
 
@@ -22,15 +24,21 @@ class JiraTeamMetrics::ScopeCfdBuilder
     forecast_date = @forecaster.forecast(@rolling_window)
     date_range = get_date_range(today, forecast_date)
 
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
+    include_predicted = @scope.any?{ |issue| issue.status_category == 'Predicted' }
+
+    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
+    header << 'Predicted' if include_predicted
+
+    data = [header]
     dates = JiraTeamMetrics::DateRange.new(date_range.start_date, date_range.end_date).to_a
     dates.each do |date|
-      data << cfd_row_for(date).to_array(date)
+      data << cfd_row_for(date).to_array(date, include_predicted)
     end
 
     if @forecaster.remaining_scope.any?
-      data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
-      data << [date_as_string(forecast_date), 'forecast', nil, nil, nil, nil, nil, nil] unless forecast_date.nil?
+      padding = Array.new(include_predicted ? 6 : 5)
+      data << ([date_as_string(today), 'today'] + padding)
+      data << ([date_as_string(forecast_date), 'forecast'] + padding) unless forecast_date.nil?
     end
 
     data
