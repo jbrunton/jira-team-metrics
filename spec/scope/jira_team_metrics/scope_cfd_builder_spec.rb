@@ -18,15 +18,15 @@ RSpec.describe JiraTeamMetrics::ScopeCfdBuilder do
       builder = JiraTeamMetrics::ScopeCfdBuilder.new(scope, 7)
       data = builder.build
       expect(data).to eq([
-        [{"label"=>"Date", "type"=>"date", "role"=>"domain"}, {"role"=>"annotation"}, "Done", {"role"=>"annotation"}, {"role"=>"annotationText"}, "In Progress", "To Do", "Predicted"],
-        ["Date(2018, 2, 30, 0, 0)", nil, 0, nil, nil, 0, 0, 0],
-        ["Date(2018, 2, 31, 0, 0)", nil, 0, nil, nil, 0, 1, 0],
-        ["Date(2018, 3, 1, 0, 0)", nil, 0, nil, nil, 0, 2, 0],
-        ["Date(2018, 3, 2, 0, 0)", nil, 0, nil, nil, 1, 1, 0],
-        ["Date(2018, 3, 3, 0, 0)", nil, 0, nil, nil, 2, 0, 0],
-        ["Date(2018, 3, 4, 0, 0)", nil, 1, nil, nil, 1, 0, 0],
-        ["Date(2018, 3, 5, 0, 0)", nil, 2, nil, nil, 0, 0, 0],
-        ["Date(2018, 3, 6, 0, 0)", nil, 2, nil, nil, 0, 0, 0]])
+        [{"label"=>"Date", "type"=>"date", "role"=>"domain"}, {"role"=>"annotation"}, "Done", {"role"=>"annotation"}, {"role"=>"annotationText"}, "In Progress", "To Do"],
+        ["Date(2018, 2, 30, 0, 0)", nil, 0, nil, nil, 0, 0],
+        ["Date(2018, 2, 31, 0, 0)", nil, 0, nil, nil, 0, 1],
+        ["Date(2018, 3, 1, 0, 0)", nil, 0, nil, nil, 0, 2],
+        ["Date(2018, 3, 2, 0, 0)", nil, 0, nil, nil, 1, 1],
+        ["Date(2018, 3, 3, 0, 0)", nil, 0, nil, nil, 2, 0],
+        ["Date(2018, 3, 4, 0, 0)", nil, 1, nil, nil, 1, 0],
+        ["Date(2018, 3, 5, 0, 0)", nil, 2, nil, nil, 0, 0],
+        ["Date(2018, 3, 6, 0, 0)", nil, 2, nil, nil, 0, 0]])
     end
   end
 
@@ -37,22 +37,22 @@ RSpec.describe JiraTeamMetrics::ScopeCfdBuilder do
       builder = JiraTeamMetrics::ScopeCfdBuilder.new(scope, 7)
       data = builder.build
       expect(data).to eq([
-        [{"label"=>"Date", "type"=>"date", "role"=>"domain"}, {"role"=>"annotation"}, "Done", {"role"=>"annotation"}, {"role"=>"annotationText"}, "In Progress", "To Do", "Predicted"],
-        ["Date(2018, 3, 1, 0, 0)", nil, 0, nil, nil, 0, 2, 0],
-        ["Date(2018, 3, 2, 0, 0)", nil, 0, nil, nil, 1, 2, 0],
-        ["Date(2018, 3, 3, 0, 0)", nil, 0, nil, nil, 2, 1, 0],
-        ["Date(2018, 3, 4, 0, 0)", nil, 1, nil, nil, 2, 0, 0],
-        ["Date(2018, 3, 5, 0, 0)", nil, 2, nil, nil, 1, 0, 0],
-        ["Date(2018, 3, 6, 0, 0)", nil, 2, nil, nil, 1, 0, 0],
-        ["Date(2018, 3, 7, 0, 0)", nil, 2, nil, nil, 1, 0, 0],
-        ["Date(2018, 3, 8, 0, 0)", nil, 2, nil, nil, 1, 0, 0],
-        ["Date(2018, 3, 9, 0, 0)", nil, 2.2857142857142856, nil, nil, 0.7142857142857143, 0, 0],
-        ["Date(2018, 3, 10, 0, 0)", nil, 2.571428571428571, nil, nil, 0.4285714285714286, 0, 0],
-        ["Date(2018, 3, 11, 0, 0)", nil, 2.857142857142857, nil, nil, 0.1428571428571429, 0, 0],
-        ["Date(2018, 3, 12, 0, 0)", nil, 3, nil, nil, 0, 0, 0],
-        ["Date(2018, 3, 13, 0, 0)", nil, 3, nil, nil, 0, 0, 0],
-        ["Date(2018, 3, 8)", "today", nil, nil, nil, nil, nil, nil],
-        ["Date(2018, 3, 11, 12, 0)", "forecast", nil, nil, nil, nil, nil, nil]
+        [{"label"=>"Date", "type"=>"date", "role"=>"domain"}, {"role"=>"annotation"}, "Done", {"role"=>"annotation"}, {"role"=>"annotationText"}, "In Progress", "To Do"],
+        ["Date(2018, 3, 1, 0, 0)", nil, 0, nil, nil, 0, 2],
+        ["Date(2018, 3, 2, 0, 0)", nil, 0, nil, nil, 1, 2],
+        ["Date(2018, 3, 3, 0, 0)", nil, 0, nil, nil, 2, 1],
+        ["Date(2018, 3, 4, 0, 0)", nil, 1, nil, nil, 2, 0],
+        ["Date(2018, 3, 5, 0, 0)", nil, 2, nil, nil, 1, 0],
+        ["Date(2018, 3, 6, 0, 0)", nil, 2, nil, nil, 1, 0],
+        ["Date(2018, 3, 7, 0, 0)", nil, 2, nil, nil, 1, 0],
+        ["Date(2018, 3, 8, 0, 0)", nil, 2, nil, nil, 1, 0],
+        ["Date(2018, 3, 9, 0, 0)", nil, 2.2857142857142856, nil, nil, 0.7142857142857143, 0],
+        ["Date(2018, 3, 10, 0, 0)", nil, 2.571428571428571, nil, nil, 0.4285714285714286, 0],
+        ["Date(2018, 3, 11, 0, 0)", nil, 2.857142857142857, nil, nil, 0.1428571428571429, 0],
+        ["Date(2018, 3, 12, 0, 0)", nil, 3, nil, nil, 0, 0],
+        ["Date(2018, 3, 13, 0, 0)", nil, 3, nil, nil, 0, 0],
+        ["Date(2018, 3, 8)", "today", nil, nil, nil, nil, nil],
+        ["Date(2018, 3, 11, 12, 0)", "forecast", nil, nil, nil, nil, nil]
       ])
     end
   end
