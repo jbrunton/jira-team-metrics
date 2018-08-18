@@ -107,8 +107,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
 private
-  def sections_for(candidate_issues, report_options)
-    issues = candidate_issues.select{ |issue| issue.status_category != 'Done' || !issue.completed_time.nil? }
+  def sections_for(issues, report_options)
     mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, issues)
     if report_options.sections.any?
       report_options.sections.map do |section|

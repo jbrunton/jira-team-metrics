@@ -36,11 +36,13 @@ class JiraTeamMetrics::MqlInterpreter
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between | contains | sort_expression }
+    rule(:expression) { filter | comparison | not_expression | between | contains | boolean_expression | sort_expression }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
     rule(:primary) { lparen >> or_operation >> rparen | expression }
+
+    rule(:boolean_expression) { (string | identifier).as(:bool) }
 
     rule(:and_operation) {
       (primary.as(:left) >> and_operator >>
@@ -96,6 +98,9 @@ class JiraTeamMetrics::MqlInterpreter
       :sort_by => subtree(:sort_by),
       :order => subtree(:order)
     ) { SortExpr.new(expression, sort_by, order) }
+    rule(
+      :bool => subtree(:bool)
+    ) { BooleanExpr.new(bool) }
     # ... other rules
   end
 
@@ -117,6 +122,19 @@ class JiraTeamMetrics::MqlInterpreter
       issues.select do |issue|
         filter.include?(issue)
       end
+    end
+  end
+
+  BooleanExpr = Struct.new(:bool) do
+    def eval(board, issues)
+      issues.select do |issue|
+        value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
+        !value.nil? || value
+      end
+    end
+
+    def field_name
+      @field_name ||= (bool[:identifier] || bool[:value]).to_s
     end
   end
 
