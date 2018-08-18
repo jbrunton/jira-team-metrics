@@ -29,32 +29,32 @@ module JiraTeamMetrics::PathHelper
     "#{reports_path(board)}/#{projects_path_plural}"
   end
 
-  def project_report_path(board, issue)
-    "#{projects_report_path(board)}/#{issue.key}"
+  def project_report_path(project)
+    "#{projects_report_path(project.board)}/#{project.key}"
   end
 
-  def project_scope_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/scope/#{CGI::escape(team)}"
+  def project_scope_report_path(project, team)
+    "#{project_report_path(project)}/scope/#{CGI::escape(team)}"
   end
 
-  def project_throughput_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/throughput/#{CGI::escape(team)}"
+  def project_throughput_report_path(project, team)
+    "#{project_report_path(project)}/throughput/#{CGI::escape(team)}"
   end
 
-  def epic_progress_summary_path(board, epic)
-    "#{board_components_path(board)}/progress_summary/#{epic.key}"
+  def epic_progress_summary_path(epic)
+    "#{board_components_path(epic.board)}/progress_summary/#{epic.key}"
   end
 
-  def epic_cfd_path(board, epic)
-    "#{board_api_path(board)}/progress_cfd/#{epic.key}.json"
+  def epic_cfd_path(epic)
+    "#{board_api_path(epic.board)}/progress_cfd/#{epic.key}.json"
   end
 
-  def project_progress_summary_path(board, project, team)
-    "#{board_components_path(board)}/progress_summary/#{project.key}/teams/#{CGI::escape(team)}"
+  def project_progress_summary_path(project, team)
+    "#{board_components_path(project.board)}/progress_summary/#{project.key}/teams/#{CGI::escape(team)}"
   end
 
-  def project_cfd_path(board, project, team)
-    "#{board_api_path(board)}/progress_cfd/#{project.key}/teams/#{CGI::escape(team)}.json"
+  def project_cfd_path(project, team)
+    "#{board_api_path(project.board)}/progress_cfd/#{project.key}/teams/#{CGI::escape(team)}.json"
   end
 
   def timesheets_report_path(board, date_range = nil)

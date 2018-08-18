@@ -160,9 +160,9 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
     it "returns an array of sections when defined" do
       domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
       expect(domain_config.epics_report_options).to eq(
-        JiraTeamMetrics::DomainConfig::EpicsReportOptions.new(
+        JiraTeamMetrics::DomainConfig::ProgressReportOptions.new(
           [
-            JiraTeamMetrics::DomainConfig::EpicsReportSection.new(
+            JiraTeamMetrics::DomainConfig::ProgressReportSection.new(
               'In Progress',
               "status = 'In Progress'"
             )
