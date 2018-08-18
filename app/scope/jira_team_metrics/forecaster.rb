@@ -1,8 +1,9 @@
 class JiraTeamMetrics::Forecaster
   attr_reader :scope
 
-  def initialize(scope)
+  def initialize(scope, parent = nil)
     @scope = scope
+    @parent = parent
   end
 
   def percent_done
@@ -18,7 +19,7 @@ class JiraTeamMetrics::Forecaster
   end
 
   def completed?
-    @completed ||= remaining_scope.empty?
+    @completed ||= (@parent && @parent.completed?) || remaining_scope.empty?
   end
 
   def started_time
@@ -26,7 +27,7 @@ class JiraTeamMetrics::Forecaster
   end
 
   def completed_time
-    scope.map{ |issue| issue.completed_time }.max if completed?
+    scope.map{ |issue| issue.completed_time }.compact.max if completed?
   end
 
   def in_progress_scope
