@@ -28,31 +28,31 @@ RSpec.describe JiraTeamMetrics::PathHelper do
   end
 
   it "defines #project_report_path" do
-    expect(helper.project_report_path(board, project)).to eq('/metrics/reports/boards/101/projects/DELIVERY-1')
+    expect(helper.project_report_path(project)).to eq('/metrics/reports/boards/101/projects/DELIVERY-1')
   end
 
   it "defines #project_scope_report_path" do
-    expect(helper.project_scope_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/scope/MyTeam')
+    expect(helper.project_scope_report_path(project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/scope/MyTeam')
   end
 
   it "defines #project_throughput_report_path" do
-    expect(helper.project_throughput_report_path(board, project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/throughput/MyTeam')
+    expect(helper.project_throughput_report_path(project, 'MyTeam')).to eq('/metrics/reports/boards/101/projects/DELIVERY-1/throughput/MyTeam')
   end
 
   it "defines #epic_progress_summary_path" do
-    expect(helper.epic_progress_summary_path(board, epic)).to eq('/metrics/components/boards/101/progress_summary/EPIC-1')
+    expect(helper.epic_progress_summary_path(epic)).to eq('/metrics/components/boards/101/progress_summary/EPIC-1')
   end
 
   it "defines #epic_cfd_path" do
-    expect(helper.epic_cfd_path(board, epic)).to eq('/metrics/api/boards/101/progress_cfd/EPIC-1.json')
+    expect(helper.epic_cfd_path(epic)).to eq('/metrics/api/boards/101/progress_cfd/EPIC-1.json')
   end
 
   it "defines #project_progress_summary_path" do
-    expect(helper.project_progress_summary_path(board, project, 'Data & Analytics')).to eq('/metrics/components/boards/101/progress_summary/DELIVERY-1/teams/Data+%26+Analytics')
+    expect(helper.project_progress_summary_path(project, 'Data & Analytics')).to eq('/metrics/components/boards/101/progress_summary/DELIVERY-1/teams/Data+%26+Analytics')
   end
 
   it "defines #project_cfd_path" do
-    expect(helper.project_cfd_path(board, project, 'Data & Analytics')).to eq('/metrics/api/boards/101/progress_cfd/DELIVERY-1/teams/Data+%26+Analytics.json')
+    expect(helper.project_cfd_path(project, 'Data & Analytics')).to eq('/metrics/api/boards/101/progress_cfd/DELIVERY-1/teams/Data+%26+Analytics.json')
   end
 
   it "defines #timesheets_report_path" do
