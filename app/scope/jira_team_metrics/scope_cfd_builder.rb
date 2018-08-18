@@ -7,9 +7,22 @@ class JiraTeamMetrics::ScopeCfdBuilder
 
     def to_array(date, include_predicted)
       date_string = date_as_string(date)
-      row = [date_string, nil, done, nil, nil, in_progress, to_do]
-      row << predicted if include_predicted
+      row = [date_string, nil,
+        0, # total displays as zero
+        done + in_progress + to_do + predicted, # total tooltip
+        done,
+        in_progress,
+        to_do]
+      if include_predicted
+        row << predicted
+      end
       row
+    end
+
+    def tooltip_for(count, label, total = nil)
+      tooltip = "#{count}"
+      tooltip += " (#{total} total)" unless total.nil?
+      tooltip
     end
   end
 
@@ -109,13 +122,14 @@ class JiraTeamMetrics::ScopeCfdBuilder
   end
 
   def build_header
-    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
+    tooltip_type = {'type' => 'string', 'role' => 'tooltip'}
+    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Total', tooltip_type, 'Done', 'In Progress', 'To Do']
     header << 'Predicted' if predicted_scope?
     header
   end
 
   def build_annotation(date, annotation_text)
-    padding = Array.new(predicted_scope? ? 6 : 5)
+    padding = Array.new(predicted_scope? ? 8 : 7)
     [date_as_string(date), annotation_text] + padding
   end
 

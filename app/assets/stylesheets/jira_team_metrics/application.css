@@ -16,3 +16,9 @@
  *= require_tree .
  *= require_self
  */
+
+.google-visualization-tooltip-item {
+    white-space: nowrap;
+}
+
+.google-visualization-tooltip { white-space: nowrap; }
