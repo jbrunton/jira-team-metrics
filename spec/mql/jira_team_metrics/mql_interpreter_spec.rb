@@ -121,6 +121,16 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       end
     end
 
+    context "when given a boolean expression" do
+      let(:issue_a) { create(:issue, started_time: DateTime.now) }
+      let(:issue_b) { create(:issue) }
+
+      it "returns issues for which it holds true" do
+        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b]).eval("startedTime")
+        expect(issues).to eq([issue_a])
+      end
+    end
+
     context "when given an includes expression" do
       let(:issue) { create(:issue, fields: {'Teams' => ['Android']}, board: board) }
 
@@ -147,7 +157,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
       it "sorts the return values by the sort clause, descending" do
         issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
-        expect(issues).to eq([issue1, issue2])
+        expect(issues).to eq([issue2, issue1])
       end
     end
   end

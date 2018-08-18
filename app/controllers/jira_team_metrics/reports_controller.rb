@@ -113,7 +113,8 @@ private
       report_options.sections.map do |section|
         {
           title: section.title,
-          issues: mql_interpreter.eval(section.mql)
+          issues: mql_interpreter.eval(section.mql),
+          collapsed: section.collapsed
         }
       end
     else

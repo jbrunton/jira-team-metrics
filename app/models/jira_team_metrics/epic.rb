@@ -6,6 +6,6 @@ class JiraTeamMetrics::Epic < Draper::Decorator
   end
 
   def forecaster
-    @forecaster ||= JiraTeamMetrics::Forecaster.new(scope)
+    @forecaster ||= JiraTeamMetrics::Forecaster.new(scope, self)
   end
 end

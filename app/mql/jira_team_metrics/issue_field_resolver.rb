@@ -34,6 +34,8 @@ private
     'status' => 'status',
     'statusCategory' => 'status_category',
     'hierarchyLevel' => 'hierarchy_level',
+    'startedTime' => 'started_time',
+    'completedTime' => 'completed_time',
     'labels' => 'labels'
   }
 end

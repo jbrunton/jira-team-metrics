@@ -48,6 +48,8 @@ optional:
               required:
                 title: "//str"
                 mql: "//str"
+              optional:
+                collapsed: "//bool"
       projects:
         type: "//rec"
         required:
@@ -58,3 +60,6 @@ optional:
               required:
                 title: "//str"
                 mql: "//str"
+              optional:
+                collapsed: "//bool"
+

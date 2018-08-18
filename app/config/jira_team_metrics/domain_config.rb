@@ -14,7 +14,7 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
 
   ProjectType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
-  ProgressReportSection = Struct.new(:title, :mql)
+  ProgressReportSection = Struct.new(:title, :mql, :collapsed)
   ProgressReportOptions = Struct.new(:sections)
 
   def initialize(config_hash)
@@ -72,7 +72,7 @@ private
   def report_options_for(report_name)
     if config_hash['reports'] && config_hash['reports'][report_name]
       sections = config_hash['reports'][report_name]['sections'].map do |section_hash|
-        ProgressReportSection.new(section_hash['title'], section_hash['mql'])
+        ProgressReportSection.new(section_hash['title'], section_hash['mql'], section_hash['collapsed'])
       end
       ProgressReportOptions.new(sections)
     else
