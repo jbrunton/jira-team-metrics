@@ -1,6 +1,6 @@
 module JiraTeamMetrics::FormattingHelper
   def pretty_print_date(date, opts = {show_tz: true, hide_year: false})
-    strfm = date_format_for(opts)
+    strfm = date_format_for(opts, date)
     date.nil? ? '-' : date.strftime(strfm)
   end
 
@@ -25,10 +25,10 @@ module JiraTeamMetrics::FormattingHelper
   end
 
 private
-  def date_format_for(opts)
+  def date_format_for(opts, date)
     opts ||= {}
     strfm = '%d %b'
-    strfm += ' %Y' unless opts[:hide_year]
+    strfm += ' %Y' unless opts[:hide_year] && date.year == DateTime.now.year
     strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %Z' if opts[:show_tz]
     strfm
