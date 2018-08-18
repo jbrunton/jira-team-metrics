@@ -1,9 +1,9 @@
 class JiraTeamMetrics::ScatterplotChart
   include JiraTeamMetrics::FormattingHelper
 
-  def initialize(board, chart_params)
+  def initialize(board, report_params)
     @board = board
-    @params = chart_params
+    @params = report_params
   end
 
   def data_table

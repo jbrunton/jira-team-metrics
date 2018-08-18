@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe JiraTeamMetrics::ChartParams do
+RSpec.describe JiraTeamMetrics::ReportParams do
   let(:from_date) { '2018-06-01' }
   let(:to_date) { '2018-07-01' }
   let(:query) { 'some query' }
@@ -11,15 +11,15 @@ RSpec.describe JiraTeamMetrics::ChartParams do
 
   describe "#initialize" do
     it "sets default values if not given" do
-      chart_params = JiraTeamMetrics::ChartParams.new({})
-      expect(chart_params.hierarchy_level).to eq('Scope')
-      expect(chart_params.step_interval).to eq('Daily')
+      report_params = JiraTeamMetrics::ReportParams.new({})
+      expect(report_params.hierarchy_level).to eq('Scope')
+      expect(report_params.step_interval).to eq('Daily')
     end
   end
 
   describe ".from_params" do
     it "returns an instance built from the given request params" do
-      chart_params = JiraTeamMetrics::ChartParams.from_params({
+      report_params = JiraTeamMetrics::ReportParams.from_params({
         from_date: from_date,
         to_date: to_date,
         query: query,
@@ -29,21 +29,21 @@ RSpec.describe JiraTeamMetrics::ChartParams do
         team: team
       })
 
-      expect(chart_params.date_range).to eq(JiraTeamMetrics::DateRange.new(
+      expect(report_params.date_range).to eq(JiraTeamMetrics::DateRange.new(
         DateTime.parse(from_date),
         DateTime.parse(to_date)
       ))
-      expect(chart_params.query).to eq(query)
-      expect(chart_params.filter).to eq(filter)
-      expect(chart_params.hierarchy_level).to eq(hierarchy_level)
-      expect(chart_params.step_interval).to eq(step_interval)
-      expect(chart_params.team).to eq(team)
+      expect(report_params.query).to eq(query)
+      expect(report_params.filter).to eq(filter)
+      expect(report_params.hierarchy_level).to eq(hierarchy_level)
+      expect(report_params.step_interval).to eq(step_interval)
+      expect(report_params.team).to eq(team)
     end
   end
 
   describe "#to_query" do
     it "builds an mql query based on the params" do
-      chart_params = JiraTeamMetrics::ChartParams.from_params({
+      report_params = JiraTeamMetrics::ReportParams.from_params({
         from_date: from_date,
         to_date: to_date,
         query: query,
@@ -52,7 +52,7 @@ RSpec.describe JiraTeamMetrics::ChartParams do
         step_interval: step_interval,
         team: team
       })
-      expect(chart_params.to_query).to eq("((some query) and (filter = 'My Filter')) and (hierarchyLevel = 'Scope')")
+      expect(report_params.to_query).to eq("((some query) and (filter = 'My Filter')) and (hierarchyLevel = 'Scope')")
     end
   end
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::TimesheetOptions do
   let(:date_range) { JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1, 1), DateTime.new(2001, 2, 1)) }
-  let(:chart_options) { JiraTeamMetrics::ChartParams.new({ date_range: date_range}) }
+  let(:chart_options) { JiraTeamMetrics::ReportParams.new({ date_range: date_range}) }
   let(:timesheets_config) { JiraTeamMetrics::BoardConfig::TimesheetsConfig.new(6, 7, []) }
   let(:timesheet_options) { JiraTeamMetrics::TimesheetOptions.new(chart_options, timesheets_config) }
 

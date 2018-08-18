@@ -1,4 +1,4 @@
-class JiraTeamMetrics::ChartParams
+class JiraTeamMetrics::ReportParams
   attr_reader :date_range
   attr_reader :query
   attr_reader :filter
@@ -32,7 +32,7 @@ class JiraTeamMetrics::ChartParams
     end
 
     def build
-      JiraTeamMetrics::ChartParams.new({
+      JiraTeamMetrics::ReportParams.new({
         date_range: build_date_range,
         query: @params[:query],
         filter: @params[:filter],
