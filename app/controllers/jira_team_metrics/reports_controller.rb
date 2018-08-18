@@ -60,8 +60,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def epic
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
     @forecaster = @epic.forecaster
-    @progress_summary_url = epic_progress_summary_path(@board, @epic)
-    @progress_cfd_url = epic_cfd_path(@board, @epic)
+    @progress_summary_url = epic_progress_summary_path(@epic)
+    @progress_cfd_url = epic_cfd_path(g@epic)
   end
 
   def scatterplot
@@ -89,8 +89,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @filter_applied = true
     end
     @forecaster = JiraTeamMetrics::Forecaster.new(@report.scope)
-    @progress_summary_url = project_progress_summary_path(@board, @project, @team)
-    @progress_cfd_url = project_cfd_path(@board, @project, @team)
+    @progress_summary_url = project_progress_summary_path(@project, @team)
+    @progress_cfd_url = project_cfd_path(@project, @team)
   end
 
   def project_throughput
