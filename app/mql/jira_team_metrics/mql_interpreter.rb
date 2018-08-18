@@ -126,7 +126,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   BooleanExpr = Struct.new(:bool) do
-    def eval(board, issues)
+    def eval(_, issues)
       issues.select do |issue|
         value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
         !value.nil? || value
@@ -173,19 +173,27 @@ class JiraTeamMetrics::MqlInterpreter
 
   SortExpr = Struct.new(:expr, :sort_by, :order) do
     def eval(board, issues)
-      sorted_issues = expr.eval(board, issues).sort_by do |issue|
-        value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
-        if value.nil? then
-          [0, nil]
-        else
-          [1, value]
-        end
+      sorted_issues = expr
+        .eval(board, issues)
+        .sort_by { |issue| sort_key_for(issue) }
+      if order == 'desc'
+        sorted_issues.reverse
+      else
+        sorted_issues
       end
-      order == 'desc' ? sorted_issues.reverse : sorted_issues
     end
 
     def field_name
       @field_name ||= (sort_by[:identifier] || sort_by[:value]).to_s
+    end
+
+    def sort_key_for(issue)
+      value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
+      if value.nil? then
+        [0, nil]
+      else
+        [1, value]
+      end
     end
   end
 
