@@ -105,6 +105,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   helper_method :project_cfd_data
   helper_method :epic_cfd_data
   helper_method :team_dashboard_data
+  helper_method :team_dashboard_data_for
   helper_method :project_report
 
   def project_cfd_data(cfd_type)
@@ -116,10 +117,18 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def team_dashboard_data
-    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "team_dashboard")
+    team_dashboard_data_for(@project)
+  end
+
+  def team_dashboard_data_for(project)
+    JiraTeamMetrics::ReportFragment.fetch_contents(project.board, report_key_for(project), "team_dashboard")
   end
 
   def report_key
-    "project/#{@project.key}"
+    report_key_for(@project)
+  end
+
+  def report_key_for(project)
+    "project/#{project.key}"
   end
 end

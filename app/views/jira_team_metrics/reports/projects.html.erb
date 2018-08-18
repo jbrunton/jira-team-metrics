@@ -8,6 +8,7 @@
     </div>
     <div class="ui three column cards">
       <% section[:projects].each do |project| %>
+          <% dashboard_data = team_dashboard_data_for(project) %>
           <div class="ui card">
             <div class="content">
               <div class="header">
@@ -18,7 +19,7 @@
               <div class="ui two tiny statistics">
                 <div class="statistic">
                   <div class="value">
-                    <%= 100 %>
+                    <%= dashboard_data[:totals][:scope] %>
                   </div>
                   <div class="label">
                     Issues
@@ -26,7 +27,7 @@
                 </div>
                 <div class="statistic">
                   <div class="value">
-                    <%= 20 %>%
+                    <%= pretty_print_number(dashboard_data[:totals][:progress_percent], round: true) %>%
                   </div>
                   <div class="label">
                     Progress

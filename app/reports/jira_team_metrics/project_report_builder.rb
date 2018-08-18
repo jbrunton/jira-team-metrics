@@ -1,4 +1,4 @@
-class JiraTeamMetrics::ProjectReportBuilder < JiraTeamMetrics::ReportBuilder
+class JiraTeamMetrics::totProjectReportBuilder < JiraTeamMetrics::ReportBuilder
   def initialize(project)
     super(project.board,
       "project/#{project.key}",
