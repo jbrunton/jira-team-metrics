@@ -76,8 +76,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @filter_applied = true
     end
     @forecaster = JiraTeamMetrics::Forecaster.new(@report.scope)
-    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@project.key}/teams/#{URI.encode(@team)}"
-    @progress_cfd_url = "#{board_api_path(@board)}/progress_cfd/#{@project.key}/teams/#{URI.encode(@team)}.json"
+    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@project.key}/teams/#{CGI::escape(@team)}"
+    @progress_cfd_url = "#{board_api_path(@board)}/progress_cfd/#{@project.key}/teams/#{CGI::escape(@team)}.json"
   end
 
   def project_throughput

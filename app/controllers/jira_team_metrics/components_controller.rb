@@ -24,7 +24,7 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
   def progress_summary
     @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
     if params[:team]
-      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
+      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, CGI::unescape(params[:team]))
     end
     if params[:predicted_scope]
       params[:predicted_scope].to_i.times do |k|
