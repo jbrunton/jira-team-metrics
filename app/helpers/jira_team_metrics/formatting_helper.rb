@@ -28,9 +28,13 @@ private
   def date_format_for(opts, date)
     opts ||= {}
     strfm = '%d %b'
-    strfm += ' %Y' unless opts[:hide_year] && date.year == DateTime.now.year
+    strfm += ' %Y' unless hide_year?(opts, date)
     strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %Z' if opts[:show_tz]
     strfm
+  end
+
+  def hide_year?(opts, date)
+    opts[:hide_year] && date.year == DateTime.now.year unless date.nil?
   end
 end
