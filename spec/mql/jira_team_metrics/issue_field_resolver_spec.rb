@@ -10,7 +10,8 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       epic: epic,
       project: project,
       status: 'In Progress',
-      fields: {'MyField' => 'foo'})
+      fields: {'MyField' => 'foo'},
+      labels: ['foo'])
   end
 
   let(:resolver) { JiraTeamMetrics::IssueFieldResolver.new(issue) }
@@ -23,6 +24,7 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       expect(resolver.resolve('status')).to eq('In Progress')
       expect(resolver.resolve('statusCategory')).to eq('In Progress')
       expect(resolver.resolve('hierarchyLevel')).to eq('Scope')
+      expect(resolver.resolve('labels')).to eq(['foo'])
     end
 
     it "resolves Jira fields" do
