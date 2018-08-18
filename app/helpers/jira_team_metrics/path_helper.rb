@@ -33,12 +33,12 @@ module JiraTeamMetrics::PathHelper
     "#{projects_report_path(project.board)}/#{project.key}"
   end
 
-  def project_scope_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/scope/#{CGI::escape(team)}"
+  def project_scope_report_path(project, team)
+    "#{project_report_path(project)}/scope/#{CGI::escape(team)}"
   end
 
-  def project_throughput_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/throughput/#{CGI::escape(team)}"
+  def project_throughput_report_path(project, team)
+    "#{project_report_path(project)}/throughput/#{CGI::escape(team)}"
   end
 
   def epic_progress_summary_path(board, epic)

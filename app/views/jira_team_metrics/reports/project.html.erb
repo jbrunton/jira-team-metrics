@@ -146,7 +146,7 @@
       </td>
       <td class="right aligned highlight">
         <%= link_to pretty_print_number(team_data[:rolling_throughput] * 7),
-            project_throughput_report_path(@board, @project, team) %>
+            project_throughput_report_path(@project, team) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
@@ -158,7 +158,7 @@
         <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
       </td>
       <td>
-        <a href="<%= project_scope_report_path(@board, @project, team) %>">Details</a>
+        <a href="<%= project_scope_report_path(@project, team) %>">Details</a>
       </td>
     </tr>
 <% end %>
