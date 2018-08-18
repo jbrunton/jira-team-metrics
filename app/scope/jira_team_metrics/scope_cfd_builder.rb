@@ -5,9 +5,11 @@ class JiraTeamMetrics::ScopeCfdBuilder
   CfdRow = Struct.new(:to_do, :in_progress, :done, :predicted) do
     include JiraTeamMetrics::ChartsHelper
 
-    def to_array(date)
+    def to_array(date, include_predicted)
       date_string = date_as_string(date)
-      [date_string, nil, done, nil, nil, in_progress, to_do, predicted]
+      row = [date_string, nil, done, nil, nil, in_progress, to_do]
+      row << predicted if include_predicted
+      row
     end
   end
 
@@ -20,22 +22,34 @@ class JiraTeamMetrics::ScopeCfdBuilder
   def build
     today = DateTime.now.to_date
     forecast_date = @forecaster.forecast(@rolling_window)
-    end_date = (forecast_date || DateTime.now) + 10
-    start_date = [@forecaster.started_time, today - 60].compact.max
+    date_range = get_date_range(today, forecast_date)
 
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = JiraTeamMetrics::DateRange.new(start_date, end_date).to_a
+    data = [build_header]
+    dates = JiraTeamMetrics::DateRange.new(date_range.start_date, date_range.end_date).to_a
     dates.each do |date|
-      data << cfd_row_for(date).to_array(date)
+      data << cfd_row_for(date).to_array(date, predicted_scope?)
     end
 
-    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
-    data << [date_as_string(forecast_date), 'forecast', nil, nil, nil, nil, nil, nil] unless forecast_date.nil?
+    if @forecaster.remaining_scope.any?
+      data << build_annotation(today, 'today')
+      data << build_annotation(forecast_date, 'forecast') unless forecast_date.nil?
+    end
 
     data
   end
 
   private
+  def get_date_range(today, forecast_date)
+    if @forecaster.remaining_scope.any?
+      end_date = (forecast_date || DateTime.now) + 2
+      start_date = [@forecaster.started_time, today - 60].compact.max
+    else
+      start_date = @forecaster.started_time - 2
+      end_date = @forecaster.completed_time + 2
+    end
+    JiraTeamMetrics::DateRange.new(start_date, end_date)
+  end
+
   def cfd_row_for(date)
     row = CfdRow.new(0, 0, 0, 0)
 
@@ -92,5 +106,20 @@ class JiraTeamMetrics::ScopeCfdBuilder
         @forecaster.remaining_scope.count
       end
     end
+  end
+
+  def build_header
+    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
+    header << 'Predicted' if predicted_scope?
+    header
+  end
+
+  def build_annotation(date, annotation_text)
+    padding = Array.new(predicted_scope? ? 6 : 5)
+    [date_as_string(date), annotation_text] + padding
+  end
+
+  def predicted_scope?
+    @predicted_scope ||= @scope.any?{ |issue| issue.status_category == 'Predicted' }
   end
 end
