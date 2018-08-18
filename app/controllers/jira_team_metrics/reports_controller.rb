@@ -61,7 +61,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
     @forecaster = @epic.forecaster
     @progress_summary_url = epic_progress_summary_path(@epic)
-    @progress_cfd_url = epic_cfd_path(g@epic)
+    @progress_cfd_url = epic_cfd_path(@epic)
   end
 
   def scatterplot
