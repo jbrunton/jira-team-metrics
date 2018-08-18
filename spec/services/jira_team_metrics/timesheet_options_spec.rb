@@ -30,10 +30,10 @@ RSpec.describe JiraTeamMetrics::TimesheetOptions do
       expect(timesheet_options.timesheet_periods).to eq([
         ['13 Jan - 20 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  13), DateTime.new(2001, 1,  20))],
         ['06 Jan - 13 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  6),  DateTime.new(2001, 1,  13))],
-        ['30 Dec - 06 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 30), DateTime.new(2001, 1,  6))],
-        ['23 Dec - 30 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 23), DateTime.new(2000, 12, 30))],
-        ['16 Dec - 23 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 16), DateTime.new(2000, 12, 23))],
-        ['09 Dec - 16 Dec', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 9),  DateTime.new(2000, 12, 16))]
+        ['30 Dec 2000 - 06 Jan', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 30), DateTime.new(2001, 1,  6))],
+        ['23 Dec 2000 - 30 Dec 2000', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 23), DateTime.new(2000, 12, 30))],
+        ['16 Dec 2000 - 23 Dec 2000', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 16), DateTime.new(2000, 12, 23))],
+        ['09 Dec 2000 - 16 Dec 2000', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12, 9),  DateTime.new(2000, 12, 16))]
       ])
     end
 
