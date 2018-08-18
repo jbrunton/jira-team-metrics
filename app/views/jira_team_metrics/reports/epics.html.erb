@@ -6,53 +6,64 @@
     <div class="ui horizontal divider">
       <h3><%= section[:title] %></h3>
     </div>
-    <div class="ui three column cards">
-      <% section[:issues].each do |epic| %>
-          <div class="ui card">
-            <div class="content">
-              <div class="header">
-                <%= issue_summary(epic) %>
-              </div>
-            </div>
-            <div class="content">
-              <div class="ui three tiny statistics">
-                <div class="statistic">
-                  <div class="value">
-                    <%= epic.scope.count %>
-                  </div>
-                  <div class="label">
-                    Issues
-                  </div>
-                </div>
-                <div class="statistic">
-                  <div class="value">
-                    <%= pretty_print_number(epic.forecaster.percent_done, round: true) %>%
-                  </div>
-                  <div class="label">
-                    Progress
-                  </div>
-                </div>
-                <div class="statistic">
-                  <div class="text value">
-                    <%= pretty_print_date(epic.forecaster.forecast(14), show_tz: false, hide_year: true) %>
-                  </div>
-                  <div class="label">
-                    <% if epic.completed? %>
-                        Completed
-                    <% else %>
-                        Forecast
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="ui extra content">
-              <a class="ui fluid teal button" href="<%= epic_report_path(epic) %>">
-                <i class="chart line icon"></i>
-                Progress Report
-              </a>
-            </div>
+    <div class="show-more-container">
+      <% if section[:issues].empty? %>
+          <div class="ui center aligned basic segment">
+            <i>None</i>
+          </div>
+      <% elsif section[:collapsed] %>
+          <div class="ui center aligned basic segment show-more-holder">
+            <a href="#" class="ui basic blue button show-more">Show <%= section[:title] %> Epics</a>
           </div>
       <% end %>
+      <div class="ui three column cards">
+        <% section[:issues].each do |epic| %>
+            <div class="ui card <%= 'below-fold hidden' if section[:collapsed] %>">
+              <div class="content">
+                <div class="header">
+                  <%= issue_summary(epic) %>
+                </div>
+              </div>
+              <div class="content">
+                <div class="ui three tiny statistics">
+                  <div class="statistic">
+                    <div class="value">
+                      <%= epic.scope.count %>
+                    </div>
+                    <div class="label">
+                      Issues
+                    </div>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">
+                      <%= pretty_print_number(epic.forecaster.percent_done, round: true) %>%
+                    </div>
+                    <div class="label">
+                      Progress
+                    </div>
+                  </div>
+                  <div class="statistic">
+                    <div class="text value">
+                      <%= pretty_print_date(epic.forecaster.forecast(14), show_tz: false, hide_year: true) %>
+                    </div>
+                    <div class="label">
+                      <% if epic.completed? %>
+                          Completed
+                      <% else %>
+                          Forecast
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ui extra content">
+                <a class="ui fluid teal button" href="<%= epic_report_path(epic) %>">
+                  <i class="chart line icon"></i>
+                  Progress Report
+                </a>
+              </div>
+            </div>
+        <% end %>
+      </div>
     </div>
 <% end %>

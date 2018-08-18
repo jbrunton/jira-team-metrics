@@ -1,5 +1,5 @@
 <% if issue.links.any? %>
-    <table class="ui very basic table issue-fields">
+    <table class="ui very basic table issue-fields show-more-container">
       <% issue.links.each_with_index do |link, index| %>
           <tr class="<%= 'below-fold hidden' if index >= 3 %>">
             <td><%= link_type(link) %></td>
@@ -12,7 +12,7 @@
           </tr>
       <% end %>
       <% if issue.links.length > 3 %>
-        <tr>
+        <tr class="show-more-holder">
           <td colspan="2">
             <a href="#" class="show-more">Show <%= issue.links.length - 3 %> more</a>
           </td>
