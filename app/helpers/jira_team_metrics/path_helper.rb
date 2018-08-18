@@ -41,6 +41,22 @@ module JiraTeamMetrics::PathHelper
     "#{project_report_path(board, issue)}/throughput/#{CGI::escape(team)}"
   end
 
+  def epic_progress_summary_path(board, epic)
+    "#{board_components_path(board)}/progress_summary/#{epic.key}"
+  end
+
+  def epic_cfd_path(board, epic)
+    "#{board_api_path(board)}/progress_cfd/#{epic.key}.json"
+  end
+
+  def project_progress_summary_path(board, project, team)
+    "#{board_components_path(board)}/progress_summary/#{project.key}/teams/#{CGI::escape(team)}"
+  end
+
+  def project_cfd_path(board, project, team)
+    "#{board_api_path(board)}/progress_cfd/#{project.key}/teams/#{CGI::escape(team)}.json"
+  end
+
   def timesheets_report_path(board, date_range = nil)
     url = "#{reports_path(board)}/timesheets"
     unless date_range.nil?
