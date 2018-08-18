@@ -38,7 +38,7 @@ class JiraTeamMetrics::ReportParams
         filter: @params[:filter],
         hierarchy_level: @params[:hierarchy_level],
         step_interval: @params[:step_interval],
-        team: @params[:team]
+        team: decode_team
       })
     end
 
@@ -60,6 +60,10 @@ class JiraTeamMetrics::ReportParams
       JiraTeamMetrics::DateRange.new(
         from_date.at_beginning_of_day,
         to_date.at_beginning_of_day)
+    end
+
+    def decode_team
+      CGI::unescape(@params[:team])
     end
   end
 end
