@@ -7,12 +7,13 @@ class JiraTeamMetrics::ScopeCfdBuilder
 
     def to_array(date, include_predicted)
       date_string = date_as_string(date)
+      total = (done + in_progress + to_do + predicted)
       row = [date_string, nil,
         0, # total displays as zero
-        done + in_progress + to_do + predicted, # total tooltip
-        done,
-        in_progress,
-        to_do]
+        total.round, # total tooltip
+        done.round,
+        in_progress.round,
+        to_do.round]
       if include_predicted
         row << predicted
       end
@@ -129,7 +130,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
   end
 
   def build_annotation(date, annotation_text)
-    padding = Array.new(predicted_scope? ? 8 : 7)
+    padding = Array.new(predicted_scope? ? 6 : 5)
     [date_as_string(date), annotation_text] + padding
   end
 

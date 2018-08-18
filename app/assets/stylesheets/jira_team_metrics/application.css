@@ -22,3 +22,5 @@
 }
 
 .google-visualization-tooltip { white-space: nowrap; }
+
+svg > g > g:last-child { pointer-events: none }
