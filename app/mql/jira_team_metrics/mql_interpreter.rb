@@ -155,9 +155,15 @@ class JiraTeamMetrics::MqlInterpreter
 
   SortExpr = Struct.new(:expr, :sort_by, :order) do
     def eval(board, issues)
-      expr
-        .eval(board, issues)
-        .sort_by{ |issue| JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name) }
+      sorted_issues = expr.eval(board, issues).sort_by do |issue|
+        value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
+        if value.nil? then
+          [0, nil]
+        else
+          [1, value]
+        end
+      end
+      order == 'desc' ? sorted_issues.reverse : sorted_issues
     end
 
     def field_name

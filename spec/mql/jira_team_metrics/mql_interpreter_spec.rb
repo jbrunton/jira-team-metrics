@@ -147,7 +147,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
       it "sorts the return values by the sort clause, descending" do
         issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
-        expect(issues).to eq([issue1, issue2])
+        expect(issues).to eq([issue2, issue1])
       end
     end
   end
