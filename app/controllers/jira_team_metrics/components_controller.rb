@@ -4,10 +4,10 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
   def timesheets
     issues = @board.issues.select do |issue|
-        issue.in_progress_during?(@chart_params.date_range) &&
-        issue.duration_in_range(@chart_params.date_range) > 0
+        issue.in_progress_during?(@report_params.date_range) &&
+        issue.duration_in_range(@report_params.date_range) > 0
     end
-    @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@chart_params.to_query)
+    @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@report_params.to_query)
 
     epics_by_project = @filtered_issues
       .group_by{ |issue| issue.project }
@@ -23,8 +23,8 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
 
   def progress_summary
     @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
-    if params[:team]
-      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, params[:team])
+    if @report_params.team
+      @scope = JiraTeamMetrics::TeamScopeReport.issues_for_team(@scope, @report_params.team)
     end
     if params[:predicted_scope]
       params[:predicted_scope].to_i.times do |k|

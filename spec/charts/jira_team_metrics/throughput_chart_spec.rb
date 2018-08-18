@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe JiraTeamMetrics::ThroughputChart do
   let(:date) { Date.parse('2018-01-01') }
-  let(:chart_params) do
-    JiraTeamMetrics::ChartParams.new({
+  let(:report_params) do
+    JiraTeamMetrics::ReportParams.new({
       date_range: JiraTeamMetrics::DateRange.new(date, date + 35),
       hierarchy_level: 'Scope',
       step_interval: 'Weekly'
@@ -19,7 +19,7 @@ describe JiraTeamMetrics::ThroughputChart do
         create(:issue, board: board, started_time: date + 7, completed_time: date + 8)
         create(:issue, board: board, started_time: date + 21, completed_time: date + 22)
 
-        data_table = JiraTeamMetrics::ThroughputChart.new(board, chart_params).data_table
+        data_table = JiraTeamMetrics::ThroughputChart.new(board, report_params).data_table
 
         expect(data_table).to eq(JiraTeamMetrics::DataTable.new(
           ['completed_time', 'Count', 'Rolling Avg / Week (prev 4 weeks)'],
