@@ -11,20 +11,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def projects
-    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.projects)
-    if @domain.config.projects_report_options.sections.any?
-      @sections = @domain.config.projects_report_options.sections.map do |section|
-        {
-          title: section.title,
-          projects: mql_interpreter.eval(section.mql)
-        }
-      end
-    else
-      @sections = [{
-        title: 'In Progress',
-        projects: @board.projects
-      }]
-    end
+    @sections = sections_for(@board.projects, @domain.config.projects_report_options)
   end
 
   def project
@@ -41,20 +28,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.epics)
-    if @domain.config.epics_report_options.sections.any?
-      @sections = @domain.config.epics_report_options.sections.map do |section|
-        {
-          title: section.title,
-          epics: mql_interpreter.eval(section.mql)
-        }
-      end
-    else
-      @sections = [{
-        title: 'In Progress',
-        epics: @board.epics
-      }]
-    end
+    @sections = sections_for(@board.epics, @domain.config.epics_report_options)
   end
 
   def epic
@@ -130,5 +104,23 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def report_key_for(project)
     "project/#{project.key}"
+  end
+
+private
+  def sections_for(issues, report_options)
+    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, issues)
+    if report_options.sections.any?
+      report_options.sections.map do |section|
+        {
+          title: section.title,
+          issues: mql_interpreter.eval(section.mql)
+        }
+      end
+    else
+      [{
+        title: 'In Progress',
+        issues: issues
+      }]
+    end
   end
 end

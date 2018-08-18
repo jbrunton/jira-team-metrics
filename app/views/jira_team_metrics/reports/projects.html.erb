@@ -7,7 +7,7 @@
       <h3><%= section[:title] %></h3>
     </div>
     <div class="ui three column cards">
-      <% section[:projects].each do |project| %>
+      <% section[:issues].each do |project| %>
           <% dashboard_data = team_dashboard_data_for(project) %>
           <div class="ui card">
             <div class="content">
