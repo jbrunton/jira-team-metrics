@@ -63,7 +63,7 @@ class JiraTeamMetrics::ReportParams
     end
 
     def decode_team
-      CGI::unescape(@params[:team])
+      CGI::unescape(@params[:team]) unless @params[:team].nil?
     end
   end
 end

@@ -34,11 +34,11 @@ module JiraTeamMetrics::PathHelper
   end
 
   def project_scope_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/scope/#{team}"
+    "#{project_report_path(board, issue)}/scope/#{CGI::escape(team)}"
   end
 
   def project_throughput_report_path(board, issue, team)
-    "#{project_report_path(board, issue)}/throughput/#{team}"
+    "#{project_report_path(board, issue)}/throughput/#{CGI::escape(team)}"
   end
 
   def timesheets_report_path(board, date_range = nil)

@@ -58,7 +58,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def project_scope
-    @team = params[:team]
+    @team = @report_params.team
     @project = @board.issues.find_by(key: params[:issue_key])
 
     @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
@@ -81,7 +81,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def project_throughput
-    @team = params[:team]
+    @team = @report_params.team
     @project = @board.issues.find_by(key: params[:issue_key])
   end
 
