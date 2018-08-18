@@ -14,8 +14,8 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
 
   ProjectType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
-  EpicsReportSection = Struct.new(:title, :mql)
-  EpicsReportOptions = Struct.new(:sections)
+  ProgressReportSection = Struct.new(:title, :mql)
+  ProgressReportOptions = Struct.new(:sections)
 
   def initialize(config_hash)
     super(config_hash, 'domain_config')
@@ -55,11 +55,22 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   def epics_report_options
     if config_hash['reports'] && config_hash['reports']['epics']
       sections = config_hash['reports']['epics']['sections'].map do |section_hash|
-        EpicsReportSection.new(section_hash['title'], section_hash['mql'])
+        ProgressReportSection.new(section_hash['title'], section_hash['mql'])
       end
-      EpicsReportOptions.new(sections)
+      ProgressReportOptions.new(sections)
     else
-      EpicsReportOptions.new([])
+      ProgressReportOptions.new([])
+    end
+  end
+
+  def projects_report_options
+    if config_hash['reports'] && config_hash['reports']['projects']
+      sections = config_hash['reports']['projects']['sections'].map do |section_hash|
+        ProgressReportSection.new(section_hash['title'], section_hash['mql'])
+      end
+      ProgressReportOptions.new(sections)
+    else
+      ProgressReportOptions.new([])
     end
   end
 

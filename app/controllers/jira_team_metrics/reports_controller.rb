@@ -11,7 +11,20 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def projects
-    @projects = @board.projects
+    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.projects)
+    if @domain.config.projects_report_options.sections.any?
+      @sections = @domain.config.projects_report_options.sections.map do |section|
+        {
+          title: section.title,
+          projects: mql_interpreter.eval(section.mql)
+        }
+      end
+    else
+      @sections = [{
+        title: 'In Progress',
+        projects: @board.projects
+      }]
+    end
   end
 
   def project

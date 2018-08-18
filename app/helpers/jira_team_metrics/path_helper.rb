@@ -29,8 +29,8 @@ module JiraTeamMetrics::PathHelper
     "#{reports_path(board)}/#{projects_path_plural}"
   end
 
-  def project_report_path(board, issue)
-    "#{projects_report_path(board)}/#{issue.key}"
+  def project_report_path(project)
+    "#{projects_report_path(project.board)}/#{project.key}"
   end
 
   def project_scope_report_path(board, issue, team)
