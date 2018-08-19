@@ -1,5 +1,29 @@
 # Change Log
 
+## [0.18.0](https://github.com/jbrunton/jira-team-metrics/tree/0.18.0) (2018-08-19)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.17.0...0.18.0)
+
+**Merged pull requests:**
+
+- bump version [\#407](https://github.com/jbrunton/jira-team-metrics/pull/407) ([jbrunton](https://github.com/jbrunton))
+- Fix show more links [\#406](https://github.com/jbrunton/jira-team-metrics/pull/406) ([jbrunton](https://github.com/jbrunton))
+- Show values for all series on CFD tooltips [\#405](https://github.com/jbrunton/jira-team-metrics/pull/405) ([jbrunton](https://github.com/jbrunton))
+- Support for boolean expressions, startedTime and completedTime object fields [\#404](https://github.com/jbrunton/jira-team-metrics/pull/404) ([jbrunton](https://github.com/jbrunton))
+- Improve layout for Deliveries Report index [\#403](https://github.com/jbrunton/jira-team-metrics/pull/403) ([jbrunton](https://github.com/jbrunton))
+- Only hide year on dates if date is in current year [\#402](https://github.com/jbrunton/jira-team-metrics/pull/402) ([jbrunton](https://github.com/jbrunton))
+
+## [0.17.0](https://github.com/jbrunton/jira-team-metrics/tree/0.17.0) (2018-08-18)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.16.1...0.17.0)
+
+**Merged pull requests:**
+
+- bump version [\#401](https://github.com/jbrunton/jira-team-metrics/pull/401) ([jbrunton](https://github.com/jbrunton))
+- Fix progress reports for team names with special characters [\#400](https://github.com/jbrunton/jira-team-metrics/pull/400) ([jbrunton](https://github.com/jbrunton))
+- Fix MQL to search by labels [\#399](https://github.com/jbrunton/jira-team-metrics/pull/399) ([jbrunton](https://github.com/jbrunton))
+- Clearer CTA for epic reports [\#398](https://github.com/jbrunton/jira-team-metrics/pull/398) ([jbrunton](https://github.com/jbrunton))
+- Remove predicted data series from CFDs that don't have predicted scope [\#397](https://github.com/jbrunton/jira-team-metrics/pull/397) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#392](https://github.com/jbrunton/jira-team-metrics/pull/392) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.16.1](https://github.com/jbrunton/jira-team-metrics/tree/0.16.1) (2018-08-15)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.16.0...0.16.1)
 
@@ -169,7 +193,7 @@
 - update changelog [\#342](https://github.com/jbrunton/jira-team-metrics/pull/342) ([jbrunton](https://github.com/jbrunton))
 
 ## [0.7.1](https://github.com/jbrunton/jira-team-metrics/tree/0.7.1) (2018-07-02)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.1)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.7.1)
 
 **Merged pull requests:**
 
@@ -179,11 +203,11 @@
 - fix object field comparisons [\#338](https://github.com/jbrunton/jira-team-metrics/pull/338) ([jbrunton](https://github.com/jbrunton))
 - update changelog [\#337](https://github.com/jbrunton/jira-team-metrics/pull/337) ([jbrunton](https://github.com/jbrunton))
 
-## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.7.0...0.6.0)
-
 ## [0.7.0](https://github.com/jbrunton/jira-team-metrics/tree/0.7.0) (2018-07-01)
-[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.7.0)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.6.0...0.7.0)
+
+## [0.6.0](https://github.com/jbrunton/jira-team-metrics/tree/0.6.0) (2018-07-01)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.5.0...0.6.0)
 
 **Merged pull requests:**
 
