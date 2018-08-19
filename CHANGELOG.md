@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.18.1](https://github.com/jbrunton/jira-team-metrics/tree/0.18.1) (2018-08-19)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.0...0.18.1)
+
+**Merged pull requests:**
+
+- Round down predicted adjustment rates on CFDs [\#409](https://github.com/jbrunton/jira-team-metrics/pull/409) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#408](https://github.com/jbrunton/jira-team-metrics/pull/408) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.18.0](https://github.com/jbrunton/jira-team-metrics/tree/0.18.0) (2018-08-19)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.17.0...0.18.0)
 
