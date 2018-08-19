@@ -203,6 +203,8 @@ private
 
   def scope_completed_time
     completed_times = issues(recursive: true).map{ |issue| issue.completed_time }
-    completed_times.any?{ |time| time.nil? } ? nil : completed_times.max
+    if status_category == 'Done' || completed_times.all?{ |time| !time.nil? }
+      completed_times.compact.max
+    end
   end
 end

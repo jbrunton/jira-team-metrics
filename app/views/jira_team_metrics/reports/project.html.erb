@@ -20,11 +20,14 @@
       areaOpacity: 0.4,
       legend: { position: 'top' },
       series: {
-        0: { color: 'blue' },
-        1: { color: 'green' },
-        2: { color: 'red' },
-        3: { color: 'orange' }
+        0: { color: 'grey' },
+        1: { color: 'blue' },
+        2: { color: 'green' },
+        3: { color: 'red' },
+        4: { color: 'orange' }
       },
+      crosshair: { trigger: 'focus', orientation: 'vertical', color: 'grey' },
+      focusTarget: 'category',
       chartArea: {
         width: '94%',
         height: '75%',
@@ -146,7 +149,7 @@
       </td>
       <td class="right aligned highlight">
         <%= link_to pretty_print_number(team_data[:rolling_throughput] * 7),
-            project_throughput_report_path(@board, @project, team) %>
+            project_throughput_report_path(@project, team) %>
       </td>
       <td class="highlight">
         <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
@@ -158,7 +161,7 @@
         <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
       </td>
       <td>
-        <a href="<%= project_scope_report_path(@board, @project, team) %>">Details</a>
+        <a href="<%= project_scope_report_path(@project, team) %>">Details</a>
       </td>
     </tr>
 <% end %>

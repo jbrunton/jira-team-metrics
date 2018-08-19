@@ -1,9 +1,9 @@
 class JiraTeamMetrics::ThroughputChart
   include JiraTeamMetrics::FormattingHelper
 
-  def initialize(board, chart_params, project = nil)
+  def initialize(board, report_params, project = nil)
     @board = board
-    @params = chart_params
+    @params = report_params
     @project = project
   end
 

@@ -11,7 +11,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def projects
-    @projects = @board.projects
+    @sections = sections_for(@board.projects, @domain.config.projects_report_options)
   end
 
   def project
@@ -28,27 +28,14 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.epics)
-    if @domain.config.epics_report_options.sections.any?
-      @sections = @domain.config.epics_report_options.sections.map do |section|
-        {
-          title: section.title,
-          epics: mql_interpreter.eval(section.mql)
-        }
-      end
-    else
-      @sections = [{
-        title: 'In Progress',
-        epics: @board.epics
-      }]
-    end
+    @sections = sections_for(@board.epics, @domain.config.epics_report_options)
   end
 
   def epic
     @epic = @board.issues.find_by(key: params[:issue_key]).as_epic
     @forecaster = @epic.forecaster
-    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@epic.key}"
-    @progress_cfd_url = "#{board_api_path(@board)}/progress_cfd/#{@epic.key}.json"
+    @progress_summary_url = epic_progress_summary_path(@epic)
+    @progress_cfd_url = epic_cfd_path(@epic)
   end
 
   def scatterplot
@@ -58,7 +45,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def project_scope
-    @team = params[:team]
+    @team = @report_params.team
     @project = @board.issues.find_by(key: params[:issue_key])
 
     @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
@@ -76,12 +63,12 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
       @filter_applied = true
     end
     @forecaster = JiraTeamMetrics::Forecaster.new(@report.scope)
-    @progress_summary_url = "#{board_components_path(@board)}/progress_summary/#{@project.key}/teams/#{URI.encode(@team)}"
-    @progress_cfd_url = "#{board_api_path(@board)}/progress_cfd/#{@project.key}/teams/#{URI.encode(@team)}.json"
+    @progress_summary_url = project_progress_summary_path(@project, @team)
+    @progress_cfd_url = project_cfd_path(@project, @team)
   end
 
   def project_throughput
-    @team = params[:team]
+    @team = @report_params.team
     @project = @board.issues.find_by(key: params[:issue_key])
   end
 
@@ -92,6 +79,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   helper_method :project_cfd_data
   helper_method :epic_cfd_data
   helper_method :team_dashboard_data
+  helper_method :team_dashboard_data_for
   helper_method :project_report
 
   def project_cfd_data(cfd_type)
@@ -103,10 +91,37 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def team_dashboard_data
-    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "team_dashboard")
+    team_dashboard_data_for(@project)
+  end
+
+  def team_dashboard_data_for(project)
+    JiraTeamMetrics::ReportFragment.fetch_contents(project.board, report_key_for(project), "team_dashboard")
   end
 
   def report_key
-    "project/#{@project.key}"
+    report_key_for(@project)
+  end
+
+  def report_key_for(project)
+    "project/#{project.key}"
+  end
+
+private
+  def sections_for(issues, report_options)
+    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, issues)
+    if report_options.sections.any?
+      report_options.sections.map do |section|
+        {
+          title: section.title,
+          issues: mql_interpreter.eval(section.mql),
+          collapsed: section.collapsed
+        }
+      end
+    else
+      [{
+        title: 'In Progress',
+        issues: issues
+      }]
+    end
   end
 end

@@ -22,7 +22,7 @@ crumb :report do |board, report_key, report_name|
 end
 
 crumb :epics do |board|
-  link 'Epics', epics_report_path(board)
+  link 'Epic Reports', epics_report_path(board)
   parent :board, board
 end
 
@@ -32,44 +32,24 @@ crumb :epic do |epic|
 end
 
 crumb :projects do |board|
-  link projects_name_plural, projects_report_path(board)
+  link "#{projects_name_singular} Reports", projects_report_path(board)
   parent :board, board
 end
 
 crumb :project do |project|
-  link project.key, project_report_path(project.board, project)
+  link project.key, project_report_path(project)
   parent :projects, project.board
 end
 
 crumb :project_scope_report do |project, team|
-  link "#{team} Scope", project_scope_report_path(project.board, project, team)
+  link "#{team} Scope", project_scope_report_path(project, team)
   parent :project, project
 end
 
 crumb :project_throughput_report do |project, team|
-  link "#{team} Throughput", project_throughput_report_path(project.board, project, team)
+  link "#{team} Throughput", project_throughput_report_path(project, team)
   parent :project, project
 end
-
-
-# crumb :projects do
-#   link "Projects", projects_path
-# end
-
-# crumb :project do |project|
-#   link project.name, project_path(project)
-#   parent :projects
-# end
-
-# crumb :project_issues do |project|
-#   link "Issues", project_issues_path(project)
-#   parent :project, project
-# end
-
-# crumb :issue do |issue|
-#   link issue.title, issue_path(issue)
-#   parent :project_issues, issue.project
-# end
 
 # If you want to split your breadcrumbs configuration over multiple files, you
 # can create a folder named `config/breadcrumbs` and put your configuration

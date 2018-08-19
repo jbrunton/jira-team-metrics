@@ -8,8 +8,8 @@ class JiraTeamMetrics::TimesheetOptions
   attr_reader :relative_periods
   attr_reader :selected_relative_period
 
-  def initialize(chart_params, timesheets_config)
-    @chart_params = chart_params
+  def initialize(report_params, timesheets_config)
+    @report_params = report_params
     @timesheets_config = timesheets_config
   end
 
@@ -64,7 +64,7 @@ private
   end
 
   def selected_range?(date_range)
-    @chart_params.date_range.start_date.to_date == date_range.start_date.to_date &&
-      @chart_params.date_range.end_date.to_date == date_range.end_date.to_date
+    @report_params.date_range.start_date.to_date == date_range.start_date.to_date &&
+      @report_params.date_range.end_date.to_date == date_range.end_date.to_date
   end
 end

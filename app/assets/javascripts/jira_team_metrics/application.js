@@ -52,8 +52,8 @@ $(function() {
   });
 
   $(document).on('click', '.show-more', function() {
-    $(this).closest('table').find('tr.below-fold').removeClass('hidden');
-    $(this).closest('tr').remove();
+    $(this).closest('.show-more-container').find('.below-fold').removeClass('hidden');
+    $(this).closest('.show-more-holder').remove();
     return false;
   });
 });
