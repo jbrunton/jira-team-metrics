@@ -19,12 +19,6 @@ class JiraTeamMetrics::ScopeCfdBuilder
       end
       row
     end
-
-    def tooltip_for(count, label, total = nil)
-      tooltip = "#{count}"
-      tooltip += " (#{total} total)" unless total.nil?
-      tooltip
-    end
   end
 
   def initialize(scope, rolling_window)
