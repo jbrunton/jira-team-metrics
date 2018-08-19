@@ -15,15 +15,9 @@ class JiraTeamMetrics::ScopeCfdBuilder
         in_progress.round,
         to_do.round]
       if include_predicted
-        row << predicted
+        row << predicted.round
       end
       row
-    end
-
-    def tooltip_for(count, label, total = nil)
-      tooltip = "#{count}"
-      tooltip += " (#{total} total)" unless total.nil?
-      tooltip
     end
   end
 
@@ -50,6 +44,19 @@ class JiraTeamMetrics::ScopeCfdBuilder
     end
 
     data
+  end
+
+  def self.build_header(predicted_scope)
+    header = [
+      {'label' => 'Date', 'type' => 'date', 'role' => 'domain'},
+      {'role' => 'annotation'}, # for 'forecast' / 'today' annotations
+      'Total',
+      {'type' => 'string', 'role' => 'tooltip'}, # annotation for 'Total'
+      'Done',
+      'In Progress',
+      'To Do']
+    header << 'Predicted' if predicted_scope
+    header
   end
 
   private
@@ -123,10 +130,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
   end
 
   def build_header
-    tooltip_type = {'type' => 'string', 'role' => 'tooltip'}
-    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Total', tooltip_type, 'Done', 'In Progress', 'To Do']
-    header << 'Predicted' if predicted_scope?
-    header
+    JiraTeamMetrics::ScopeCfdBuilder.build_header(predicted_scope?)
   end
 
   def build_annotation(date, annotation_text)
