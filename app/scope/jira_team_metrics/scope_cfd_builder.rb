@@ -10,12 +10,12 @@ class JiraTeamMetrics::ScopeCfdBuilder
       total = (done + in_progress + to_do + predicted)
       row = [date_string, nil,
         0, # total displays as zero
-        total.round, # total tooltip
-        done.round,
-        in_progress.round,
-        to_do.round]
+        total, # total tooltip
+        done,
+        in_progress,
+        to_do]
       if include_predicted
-        row << predicted.round
+        row << predicted
       end
       row
     end
@@ -95,7 +95,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
   end
 
   def adjust_row_with_forecasts(row, date)
-    adjusted_scope = adjusted_scope_for(date)
+    adjusted_scope = adjusted_scope_for(date).truncate
 
     row.done += adjusted_scope
 
