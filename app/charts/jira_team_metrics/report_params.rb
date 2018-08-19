@@ -1,4 +1,4 @@
-class JiraTeamMetrics::ChartParams
+class JiraTeamMetrics::ReportParams
   attr_reader :date_range
   attr_reader :query
   attr_reader :filter
@@ -32,13 +32,13 @@ class JiraTeamMetrics::ChartParams
     end
 
     def build
-      JiraTeamMetrics::ChartParams.new({
+      JiraTeamMetrics::ReportParams.new({
         date_range: build_date_range,
         query: @params[:query],
         filter: @params[:filter],
         hierarchy_level: @params[:hierarchy_level],
         step_interval: @params[:step_interval],
-        team: @params[:team]
+        team: decode_team
       })
     end
 
@@ -60,6 +60,10 @@ class JiraTeamMetrics::ChartParams
       JiraTeamMetrics::DateRange.new(
         from_date.at_beginning_of_day,
         to_date.at_beginning_of_day)
+    end
+
+    def decode_team
+      CGI::unescape(@params[:team]) unless @params[:team].nil?
     end
   end
 end

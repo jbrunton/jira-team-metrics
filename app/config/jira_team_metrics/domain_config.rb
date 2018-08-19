@@ -14,8 +14,8 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
 
   ProjectType = Struct.new(:issue_type, :outward_link_type, :inward_link_type)
 
-  EpicsReportSection = Struct.new(:title, :mql)
-  EpicsReportOptions = Struct.new(:sections)
+  ProgressReportSection = Struct.new(:title, :mql, :collapsed)
+  ProgressReportOptions = Struct.new(:sections)
 
   def initialize(config_hash)
     super(config_hash, 'domain_config')
@@ -53,14 +53,11 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   end
 
   def epics_report_options
-    if config_hash['reports'] && config_hash['reports']['epics']
-      sections = config_hash['reports']['epics']['sections'].map do |section_hash|
-        EpicsReportSection.new(section_hash['title'], section_hash['mql'])
-      end
-      EpicsReportOptions.new(sections)
-    else
-      EpicsReportOptions.new([])
-    end
+    report_options_for('epics')
+  end
+
+  def projects_report_options
+    report_options_for('projects')
   end
 
   def status_category_overrides
@@ -68,6 +65,18 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
       (config_hash['status_category_overrides'] || []).map do |override_hash|
         [override_hash['map'], override_hash['to_category']]
       end.to_h
+    end
+  end
+
+private
+  def report_options_for(report_name)
+    if config_hash['reports'] && config_hash['reports'][report_name]
+      sections = config_hash['reports'][report_name]['sections'].map do |section_hash|
+        ProgressReportSection.new(section_hash['title'], section_hash['mql'], section_hash['collapsed'])
+      end
+      ProgressReportOptions.new(sections)
+    else
+      ProgressReportOptions.new([])
     end
   end
 end

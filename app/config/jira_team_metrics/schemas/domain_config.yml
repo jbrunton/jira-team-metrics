@@ -48,3 +48,18 @@ optional:
               required:
                 title: "//str"
                 mql: "//str"
+              optional:
+                collapsed: "//bool"
+      projects:
+        type: "//rec"
+        required:
+          sections:
+            type: "//arr"
+            contents:
+              type: "//rec"
+              required:
+                title: "//str"
+                mql: "//str"
+              optional:
+                collapsed: "//bool"
+

@@ -1,5 +1,5 @@
 <%
-   total_duration = @filtered_issues.empty? ? 0 : @filtered_issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum
+   total_duration = @filtered_issues.empty? ? 0 : @filtered_issues.map{ |i| i.duration_in_range(@report_params.date_range) }.sum
 %>
 
 <table class="ui basic compact selectable table jira-tree">
@@ -11,7 +11,7 @@
   </thead>
 
   <% epics_by_project.each do |project, issues_by_epic| %>
-      <% project_duration = issues_by_epic.values.flatten.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
+      <% project_duration = issues_by_epic.values.flatten.map{ |i| i.duration_in_range(@report_params.date_range) }.sum %>
       <tr class="project">
         <td>
           <% if project.nil? %>
@@ -32,7 +32,7 @@
       </tr>
 
       <% issues_by_epic.each do |epic, issues| %>
-          <% epic_duration = issues.map{ |i| i.duration_in_range(@chart_params.date_range) }.sum %>
+          <% epic_duration = issues.map{ |i| i.duration_in_range(@report_params.date_range) }.sum %>
           <tr class="epic">
             <td>
               <% if epic.nil? %>
@@ -61,10 +61,10 @@
                   &mdash; <%= issue.summary %>
                 </td>
                 <td class="effort-stats">
-                  <%= pretty_print_number(issue.duration_in_range(@chart_params.date_range)) %>
+                  <%= pretty_print_number(issue.duration_in_range(@report_params.date_range)) %>
                 </td>
                 <td class="effort-stats">
-                  (<%= pretty_print_number(issue.duration_in_range(@chart_params.date_range) / total_duration * 100) %>%)</span>
+                  (<%= pretty_print_number(issue.duration_in_range(@report_params.date_range) / total_duration * 100) %>%)</span>
                 </td>
               </tr>
           <% end %>

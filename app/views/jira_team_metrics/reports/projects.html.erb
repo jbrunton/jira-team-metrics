@@ -1,13 +1,47 @@
 <% breadcrumb :projects, @board %>
 
-<h3><%= projects_name_plural %></h3>
+<h1><%= projects_name_singular%> Reports</h1>
 
-<% @projects.each do |project| %>
-    <h5>
-      <a href="<%= project_report_path(@board, project) %>">
-        <%= project.key %>
-      </a>
-      &mdash;
-      <%= project.summary %>
-    </h5>
+<% @sections.each do |section| %>
+    <div class="ui horizontal divider">
+      <h3><%= section[:title] %></h3>
+    </div>
+    <div class="ui three column cards">
+      <% section[:issues].each do |project| %>
+          <% dashboard_data = team_dashboard_data_for(project) %>
+          <div class="ui card">
+            <div class="content">
+              <div class="header">
+                <%= issue_summary(project) %>
+              </div>
+            </div>
+            <div class="content">
+              <div class="ui two tiny statistics">
+                <div class="statistic">
+                  <div class="value">
+                    <%= dashboard_data[:totals][:scope] %>
+                  </div>
+                  <div class="label">
+                    Issues
+                  </div>
+                </div>
+                <div class="statistic">
+                  <div class="value">
+                    <%= pretty_print_number(dashboard_data[:totals][:progress_percent], round: true) %>%
+                  </div>
+                  <div class="label">
+                    Progress
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ui extra content">
+              <a class="ui fluid teal button" href="<%= project_report_path(project) %>">
+                <i class="chart line icon"></i>
+                Progress Report
+              </a>
+            </div>
+          </div>
+      <% end %>
+    </div>
 <% end %>
