@@ -11,7 +11,8 @@ class JiraTeamMetrics::ProjectCfdBuilder
 
     def to_array(date, annotation, annotation_text)
       date_string = date_as_string(date)
-      [date_string, nil, done, annotation, annotation_text, in_progress, to_do, predicted]
+      total = done + in_progress + to_do + predicted
+      [date_string, nil, 0, total.round, done.round, annotation, annotation_text, in_progress.round, to_do.round, predicted.round]
     end
   end
 
@@ -27,16 +28,17 @@ class JiraTeamMetrics::ProjectCfdBuilder
     completion_date = ([today, target_date] + @team_completion_dates.values).compact.max
     start_date = [@project_report.second_percentile_started_date, today - 60].max
 
-    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
+    tooltip_type = {'type' => 'string', 'role' => 'tooltip'}
+    data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Total', tooltip_type, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
     dates = JiraTeamMetrics::DateRange.new(start_date, completion_date).to_a
     dates.each do |date|
       annotation, annotation_text = annotation_for(date)
       data << cfd_row_for(date).to_array(date, annotation, annotation_text)
     end
 
-    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil]
+    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil, nil, nil]
     unless target_date.nil?
-      data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil]
+      data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil, nil, nil]
     end
 
     data

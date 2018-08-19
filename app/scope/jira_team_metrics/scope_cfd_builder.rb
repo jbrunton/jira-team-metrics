@@ -7,8 +7,16 @@ class JiraTeamMetrics::ScopeCfdBuilder
 
     def to_array(date, include_predicted)
       date_string = date_as_string(date)
-      row = [date_string, nil, done, nil, nil, in_progress, to_do]
-      row << predicted if include_predicted
+      total = (done + in_progress + to_do + predicted)
+      row = [date_string, nil,
+        0, # total displays as zero
+        total.round, # total tooltip
+        done.round,
+        in_progress.round,
+        to_do.round]
+      if include_predicted
+        row << predicted.round
+      end
       row
     end
   end
@@ -36,6 +44,19 @@ class JiraTeamMetrics::ScopeCfdBuilder
     end
 
     data
+  end
+
+  def self.build_header(predicted_scope)
+    header = [
+      {'label' => 'Date', 'type' => 'date', 'role' => 'domain'},
+      {'role' => 'annotation'}, # for 'forecast' / 'today' annotations
+      'Total',
+      {'type' => 'string', 'role' => 'tooltip'}, # annotation for 'Total'
+      'Done',
+      'In Progress',
+      'To Do']
+    header << 'Predicted' if predicted_scope
+    header
   end
 
   private
@@ -109,9 +130,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
   end
 
   def build_header
-    header = [{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do']
-    header << 'Predicted' if predicted_scope?
-    header
+    JiraTeamMetrics::ScopeCfdBuilder.build_header(predicted_scope?)
   end
 
   def build_annotation(date, annotation_text)
