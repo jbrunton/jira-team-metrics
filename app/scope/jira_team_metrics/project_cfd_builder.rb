@@ -12,7 +12,7 @@ class JiraTeamMetrics::ProjectCfdBuilder
     def to_array(date, annotation, annotation_text)
       date_string = date_as_string(date)
       total = done + in_progress + to_do + predicted
-      [date_string, nil, 0, total.round, done.round, annotation, annotation_text, in_progress.round, to_do.round, predicted.round]
+      [date_string, nil, 0, total, done, annotation, annotation_text, in_progress, to_do, predicted]
     end
   end
 
@@ -116,7 +116,7 @@ class JiraTeamMetrics::ProjectCfdBuilder
   end
 
   def adjust_row_with_predictions(row, date)
-    predicted_completion_rate = predicted_rate_on_date(date)
+    predicted_completion_rate = predicted_rate_on_date(date).truncate
 
     row.done += predicted_completion_rate
 
