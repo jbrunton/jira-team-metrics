@@ -49,10 +49,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @project = @board.issues.find_by(key: params[:issue_key])
 
     @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
-    @issues_by_epic = @report.scope
-      .group_by{ |issue| issue.epic }
-      .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
-      .to_h
+    @issues_by_epic = build_issues_by_epic(@report)
+
 
     @status_categories = ['To Do', 'In Progress', 'Done', 'Predicted']
     if params[:filter_status].nil?
@@ -123,5 +121,19 @@ private
         issues: issues
       }]
     end
+  end
+
+  def build_issues_by_epic(report)
+    issues_by_epic = report.scope
+      .group_by{ |issue| issue.epic }
+
+    empty_epics = @report.epics
+      .select{ |epic| !issues_by_epic.keys.include?(epic) }
+
+    empty_epics.each { |epic| issues_by_epic[epic] = [] }
+
+    issues_by_epic
+      .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
+      .to_h
   end
 end
