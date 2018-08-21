@@ -27,7 +27,7 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
 
   def short_team_name(full_team_name)
     team = config.teams.find{ |t| t.name == full_team_name }
-    team.nil? ? full_team_name[0..2].downcase : team.short_name
+    team.nil? ? full_team_name.gsub(/\s+/, '')[0..2].downcase : team.short_name
   end
 
   def status_color_for(status_category)

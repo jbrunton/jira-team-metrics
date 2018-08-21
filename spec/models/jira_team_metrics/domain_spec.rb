@@ -11,12 +11,16 @@ RSpec.describe JiraTeamMetrics::Domain do
 
   describe "#short_team_name" do
     it "returns a shortened version of the team name" do
-      expect(domain.short_team_name("Android")).to eq("and")
+      expect(domain.short_team_name('Android')).to eq('and')
+    end
+
+    it "strips whitespace" do
+      expect(domain.short_team_name('My Team')).to eq('myt')
     end
 
     it "looks up the short team name if given in the config" do
       domain.config_string = "teams:\n- name: Mobile\n  short_name: mobi"
-      expect(domain.short_team_name("Mobile")).to eq("mobi")
+      expect(domain.short_team_name('Mobile')).to eq('mobi')
     end
   end
 end
