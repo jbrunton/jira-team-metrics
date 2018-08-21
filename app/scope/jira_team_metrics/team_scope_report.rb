@@ -42,6 +42,8 @@ class JiraTeamMetrics::TeamScopeReport
 
     zero_predicted_scope unless has_training_data?
 
+    byebug if has_training_data? && @team == 'MS tools'
+
     self
   end
 
@@ -111,12 +113,13 @@ private
   def build_predicted_scope
     training_epic_count = @training_team_reports.map { |team_report| team_report.epics.count }.sum.to_f
     training_scope = @training_team_reports.map { |team_report| team_report.scope.count }.sum
+
     if training_epic_count == 0
-      zero_predicted_scope
-      return
+      @trained_epic_scope = 0
+    else
+      @trained_epic_scope = training_scope / training_epic_count
     end
 
-    @trained_epic_scope = training_scope / training_epic_count
     unless @project.metric_adjustments.nil?
       @adjusted_epic_scope = @project.metric_adjustments.adjusted_epic_scope(@short_team_name, @trained_epic_scope)
     end
