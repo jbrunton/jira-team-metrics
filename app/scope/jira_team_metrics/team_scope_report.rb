@@ -42,8 +42,6 @@ class JiraTeamMetrics::TeamScopeReport
 
     zero_predicted_scope unless has_training_data?
 
-    byebug if has_training_data? && @team == 'MS tools'
-
     self
   end
 
