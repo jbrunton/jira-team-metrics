@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.18.4](https://github.com/jbrunton/jira-team-metrics/tree/0.18.4) (2018-08-22)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.3...0.18.4)
+
+**Merged pull requests:**
+
+- Remove links to issues from project/epic report index pages [\#413](https://github.com/jbrunton/jira-team-metrics/pull/413) ([jbrunton](https://github.com/jbrunton))
+
+## [0.18.3](https://github.com/jbrunton/jira-team-metrics/tree/0.18.3) (2018-08-21)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.2...0.18.3)
+
+**Merged pull requests:**
+
+- Apply adjustments when no training data available [\#412](https://github.com/jbrunton/jira-team-metrics/pull/412) ([jbrunton](https://github.com/jbrunton))
+
+## [0.18.2](https://github.com/jbrunton/jira-team-metrics/tree/0.18.2) (2018-08-20)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.1...0.18.2)
+
+**Merged pull requests:**
+
+- Show empty epics on team reports [\#411](https://github.com/jbrunton/jira-team-metrics/pull/411) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#410](https://github.com/jbrunton/jira-team-metrics/pull/410) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.18.1](https://github.com/jbrunton/jira-team-metrics/tree/0.18.1) (2018-08-19)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.0...0.18.1)
 
