@@ -66,6 +66,11 @@ RSpec.describe JiraTeamMetrics::LinkHelper do
       expected_html = "<a href='/boards/1/issues/ISSUE-2'>ISSUE-2</a> – Issue 2 summary".html_safe
       expect(helper.issue_summary(issue)).to eq(expected_html)
     end
+
+    it "returns a text link for the issue if include_links is false" do
+      expected_html = "ISSUE-2 – Issue 2 summary"
+      expect(helper.issue_summary(issue, include_links: false)).to eq(expected_html)
+    end
   end
 
   describe "#external_link_url" do
