@@ -15,8 +15,12 @@ module JiraTeamMetrics::LinkHelper
     end
   end
 
-  def issue_summary(issue)
-    "<a href='#{path_for(issue)}'>#{issue.key}</a> – #{issue.summary}".html_safe
+  def issue_summary(issue, opts = { include_links: true })
+    if opts[:include_links]
+      "<a href='#{path_for(issue)}'>#{issue.key}</a> – #{issue.summary}".html_safe
+    else
+      "#{issue.key} – #{issue.summary}"
+    end
   end
 
   def external_link_url(link, domain)

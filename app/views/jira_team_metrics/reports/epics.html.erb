@@ -21,7 +21,7 @@
             <div class="ui card <%= 'below-fold hidden' if section[:collapsed] %>">
               <div class="content">
                 <div class="header">
-                  <%= issue_summary(epic) %>
+                  <%= issue_summary(epic, include_links: false) %>
                 </div>
               </div>
               <div class="content">
