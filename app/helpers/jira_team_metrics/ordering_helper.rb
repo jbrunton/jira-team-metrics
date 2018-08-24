@@ -6,6 +6,6 @@ module JiraTeamMetrics::OrderingHelper
 
     (all_issues['In Progress'] || []).sort_by{ |issue| issue.global_rank } +
       (all_issues['To Do'] || []).sort_by{ |issue| issue.global_rank } +
-      (all_issues['Done'] || []).sort_by{ |issue| issue.completed_time }
+      (all_issues['Done'] || []).sort_by{ |issue| [issue.started_time || DateTime.now, issue.completed_time ] }
   end
 end
