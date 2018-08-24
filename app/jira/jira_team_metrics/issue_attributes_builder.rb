@@ -15,7 +15,9 @@ class JiraTeamMetrics::IssueAttributesBuilder
       'issue_created' => issue_created,
       'labels' => labels,
       'links' => links,
-      'status' => status
+      'status' => status,
+      'global_rank' => global_rank,
+      'resolution' => resolution
     }
   end
 
@@ -48,10 +50,18 @@ private
     @json['fields']['labels']
   end
 
+  def global_rank
+    fields['Global Rank']
+  end
+
+  def resolution
+    @json['fields']['resolution'].try(:[], 'name')
+  end
+
   def fields
     @fields ||= begin
       fields = {}
-      @domain.fields.each do |field|
+      (@domain.fields + ['Global Rank']).each do |field|
         field_id = field['id']
         field_value = @json['fields'][field_id]
         fields[field['name']] =

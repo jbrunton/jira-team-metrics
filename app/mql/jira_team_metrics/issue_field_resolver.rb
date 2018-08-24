@@ -36,6 +36,8 @@ private
     'hierarchyLevel' => 'hierarchy_level',
     'startedTime' => 'started_time',
     'completedTime' => 'completed_time',
-    'labels' => 'labels'
+    'labels' => 'labels',
+    'resolution' => 'resolution',
+    'Global Rank' => 'global_rank'
   }
 end
