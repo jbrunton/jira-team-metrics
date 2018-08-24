@@ -9,6 +9,7 @@ class JiraTeamMetrics::IssueAttributesBuilder
       'key' => key,
       'summary' => summary,
       'issue_type' => issue_type,
+      'issue_type_icon' => issue_type_icon,
       'transitions' => transitions,
       'fields' => fields,
       'issue_created' => issue_created,
@@ -29,6 +30,10 @@ private
 
   def issue_type
     @json['fields']['issuetype']['name']
+  end
+
+  def issue_type_icon
+    @json['fields']['issuetype']['iconUrl']
   end
 
   def issue_created
