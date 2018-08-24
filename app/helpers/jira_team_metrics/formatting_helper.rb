@@ -11,10 +11,11 @@ module JiraTeamMetrics::FormattingHelper
   def pretty_print_number(number, opts = {})
     if number.nil?
       '-'
-    elsif opts[:round]
-      '%.0f' % number
     else
-      '%.2f' % number
+      fm = opts[:round] ? '%.0f' : '%.2f'
+      val = fm % number
+      val += ' %' if opts[:percentage]
+      val
     end
   end
 
