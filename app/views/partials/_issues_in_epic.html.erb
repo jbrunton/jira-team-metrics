@@ -1,4 +1,4 @@
-<% issues = epic.issues(recursive: false) %>
+<% issues = issues_in_epic(epic) %>
 
 <% if issues.any? %>
     <table class="ui very basic table issues-in-epic show-more-container">
