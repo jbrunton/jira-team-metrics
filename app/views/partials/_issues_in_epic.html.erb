@@ -4,6 +4,7 @@
     <table class="ui very basic table issues-in-epic show-more-container">
       <thead>
         <th></th>
+        <th></th>
         <% if show_dates %>
             <th>Started</th>
             <th></th>
@@ -13,8 +14,13 @@
         <th></th>
       </thead>
       <tbody>
-      <% issues.sort_by{ |issue| issue.started_time || DateTime.now }.each_with_index do |issue, index| %>
+      <% issues.each_with_index do |issue, index| %>
           <tr class="<%= 'below-fold hidden' if index >= 3 %>">
+            <td>
+              <img src="<%= issue.issue_type_icon %>"
+                   alt="<%= issue.issue_type %>"
+                   title="<%= issue.issue_type %>" />
+            </td>
             <td>
               <%= issue_summary(issue) %>
             </td>
