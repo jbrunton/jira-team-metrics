@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.19.0](https://github.com/jbrunton/jira-team-metrics/tree/0.19.0) (2018-08-26)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.4...0.19.0)
+
+**Merged pull requests:**
+
+- bump version [\#420](https://github.com/jbrunton/jira-team-metrics/pull/420) ([jbrunton](https://github.com/jbrunton))
+- Swap total and completed stats on summary widget [\#418](https://github.com/jbrunton/jira-team-metrics/pull/418) ([jbrunton](https://github.com/jbrunton))
+- Remove NAN values from epic and project status reports [\#417](https://github.com/jbrunton/jira-team-metrics/pull/417) ([jbrunton](https://github.com/jbrunton))
+- Sort issues in epics by status category, global rank [\#416](https://github.com/jbrunton/jira-team-metrics/pull/416) ([jbrunton](https://github.com/jbrunton))
+- Show issue type icons [\#415](https://github.com/jbrunton/jira-team-metrics/pull/415) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#414](https://github.com/jbrunton/jira-team-metrics/pull/414) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.18.4](https://github.com/jbrunton/jira-team-metrics/tree/0.18.4) (2018-08-22)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.3...0.18.4)
 
