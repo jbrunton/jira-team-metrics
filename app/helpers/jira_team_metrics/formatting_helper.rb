@@ -12,10 +12,9 @@ module JiraTeamMetrics::FormattingHelper
     if number.nil?
       '-'
     else
-      fm = opts[:round] ? '%.0f' : '%.2f'
+      fm = number_format_for(opts)
       val = fm % number
-      val += ' %' if opts[:percentage]
-      val
+      add_units(val, opts)
     end
   end
 
@@ -33,6 +32,18 @@ private
     strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %Z' if opts[:show_tz]
     strfm
+  end
+
+  def number_format_for(opts)
+    opts[:round] ? '%.0f' : '%.2f'
+  end
+
+  def add_units(val, opts)
+    if opts[:percentage]
+      "#{val} %"
+    else
+      val
+    end
   end
 
   def hide_year?(opts, date)
