@@ -7,6 +7,7 @@ module JiraTeamMetrics::ApplicationHelper
   include JiraTeamMetrics::PathHelper
   include JiraTeamMetrics::HtmlHelper
   include JiraTeamMetrics::EnvironmentHelper
+  include JiraTeamMetrics::OrderingHelper
 
   def generate_id
     SecureRandom.urlsafe_base64(10)

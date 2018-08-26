@@ -1,0 +1,63 @@
+{
+  "key": "ISSUE-1",
+  "fields": {
+    "summary": "Issue Summary",
+    "issuetype": {
+      "name": "Issue Type",
+      "iconUrl": "http://example.com/icon.png"
+    },
+    "created": "2018-01-01T10:30:00.000-0000",
+    "status": {
+      "name": "In Progress"
+    },
+    "labels": ["foo", "bar"],
+    "customfield_101": "2|globalrank:",
+    "resolution": {
+      "name": "Resolution"
+    },
+    "issuelinks": [
+      {
+        "type": {
+          "outward": "blocks"
+        },
+        "outwardIssue": {
+          "key": "ISSUE-2",
+          "fields": {
+            "issuetype": {
+              "name": "Story"
+            },
+            "summary": "Blocked Issue"
+          }
+        }
+      },
+      {
+        "type": {
+          "inward": "is blocked by"
+        },
+        "inwardIssue": {
+          "key": "ISSUE-3",
+          "fields": {
+            "issuetype": {
+              "name": "Story"
+            },
+            "summary": "Blocking Issue"
+          }
+        }
+      }
+    ]
+  },
+  "changelog": {
+    "histories": [
+      {
+        "created": "2018-01-02T10:30:00.000-0000",
+        "items": [
+          {
+            "field": "status",
+            "fromString": "Backlog",
+            "toString": "In Progress"
+          }
+        ]
+      }
+    ]
+  }
+}

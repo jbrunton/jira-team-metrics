@@ -12,6 +12,12 @@
     </td>
   </tr>
   <tr>
+    <td>Resolution</td>
+    <td>
+      <%= issue.resolution || '<i>None</i>'.html_safe %>
+    </td>
+  </tr>
+  <tr>
     <td>Created</td>
     <td><%= pretty_print_date(issue.issue_created) %></td>
   </tr>
