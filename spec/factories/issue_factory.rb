@@ -8,6 +8,7 @@ FactoryBot.define do
     transitions []
     links []
     status 'Done'
+    sequence(:global_rank) { |k| (k+200).to_s }
 
     transient do
       started_time nil
