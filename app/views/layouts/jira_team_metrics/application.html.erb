@@ -38,19 +38,10 @@
       <% end %>
     </div>
 
-    <% if @domain.try(:sync_in_progress?) %>
-          <main class="ui basic segment">
-            <div class="ui active inverted dimmer">
-              <div class="ui text loader">Synchronizing data ... this may take a few minutes.</div>
-            </div>
-            <p></p>
-          </main>
-      <% else %>
-        <main class="ui container" id="content_container">
-          <%= yield %>
-          <div id="pickadate-container"></div>
-        </main>
-      <% end %>
+    <main class="ui container" id="content_container">
+      <%= yield %>
+      <div id="pickadate-container"></div>
+    </main>
 
     <footer class="ui basic center aligned segment">
       <div class="ui divider"></div>

@@ -16,9 +16,9 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
       build_reports(board)
+      board.make_active
     ensure
       board.transaction do
-        board.make_active
         board.syncing = false
         board.save!
       end
