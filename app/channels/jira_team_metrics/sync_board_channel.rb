@@ -1,5 +1,5 @@
 class JiraTeamMetrics::SyncBoardChannel < JiraTeamMetrics::Channel
   def subscribed
-    stream_for JiraTeamMetrics::Board.find_by(jira_id: params[:id])
+    stream_for JiraTeamMetrics::Board.find(params[:id])
   end
 end
