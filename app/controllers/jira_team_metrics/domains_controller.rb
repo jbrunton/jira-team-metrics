@@ -3,7 +3,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   include JiraTeamMetrics::ApplicationHelper
 
   def show
-    @boards = @domain.boards.select do |board|
+    @boards = @domain.boards.where(active: true).select do |board|
       !board.last_synced.nil?
     end
   end

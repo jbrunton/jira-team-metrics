@@ -1,13 +1,16 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, credentials, months, notify_complete = true)
+  def perform(jira_id, credentials, months, notify_complete = true)
+    domain = JiraTeamMetrics::Domain.get_instance
+    prototype = domain.boards.find_by(jira_id: jira_id, active: true)
+    board = copy_board(prototype)
     board.domain.transaction do
       board.syncing = true
       board.save!
     end
     begin
-      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
+      @notifier = JiraTeamMetrics::StatusNotifier.new(prototype, "syncing #{prototype.name}")
 
       clear_cache(board)
       sync_issues(board, credentials, months)
@@ -15,6 +18,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       build_reports(board)
     ensure
       board.transaction do
+        board.make_active
         board.syncing = false
         board.save!
       end
@@ -103,5 +107,11 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
           raise "Unexpected filter type: #{filter}"
       end
     end
+  end
+
+private
+  def copy_board(prototype)
+    attrs = prototype.slice('jira_id', 'name', 'query', 'config_string')
+    prototype.domain.boards.create(attrs.merge('active': false))
   end
 end
