@@ -17,6 +17,11 @@ describe JiraTeamMetrics::Epic do
     it "returns the percentage of completed issues" do
       expect(forecaster.percent_done).to eq(50.0)
     end
+
+    it "returns nil if the scope is 0" do
+      forecaster = JiraTeamMetrics::Forecaster.new([])
+      expect(forecaster.percent_done).to eq(nil)
+    end
   end
 
   describe "#scope" do

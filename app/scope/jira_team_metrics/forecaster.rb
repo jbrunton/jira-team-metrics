@@ -7,7 +7,7 @@ class JiraTeamMetrics::Forecaster
   end
 
   def percent_done
-    @percent_done ||= completed_scope.count * 100.0 / scope.count
+    @percent_done ||= completed_scope.count * 100.0 / scope.count unless scope.empty?
   end
 
   def completed_scope(date_range = nil)
