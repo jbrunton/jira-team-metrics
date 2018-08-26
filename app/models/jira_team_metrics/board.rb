@@ -117,12 +117,6 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
-  def make_active
-    domain.boards.where(jira_id: jira_id).update_all(active: false)
-    self.active = true
-    self.save
-  end
-
 private
   def build_sync_subquery(months)
     if months.nil?

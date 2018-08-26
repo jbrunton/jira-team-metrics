@@ -2,8 +2,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(jira_id, credentials, months, notify_complete = true)
-    domain = JiraTeamMetrics::Domain.get_instance
-    prototype = domain.boards.find_by(jira_id: jira_id, active: true)
+    @domain = JiraTeamMetrics::Domain.get_instance
+    prototype = @domain.boards.find_by(jira_id: jira_id, active: true)
     board = copy_board(prototype)
     board.domain.transaction do
       board.syncing = true
@@ -16,7 +16,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
       build_reports(board)
-      board.make_active
+      activate(board)
     ensure
       board.transaction do
         board.syncing = false
@@ -113,5 +113,13 @@ private
   def copy_board(prototype)
     attrs = prototype.slice('jira_id', 'name', 'query', 'config_string')
     prototype.domain.boards.create(attrs.merge('active': false))
+  end
+
+  def activate(board)
+    @domain.transaction do
+      @domain.boards.where(jira_id: board.jira_id).update_all(active: false)
+      board.active = true
+      board.save
+    end
   end
 end
