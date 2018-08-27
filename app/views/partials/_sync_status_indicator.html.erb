@@ -7,17 +7,21 @@
   });
 </script>
 
-<div id="sync-indicator" style="display: none;">
-  <div class="ui divider"></div>
-  <p>
-    <span id="sync-status-title">Updating Board</span>
-    &middot;
-    <span class="grey-text" id="sync-status">Syncing issues</span>
-  </p>
-  <div class="ui tiny blue progress" id="indicator-determinate">
-    <div class="bar"></div>
+<div id="sync-indicator" style="display: none;" class="ui fluid card">
+  <div class="content">
+    <div class="header">Synchronizing</div>
   </div>
-  <div class="ui tiny blue active progress" id="indicator-indeterminate">
-    <div class="bar"></div>
+  <div class="content">
+    <p>
+      <span id="sync-status-title">Updating Board</span>
+      &middot;
+      <span class="grey-text" id="sync-status">Syncing issues</span>
+    </p>
+    <div class="ui tiny blue progress" id="indicator-determinate">
+      <div class="bar"></div>
+    </div>
+    <div class="ui tiny blue active progress" id="indicator-indeterminate">
+      <div class="bar"></div>
+    </div>
   </div>
 </div>

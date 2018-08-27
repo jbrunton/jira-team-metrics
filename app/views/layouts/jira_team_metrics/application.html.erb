@@ -36,11 +36,6 @@
     </main>
 
     <footer class="ui basic center aligned segment">
-      <% if !@board.nil? %>
-          <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.id } %>
-      <% elsif !@domain.nil? %>
-          <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
-      <% end %>
       <div class="ui divider"></div>
       <% unless @board.nil? %>
           <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>

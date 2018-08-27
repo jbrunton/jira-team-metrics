@@ -33,6 +33,12 @@
   </div>
 </div>
 
+<% if !@board.nil? %>
+    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.id } %>
+<% elsif !@domain.nil? %>
+    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
+<% end %>
+
 <script id="sync-form-template" type="text/x-handlebars-template">
   <%= render partial: 'partials/sync_form' %>
 </script>
