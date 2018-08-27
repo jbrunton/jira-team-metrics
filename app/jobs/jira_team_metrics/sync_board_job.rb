@@ -2,26 +2,19 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(jira_id, credentials, months, notify_complete = true)
-    @domain = JiraTeamMetrics::Domain.get_instance
-    prototype = @domain.boards.find_by(jira_id: jira_id, active: true)
+    domain = JiraTeamMetrics::Domain.get_instance
+    prototype = domain.boards.find_by(jira_id: jira_id, active: true)
     board = copy_board(prototype)
-    board.domain.transaction do
-      board.syncing = true
-      board.save!
-    end
+    start_sync(board)
     begin
       @notifier = JiraTeamMetrics::StatusNotifier.new(prototype, "syncing #{prototype.name}")
 
-      clear_cache(board)
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
       build_reports(board)
       activate(board)
     ensure
-      board.transaction do
-        board.syncing = false
-        board.save!
-      end
+      end_sync(board)
     end
     @notifier.notify_complete if notify_complete
   end
@@ -70,7 +63,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.save
   end
 
-  def clear_cache(board)
+  def delete_board(board)
+    # TODO: this should be done in destroy callbacks
     @notifier.notify_status('clearing cache')
 
     board.issues.update_all(epic_id: nil, project_id: nil, parent_id: nil)
@@ -78,6 +72,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.issues.destroy_all
     board.filters.destroy_all
     board.report_fragments.destroy_all
+    board.delete
   end
 
   def fetch_issues_for_query(board, query, credentials, status)
@@ -116,9 +111,28 @@ private
   end
 
   def activate(board)
-    @domain.transaction do
-      @domain.boards.where(jira_id: board.jira_id).update_all(active: false)
-      board.active = true
+    board.domain.boards
+      .where(jira_id: board.jira_id)
+      .update_all(active: false)
+
+    board.active = true
+    board.save
+
+    board.domain.boards
+      .where(jira_id: board.jira_id, active: false)
+      .each { |b| delete_board(b) }
+  end
+
+  def start_sync(board)
+    board.domain.transaction do
+      board.syncing = true
+      board.save
+    end
+  end
+
+  def end_sync(board)
+    board.transaction do
+      board.syncing = false
       board.save
     end
   end
