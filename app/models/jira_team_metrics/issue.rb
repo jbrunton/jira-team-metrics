@@ -73,7 +73,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def is_project?
-    @is_project ||= board.domain.get_active_instance.is_project?(self)
+    @is_project ||= board.domain.is_project?(self)
   end
 
   def metric_adjustments

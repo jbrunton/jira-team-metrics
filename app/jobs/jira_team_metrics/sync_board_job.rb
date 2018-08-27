@@ -8,7 +8,6 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     begin
       @notifier = JiraTeamMetrics::StatusNotifier.new(prototype, "syncing #{prototype.name}")
 
-      byebug
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
       build_reports(board)

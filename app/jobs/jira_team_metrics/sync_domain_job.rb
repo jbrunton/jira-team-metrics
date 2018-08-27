@@ -18,7 +18,6 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
         board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
         board.config_string = board_details.fetch_config_string(ENV['CONFIG_DIR'])
         board.save
-        byebug
         JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months, false)
       end
       activate(domain)
@@ -62,13 +61,13 @@ private
   end
 
   def activate(domain)
-    JiraTeamMetitrcs::Domain
+    JiraTeamMetrics::Domain
       .update_all(active: false)
 
     domain.active = true
     domain.save
 
-    JiraTeamMetitrcs::Domain
+    JiraTeamMetrics::Domain
       .where(active: false)
       .each { |d| delete_domain(d) }
   end
