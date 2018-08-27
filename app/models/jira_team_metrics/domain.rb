@@ -50,12 +50,12 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     @project_type == issue.issue_type
   end
 
-  def self.get_instance
-    @domain ||= JiraTeamMetrics::Domain.first_or_create
+  def self.get_active_instance
+    @active_domain ||= JiraTeamMetrics::Domain.first_or_create(active: true)
   end
 
   def self.clear_cache
-    @domain = nil
+    @active_domain = nil
   end
 
   def clear_cache

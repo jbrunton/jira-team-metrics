@@ -1,14 +1,14 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(jira_id, credentials, months, notify_complete = true)
-    domain = JiraTeamMetrics::Domain.get_instance
+  def perform(jira_id, domain, credentials, months, notify_complete = true)
     prototype = domain.boards.find_by(jira_id: jira_id, active: true)
     board = copy_board(prototype)
     start_sync(board)
     begin
       @notifier = JiraTeamMetrics::StatusNotifier.new(prototype, "syncing #{prototype.name}")
 
+      byebug
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
       build_reports(board)

@@ -4,7 +4,7 @@ class JiraTeamMetrics::ApplicationController < ActionController::Base
 private
 
   def set_domain
-    @domain = JiraTeamMetrics::Domain.get_instance
+    @domain = JiraTeamMetrics::Domain.get_active_instance
   end
 
   def set_board

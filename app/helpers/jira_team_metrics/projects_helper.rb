@@ -8,10 +8,10 @@ module JiraTeamMetrics::ProjectsHelper
   end
 
   def projects_name_singular
-    JiraTeamMetrics::Domain.get_instance.config.project_type.issue_type
+    JiraTeamMetrics::Domain.get_active_instance.config.project_type.issue_type
   end
 
   def projects_name_plural
-    JiraTeamMetrics::Domain.get_instance.config.project_type.issue_type.pluralize
+    JiraTeamMetrics::Domain.get_active_instance.config.project_type.issue_type.pluralize
   end
 end

@@ -37,12 +37,13 @@ class JiraTeamMetrics::StatusNotifier
 private
   def broadcast(message)
     message.merge!(statusTitle: @status_title) unless message[:status].nil?
+    active_domain = JiraTeamMetrics::Domain.get_active_instance
     case
     when @model.is_a?(JiraTeamMetrics::Board)
       JiraTeamMetrics::SyncBoardChannel.broadcast_to(@model, message)
-      JiraTeamMetrics::SyncDomainChannel.broadcast_to(@model.domain, message)
+      JiraTeamMetrics::SyncDomainChannel.broadcast_to(active_domain, message)
     when @model.is_a?(JiraTeamMetrics::Domain)
-      JiraTeamMetrics::SyncDomainChannel.broadcast_to(@model, message)
+      JiraTeamMetrics::SyncDomainChannel.broadcast_to(active_domain, message)
     else
       raise "Unexpected model type: #{@model.class}"
     end

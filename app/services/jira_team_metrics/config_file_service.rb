@@ -10,7 +10,7 @@ class JiraTeamMetrics::ConfigFileService
         @config_file = File.join(config_dir || '', config_file)
       end
     end
-    @domain = JiraTeamMetrics::Domain.get_instance
+    @domain = JiraTeamMetrics::Domain.get_active_instance
   end
 
   def load_config

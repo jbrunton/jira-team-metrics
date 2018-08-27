@@ -102,7 +102,7 @@ class JiraTeamMetrics::ProjectCfdBuilder
       team_completion_date = @team_completion_dates[team]
       unless team_completion_date.nil?
         if date <= team_completion_date && team_completion_date < date + 1
-          annotations << JiraTeamMetrics::Domain.get_instance.short_team_name(team)
+          annotations << @project_report.project.board.domain.short_team_name(team)
         end
       end
     end
