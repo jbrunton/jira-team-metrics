@@ -1,10 +1,15 @@
 <script>
-  App.cable.subscriptions.create({
-    channel: "<%= channel %>",
-    id: <%= model_id %>
-  }, {
-    received: statusReceived
-  });
+  (function() {
+    var channelOpts = {
+      channel: "<%= channel %>"
+    };
+    <% if defined?(jira_id) %>
+      channelOpts.jira_id = <%= jira_id %>;
+    <% end %>
+    App.cable.subscriptions.create(channelOpts, {
+      received: statusReceived
+    });
+  })();
 </script>
 
 <div id="sync-indicator" style="display: none;" class="ui fluid card">

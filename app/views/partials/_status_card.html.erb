@@ -34,9 +34,9 @@
 </div>
 
 <% if !@board.nil? %>
-    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', model_id: @board.id } %>
+    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncBoardChannel', jira_id: @board.jira_id } %>
 <% elsif !@domain.nil? %>
-    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel', model_id: @domain.id } %>
+    <%= render partial: 'partials/sync_status_indicator', locals: { channel: 'JiraTeamMetrics::SyncDomainChannel' } %>
 <% end %>
 
 <script id="sync-form-template" type="text/x-handlebars-template">
