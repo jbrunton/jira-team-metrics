@@ -5,9 +5,9 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
     active_domain = JiraTeamMetrics::Domain.get_active_instance
     domain = copy_domain(active_domain)
 
-    domain.transaction do
-      domain.syncing = true
-      domain.save!
+    active_domain.transaction do
+      active_domain.syncing = true
+      active_domain.save!
     end
     begin
       @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
@@ -21,8 +21,8 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
         JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months)
       end
       activate(domain)
-    ensure
-      domain.transaction do
+    rescue
+      active_domain.transaction do
         domain.syncing = false
         domain.save!
       end
