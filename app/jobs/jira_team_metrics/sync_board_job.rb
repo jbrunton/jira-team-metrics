@@ -14,10 +14,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     ensure
       end_sync(board)
     end
-    if domain.active?
-      # only notify complete if we're syncing this single board, not the whole domain
-      @notifier.notify_complete
-    end
+    @notifier.notify_complete
   end
 
   def build_reports(board)
