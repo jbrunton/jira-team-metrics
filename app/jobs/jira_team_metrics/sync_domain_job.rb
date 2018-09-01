@@ -23,9 +23,9 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
       activate(domain)
     rescue
       active_domain.transaction do
-        domain.syncing = false
-        domain.save!
-      end
+        active_domain.syncing = false
+        active_domain.save!
+      end unless active_domain.destroyed?
     end
     @notifier.notify_complete
   end
