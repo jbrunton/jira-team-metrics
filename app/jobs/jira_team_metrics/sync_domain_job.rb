@@ -70,13 +70,16 @@ private
     JiraTeamMetrics::Domain
       .where(active: false)
       .each { |d| delete_domain(d) }
+
+    domain.boards
+      .update_all(active: true)
   end
 
   def update_cache(domain, boards, statuses, fields)
     @notifier.notify_status('updating cache')
 
     boards.each do |b|
-      domain.boards.create(b.merge(active: true))
+      domain.boards.create(b)
     end
 
     domain.last_synced = DateTime.now

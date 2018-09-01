@@ -2,11 +2,10 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(jira_id, domain, credentials, months)
-    prototype = domain.boards.find_by(jira_id: jira_id, active: true)
-    board = copy_board(prototype)
+    board = find_target_board(jira_id, domain)
     start_sync(board)
     begin
-      @notifier = JiraTeamMetrics::StatusNotifier.new(prototype, "syncing #{prototype.name}")
+      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
       sync_issues(board, credentials, months)
       create_filters(board, credentials)
@@ -136,6 +135,17 @@ private
     board.transaction do
       board.syncing = false
       board.save
+    end
+  end
+
+  def find_target_board(jira_id, domain)
+    board = domain.boards.find_by(jira_id: jira_id, active: true)
+    if board.nil?
+      # no active board, meaning we're syncing a new domain
+      domain.boards.find_by(jira_id: jira_id)
+    else
+      # we have an active board, so copy it to sync
+      copy_board(board)
     end
   end
 end
