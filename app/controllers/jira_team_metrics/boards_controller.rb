@@ -22,11 +22,17 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
 
   def sync
     @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
-    if JiraTeamMetrics::ModelUpdater.new(@board).can_sync?(@credentials) && @credentials.valid?
-      JiraTeamMetrics::SyncBoardJob.perform_later(@board.jira_id, @board.domain, @credentials.to_serializable_hash, sync_months)
-      render json: {}, status: 200
-    else
-      render partial: 'partials/sync_form', status: 400
+    @domain.with_lock do
+      if JiraTeamMetrics::ModelUpdater.new(@board).can_sync?(@credentials) && @credentials.valid?
+        @domain.syncing = true
+        @domain.save!
+        @board.syncing = true
+        @board.save!
+        JiraTeamMetrics::SyncBoardJob.perform_later(@board.jira_id, @board.domain, @credentials.to_serializable_hash, sync_months)
+        render json: {}, status: 200
+      else
+        render partial: 'partials/sync_form', status: 400
+      end
     end
   end
 

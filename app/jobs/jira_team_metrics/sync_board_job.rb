@@ -3,17 +3,12 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
 
   def perform(jira_id, domain, credentials, months)
     board = find_target_board(jira_id, domain)
-    start_sync(board)
-    begin
-      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
+    @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
-      sync_issues(board, credentials, months)
-      create_filters(board, credentials)
-      build_reports(board)
-      activate(board)
-    ensure
-      end_sync(board)
-    end
+    sync_issues(board, credentials, months)
+    create_filters(board, credentials)
+    build_reports(board)
+    activate(board)
     @notifier.notify_complete
   end
 
@@ -119,20 +114,6 @@ private
     board.domain.boards
       .where(jira_id: board.jira_id, active: false)
       .each { |b| delete_board(b) }
-  end
-
-  def start_sync(board)
-    board.domain.transaction do
-      board.syncing = true
-      board.save
-    end
-  end
-
-  def end_sync(board)
-    board.transaction do
-      board.syncing = false
-      board.save
-    end
   end
 
   def find_target_board(jira_id, domain)

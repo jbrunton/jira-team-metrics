@@ -17,7 +17,7 @@ class JiraTeamMetrics::ModelUpdater
 
   def can_sync?(target_model = nil)
     target_model ||= @object
-    if @object.sync_in_progress?
+    if @object.domain.syncing?
       target_model.errors.add(:base, 'Synchronize job in progress, please wait.')
       false
     else

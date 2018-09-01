@@ -6,10 +6,6 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   has_many :filters, :dependent => :delete_all
   has_many :report_fragments, :dependent => :delete_all
 
-  def sync_in_progress?
-    domain.sync_in_progress?
-  end
-
   def exclusions
     exclusions_string = config_hash['exclude']
     exclusions_string ||= ''
