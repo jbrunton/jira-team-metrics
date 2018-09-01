@@ -26,8 +26,6 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
       if JiraTeamMetrics::ModelUpdater.new(@board).can_sync?(@credentials) && @credentials.valid?
         @domain.syncing = true
         @domain.save!
-        @board.syncing = true
-        @board.save!
         JiraTeamMetrics::SyncBoardJob.perform_later(@board.jira_id, @board.domain, @credentials.to_serializable_hash, sync_months)
         render json: {}, status: 200
       else
