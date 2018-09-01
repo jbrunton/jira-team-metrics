@@ -41,11 +41,8 @@ private
       when @model.is_a?(JiraTeamMetrics::Board)
         ActionCable.server.broadcast("sync_domain", message)
         ActionCable.server.broadcast("sync_board_#{@model.jira_id}", message)
-        #JiraTeamMetrics::SyncBoardChannel.broadcast_to(@model, message)
-        #JiraTeamMetrics::SyncDomainChannel.broadcast_to(@active_domain, message)
       when @model.is_a?(JiraTeamMetrics::Domain)
         ActionCable.server.broadcast("sync_domain", message)
-        #JiraTeamMetrics::SyncDomainChannel.broadcast_to(@active_domain, message)
       else
         raise "Unexpected model type: #{@model.class}"
     end
