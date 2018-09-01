@@ -1,7 +1,7 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(jira_id, domain, credentials, months, notify_complete = true)
+  def perform(jira_id, domain, credentials, months)
     prototype = domain.boards.find_by(jira_id: jira_id, active: true)
     board = copy_board(prototype)
     start_sync(board)
@@ -15,7 +15,10 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     ensure
       end_sync(board)
     end
-    @notifier.notify_complete if notify_complete
+    if domain.active?
+      # only notify complete if we're syncing this single board, not the whole domain
+      @notifier.notify_complete
+    end
   end
 
   def build_reports(board)
