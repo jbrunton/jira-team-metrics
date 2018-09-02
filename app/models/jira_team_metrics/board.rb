@@ -5,7 +5,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
   has_many :report_fragments, :dependent => :delete_all
-  
+
   def projects
     @projects ||= issues.select { |issue| issue.is_project? }
   end

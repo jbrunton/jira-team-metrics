@@ -26,7 +26,6 @@ class JiraTeamMetrics::StatusNotifier
       else
         raise "Unexpected model type: #{@model.class}"
     end
-    broadcast(message)
   end
 
   def notify_error(error, error_code = nil)
