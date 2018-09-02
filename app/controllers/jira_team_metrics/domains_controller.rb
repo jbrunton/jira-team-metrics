@@ -3,13 +3,13 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   include JiraTeamMetrics::ApplicationHelper
 
   def show
-    @boards = @domain.boards.select do |board|
+    @boards = @domain.boards.where(active: true).select do |board|
       !board.last_synced.nil?
     end
   end
 
   def update
-    @domain.transaction do
+    @domain.with_lock do
       if JiraTeamMetrics::ModelUpdater.new(@domain).update(domain_params)
         render json: {}, status: :ok
       else
@@ -19,10 +19,12 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def sync
-    @domain.transaction do
-      @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+    @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+    @domain.with_lock do
       if JiraTeamMetrics::ModelUpdater.new(@domain).can_sync?(@credentials) && @credentials.valid?
-        JiraTeamMetrics::SyncDomainJob.perform_later(@domain, @credentials.to_serializable_hash)
+        @domain.syncing = true
+        @domain.save!
+        JiraTeamMetrics::SyncDomainJob.perform_later(@credentials.to_serializable_hash)
         render json: {}, status: 200
       else
         render partial: 'partials/sync_form', status: 400

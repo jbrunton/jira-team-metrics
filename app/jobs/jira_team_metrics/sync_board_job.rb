@@ -1,25 +1,15 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(board, credentials, months, notify_complete = true)
-    board.domain.transaction do
-      board.syncing = true
-      board.save!
-    end
-    begin
-      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
+  def perform(jira_id, domain, credentials, months)
+    board = find_target_board(jira_id, domain)
+    @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
-      clear_cache(board)
-      sync_issues(board, credentials, months)
-      create_filters(board, credentials)
-      build_reports(board)
-    ensure
-      board.transaction do
-        board.syncing = false
-        board.save!
-      end
-    end
-    @notifier.notify_complete if notify_complete
+    sync_issues(board, credentials, months)
+    create_filters(board, credentials)
+    build_reports(board)
+    activate(board)
+    @notifier.notify_complete
   end
 
   def build_reports(board)
@@ -66,7 +56,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.save
   end
 
-  def clear_cache(board)
+  def delete_board(board)
+    # TODO: this should be done in destroy callbacks
     @notifier.notify_status('clearing cache')
 
     board.issues.update_all(epic_id: nil, project_id: nil, parent_id: nil)
@@ -74,6 +65,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.issues.destroy_all
     board.filters.destroy_all
     board.report_fragments.destroy_all
+    board.delete
   end
 
   def fetch_issues_for_query(board, query, credentials, status)
@@ -102,6 +94,36 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
         else
           raise "Unexpected filter type: #{filter}"
       end
+    end
+  end
+
+private
+  def copy_board(prototype)
+    attrs = prototype.slice('jira_id', 'name', 'query', 'config_string')
+    prototype.domain.boards.create(attrs.merge('active': false))
+  end
+
+  def activate(board)
+    board.domain.boards
+      .where(jira_id: board.jira_id)
+      .update_all(active: false)
+
+    board.active = true
+    board.save
+
+    board.domain.boards
+      .where(jira_id: board.jira_id, active: false)
+      .each { |b| delete_board(b) }
+  end
+
+  def find_target_board(jira_id, domain)
+    board = domain.boards.find_by(jira_id: jira_id, active: true)
+    if board.nil?
+      # no active board, meaning we're syncing a new domain
+      domain.boards.find_by(jira_id: jira_id)
+    else
+      # we have an active board, so copy it to sync
+      copy_board(board)
     end
   end
 end

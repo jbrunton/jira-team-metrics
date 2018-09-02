@@ -7,14 +7,12 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
 
   after_save :clear_cache
 
-  def synced_boards
-    boards.where.not(jira_team_metrics_boards: {last_synced: nil})
+  def domain
+    self
   end
 
-  def sync_in_progress?
-    self.transaction do
-      syncing? || boards.any? { |board| board.syncing? }
-    end
+  def synced_boards
+    boards.where.not(jira_team_metrics_boards: {last_synced: nil})
   end
 
   def status_category_for(status)
@@ -50,12 +48,12 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     @project_type == issue.issue_type
   end
 
-  def self.get_instance
-    @domain ||= JiraTeamMetrics::Domain.first_or_create
+  def self.get_active_instance
+    @active_domain ||= JiraTeamMetrics::Domain.first_or_create(active: true)
   end
 
   def self.clear_cache
-    @domain = nil
+    @active_domain = nil
   end
 
   def clear_cache

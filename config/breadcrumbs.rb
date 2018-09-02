@@ -1,5 +1,5 @@
 crumb :root do
-  domain = JiraTeamMetrics::Domain.get_instance
+  domain = JiraTeamMetrics::Domain.get_active_instance
   link domain.config.name, domain_path
 end
 

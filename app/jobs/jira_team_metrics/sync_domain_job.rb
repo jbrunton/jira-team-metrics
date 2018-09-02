@@ -1,36 +1,29 @@
 class JiraTeamMetrics::SyncDomainJob < ApplicationJob
   queue_as :default
 
-  def perform(domain, credentials)
-    domain.transaction do
-      domain.syncing = true
-      domain.save!
-    end
-    begin
-      @notifier = JiraTeamMetrics::StatusNotifier.new(domain, "syncing #{domain.config.name}")
-      clear_cache(domain)
-      boards, statuses, fields = fetch_data(domain, credentials)
-      update_cache(domain, boards, statuses, fields)
+  def perform(credentials)
+    active_domain = JiraTeamMetrics::Domain.get_active_instance
+    domain = copy_domain(active_domain)
 
-      domain.config.boards.each do |board_details|
-        board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
-        board.config_string = board_details.fetch_config_string(ENV['CONFIG_DIR'])
-        board.save
-        JiraTeamMetrics::SyncBoardJob.perform_now(board, credentials, board.config.sync_months, false)
-      end
-    ensure
-      domain.transaction do
-        domain.syncing = false
-        domain.save!
-      end
+    @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
+    boards, statuses, fields = fetch_data(domain, credentials)
+    update_cache(domain, boards, statuses, fields)
+
+    domain.config.boards.each do |board_details|
+      board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
+      board.config_string = board_details.fetch_config_string(ENV['CONFIG_DIR'])
+      board.save
+      JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months)
     end
+    activate(domain)
     @notifier.notify_complete
   end
 
 private
-  def clear_cache(domain)
+  def delete_domain(domain)
     @notifier.notify_status('clearing cache')
     domain.boards.destroy_all
+    domain.destroy
   end
 
   def fetch_data(domain, credentials)
@@ -49,6 +42,28 @@ private
 
       [boards, statuses, fields]
     end
+  end
+
+  def copy_domain(prototype)
+    attrs = prototype.slice('config_string')
+    JiraTeamMetrics::Domain.create(attrs.merge('active': false))
+  end
+
+  def activate(domain)
+    JiraTeamMetrics::Domain
+      .update_all(active: false)
+
+    domain.active = true
+    domain.save
+
+    JiraTeamMetrics::Domain
+      .where(active: false)
+      .each { |d| delete_domain(d) }
+
+    domain.boards
+      .update_all(active: true)
+
+    JiraTeamMetrics::Domain.clear_cache
   end
 
   def update_cache(domain, boards, statuses, fields)

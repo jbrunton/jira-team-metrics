@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_24_204751) do
+ActiveRecord::Schema.define(version: 2018_08_26_153824) do
 
   create_table "jira_team_metrics_boards", force: :cascade do |t|
     t.string "jira_id"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_204751) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "syncing"
+    t.boolean "active"
     t.index ["domain_id"], name: "index_jira_team_metrics_boards_on_domain_id"
   end
 
@@ -34,6 +35,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_204751) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "syncing"
+    t.boolean "active"
   end
 
   create_table "jira_team_metrics_filters", force: :cascade do |t|
