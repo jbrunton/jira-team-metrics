@@ -23,4 +23,17 @@ RSpec.describe JiraTeamMetrics::Domain do
       expect(domain.short_team_name('Mobile')).to eq('mobi')
     end
   end
+
+  describe "#status_color_for" do
+    it "returns the color for the given status category" do
+      [
+        { 'To Do'       => 'red' },
+        { 'Predicted'   => 'orange' },
+        { 'In Progress' => 'green' },
+        { 'Done'        => 'blue' }
+      ].each do |category, expected_color|
+        expect(domain.status_color_for(category)).to eq(expected_color)
+      end
+    end
+  end
 end
