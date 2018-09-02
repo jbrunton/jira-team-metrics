@@ -123,6 +123,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
       end
 
       it "returns a 200" do
+        expect(JiraTeamMetrics::SyncBoardJob).to receive(:perform_later)
         post :sync, params: {:board_id => board.jira_id, :credential => credentials}
         expect(response.status).to eq(200)
       end
@@ -162,6 +163,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
       it "re-renders the 'config' template" do
         post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+
         expect(response).to render_template('partials/_sync_form')
         expect(response.status).to eq(400)
       end
