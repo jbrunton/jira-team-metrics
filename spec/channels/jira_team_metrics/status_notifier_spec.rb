@@ -93,15 +93,30 @@ RSpec.describe JiraTeamMetrics::StatusNotifier do
       notifier.notify_status(status)
     end
 
-    context "if the domain is inactive" do
-      before(:each) { domain.active = false }
+    context "#notify_complete" do
+      context "if the domain is active" do
+        before(:each) { domain.active = true }
 
-      it "only sends the completion event to the board" do
-        expected_message = {
-          in_progress: false
-        }
-        expect(ActionCable.server).to receive(:broadcast).with("sync_board_#{board.jira_id}", expected_message)
-        notifier.notify_complete
+        it "only sends the message to the board and the domain" do
+          expected_message = {
+            in_progress: false
+          }
+          expect(ActionCable.server).to receive(:broadcast).with('sync_domain', expected_message)
+          expect(ActionCable.server).to receive(:broadcast).with("sync_board_#{board.jira_id}", expected_message)
+          notifier.notify_complete
+        end
+      end
+
+      context "if the domain is inactive" do
+        before(:each) { domain.active = false }
+
+        it "only sends the completion event to the board" do
+          expected_message = {
+            in_progress: false
+          }
+          expect(ActionCable.server).to receive(:broadcast).with("sync_board_#{board.jira_id}", expected_message)
+          notifier.notify_complete
+        end
       end
     end
   end
