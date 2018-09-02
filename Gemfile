@@ -17,4 +17,5 @@ group :development, :test do
   gem 'teaspoon-jasmine'
   gem 'autoprefixer-rails', '8.6.5'
   gem 'pry-rails'
+  gem 'webmock'
 end
