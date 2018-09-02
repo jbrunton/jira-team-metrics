@@ -2,14 +2,18 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
   def perform(jira_id, domain, credentials, months)
-    board = find_target_board(jira_id, domain)
-    @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
+    begin
+      board = find_target_board(jira_id, domain)
+      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
-    sync_issues(board, credentials, months)
-    create_filters(board, credentials)
-    build_reports(board)
-    activate(board)
-    @notifier.notify_complete
+      sync_issues(board, credentials, months)
+      create_filters(board, credentials)
+      build_reports(board)
+      activate(board)
+      @notifier.notify_complete
+    ensure
+      end_sync(domain) if domain.active?
+    end
   end
 
   def build_reports(board)
@@ -114,6 +118,13 @@ private
     board.domain.boards
       .where(jira_id: board.jira_id, active: false)
       .each { |b| delete_board(b) }
+  end
+
+  def end_sync(domain)
+    domain.with_lock do
+      domain.syncing = false
+      domain.save
+    end
   end
 
   def find_target_board(jira_id, domain)
