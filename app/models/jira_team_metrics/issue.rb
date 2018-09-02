@@ -85,18 +85,6 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     end
   end
 
-  def short_summary
-    summary.truncate(50, separator: /\s/)
-  end
-
-  def display_name
-    "#{key} - #{summary}"
-  end
-
-  def short_display_name
-    display_name.truncate(50, separator: /\s/)
-  end
-
   def started_time
     if is_scope?
       jira_started_time

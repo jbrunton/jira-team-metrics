@@ -110,4 +110,63 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
       end
     end
   end
+
+  describe "POST #sync" do
+    context "with valid params" do
+      let(:credentials) {
+        {:username => 'asd', :password => 'asd'}
+      }
+
+      it "syncs the board" do
+        expect(JiraTeamMetrics::SyncBoardJob).to receive(:perform_later)
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+      end
+
+      it "returns a 200" do
+        expect(JiraTeamMetrics::SyncBoardJob).to receive(:perform_later)
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "with invalid params" do
+      let(:credentials) {
+        {:username => 'asd'}
+      }
+
+      it "doesn't sync the board" do
+        expect(JiraTeamMetrics::SyncBoardJob).not_to receive(:perform_later)
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+      end
+
+      it "re-renders the 'config' template" do
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+        expect(response).to render_template('partials/_sync_form')
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "if the domain is syncing" do
+      let(:credentials) {
+        {:username => 'asd', :password => 'asd'}
+      }
+
+      before(:each) {
+        domain.syncing = true
+        domain.save
+      }
+
+      it "doesn't sync the board" do
+        expect(JiraTeamMetrics::SyncBoardJob).not_to receive(:perform_later)
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+      end
+
+      it "re-renders the 'config' template" do
+        post :sync, params: {:board_id => board.jira_id, :credential => credentials}
+
+        expect(response).to render_template('partials/_sync_form')
+        expect(response.status).to eq(400)
+      end
+    end
+  end
 end

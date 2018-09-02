@@ -2,21 +2,25 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
   queue_as :default
 
   def perform(credentials)
-    active_domain = JiraTeamMetrics::Domain.get_active_instance
-    domain = copy_domain(active_domain)
+    begin
+      active_domain = JiraTeamMetrics::Domain.get_active_instance
+      domain = copy_domain(active_domain)
 
-    @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
-    boards, statuses, fields = fetch_data(domain, credentials)
-    update_cache(domain, boards, statuses, fields)
+      @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
+      boards, statuses, fields = fetch_data(domain, credentials)
+      update_cache(domain, boards, statuses, fields)
 
-    domain.config.boards.each do |board_details|
-      board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
-      board.config_string = board_details.fetch_config_string(ENV['CONFIG_DIR'])
-      board.save
-      JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months)
+      domain.config.boards.each do |board_details|
+        board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
+        board.config_string = board_details.fetch_config_string(ENV['CONFIG_DIR'])
+        board.save
+        JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months)
+      end
+      activate(domain)
+      @notifier.notify_complete
+    ensure
+      end_sync(active_domain) unless active_domain.destroyed?
     end
-    activate(domain)
-    @notifier.notify_complete
   end
 
 private
@@ -64,6 +68,13 @@ private
       .update_all(active: true)
 
     JiraTeamMetrics::Domain.clear_cache
+  end
+
+  def end_sync(domain)
+    domain.with_lock do
+      domain.syncing = false
+      domain.save
+    end
   end
 
   def update_cache(domain, boards, statuses, fields)

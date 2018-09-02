@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::Board do
   let(:board) { create(:board) }
   let!(:project) { create(:project, board: board) }
-  let!(:epic) { create(:epic, board: board) }
-  let!(:story) { create(:issue, board: board) }
+  let!(:epic) { create(:epic, project: project) }
+  let!(:story) { create(:issue, epic: epic) }
 
   describe "#projects" do
     it "returns a list of issues that are projects" do
@@ -19,6 +19,30 @@ RSpec.describe JiraTeamMetrics::Board do
 
     it "decorates the list" do
       expect(board.epics.first.class).to eq(JiraTeamMetrics::Epic)
+    end
+  end
+
+  describe "#issues_in_epic" do
+    it "returns the issues in an epic" do
+      expect(board.issues_in_epic(epic)).to eq([story])
+    end
+  end
+
+  describe "#issues_in_project" do
+    context "when recursive = false" do
+      let(:opts) { { recursive: false} }
+
+      it "returns the issues directly linked to the project" do
+        expect(board.issues_in_project(project, opts)).to eq([epic])
+      end
+    end
+
+    context "when recursive = true" do
+      let(:opts) { { recursive: true} }
+
+      it "returns the issues in a project recursively" do
+        expect(board.issues_in_project(project, opts)).to eq([epic, story])
+      end
     end
   end
   
