@@ -2,6 +2,25 @@ require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::Board do
   let(:board) { create(:board) }
+  let!(:project) { create(:project, board: board) }
+  let!(:epic) { create(:epic, board: board) }
+  let!(:story) { create(:issue, board: board) }
+
+  describe "#projects" do
+    it "returns a list of issues that are projects" do
+      expect(board.projects).to eq([project])
+    end
+  end
+
+  describe "#epics" do
+    it "returns a list of epics" do
+      expect(board.epics).to eq([epic])
+    end
+
+    it "decorates the list" do
+      expect(board.epics.first.class).to eq(JiraTeamMetrics::Epic)
+    end
+  end
   
   describe "#sync_from" do
     context "when the rounded date is the same year" do
