@@ -13,10 +13,12 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def update
-    if JiraTeamMetrics::ModelUpdater.new(@board).update(board_params)
-      render json: {}, status: :ok
-    else
-      render partial: 'partials/config_form', status: 400
+    @domain.with_lock do
+      if JiraTeamMetrics::ModelUpdater.new(@board).update(board_params)
+        render json: {}, status: :ok
+      else
+        render partial: 'partials/config_form', status: 400
+      end
     end
   end
 
