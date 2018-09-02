@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::Domain do
-  let!(:domain) { create(:domain) }
+  let!(:domain) { create(:domain, active: true) }
 
   describe "#get_instance" do
-    it "returns the domain instance" do
-      expect(JiraTeamMetrics::Domain.get_instance).to eq(domain)
+    it "returns the active domain instance" do
+      expect(JiraTeamMetrics::Domain.get_active_instance).to eq(domain)
     end
   end
 

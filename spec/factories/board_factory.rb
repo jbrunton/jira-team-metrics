@@ -5,5 +5,6 @@ FactoryBot.define do
     domain
     config_string { "default_query: filter = 'MyFilter'" }
     query 'Project = MyProject'
+    active true
   end
 end
