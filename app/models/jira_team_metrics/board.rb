@@ -25,7 +25,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     if opts[:recursive]
       issues.where(project: project)
     else
-      issue.where(parent: project)
+      issues.where(parent: project)
     end
   end
 

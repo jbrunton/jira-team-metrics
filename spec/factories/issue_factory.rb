@@ -43,21 +43,26 @@ FactoryBot.define do
         }
       end
 
-      assign_project = lambda do |issue, project|
-        issue.links << {
-          'inward_link_type' => 'is included in',
-          'issue' => {
-            'issue_type' => project.issue_type,
-            'key' => project.key,
-            'summary' => project.summary
+      assign_project = lambda do |issue, project, add_links|
+        if add_links
+          issue.links << {
+            'inward_link_type' => 'is included in',
+            'issue' => {
+              'issue_type' => project.issue_type,
+              'key' => project.key,
+              'summary' => project.summary
+            }
           }
-        }
+          issue.parent_key = project.key
+          issue.parent = project
+        end
         issue.project_key = project.key
         issue.project = project
+        issue.board = project.board
       end
 
       if evaluator.project
-        assign_project.call(issue, evaluator.project)
+        assign_project.call(issue, evaluator.project, true)
       end
 
       if evaluator.epic
@@ -67,7 +72,7 @@ FactoryBot.define do
         issue.epic = evaluator.epic
 
         if issue.project.nil? && evaluator.epic.project
-          assign_project.call(issue, evaluator.epic.project)
+          assign_project.call(issue, evaluator.epic.project, false)
         end
       end
     end
