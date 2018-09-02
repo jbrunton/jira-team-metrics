@@ -3,6 +3,10 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::Issue do
   before(:each) { create(:domain) }
 
+  let(:project) { create(:project) }
+  let(:epic) { create(:epic) }
+  let(:story) { create(:issue, epic: epic) }
+
   let(:analysis_transition) {
     {
       'date' => '2017-01-01T12:00:00.000-0000',
@@ -55,6 +59,7 @@ RSpec.describe JiraTeamMetrics::Issue do
 
   let(:issue) {
     create(:issue,
+      key: 'ISSUE-101',
       board: board,
       issue_type: 'Story',
       transitions: [
@@ -77,6 +82,48 @@ RSpec.describe JiraTeamMetrics::Issue do
       in_test_transition,
       done_transition
     ])
+  end
+
+  describe "#hierarchy_level" do
+    it "returns the hierarchy level for the issue" do
+      {
+        issue => 'Scope',
+        epic => 'Epic',
+        project => 'Project'
+      }.each do |issue, expected_hierarchy_level|
+        expect(issue.hierarchy_level).to eq(expected_hierarchy_level)
+      end
+    end
+  end
+
+  describe "#teams" do
+    context "for epics" do
+      let(:epic) { create(:issue, board: board, issue_type: 'Epic', fields: { 'Teams' => ['Android', 'iOS']}) }
+
+      it "returns the teams assigned to the epic" do
+        expect(epic.teams).to eq(['Android', 'iOS'])
+      end
+    end
+
+    context "for issues" do
+      let(:epic) { create(:issue, board: board, issue_type: 'Epic', fields: { 'Teams' => ['Android', 'iOS']}) }
+
+      it "inherits teams from the parent epic if none are assigned" do
+        issue = create(:issue, board: board, issue_type: 'Epic', fields: {
+          'Teams' => ['Android', 'iOS'],
+          'Epic Link' => epic.key
+        })
+        expect(issue.teams).to eq(['Android', 'iOS'])
+      end
+
+      it "returns the teams from the issue if assigned" do
+        issue = create(:issue, board: board, issue_type: 'Epic', fields: {
+          'Teams' => ['Android'],
+          'Epic Link' => epic.key
+        })
+        expect(issue.teams).to eq(['Android'])
+      end
+    end
   end
 
   describe "#is_epic?" do
@@ -276,33 +323,9 @@ RSpec.describe JiraTeamMetrics::Issue do
     end
   end
 
-  describe "#teams" do
-    context "for epics" do
-      let(:epic) { create(:issue, board: board, issue_type: 'Epic', fields: { 'Teams' => ['Android', 'iOS']}) }
-
-      it "returns the teams assigned to the epic" do
-        expect(epic.teams).to eq(['Android', 'iOS'])
-      end
-    end
-
-    context "for issues" do
-      let(:epic) { create(:issue, board: board, issue_type: 'Epic', fields: { 'Teams' => ['Android', 'iOS']}) }
-
-      it "inherits teams from the parent epic if none are assigned" do
-        issue = create(:issue, board: board, issue_type: 'Epic', fields: {
-            'Teams' => ['Android', 'iOS'],
-            'Epic Link' => epic.key
-        })
-        expect(issue.teams).to eq(['Android', 'iOS'])
-      end
-
-      it "returns the teams from the issue if assigned" do
-        issue = create(:issue, board: board, issue_type: 'Epic', fields: {
-            'Teams' => ['Android'],
-            'Epic Link' => epic.key
-        })
-        expect(issue.teams).to eq(['Android'])
-      end
+  describe "#domain_url" do
+    it "returns the url for the issue on the Jira domain" do
+      expect(issue.domain_url).to eq('https://jira.example.com/browse/ISSUE-101')
     end
   end
 end
