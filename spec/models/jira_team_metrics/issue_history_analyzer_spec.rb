@@ -64,55 +64,65 @@ RSpec.describe JiraTeamMetrics::Issue do
   end
 
   describe "#history_as_ranges" do
-    it "returns a list of status changes with ranges" do
-      expect(analyzer.history_as_ranges).to eq([
-          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
-              'Analysis',
-              'To Do',
-              JiraTeamMetrics::DateRange.new(
-                  DateTime.parse('2017-01-01T12:00:00.000-0000'),
-                  DateTime.parse('2017-01-02T12:00:00.000-0000')
-              )
-          ),
-          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
-              'In Progress',
-              'In Progress',
-              JiraTeamMetrics::DateRange.new(
-                  DateTime.parse('2017-01-02T12:00:00.000-0000'),
-                  DateTime.parse('2017-01-03T12:00:00.000-0000')
-              )
-          ),
-          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
-              'Blocked',
-              'To Do',
-              JiraTeamMetrics::DateRange.new(
-                  DateTime.parse('2017-01-03T12:00:00.000-0000'),
-                  DateTime.parse('2017-01-04T12:00:00.000-0000')
-              )
-          ),
-          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
-              'In Progress',
-              'In Progress',
-              JiraTeamMetrics::DateRange.new(
-                  DateTime.parse('2017-01-04T12:00:00.000-0000'),
-                  DateTime.parse('2017-01-04T18:00:00.000-0000')
-              )
-          ),
-          JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
-              'Done',
-              'Done',
-              JiraTeamMetrics::DateRange.new(
-                  DateTime.parse('2017-01-04T18:00:00.000-0000'),
-                  DateTime.parse('2017-01-05T12:00:00.000-0000')
-              )
-          )
-      ])
+    context "when the issue has no transitions" do
+      before(:each) { issue.transitions = [] }
+
+      it "returns an empty list" do
+        expect(analyzer.history_as_ranges).to eq([])
+      end
+    end
+
+    context "when the issue has transitions" do
+      it "returns a list of status changes with ranges" do
+        expect(analyzer.history_as_ranges).to eq([
+            JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+                'Analysis',
+                'To Do',
+                JiraTeamMetrics::DateRange.new(
+                    DateTime.parse('2017-01-01T12:00:00.000-0000'),
+                    DateTime.parse('2017-01-02T12:00:00.000-0000')
+                )
+            ),
+            JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+                'In Progress',
+                'In Progress',
+                JiraTeamMetrics::DateRange.new(
+                    DateTime.parse('2017-01-02T12:00:00.000-0000'),
+                    DateTime.parse('2017-01-03T12:00:00.000-0000')
+                )
+            ),
+            JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+                'Blocked',
+                'To Do',
+                JiraTeamMetrics::DateRange.new(
+                    DateTime.parse('2017-01-03T12:00:00.000-0000'),
+                    DateTime.parse('2017-01-04T12:00:00.000-0000')
+                )
+            ),
+            JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+                'In Progress',
+                'In Progress',
+                JiraTeamMetrics::DateRange.new(
+                    DateTime.parse('2017-01-04T12:00:00.000-0000'),
+                    DateTime.parse('2017-01-04T18:00:00.000-0000')
+                )
+            ),
+            JiraTeamMetrics::IssueHistoryAnalyzer::StatusHistory.new(
+                'Done',
+                'Done',
+                JiraTeamMetrics::DateRange.new(
+                    DateTime.parse('2017-01-04T18:00:00.000-0000'),
+                    DateTime.parse('2017-01-05T12:00:00.000-0000')
+                )
+            )
+        ])
+      end
     end
   end
 
   describe "#time_in_category" do
     context "when given no date range" do
-      xit "returns the total time in the given category" do
+      it "returns the total time in the given category" do
         expect(analyzer.time_in_category('In Progress')).to eq(1.25)
       end
     end
@@ -120,10 +130,18 @@ RSpec.describe JiraTeamMetrics::Issue do
     context "when given a date range" do
       it "returns the total time in the given category in that range" do
         date_range = JiraTeamMetrics::DateRange.new(
-            DateTime.parse('2017-01-02T00:00:00.000-0000'),
-            DateTime.parse('2017-01-04T00:00:00.000-0000')
+          DateTime.parse('2017-01-02T00:00:00.000-0000'),
+          DateTime.parse('2017-01-04T00:00:00.000-0000')
         )
         expect(analyzer.time_in_category('In Progress', date_range)).to eq(1.0)
+      end
+
+      it "returns 0 if no time was spent in the given category for the given range" do
+        date_range = JiraTeamMetrics::DateRange.new(
+          DateTime.parse('2017-01-01T00:00:00.000-0000'),
+          DateTime.parse('2017-01-02T00:00:00.000-0000')
+        )
+        expect(analyzer.time_in_category('In Progress', date_range)).to eq(0.0)
       end
     end
   end
