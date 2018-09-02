@@ -41,10 +41,6 @@ private
     params.require(:credential).permit(:username, :password)
   end
 
-  def subquery
-    params.permit(:subquery)[:subquery]
-  end
-
   def sync_months
     months = params.permit(:months)[:months]
     months.blank? ? nil : months.to_i
