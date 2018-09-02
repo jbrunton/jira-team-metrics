@@ -6,12 +6,6 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   has_many :filters, :dependent => :delete_all
   has_many :report_fragments, :dependent => :delete_all
 
-  def exclusions
-    exclusions_string = config_hash['exclude']
-    exclusions_string ||= ''
-    exclusions_string.split
-  end
-
   def config_filters
     (config_hash['filters'] || []).map{ |h| h.deep_symbolize_keys }
   end
@@ -60,17 +54,6 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
 
   def issue_types
     issues.map{ |issue| issue.issue_type }.uniq
-  end
-
-  def config_property(property)
-    *scopes, property_name = property.split('.')
-    config = config_hash
-    while !scopes.empty?
-      config = config[scopes.shift] || {}
-    end
-    value = config[property_name]
-    value.deep_symbolize_keys! if value.is_a?(Hash)
-    value
   end
 
   def training_board
