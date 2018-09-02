@@ -23,9 +23,9 @@ RSpec.describe JiraTeamMetrics::JiraClient do
     stub_request(:get, "https://jira.example.com/rest/api/2/search?expand=changelog&maxResults=50").
         to_return(status: 200, body: response_text)
     issues = client.search_issues(domain, {})
-    expect(issue_attrs(issues)).to eq({
-      'key' => 'ISSUE-1', 'summary' => 'Issue Summary'
-    })
+    expect(issue_attrs(issues)).to eq([
+      { 'key' => 'ISSUE-1', 'summary' => 'Issue Summary' }
+    ])
   end
 
   def issue_attrs(issues)
