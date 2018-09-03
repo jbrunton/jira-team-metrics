@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.20.2](https://github.com/jbrunton/jira-team-metrics/tree/0.20.2) (2018-09-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.20.1...0.20.2)
+
+**Merged pull requests:**
+
+- Ensure syncing? flag set to false if error thrown during sync [\#423](https://github.com/jbrunton/jira-team-metrics/pull/423) ([jbrunton](https://github.com/jbrunton))
+
+## [0.20.1](https://github.com/jbrunton/jira-team-metrics/tree/0.20.1) (2018-09-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.20.0...0.20.1)
+
+**Merged pull requests:**
+
+- Prepare database on startup [\#422](https://github.com/jbrunton/jira-team-metrics/pull/422) ([jbrunton](https://github.com/jbrunton))
+
+## [0.20.0](https://github.com/jbrunton/jira-team-metrics/tree/0.20.0) (2018-09-02)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.19.0...0.20.0)
+
+**Merged pull requests:**
+
+- update changelog [\#421](https://github.com/jbrunton/jira-team-metrics/pull/421) ([jbrunton](https://github.com/jbrunton))
+- Sync data in background [\#419](https://github.com/jbrunton/jira-team-metrics/pull/419) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.19.0](https://github.com/jbrunton/jira-team-metrics/tree/0.19.0) (2018-08-26)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.18.4...0.19.0)
 
