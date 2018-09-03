@@ -12,4 +12,16 @@ class JiraTeamMetrics::BaseConfig
     schema = rx.make_schema(YAML.load_file(schema_path))
     schema.check!(config_hash)
   end
+
+  def report_options_for(report_name)
+    if config_hash['reports'] && config_hash['reports'][report_name]
+      sections = config_hash['reports'][report_name]['sections'].map do |section_hash|
+        ReportSection.new(section_hash['title'], section_hash['mql'], section_hash['collapsed'])
+      end
+      ReportOptions.new(sections, config_hash['reports'][report_name]['backing_query'])
+    end
+  end
+
+  ReportSection = Struct.new(:title, :mql, :collapsed)
+  ReportOptions = Struct.new(:sections, :backing_query)
 end
