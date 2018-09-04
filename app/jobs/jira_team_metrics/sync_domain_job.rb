@@ -41,7 +41,7 @@ private
 
       @notifier.notify_status('fetching fields from JIRA')
       fields = client.get_fields.select do |field|
-        (['Epic Link'] + domain.config.fields).include?(field['name'])
+        (['Epic Link', 'Global Rank'] + domain.config.fields).include?(field['name'])
       end
 
       [boards, statuses, fields]
