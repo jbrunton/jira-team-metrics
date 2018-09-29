@@ -62,4 +62,12 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
       config_hash['rolling_window']['days'].to_i
     end
   end
+
+  def epics_report_options(domain)
+    report_options_for('epics') || domain.config.report_options_for('epics')
+  end
+
+  def projects_report_options(domain)
+    report_options_for('projects') || domain.config.report_options_for('projects')
+  end
 end

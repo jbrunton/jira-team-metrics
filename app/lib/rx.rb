@@ -76,7 +76,7 @@ class Rx
     uri = expand_uri(schema['type'])
 
     if ! @type_registry.has_key?(uri) then
-      raise Rx::Exception.new('unknown type')
+      raise Rx::Exception.new("unknown type: #{uri}")
     end
 
     type_class = @type_registry[uri]

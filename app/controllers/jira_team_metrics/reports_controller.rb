@@ -11,7 +11,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def projects
-    @sections = sections_for(@board.projects, @domain.config.projects_report_options)
+    @sections = sections_for(@board.projects, @board.config.projects_report_options(@domain))
   end
 
   def project
@@ -28,7 +28,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    @sections = sections_for(@board.epics, @domain.config.epics_report_options)
+    @sections = sections_for(@board.epics, @board.config.epics_report_options(@domain))
   end
 
   def epic
@@ -106,12 +106,14 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
 private
   def sections_for(issues, report_options)
-    mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, issues)
+    backing_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, issues)
+    backing_issues = backing_interpreter.eval(report_options.backing_query)
+    sections_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, backing_issues)
     if report_options.sections.any?
       report_options.sections.map do |section|
         {
           title: section.title,
-          issues: mql_interpreter.eval(section.mql),
+          issues: sections_interpreter.eval(section.mql),
           collapsed: section.collapsed
         }
       end
