@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.21.0](https://github.com/jbrunton/jira-team-metrics/tree/0.21.0) (2018-09-29)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.20.3...0.21.0)
+
+**Merged pull requests:**
+
+- bump version [\#436](https://github.com/jbrunton/jira-team-metrics/pull/436) ([jbrunton](https://github.com/jbrunton))
+- Show backlogs in a single column list [\#435](https://github.com/jbrunton/jira-team-metrics/pull/435) ([jbrunton](https://github.com/jbrunton))
+- Add relative date expressions to MQL [\#433](https://github.com/jbrunton/jira-team-metrics/pull/433) ([jbrunton](https://github.com/jbrunton))
+- set default for WEB\_CONCURRENCY to 0 for dummy app [\#432](https://github.com/jbrunton/jira-team-metrics/pull/432) ([jbrunton](https://github.com/jbrunton))
+- add epic reports options to board config [\#429](https://github.com/jbrunton/jira-team-metrics/pull/429) ([jbrunton](https://github.com/jbrunton))
+
+## [0.20.3](https://github.com/jbrunton/jira-team-metrics/tree/0.20.3) (2018-09-04)
+[Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.20.2...0.20.3)
+
+**Merged pull requests:**
+
+- Fix Global Rank sync [\#427](https://github.com/jbrunton/jira-team-metrics/pull/427) ([jbrunton](https://github.com/jbrunton))
+- update changelog [\#426](https://github.com/jbrunton/jira-team-metrics/pull/426) ([jbrunton](https://github.com/jbrunton))
+
 ## [0.20.2](https://github.com/jbrunton/jira-team-metrics/tree/0.20.2) (2018-09-02)
 [Full Changelog](https://github.com/jbrunton/jira-team-metrics/compare/0.20.1...0.20.2)
 
