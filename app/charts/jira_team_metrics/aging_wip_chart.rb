@@ -44,14 +44,17 @@ class JiraTeamMetrics::AgingWipChart
 
 private
   def wip_issues
-    JiraTeamMetrics::MqlInterpreter.new(@board, @board.wip_issues)
+    issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
+    JiraTeamMetrics::MqlInterpreter.new(@board, issues)
         .eval(@params.to_query)
         .sort_by { |issue| issue.started_time }
   end
 
   def completed_issues
+    query_builder = JiraTeamMetrics::QueryBuilder.new(@params.to_query, :mql)
+        .and(@board.config.aging_wip_completed_query(@board.domain))
     JiraTeamMetrics::MqlInterpreter.new(@board, @board.completed_issues(@params.date_range))
-        .eval(@params.to_query)
+        .eval(query_builder.query)
         .sort_by { |issue| issue.cycle_time }
   end
 

@@ -68,5 +68,9 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
   def scatterplot_default_query
     report_property_for('scatterplot', 'default_query')
   end
+
+  def aging_wip_completed_query
+    report_property_for('aging_wip', 'completed_query')
+  end
 end
 
