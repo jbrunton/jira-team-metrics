@@ -62,6 +62,23 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       end
     end
 
+    context "when given a date comparison" do
+      let(:issue_a) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 10) }
+      let(:issue_b) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 8, completed_time: DateTime.now - 6) }
+      let(:issue_c) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 6, completed_time: DateTime.now - 2) }
+
+      it "filters issues by the date" do
+        {
+            'completedTime > -4 days' => [issue_c],
+            'completedTime > -8 days' => [issue_b, issue_c],
+            'startedTime < -7 days' => [issue_a, issue_b]
+        }.each do |expr, expected_issues|
+          issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval(expr)
+          expect(issues).to eq(expected_issues)
+        end
+      end
+    end
+
     context "when given a project comparison" do
       xit "returns issues in the given project"
       xit "filters out issues that aren't in the given project"

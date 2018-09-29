@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::IssueFieldResolver do
   let(:project) { create(:project) }
   let(:epic) { create(:epic, project: project) }
+  let(:started_time) { DateTime.new(2017, 1, 1) }
+  let(:completed_time) { DateTime.new(2017, 2, 1) }
   let(:issue) do
     create(:issue,
       key: 'ISSUE-101',
@@ -11,7 +13,9 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       project: project,
       status: 'In Progress',
       fields: {'MyField' => 'foo'},
-      labels: ['foo'])
+      labels: ['foo'],
+      started_time: started_time,
+      completed_time: completed_time)
   end
 
   let(:resolver) { JiraTeamMetrics::IssueFieldResolver.new(issue) }
@@ -37,6 +41,11 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
 
     it "resolves the epic key" do
       expect(resolver.resolve('epic')).to eq(epic.key)
+    end
+
+    it "resolved started and completed times" do
+      expect(resolver.resolve('startedTime')).to eq(started_time)
+      expect(resolver.resolve('completedTime')).to eq(completed_time)
     end
   end
 end
