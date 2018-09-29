@@ -28,6 +28,14 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
             'mql' => "status = 'In Progress'"
           }
         ]
+      },
+      'projects' => {
+        'sections' => [
+          {
+            'title' => 'In Progress',
+            'mql' => "status = 'In Progress'"
+          }
+        ]
       }
     }
   end
@@ -149,7 +157,7 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
 
   context "#epics_report_options" do
     it "is optional" do
-      config_hash.delete('reports')
+      config_hash['reports'].delete('epics')
       domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
 
       domain_config.validate
@@ -160,14 +168,39 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
     it "returns an array of sections when defined" do
       domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
       expect(domain_config.epics_report_options).to eq(
-        JiraTeamMetrics::DomainConfig::ReportOptions.new(
-          [
-            JiraTeamMetrics::DomainConfig::ReportSection.new(
-              'In Progress',
-              "status = 'In Progress'"
-            )
-          ]
-        )
+          JiraTeamMetrics::BaseConfig::ReportOptions.new(
+              [
+                  JiraTeamMetrics::BaseConfig::ReportSection.new(
+                      'In Progress',
+                      "status = 'In Progress'"
+                  )
+              ]
+          )
+      )
+    end
+  end
+
+  context "#projects_report_options" do
+    it "is optional" do
+      config_hash['reports'].delete('projects')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+
+      domain_config.validate
+
+      expect(domain_config.projects_report_options.sections).to eq([])
+    end
+
+    it "returns an array of sections when defined" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.projects_report_options).to eq(
+          JiraTeamMetrics::BaseConfig::ReportOptions.new(
+              [
+                  JiraTeamMetrics::BaseConfig::ReportSection.new(
+                      'In Progress',
+                      "status = 'In Progress'"
+                  )
+              ]
+          )
       )
     end
   end

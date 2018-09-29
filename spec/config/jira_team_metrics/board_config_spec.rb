@@ -2,11 +2,48 @@ require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::BoardConfig do
   let(:default_query) { "not (filter = 'Outliers')" }
+  let(:board_reports) do
+    {
+        'epics' => {
+            'sections' => [
+                {
+                    'title' => 'Board In Progress',
+                    'mql' => "status = 'In Progress'"
+                }
+            ]
+        },
+        'projects' => {
+            'sections' => [
+                {
+                    'title' => 'Board In Progress',
+                    'mql' => "status = 'In Progress'"
+                }
+            ]
+        }
+    }
+  end
 
   let(:config_hash) do
     {
-      'default_query' => default_query
+      'default_query' => default_query,
+      'reports' => board_reports
     }
+  end
+
+  let(:domain) do
+    create(:domain, config_string: <<~EOF
+      url: example.com
+      reports:
+        epics:
+          sections:
+            - title: 'Domain In Progress'
+              mql: status = 'In Progress'
+        projects:
+          sections:
+            - title: 'Domain In Progress'
+              mql: status = 'In Progress'
+    EOF
+    )
   end
 
   it "initializes #config_hash" do
@@ -128,6 +165,42 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
         board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
         expect(board_config.sync_months).to eq(6)
       end
+    end
+  end
+
+  context "#epics_report_options" do
+    it "returns an array of sections when defined" do
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expected_options = JiraTeamMetrics::BaseConfig::ReportOptions.new(
+          [
+              JiraTeamMetrics::BaseConfig::ReportSection.new(
+                  'Board In Progress',
+                  "status = 'In Progress'"
+              )
+          ]
+      )
+
+
+      actual_options = board_config.epics_report_options(domain)
+
+      expect(actual_options).to eq(expected_options)
+    end
+
+    it "returns the domain sections when not defined" do
+      config_hash['reports'].delete('epics')
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expected_options = JiraTeamMetrics::BaseConfig::ReportOptions.new(
+          [
+              JiraTeamMetrics::BaseConfig::ReportSection.new(
+                  'Domain In Progress',
+                  "status = 'In Progress'"
+              )
+          ]
+      )
+
+      actual_options = board_config.epics_report_options(domain)
+
+      expect(actual_options).to eq(expected_options)
     end
   end
 end
