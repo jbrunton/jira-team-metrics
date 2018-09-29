@@ -25,6 +25,12 @@ class JiraTeamMetrics::BaseConfig
     end
   end
 
+  def report_property_for(report_name, property_name)
+    if config_hash['reports'] && config_hash['reports'][report_name]
+      config_hash['reports'][report_name][property_name]
+    end
+  end
+
   ReportSection = Struct.new(:title, :mql, :collapsed)
   ReportOptions = Struct.new(:sections, :backing_query)
 end

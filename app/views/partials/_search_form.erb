@@ -114,7 +114,7 @@
           </div>
         </label>
         <div class="ui action input">
-          <input type="text" class="mono" id="query" name="query" value="<%= @report_params.query %>"/>
+          <input type="text" class="mono" id="query" name="query" value="<%= @report_params.query || @default_query %>"/>
           <button class="ui button" type="submit" id="search-submit" name="search-submit">Search</button>
         </div>
       </div>

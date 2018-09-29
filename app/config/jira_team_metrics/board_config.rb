@@ -70,4 +70,8 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
   def projects_report_options(domain)
     report_options_for('projects') || domain.config.report_options_for('projects')
   end
+
+  def scatterplot_default_query(domain)
+    report_property_for('scatterplot', 'default_query') || domain.config.scatterplot_default_query
+  end
 end

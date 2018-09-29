@@ -29,3 +29,7 @@ optional:
             mql: "//str"
           optional:
             collapsed: "//bool"
+  scatterplot:
+    type: "//rec"
+    optional:
+      default_query: "//str"
