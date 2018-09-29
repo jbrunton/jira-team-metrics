@@ -21,22 +21,26 @@ class JiraTeamMetrics::MqlInterpreter
 
     rule(:and_operator) { str("and") >> space? }
     rule(:or_operator)  { str("or")  >> space? }
+    rule(:kw_days) { (str('days') | str('day')) >> space? }
     rule(:lparen) { str("(") >> space? }
     rule(:rparen) { str(")") >> space? }
     rule(:comma)  { str(",") >> space? }
+    rule(:digit) { match['0-9'] }
 
+    rule(:integer) { (str('-').maybe >> digit.repeat(1)).as(:value) >> space? }
     rule(:identifier) { match('[a-zA-Z_]').repeat(1).as(:identifier) >> space? }
-    rule(:operator)   { (str('=') | str('and') | str('includes')).as(:op) >> space? }
+    rule(:operator)   { (str('=') | str('and') | str('includes') | str('<') | str('>')).as(:op) >> space? }
     rule(:filter)     { str('filter') >> space? >> operator >> string.as(:filter) }
     rule(:between)    { (str('between') >> space? >> lparen >> string.as(:left) >> comma >> string.as(:right) >> rparen).as(:between) }
     rule(:comparison) { (string | identifier).as(:field) >> operator >> string.as(:string) }
+    rule(:date_comparison) { (string | identifier).as(:date_field) >> operator >> integer.as(:days) >> kw_days }
     rule(:contains) { (string | identifier).as(:field) >> operator >> string.as(:string) }
     rule :string do
       str("'") >>
         (str("'").absent? >> any).repeat.as(:value) >>
         str("'") >> space?
     end
-    rule(:expression) { filter | comparison | not_expression | between | contains | boolean_expression | sort_expression }
+    rule(:expression) { filter | comparison | date_comparison | not_expression | between | contains | boolean_expression | sort_expression }
 
     rule(:not_expression) { str('not') >> space? >> primary.as(:not) }
 
@@ -79,7 +83,15 @@ class JiraTeamMetrics::MqlInterpreter
     rule(
       :field => subtree(:field),
       :op => '=',
-      :string => subtree(:string)) { Comparison.new(field, string) }
+      :string => subtree(:string)) { EqlComparison.new(field, string) }
+    rule(
+      :date_field => subtree(:date_field),
+      :op => '>',
+      :days => subtree(:days)) { DateComparison.new(date_field, days, '>') }
+    rule(
+      :date_field => subtree(:date_field),
+      :op => '<',
+      :days => subtree(:days)) { DateComparison.new(date_field, days, '<') }
     rule(
       :field => subtree(:field),
       :op => 'includes',
@@ -213,7 +225,7 @@ class JiraTeamMetrics::MqlInterpreter
     end
   end
 
-  Comparison = Struct.new(:field, :value) do
+  EqlComparison = Struct.new(:field, :value) do
     def eval(_, issues)
       issues.select { |issue| compare_with(issue) }
     end
@@ -228,6 +240,33 @@ class JiraTeamMetrics::MqlInterpreter
 
     def field_value
       @field_value ||= value[:value].to_s
+    end
+  end
+
+  DateComparison = Struct.new(:date_field, :days, :op) do
+    def eval(_, issues)
+      issues.select { |issue| compare_with(issue) }
+    end
+
+    def compare_with(issue)
+      date = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
+      days = field_value
+      case op
+        when '>'
+          !date.nil? && date > DateTime.now + days
+        when '<'
+          !date.nil? && date < DateTime.now + days
+        else
+          raise "Unexpected operator: #{op}"
+      end
+    end
+
+    def field_name
+      @field_name ||= (date_field[:identifier] || date_field[:value]).to_s
+    end
+
+    def field_value
+      @field_value ||= days[:value].to_i
     end
   end
 end
