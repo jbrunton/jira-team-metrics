@@ -38,6 +38,8 @@ private
     'completedTime' => 'completed_time',
     'labels' => 'labels',
     'resolution' => 'resolution',
-    'Global Rank' => 'global_rank'
+    'Global Rank' => 'global_rank',
+    'startedTime' => 'started_time',
+    'completedTime' => 'completed_time'
   }
 end
