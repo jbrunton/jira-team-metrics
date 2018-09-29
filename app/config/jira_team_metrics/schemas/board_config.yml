@@ -55,34 +55,4 @@ optional:
     required:
       months: "//int"
 
-  reports:
-    type: "//rec"
-    optional:
-      epics:
-        type: "//rec"
-        optional:
-          backing_query: "//str"
-        required:
-          sections:
-            type: "//arr"
-            contents:
-              type: "//rec"
-              required:
-                title: "//str"
-                mql: "//str"
-              optional:
-                collapsed: "//bool"
-      projects:
-        type: "//rec"
-        optional:
-          backing_query: "//str"
-        required:
-          sections:
-            type: "//arr"
-            contents:
-              type: "//rec"
-              required:
-                title: "//str"
-                mql: "//str"
-              optional:
-                collapsed: "//bool"
+  reports: "/metrics/reports-config"
