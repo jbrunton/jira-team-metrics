@@ -6,40 +6,44 @@
     <div class="ui horizontal divider">
       <h3><%= section[:title] %></h3>
     </div>
-    <div class="ui three column cards">
+    <div class="ui one column cards">
       <% section[:issues].each do |project| %>
           <% dashboard_data = team_dashboard_data_for(project) %>
           <div class="ui card">
             <div class="content">
-              <div class="header">
-                <%= issue_summary(project, include_links: false) %>
-              </div>
-            </div>
-            <div class="content">
-              <div class="ui two tiny statistics">
-                <div class="statistic">
-                  <div class="value">
-                    <%= dashboard_data[:totals][:scope] %>
+              <div class="ui divided grid">
+                <div class="row">
+                  <div class="six wide column">
+                    <h3><%= issue_summary(project) %></h3>
                   </div>
-                  <div class="label">
-                    Issues
+                  <div class="six wide column">
+                    <div class="ui two tiny statistics">
+                      <div class="statistic">
+                        <div class="value">
+                          <%= dashboard_data[:totals][:scope] %>
+                        </div>
+                        <div class="label">
+                          Issues
+                        </div>
+                      </div>
+                      <div class="statistic">
+                        <div class="value">
+                          <%= pretty_print_number(dashboard_data[:totals][:progress_percent], round: true, percentage: true) %>
+                        </div>
+                        <div class="label">
+                          Progress
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="four wide middle aligned column">
+                    <a class="ui fluid teal button" href="<%= project_report_path(project) %>">
+                      <i class="chart line icon"></i>
+                      Progress Report
+                    </a>
                   </div>
                 </div>
-                <div class="statistic">
-                  <div class="value">
-                    <%= pretty_print_number(dashboard_data[:totals][:progress_percent], round: true, percentage: true) %>
-                  </div>
-                  <div class="label">
-                    Progress
-                  </div>
-                </div>
               </div>
-            </div>
-            <div class="ui extra content">
-              <a class="ui fluid teal button" href="<%= project_report_path(project) %>">
-                <i class="chart line icon"></i>
-                Progress Report
-              </a>
             </div>
           </div>
       <% end %>
