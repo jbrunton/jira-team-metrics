@@ -29,3 +29,12 @@ optional:
             mql: "//str"
           optional:
             collapsed: "//bool"
+  scatterplot:
+    type: "//rec"
+    optional:
+      default_query: "//str"
+  aging_wip:
+    type: "//rec"
+    optional:
+      completed_query: "//str"
+      

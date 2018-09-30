@@ -39,6 +39,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def scatterplot
+    @default_query = @board.config.scatterplot_default_query(@domain)
   end
 
   def aging_wip
