@@ -19,6 +19,12 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
                     'mql' => "status = 'In Progress'"
                 }
             ]
+        },
+        'scatterplot' => {
+            'default_query' => 'board scatterplot default query'
+        },
+        'aging_wip' => {
+            'completed_query' => 'board aging_wip completed query'
         }
     }
   end
@@ -42,6 +48,10 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
           sections:
             - title: 'Domain In Progress'
               mql: status = 'In Progress'
+        scatterplot:
+          default_query: domain scatterplot default query
+        aging_wip:
+          completed_query: domain aging_wip completed query
     EOF
     )
   end
@@ -201,6 +211,38 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       actual_options = board_config.epics_report_options(domain)
 
       expect(actual_options).to eq(expected_options)
+    end
+  end
+
+  context "#scatterplot_default_query" do
+    it "returns the scatterplot default query for the board if given" do
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.scatterplot_default_query(domain)).to eq('board scatterplot default query')
+    end
+
+    it "returns the scatterplot default query for the domain otherwise " do
+      config_hash['reports'].delete('scatterplot')
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+
+      board_config.validate
+
+      expect(board_config.scatterplot_default_query(domain)).to eq('domain scatterplot default query')
+    end
+  end
+
+  context "#aging_wip_completed_query" do
+    it "returns the aging WIP completed query" do
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.aging_wip_completed_query(domain)).to eq('board aging_wip completed query')
+    end
+
+    it "is optional" do
+      config_hash['reports'].delete('aging_wip')
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+
+      board_config.validate
+
+      expect(board_config.aging_wip_completed_query(domain)).to eq('domain aging_wip completed query')
     end
   end
 end

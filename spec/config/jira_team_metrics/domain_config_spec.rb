@@ -36,6 +36,12 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
             'mql' => "status = 'In Progress'"
           }
         ]
+      },
+      'scatterplot' => {
+        'default_query' => 'scatterplot default query'
+      },
+      'aging_wip' => {
+        'completed_query' => 'aging_wip completed query'
       }
     }
   end
@@ -202,6 +208,38 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
               ]
           )
       )
+    end
+  end
+
+  context "#scatterplot_default_query" do
+    it "returns the default scatterplot query" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.scatterplot_default_query).to eq('scatterplot default query')
+    end
+
+    it "is optional" do
+      config_hash['reports'].delete('scatterplot')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+
+      domain_config.validate
+
+      expect(domain_config.scatterplot_default_query).to eq(nil)
+    end
+  end
+
+  context "#aging_wip_completed_query" do
+    it "returns the aging WIP completed query" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.aging_wip_completed_query).to eq('aging_wip completed query')
+    end
+
+    it "is optional" do
+      config_hash['reports'].delete('aging_wip')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+
+      domain_config.validate
+
+      expect(domain_config.aging_wip_completed_query).to eq(nil)
     end
   end
 end
