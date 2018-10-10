@@ -98,8 +98,20 @@
       <th class="center aligned">Target</th>
       <th class="center aligned" colspan="2">Remaining</th>
       <th class="center aligned" colspan="2">Completed</th>
-      <th class="center aligned highlight" colspan="2">Rolling Metrics</th>
-      <th class="center aligned" colspan="2">Predicted Metrics</th>
+      <th class="center aligned highlight" colspan="2">
+        Rolling Metrics
+        <a href="#" data-position="bottom right"
+           data-tooltip="Measures average throughput over previous 14 day rolling window. Forecasts based on this rolling average.">
+          <i class="question circle outline icon"></i>
+        </a>
+      </th>
+      <th class="center aligned" colspan="2">
+        History-based Metrics
+        <a href="#" data-position="bottom right"
+           data-tooltip="Computes average throughput based on historical data, using previous <%= projects_name_plural %> to train forecast.">
+          <i class="question circle outline icon"></i>
+        </a>
+      </th>
       <th></th>
     </tr>
   </thead>
