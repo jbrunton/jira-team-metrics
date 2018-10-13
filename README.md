@@ -25,11 +25,13 @@ To run the web server:
 
 Then navigate to http://localhost:3000/metrics.
 
-## Server options
+## Config options
 
-To specify a config file (either remote or local), set a `CONFIG_FILE` environment variable pointing to the file:
+By default, the engine expects to find a config file called `jira-team-metrics.yml` in the app's `config` directory.
 
-    CONFIG_FILE=https://my.config.yml bundle exec rails s
+To specify a different location, specify a `CONFIG_DIR` environment variable:
+
+    CONFIG_DIR=/path/to/config_dir bundle exec rails s
 
 To start the server in read-only mode, set a `READONLY` environment variable:
 
