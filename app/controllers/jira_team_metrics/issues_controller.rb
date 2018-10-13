@@ -21,16 +21,8 @@ class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
   end
 
   def search
-    if params[:text]
-      @issues = @board.issues.search(params[:text]).first(20)
-    elsif params[:mql]
-      mql_interpreter = JiraTeamMetrics::MqlInterpreter.new(@board, @board.issues)
-      @issues = mql_interpreter.eval(params[:mql])
-    end
-    respond_to do |format|
-      format.json { render json: @issues.map{ |issue| issue.as_json.merge(link: issue_path(issue)) } }
-      format.html { render partial: 'partials/issues_list', layout: false }
-    end
+    @issues = @board.issues.search(params[:query]).first(20)
+    render json: @issues.map{ |issue| issue.as_json.merge(link: issue_path(issue)) }
   end
 
 private

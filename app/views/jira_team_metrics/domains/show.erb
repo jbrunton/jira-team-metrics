@@ -5,7 +5,7 @@
     function performSearch() {
       var query = $('#search').val();
       if (query.length > 0) {
-        var searchUrl = '<%= domain_path %>/boards/search.json?text=' + query;
+        var searchUrl = '<%= domain_path %>/boards/search.json?query=' + query;
         $.get(searchUrl)
             .done(function (data) {
               $('#search-results').empty();
