@@ -8,7 +8,7 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   end
 
   def search
-    @boards = JiraTeamMetrics::Board.where('lower(name) LIKE ?', "%#{params[:query].downcase}%").first(20)
+    @boards = JiraTeamMetrics::Board.search(params[:query]).first(20)
     render json: @boards.map{ |board| board.as_json.merge(link: board_path( board)) }
   end
 

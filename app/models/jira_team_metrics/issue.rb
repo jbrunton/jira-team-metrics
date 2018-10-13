@@ -9,6 +9,10 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   belongs_to :project, optional: true, class_name: 'JiraTeamMetrics::Issue'
   belongs_to :parent, optional: true, class_name: 'JiraTeamMetrics::Issue'
 
+  scope :search, ->(query) {
+    where('lower(key) LIKE :query or lower(summary) LIKE :query', query: "%#{query.downcase}%")
+  }
+
   def filters
     board.filters
       .select{ |filter| filter.include?(self) }

@@ -21,7 +21,7 @@ class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
   end
 
   def search
-    @issues = @board.issues.where('lower(key) LIKE :query or lower(summary) LIKE :query', query: "%#{params[:query].downcase}%").first(20)
+    @issues = @board.issues.search(params[:query]).first(20)
     render json: @issues.map{ |issue| issue.as_json.merge(link: issue_path(issue)) }
   end
 
