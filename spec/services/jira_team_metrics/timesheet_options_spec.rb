@@ -42,7 +42,9 @@ RSpec.describe JiraTeamMetrics::TimesheetOptions do
         ['Last 7 days', JiraTeamMetrics::DateRange.new(DateTime.new(2001, 1,  8),    DateTime.new(2001, 1,  15))],
         ['Last 30 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 12,  16), DateTime.new(2001, 1,  15))],
         ['Last 90 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 10,  17), DateTime.new(2001, 1,  15))],
-        ['Last 180 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 7,  19), DateTime.new(2001, 1,  15))]
+        ['Last 180 days', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 7,  19), DateTime.new(2001, 1,  15))],
+        ['Last 3 calendar months', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 10, 1), DateTime.new(2001, 1,  1))],
+        ['Last 6 calendar months', JiraTeamMetrics::DateRange.new(DateTime.new(2000, 7,  1), DateTime.new(2001, 1,  1))]
       ])
     end
   end
