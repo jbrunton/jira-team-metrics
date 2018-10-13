@@ -23,6 +23,9 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
         'scatterplot' => {
             'default_query' => 'board scatterplot default query'
         },
+        'throughput' => {
+            'default_query' => 'board throughput default query'
+        },
         'aging_wip' => {
             'completed_query' => 'board aging_wip completed query'
         }
@@ -50,6 +53,8 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
               mql: status = 'In Progress'
         scatterplot:
           default_query: domain scatterplot default query
+        throughput:
+          default_query: domain throughput default query
         aging_wip:
           completed_query: domain aging_wip completed query
     EOF
@@ -227,6 +232,22 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       board_config.validate
 
       expect(board_config.scatterplot_default_query(domain)).to eq('domain scatterplot default query')
+    end
+  end
+
+  context "#throughput_default_query" do
+    it "returns the scatterplot default query for the board if given" do
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.throughput_default_query(domain)).to eq('board throughput default query')
+    end
+
+    it "returns the throughput default query for the domain otherwise " do
+      config_hash['reports'].delete('throughput')
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+
+      board_config.validate
+
+      expect(board_config.throughput_default_query(domain)).to eq('domain throughput default query')
     end
   end
 
