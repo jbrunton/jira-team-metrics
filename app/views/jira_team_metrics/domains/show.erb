@@ -1,6 +1,5 @@
 <script>
   $(function() {
-    performSearch();
     $('#search').on('input', performSearch);
 
     function performSearch() {
@@ -51,7 +50,7 @@
     <div class="ui segment">
       <div class="input-field">
         <div class="ui icon fluid input">
-          <input id="search" type="text" placeholder="Search all boards...">
+          <input id="search" type="text" autocomplete="off" placeholder="Search all boards...">
           <i class="search icon"></i>
         </div>
       </div>

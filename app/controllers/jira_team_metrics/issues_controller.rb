@@ -1,4 +1,6 @@
 class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
+  include JiraTeamMetrics::ApplicationHelper
+
   before_action :set_domain
   before_action :set_board
   before_action :set_issue
@@ -16,6 +18,11 @@ class JiraTeamMetrics::IssuesController < JiraTeamMetrics::ApplicationController
     else
       outlier_filter.remove_issue(@issue)
     end
+  end
+
+  def search
+    @issues = @board.issues.where('lower(key) LIKE :query or lower(summary) LIKE :query', query: "%#{params[:query].downcase}%").first(20)
+    render json: @issues.map{ |issue| issue.as_json.merge(link: issue_path(issue)) }
   end
 
 private

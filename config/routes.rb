@@ -16,6 +16,7 @@ JiraTeamMetrics::Engine.routes.draw do
   post '/domain/boards/:board_id/sync', to: 'boards#sync'
   post '/domain/boards/:board_id', to: 'boards#update'
 
+  get '/domain/boards/:board_id/issues/search', to: 'issues#search'
   get '/domain/boards/:board_id/issues/:issue_key', to: 'issues#show'
   put '/domain/boards/:board_id/issues/:issue_key/flag_outlier', to: 'issues#flag_outlier'
 

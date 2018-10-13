@@ -2,6 +2,34 @@
 
 <h1><%= @board.name %></h1>
 
+<script>
+  $(function() {
+    $('#search').on('input', performSearch);
+
+    function performSearch() {
+      var query = $('#search').val();
+      if (query.length > 0) {
+        var searchUrl = '<%= domain_path %>/boards/<%= @board.jira_id %>/issues/search.json?query=' + query;
+        $.get(searchUrl)
+            .done(function (data) {
+              $('#search-results').empty();
+              var collection = $('<div class="ui list"></div>');
+              $(data).each(function (i, issue) {
+                collection.append(
+                    '<a class="item" href="' + issue.link + '">' + issue.key + ' - ' + issue.summary + '</a>'
+                );
+              });
+              if (data.length) {
+                $('#search-results').append(collection);
+              }
+            });
+      } else {
+        $('#search-results').empty();
+      }
+    }
+  });
+</script>
+
 <div class="ui grid">
   <div class="ten wide column">
     <table class="ui celled table">
@@ -82,6 +110,15 @@
         </tr>
       </tbody>
     </table>
+    <div class="ui segment">
+      <div class="input-field">
+        <div class="ui icon fluid input">
+          <input id="search" type="text" autocomplete="off" placeholder="Search issues...">
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div id="search-results" style="height: 200px; overflow-y: hidden; margin: 10px 0;"></div>
+    </div>
   </div>
   <div class="six wide column">
     <%= render partial: 'partials/status_card', locals: { object: @board } %>
