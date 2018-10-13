@@ -1,16 +1,55 @@
-<table>
-  <thead>
-    <tr>
-      <th>Key</th>
-      <th>Summary</th>
-    </tr>
-  </thead>
-  <tbody>
-<% @issues.each do |issue| %>
-    <tr>
-      <td><%= issue.key %></td>
-      <td><%= issue.summary %></td>
-    </tr>
+<% if issues.any? %>
+    <table class="ui very basic table issues-in-epic show-more-container">
+      <thead>
+        <th></th>
+        <th></th>
+        <% if show_dates %>
+            <th>Started</th>
+            <th></th>
+            <th>Completed</th>
+        <% end %>
+        <th>Status</th>
+        <th></th>
+      </thead>
+      <tbody>
+        <% issues.each_with_index do |issue, index| %>
+            <tr class="<%= 'below-fold hidden' if index >= 3 %>">
+              <td>
+                <img src="<%= issue.issue_type_icon %>"
+                     alt="<%= issue.issue_type %>"
+                     title="<%= issue.issue_type %>" />
+              </td>
+              <td>
+                <%= issue_summary(issue) %>
+              </td>
+              <% if show_dates %>
+                  <td class="collapsing"><%= pretty_print_date(issue.started_time, show_tz: false) %></td>
+                  <td>&rarr;</td>
+                  <td class="collapsing">
+                    <%= pretty_print_date(issue.completed_time, show_tz: false) %>
+                  </td>
+              <% end %>
+              <td class="collapsing">
+                <div class="ui <%= @domain.status_color_for(issue.status_category) %> label">
+                  <%= issue.status %>
+                </div>
+              </td>
+              <td class="collapsing">
+                <a class="right floated" href="<%= issue.domain_url %>" target="_blank">
+                  <i class="external alternate icon"></i>
+                </a>
+              </td>
+            </tr>
+        <% end %>
+        <% if issues.length > 3 %>
+            <tr class="show-more-holder">
+              <td colspan="5">
+                <a href="#" class="show-more">Show <%= issues.length - 3 %> more</a>
+              </td>
+            </tr>
+        <% end %>
+      </tbody>
+    </table>
+<% else %>
+    <span>None</span>
 <% end %>
-  </tbody>
-</table>

@@ -47,13 +47,13 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
     @query = @report_params.to_query
     @issues = @board.completed_issues(@report_params.date_range)
     @issues = JiraTeamMetrics::MqlInterpreter.new(@board, @issues).eval(@query)
-    selected_date = DateTime.parse(params[:selected_date])
+    @selected_date = DateTime.parse(params[:selected_date])
     @issues = @issues.select do |issue|
-      selected_date == JiraTeamMetrics::ThroughputChart.group_by(issue.completed_time, @report_params.step_interval)
+      @selected_date == JiraTeamMetrics::ThroughputChart.group_by(issue.completed_time, @report_params.step_interval)
     end
     respond_to do |format|
       format.json { render json: @issues.map{ |issue| issue.as_json.merge(link: issue_path(issue)) } }
-      format.html { render partial: 'partials/issues_list', layout: false }
+      format.html { render partial: 'partials/throughput_drilldown' }
     end
   end
 end
