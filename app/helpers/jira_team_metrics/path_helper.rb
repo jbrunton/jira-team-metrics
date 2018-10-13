@@ -41,6 +41,10 @@ module JiraTeamMetrics::PathHelper
     "#{project_report_path(project)}/throughput/#{CGI::escape(team)}"
   end
 
+  def throughput_drilldown_path(board)
+    "#{board_components_path(board)}/throughput_drilldown"
+  end
+
   def epic_progress_summary_path(epic)
     "#{board_components_path(epic.board)}/progress_summary/#{epic.key}"
   end

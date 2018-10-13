@@ -57,7 +57,11 @@ class JiraTeamMetrics::ThroughputChart
   end
 
   def group_by(date)
-    case @params.step_interval
+    JiraTeamMetrics::ThroughputChart.group_by(date, @params.step_interval)
+  end
+
+  def self.group_by(date, step_interval)
+    case step_interval
       when 'Daily'
         date.to_date
       when 'Weekly'

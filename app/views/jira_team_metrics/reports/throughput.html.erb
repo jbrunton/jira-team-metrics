@@ -6,9 +6,28 @@
 
 <%= render partial: 'partials/search_form', locals: { show_step_interval: true } %>
 
+<script>
+  function selectHandler() {
+    var chart = _charts['<%= chart_id %>'];
+    var selection = chart._gchart.getSelection()[0];
+    if (selection.column == 1) {
+      var selectedDate = chart._data.getValue(selection.row, 0);
+      var selectedDateFm = moment(selectedDate).format('YYYY-MM-DD');
+      var searchParams = $('#filter-params').serialize();
+      var url = `<%= throughput_drilldown_path(@board) %>?selected_date=${selectedDateFm}&${searchParams}`
+      $('#selected_content').animate({opacity: 0}).load(url, function () {
+        $(this).animate({opacity: 1});
+        $('.ui.accordion').accordion({ exclusive: false });
+      });
+    }
+  }
+</script>
+
 <%= render partial: 'partials/chart', locals: {
     chart_id: chart_id,
     chart_type: 'ComboChart',
+    select_handler: 'selectHandler',
     url: "#{board_api_path(@board)}/throughput.json"
 } %>
 
+<div id="selected_content" style="margin-top: 20px;"></div>

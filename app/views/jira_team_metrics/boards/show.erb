@@ -9,7 +9,7 @@
     function performSearch() {
       var query = $('#search').val();
       if (query.length > 0) {
-        var searchUrl = '<%= domain_path %>/boards/<%= @board.jira_id %>/issues/search.json?query=' + query;
+        var searchUrl = '<%= domain_path %>/boards/<%= @board.jira_id %>/issues/search.json?text=' + query;
         $.get(searchUrl)
             .done(function (data) {
               $('#search-results').empty();
