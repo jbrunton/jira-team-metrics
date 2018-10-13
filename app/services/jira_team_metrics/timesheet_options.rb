@@ -52,11 +52,14 @@ private
   end
 
   def enumerate_relative_periods(today)
+    start_of_month = today.at_beginning_of_month
     @relative_periods = [
       ['Last 7 days', JiraTeamMetrics::DateRange.new(today - 7, today)],
       ['Last 30 days', JiraTeamMetrics::DateRange.new(today - 30, today)],
       ['Last 90 days', JiraTeamMetrics::DateRange.new(today - 90, today)],
-      ['Last 180 days', JiraTeamMetrics::DateRange.new(today - 180, today)]
+      ['Last 180 days', JiraTeamMetrics::DateRange.new(today - 180, today)],
+      ['Last 3 calendar months', JiraTeamMetrics::DateRange.new(start_of_month - 3.months, start_of_month)],
+      ['Last 6 calendar months', JiraTeamMetrics::DateRange.new(start_of_month - 6.months, start_of_month)]
     ]
     @relative_periods.each do |label, date_range|
       @selected_relative_period = label if selected_range?(date_range)
