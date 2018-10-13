@@ -14,15 +14,13 @@ class JiraTeamMetrics::ConfigFileService
   end
 
   def load_config
-    unless @config_file.blank?
-      log_message = "CONFIG_FILE defined. Setting config from #{@config_file}"
-      Rails.logger.info log_message
-      puts log_message # Rails doesn't print to stdout during boot
+    log_message = "Loading config from #{@config_file}"
+    Rails.logger.info log_message
+    puts log_message # Rails doesn't print to stdout during boot
 
-      @domain.config_string = open(@config_file).read
-      unless @domain.save
-        raise 'Invalid config: ' + @domain.errors.full_messages.join(',')
-      end
+    @domain.config_string = open(@config_file).read
+    unless @domain.save
+      raise 'Invalid config: ' + @domain.errors.full_messages.join(',')
     end
   end
 end
