@@ -8,6 +8,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def throughput
+    @default_query = @board.config.throughput_default_query(@domain)
   end
 
   def projects

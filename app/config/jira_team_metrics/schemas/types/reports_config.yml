@@ -33,6 +33,10 @@ optional:
     type: "//rec"
     optional:
       default_query: "//str"
+  throughput:
+      type: "//rec"
+      optional:
+        default_query: "//str"
   aging_wip:
     type: "//rec"
     optional:

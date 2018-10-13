@@ -40,6 +40,9 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       'scatterplot' => {
         'default_query' => 'scatterplot default query'
       },
+      'throughput' => {
+        'default_query' => 'throughput default query'
+      },
       'aging_wip' => {
         'completed_query' => 'aging_wip completed query'
       }
@@ -219,6 +222,22 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
       domain_config.validate
 
       expect(domain_config.scatterplot_default_query).to eq(nil)
+    end
+  end
+
+  context "#throughput_default_query" do
+    it "returns the default scatterplot query" do
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+      expect(domain_config.throughput_default_query).to eq('throughput default query')
+    end
+
+    it "is optional" do
+      config_hash['reports'].delete('throughput')
+      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
+
+      domain_config.validate
+
+      expect(domain_config.throughput_default_query).to eq(nil)
     end
   end
 
