@@ -139,11 +139,6 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
         JiraTeamMetrics::DomainConfig::BoardDetails.new(board_id, board_config_file)
       ])
     end
-
-    it "fetches the config string when given a directory" do
-      domain_config = JiraTeamMetrics::DomainConfig.new(config_hash)
-      expect(domain_config.boards.first.fetch_config_string(fixture_path)).to eq("url: https://jira.valid_config.example.com\n")
-    end
   end
 
   context "#teams" do

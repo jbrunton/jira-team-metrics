@@ -19,8 +19,8 @@ module JiraTeamMetrics
 
     config.after_initialize do
       unless ActiveRecord::Base.connection.migration_context.needs_migration?
-        JiraTeamMetrics::ConfigFileService.new(ENV['CONFIG_FILE'], ENV['CONFIG_DIR']).load_config
         JiraTeamMetrics::DatabaseService.new.prepare_database
+        JiraTeamMetrics::ConfigFileService.load_domain_config
       end
     end
   end
