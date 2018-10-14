@@ -30,7 +30,6 @@ module JiraTeamMetrics::FormattingHelper
 
 private
   def date_format_for(opts, date)
-    opts ||= {}
     strfm = ''
     strfm += '%d' unless opts[:month_only]
     strfm += ' %b'
