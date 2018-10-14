@@ -1,5 +1,5 @@
 <div class="ui top attached block header">
-  Issues closed on <%= pretty_print_date(@selected_date, show_tz: false) %>
+  <%= @selection_header %>
 </div>
 <div class="ui bottom attached segment">
   <%= render partial: 'partials/issues_list', locals: { issues: @issues, show_dates: true } %>

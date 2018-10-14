@@ -1,4 +1,6 @@
 class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationController
+  include JiraTeamMetrics::ApplicationHelper
+
   before_action :set_domain
   before_action :set_board
 
@@ -48,6 +50,14 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
     @issues = @board.completed_issues(@report_params.date_range)
     @issues = JiraTeamMetrics::MqlInterpreter.new(@board, @issues).eval(@query)
     @selected_date = DateTime.parse(params[:selected_date])
+    @selection_header = case @report_params.step_interval
+      when 'Daily'
+        "Issues closed on #{pretty_print_date(@selected_date, show_tz: false)}"
+      when 'Weekly'
+        "Issues closed week starting #{pretty_print_date(@selected_date, show_tz: false)}"
+      when 'Monthly'
+        "Issues closed in #{pretty_print_date(@selected_date, show_tz: false, month_only: true)}"
+    end
     @issues = @issues.select do |issue|
       @selected_date == JiraTeamMetrics::ThroughputChart.group_by(issue.completed_time, @report_params.step_interval)
     end
