@@ -10,10 +10,11 @@
     var selection = chart._gchart.getSelection()[0];
     // completed issues column
     if (selection.column == 1) {
+      $('#spinner').show().html(render('spinner', { margin: 20 }));
       var key = chart._data.getValue(selection.row, 2);
-      $('#selected_content').animate({opacity: 0}).load('<%= board_path(@board) %>/issues/' + key + '?fragment=true', function () {
-        $(this).animate({opacity: 1});
-        $('.ui.accordion').accordion({ exclusive: false });
+      $('#selected-content').hide().load('<%= board_path(@board) %>/issues/' + key + '?fragment=true', function () {
+        $(this).show();
+        $('#spinner').hide();
       });
     }
   }
@@ -28,4 +29,7 @@
     url: "#{board_api_path(@board)}/scatterplot.json"
 } %>
 
-<div id="selected_content" style="margin-top: 20px;"></div>
+<div style="margin-top: 20px;">
+  <div id="spinner"></div>
+  <div id="selected-content"></div>
+</div>

@@ -101,6 +101,6 @@ Chart.prototype.refresh = function() {
 Chart.prototype.loading = function(loading) {
   var $container = this._findContainer();
   if (loading) {
-    $container.html(render('spinner'));
+    $container.html(render('spinner', { margin: 100 }));
   }
 }
