@@ -15,6 +15,10 @@ RSpec.describe JiraTeamMetrics::FormattingHelper do
     it "can format without the year" do
       expect(helper.pretty_print_date(date, show_tz: false, hide_year: true)).to eq('01 Jan')
     end
+
+    it "can format without the date" do
+      expect(helper.pretty_print_date(date, show_tz: false, month_only: true)).to eq('Jan 2018')
+    end
   end
 
   describe "#pretty_print_time" do

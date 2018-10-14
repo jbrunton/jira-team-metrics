@@ -37,7 +37,7 @@ private
     strfm += ' %Y' unless hide_year?(opts, date)
     strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %Z' if opts[:show_tz]
-    strfm
+    strfm.strip
   end
 
   def number_format_for(opts)
