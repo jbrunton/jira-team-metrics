@@ -35,7 +35,6 @@ private
     strfm += '%d' unless opts[:month_only]
     strfm += ' %b'
     strfm += ' %Y' unless hide_year?(opts, date)
-    strfm = ('%a ' + strfm) if opts[:show_day]
     strfm += ' %Z' if opts[:show_tz]
     strfm.strip
   end
