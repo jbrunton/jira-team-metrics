@@ -5,6 +5,11 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
   before_action :set_board, only: [:show, :update, :sync]
 
   def show
+    today = DateTime.now.beginning_of_day
+    @issue_cycletimes_ql = issue_cycletimes_ql(today)
+    @epic_cycletimes_ql = epic_cycletimes_ql(today)
+    @issue_throughput_ql = issue_throughput_ql(today)
+    @epic_throughput_ql = epic_throughput_ql(today)
   end
 
   def search
@@ -48,5 +53,51 @@ private
 
   def board_params
     params.require(:board).permit(:config_string)
+  end
+
+  def issue_cycletimes_ql(today)
+    to_date = today
+    from_date = to_date - 30
+    opts = {
+      hierarchy_level: 'Scope',
+      from_date: format_mql_date(from_date),
+      to_date: format_mql_date(to_date)
+    }
+    "#{reports_path(@board)}/scatterplot?#{opts.to_query}"
+  end
+
+  def epic_cycletimes_ql(today)
+    to_date = today
+    from_date = to_date - 180
+    opts = {
+      hierarchy_level: 'Epic',
+      from_date: format_mql_date(from_date),
+      to_date: format_mql_date(to_date)
+    }
+    "#{reports_path(@board)}/scatterplot?#{opts.to_query}"
+  end
+
+  def issue_throughput_ql(today)
+    to_date = today.at_beginning_of_month
+    from_date = to_date - 6.months
+    opts = {
+      hierarchy_level: 'Scope',
+      from_date: format_mql_date(from_date),
+      to_date: format_mql_date(to_date),
+      step_interval: 'Monthly'
+    }
+    "#{reports_path(@board)}/throughput?#{opts.to_query}"
+  end
+
+  def epic_throughput_ql(today)
+    to_date = today.at_beginning_of_month
+    from_date = to_date - 6.months
+    opts = {
+      hierarchy_level: 'Epic',
+      from_date: format_mql_date(from_date),
+      to_date: format_mql_date(to_date),
+      step_interval: 'Monthly'
+    }
+    "#{reports_path(@board)}/throughput?#{opts.to_query}"
   end
 end

@@ -1,4 +1,8 @@
 module JiraTeamMetrics::FormattingHelper
+  def format_mql_date(date)
+    date.strftime('%Y-%m-%d')
+  end
+
   def pretty_print_date(date, opts = {show_tz: true, hide_year: false})
     strfm = date_format_for(opts, date)
     date.nil? ? '-' : date.strftime(strfm)

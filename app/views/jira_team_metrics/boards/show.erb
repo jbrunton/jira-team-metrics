@@ -51,8 +51,8 @@
 
             <div class="ui small borderless menu">
               <div class="header item">Quick Links</div>
-              <%= link_to('Issues Scatterplot', '#', class: 'item') %>
-              <%= link_to('Epics Scatterplot', '#', class: 'item') %>
+              <%= link_to('Issue Cycle Times', @issue_cycletimes_ql, class: 'item') %>
+              <%= link_to('Epic Cycle Times', @epic_cycletimes_ql, class: 'item') %>
             </div>
           </td>
         </tr>
@@ -75,8 +75,8 @@
 
             <div class="ui small borderless menu">
               <div class="header item">Quick Links</div>
-              <%= link_to('Issues by Month', '#', class: 'item') %>
-              <%= link_to('Epics by Month', '#', class: 'item') %>
+              <%= link_to('Issues by Month', @issue_throughput_ql, class: 'item') %>
+              <%= link_to('Epics by Month', @epic_throughput_ql, class: 'item') %>
             </div>
           </td>
         </tr>
