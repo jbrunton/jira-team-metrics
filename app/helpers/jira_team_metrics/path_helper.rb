@@ -87,6 +87,17 @@ module JiraTeamMetrics::PathHelper
     end
   end
 
+  def progress_report_for(issue)
+    case issue.hierarchy_level
+      when 'Epic'
+        epic_report_path(issue)
+      when 'Project'
+        project_report_path(issue)
+      else
+        raise "Invalid hierarchy_level: #{issue.hierarchy_level}"
+    end
+  end
+
   def jira_board_url(board)
     "#{board.domain.config.url}/secure/RapidBoard.jspa?rapidView=#{board.jira_id}"
   end
