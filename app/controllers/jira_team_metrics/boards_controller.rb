@@ -56,23 +56,26 @@ private
   end
 
   def issue_cycletimes_ql(today)
-    JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Scope', today).build_for(@board)
+    JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Scope')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def epic_cycletimes_ql(today)
-    JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Epic', today).build_for(@board)
+    JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Epic')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def issue_throughput_ql(today)
-    JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Scope', today).build_for(@board)
-
+    JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Scope')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def epic_throughput_ql(today)
-    JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Epic', today).build_for(@board)
-  end
-
-  def ql_report_path(report_name, opts)
-    "#{reports_path(@board)}/#{report_name}?#{opts.to_query}"
+    JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Epic')
+      .set_defaults(today)
+      .build_for(@board)
   end
 end

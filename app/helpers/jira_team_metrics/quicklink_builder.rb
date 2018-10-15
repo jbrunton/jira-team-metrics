@@ -2,37 +2,29 @@ class JiraTeamMetrics::QuicklinkBuilder
   include JiraTeamMetrics::ApplicationHelper
   include JiraTeamMetrics::Engine.routes.url_helpers
 
-  attr_reader :hierarchy_level
-  attr_reader :from_date
-  attr_reader :to_date
-  attr_reader :step_interval
-
-  def initialize(report_name, hierarchy_level, today)
+  def initialize(report_name, hierarchy_level)
     @report_name = report_name
     @hierarchy_level = hierarchy_level
-    set_defaults(today)
   end
 
   def from_date(from_date)
     @from_date = from_date
+    self
   end
 
   def to_date(to_date)
     @to_date = to_date
+    self
   end
 
-  def build_for(board)
-    "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
+  def query(query)
+    @query = query
+    self
   end
 
-private
-
-  def build_opts
-    {
-      from_date: format_mql_date(@from_date),
-      to_date: format_mql_date(@to_date),
-      step_interval: @step_interval
-    }
+  def step_interval(step_interval)
+    @step_interval = step_interval
+    self
   end
 
   def set_defaults(today)
@@ -44,11 +36,30 @@ private
       else
         raise "Unexpected report_name: #{@report_name}"
     end
+    self
+  end
+
+  def build_for(board)
+    "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
+  end
+
+private
+
+  def build_opts
+    opts = {
+      from_date: format_mql_date(@from_date),
+      to_date: format_mql_date(@to_date),
+      hierarchy_level: @hierarchy_level,
+    }
+    opts.merge!(step_interval: @step_interval) unless @step_interval.nil?
+    opts.merge!(query: @query) unless @query.nil?
+    opts
   end
 
   def set_throughput_defaults(today)
-    @to_date = today.at_beginning_of_month
+    @to_date = today.at_beginning_of_month + 1.month
     @from_date = @to_date - 6.months
+    @step_interval = 'Monthly'
   end
 
   def set_scatterplot_defaults(today)

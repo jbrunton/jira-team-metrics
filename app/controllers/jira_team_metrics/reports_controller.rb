@@ -53,6 +53,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
     @issues_by_epic = build_issues_by_epic(@report)
 
+    @quicklinks = build_quicklinks
+
     @status_categories = ['To Do', 'In Progress', 'Done', 'Predicted']
     if params[:filter_status].nil?
       @show_categories = @status_categories
@@ -138,5 +140,45 @@ private
     issues_by_epic
       .sort_by{ |epic, _| epic.nil? ? 1 : 0 }
       .to_h
+  end
+
+  def build_quicklinks
+    from_date = @report.started_date.at_beginning_of_month
+    to_date = @report.completed_date.at_beginning_of_month + 2.months
+    query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
+      .and(@board.config.throughput_default_query(@domain))
+      .query
+    issues_by_month_link = JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Issue')
+      .from_date(from_date)
+      .to_date(to_date)
+      .step_interval('Monthly')
+      .query(query)
+      .build_for(@board)
+    epics_by_month_link = JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Epic')
+      .from_date(from_date)
+      .to_date(to_date)
+      .step_interval('Monthly')
+      .query(query)
+      .build_for(@board)
+    issues_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Issue')
+      .from_date(from_date)
+      .to_date(to_date)
+      .query(query)
+      .build_for(@board)
+    epics_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Epic')
+      .from_date(from_date)
+      .to_date(to_date)
+      .query(query)
+      .build_for(@board)
+    {
+      'Throughput Reports' => {
+        'Issues by Month' => issues_by_month_link,
+        'Epics by Month' => epics_by_month_link
+      },
+      'Cycle Time Reports' => {
+        'Issue Cycle Times' => issues_scatterplot_link,
+        'Epic Cycle Times' => epics_scatterplot_link
+      }
+    }
   end
 end
