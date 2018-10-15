@@ -53,7 +53,6 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     @report = JiraTeamMetrics::TeamScopeReport.for(@project, @team)
     @issues_by_epic = build_issues_by_epic(@report)
 
-
     @status_categories = ['To Do', 'In Progress', 'Done', 'Predicted']
     if params[:filter_status].nil?
       @show_categories = @status_categories
