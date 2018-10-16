@@ -36,6 +36,18 @@ class JiraTeamMetrics::QuicklinkBuilder
     "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
   end
 
+  def self.throughput_quicklink(opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(opts)
+      .update(report_name: 'throughput', step_interval: 'Monthly')
+      .build_for(@board)
+  end
+
+  def self.scatterplot_quicklink(opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(opts)
+      .update(report_name: 'scatterplot')
+      .build_for(@board)
+  end
+
 private
 
   FIELDS = [:report_name, :hierarchy_level, :from_date, :to_date, :query, :step_interval]
