@@ -56,45 +56,26 @@ private
   end
 
   def issue_cycletimes_ql(today)
-    opts = ql_cycletimes_opts(today, 30, hierarchy_level: 'Scope')
-    ql_report_path('scatterplot', opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'scatterplot', hierarchy_level: 'Scope')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def epic_cycletimes_ql(today)
-    opts = ql_cycletimes_opts(today, 90, hierarchy_level: 'Epic')
-    ql_report_path('scatterplot', opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'scatterplot', hierarchy_level: 'Epic')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def issue_throughput_ql(today)
-    opts = ql_throughput_opts(today, hierarchy_level: 'Scope')
-    ql_report_path('throughput', opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'throughput', hierarchy_level: 'Scope')
+      .set_defaults(today)
+      .build_for(@board)
   end
 
   def epic_throughput_ql(today)
-    opts = ql_throughput_opts(today, hierarchy_level: 'Epic')
-    ql_report_path('throughput', opts)
-  end
-
-  def ql_report_path(report_name, opts)
-    "#{reports_path(@board)}/#{report_name}?#{opts.to_query}"
-  end
-
-  def ql_cycletimes_opts(today, days, opts)
-    to_date = today
-    from_date = to_date - days
-    opts.merge({
-      from_date: format_mql_date(from_date),
-      to_date: format_mql_date(to_date)
-    })
-  end
-
-  def ql_throughput_opts(today, opts)
-    to_date = today.at_beginning_of_month
-    from_date = to_date - 6.months
-    opts.merge({
-      from_date: format_mql_date(from_date),
-      to_date: format_mql_date(to_date),
-      step_interval: 'Monthly'
-    })
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'throughput', hierarchy_level: 'Epic')
+      .set_defaults(today)
+      .build_for(@board)
   end
 end

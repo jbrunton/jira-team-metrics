@@ -88,6 +88,21 @@
     </div>
 <% end %>
 
+<div class="ui small borderless menu">
+  <div class="header item">Quick Links</div>
+  <% @quicklinks.each do |section_name, section_links| %>
+    <div class="ui simple dropdown item">
+      <%= section_name %>
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <% section_links.each do |name, link| %>
+          <%= link_to(name, link, class: 'item') %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
 <table class="ui table jira-tree">
   <thead>
     <tr>
