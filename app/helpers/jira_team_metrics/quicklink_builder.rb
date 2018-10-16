@@ -2,29 +2,15 @@ class JiraTeamMetrics::QuicklinkBuilder
   include JiraTeamMetrics::ApplicationHelper
   include JiraTeamMetrics::Engine.routes.url_helpers
 
-  def initialize(report_name, hierarchy_level)
-    @report_name = report_name
-    @hierarchy_level = hierarchy_level
-  end
+  attr_reader :report_name
+  attr_reader :hierarchy_level
+  attr_reader :from_date
+  attr_reader :to_date
+  attr_reader :query
+  attr_reader :step_interval
 
-  def from_date(from_date)
-    @from_date = from_date
-    self
-  end
-
-  def to_date(to_date)
-    @to_date = to_date
-    self
-  end
-
-  def query(query)
-    @query = query
-    self
-  end
-
-  def step_interval(step_interval)
-    @step_interval = step_interval
-    self
+  def initialize(opts)
+    update(opts)
   end
 
   def set_defaults(today)
@@ -39,11 +25,20 @@ class JiraTeamMetrics::QuicklinkBuilder
     self
   end
 
+  def update(opts)
+    FIELDS.each do |field|
+      instance_variable_set("@#{field}", opts[field]) unless opts[field].nil?
+    end
+    self
+  end
+
   def build_for(board)
     "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
   end
 
 private
+
+  FIELDS = [:report_name, :hierarchy_level, :from_date, :to_date, :query, :step_interval]
 
   def build_opts
     opts = {

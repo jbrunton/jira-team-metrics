@@ -9,7 +9,7 @@ RSpec.describe JiraTeamMetrics::QuicklinkBuilder do
 
   describe "#build_for" do
     it "builds default scatterplot reports" do
-      builder = JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Scope')
+      builder = JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'scatterplot', hierarchy_level: 'Scope')
           .set_defaults(today)
 
       uri = URI(builder.build_for(board))
@@ -24,7 +24,7 @@ RSpec.describe JiraTeamMetrics::QuicklinkBuilder do
     end
 
     it "builds default throughput reports" do
-      builder = JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Scope')
+      builder = JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'throughput', hierarchy_level: 'Scope')
           .set_defaults(today)
 
       uri = URI(builder.build_for(board))

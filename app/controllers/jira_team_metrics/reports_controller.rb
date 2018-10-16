@@ -143,33 +143,18 @@ private
   end
 
   def build_quicklinks
-    from_date = @report.started_date.at_beginning_of_month
-    to_date = @report.completed_date.at_beginning_of_month + 2.months
     query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
-      .and(@board.config.throughput_default_query(@domain))
-      .query
-    issues_by_month_link = JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Issue')
-      .from_date(from_date)
-      .to_date(to_date)
-      .step_interval('Monthly')
-      .query(query)
-      .build_for(@board)
-    epics_by_month_link = JiraTeamMetrics::QuicklinkBuilder.new('throughput', 'Epic')
-      .from_date(from_date)
-      .to_date(to_date)
-      .step_interval('Monthly')
-      .query(query)
-      .build_for(@board)
-    issues_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Issue')
-      .from_date(from_date)
-      .to_date(to_date)
-      .query(query)
-      .build_for(@board)
-    epics_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.new('scatterplot', 'Epic')
-      .from_date(from_date)
-      .to_date(to_date)
-      .query(query)
-      .build_for(@board)
+        .and(@board.config.throughput_default_query(@domain))
+        .query
+    opts = {
+        from_date: @report.started_date.at_beginning_of_month,
+        to_date: @report.completed_date.at_beginning_of_month + 2.months,
+        query: query
+    }
+    issues_by_month_link = throughput_quicklink(opts.merge(hierarchy_level: 'Scope'))
+    epics_by_month_link = throughput_quicklink(opts.merge(hierarchy_level: 'Epic'))
+    issues_scatterplot_link = scatterplot_quicklink(opts.merge(hierarchy_level: 'Scope'))
+    epics_scatterplot_link = scatterplot_quicklink(opts.merge(hierarchy_level: 'Epic'))
     {
       'Throughput Reports' => {
         'Issues by Month' => issues_by_month_link,
@@ -180,5 +165,17 @@ private
         'Epic Cycle Times' => epics_scatterplot_link
       }
     }
+  end
+
+  def throughput_quicklink(opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(opts)
+        .update(report_name: 'throughput', step_interval: 'Monthly')
+        .build_for(@board)
+  end
+
+  def scatterplot_quicklink(opts)
+    JiraTeamMetrics::QuicklinkBuilder.new(opts)
+        .update(report_name: 'scatterplot')
+        .build_for(@board)
   end
 end
