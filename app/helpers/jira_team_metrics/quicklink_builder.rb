@@ -36,16 +36,16 @@ class JiraTeamMetrics::QuicklinkBuilder
     "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
   end
 
-  def self.throughput_quicklink(opts)
+  def self.throughput_quicklink(board, opts)
     JiraTeamMetrics::QuicklinkBuilder.new(opts)
       .update(report_name: 'throughput', step_interval: 'Monthly')
-      .build_for(@board)
+      .build_for(board)
   end
 
-  def self.scatterplot_quicklink(opts)
+  def self.scatterplot_quicklink(board, opts)
     JiraTeamMetrics::QuicklinkBuilder.new(opts)
       .update(report_name: 'scatterplot')
-      .build_for(@board)
+      .build_for(board)
   end
 
 private

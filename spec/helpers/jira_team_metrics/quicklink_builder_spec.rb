@@ -5,7 +5,7 @@ RSpec.describe JiraTeamMetrics::QuicklinkBuilder do
   include JiraTeamMetrics::Engine.routes.url_helpers
 
   let(:board) { create(:board) }
-  let(:today) { DateTime.now.at_beginning_of_day }
+  let(:today) { DateTime.new(2018, 10, 16) }
 
   describe "#build_for" do
     it "builds default scatterplot reports" do
