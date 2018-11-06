@@ -146,7 +146,11 @@
         <td>
           <%= issues.count %>
         </td>
-        <td></td>
+        <td>
+          <span class="ui <%= @domain.status_color_for(epic.status_category) %> label" style="width: 100%; text-align: center;">
+            <%= epic.status %>
+          </span>
+        </td>
       </tr>
 
       <% issues.each do |issue| %>
@@ -163,8 +167,10 @@
               <% end %>
             </td>
             <td></td>
-            <td class="<%= @domain.status_color_for(issue.status_category) %>">
-              <%= issue.status %>
+            <td>
+              <span class="ui <%= @domain.status_color_for(issue.status_category) %> label" style="width: 100%; text-align: center;">
+                <%= issue.status %>
+              </span>
             </td>
           </tr>
       <% end %>
