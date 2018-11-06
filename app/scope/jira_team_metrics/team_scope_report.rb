@@ -154,7 +154,8 @@ private
   end
 
   def build_predicted_scope_for(epic)
-    if epic.issues(recursive: false).empty? && !@predicted_epic_scope.nil? && epic.status_category != 'Done'
+    issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
+    if issues_for_team.empty? && !@predicted_epic_scope.nil? && epic.status_category != 'Done'
       @predicted_epic_scope.round.times do |k|
         @scope << JiraTeamMetrics::Issue.new({
           issue_type: 'Story',
