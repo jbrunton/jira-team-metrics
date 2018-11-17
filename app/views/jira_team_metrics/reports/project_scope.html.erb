@@ -147,9 +147,11 @@
           <%= issues.count %>
         </td>
         <td>
-          <span class="ui <%= @domain.status_color_for(epic.status_category) %> label" style="width: 100%; text-align: center;">
-            <%= epic.status %>
-          </span>
+          <% unless epic.nil? %>
+            <span class="ui <%= @domain.status_color_for(epic.status_category) %> label" style="width: 100%; text-align: center;">
+              <%= epic.status %>
+            </span>
+          <% end %>
         </td>
       </tr>
 
