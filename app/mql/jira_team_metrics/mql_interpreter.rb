@@ -9,9 +9,14 @@ class JiraTeamMetrics::MqlInterpreter
 
   class MqlTransform < Parslet::Transform
     rule(int: simple(:int)) { Integer(int) }
+    rule(bool: simple(:bool)) { ActiveModel::Type::Boolean.new.cast(bool.to_s) }
+
     rule(lhs: simple(:lhs), op: '+', rhs: simple(:rhs)) { lhs + rhs }
     rule(lhs: simple(:lhs), op: '-', rhs: simple(:rhs)) { lhs - rhs }
     rule(lhs: simple(:lhs), op: '*', rhs: simple(:rhs)) { lhs * rhs }
     rule(lhs: simple(:lhs), op: '/', rhs: simple(:rhs)) { lhs / rhs }
+
+    rule(lhs: simple(:lhs), op: 'and', rhs: simple(:rhs)) { lhs && rhs }
+    rule(lhs: simple(:lhs), op: 'or', rhs: simple(:rhs)) { lhs || rhs }
   end
 end
