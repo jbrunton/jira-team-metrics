@@ -5,7 +5,7 @@ module JiraTeamMetrics::MqlLexer
   rule(:space?)     { space.maybe }
 
   rule(:digit) { match['0-9'] }
-  rule(:integer) { (str('-').maybe >> digit.repeat(1)).as(:value) >> space? }
+  rule(:integer) { (str('-').maybe >> digit.repeat(1)).as(:int) >> space? }
   rule(:identifier) { (match('[a-zA-Z_]') >> match('[a-zA-Z0-9_]').repeat).as(:identifier) >> space? }
   rule :string do
     str("'") >>
