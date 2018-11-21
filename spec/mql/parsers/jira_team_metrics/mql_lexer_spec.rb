@@ -9,8 +9,13 @@ RSpec.describe JiraTeamMetrics::MqlLexer do
   let(:parser) { TestParser.new }
 
   it "parses integers" do
-    expect(parser.parse('123')).to eq(value: '123')
-    expect(parser.parse('-123')).to eq(value: '-123')
+    expect(parser.parse('123')).to eq(int: '123')
+    expect(parser.parse('-123')).to eq(int: '-123')
+  end
+
+  it "parses booleans" do
+    expect(parser.parse('true')).to eq(bool: 'true')
+    expect(parser.parse('false')).to eq(bool: 'false')
   end
 
   it "parses identifiers" do

@@ -4,34 +4,66 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
   let(:parser) { JiraTeamMetrics::MqlExprParser.new }
 
   it "parses integers" do
-    expect(parser.parse('123')).to eq(value: '123')
+    expect(parser.parse('123')).to eq(int: '123')
   end
 
-  it "parses additive expressions" do
-    expect(parser.parse('1 + 2')).to eq(lhs: { value: '1' }, op: '+', rhs: { value: '2' })
+  it "parses booleans" do
+    expect(parser.parse('true')).to eq(bool: 'true')
+    expect(parser.parse('false')).to eq(bool: 'false')
+  end
+
+  it "parses arithmetic expressions" do
+    expect(parser.parse('1 + 2')).to eq(lhs: { int: '1' }, op: '+', rhs: { int: '2' })
     expect(parser.parse('1 + 2 + 3')).to eq({
-        lhs: { value: '1' },
+        lhs: { lhs: { int: '1' }, op: '+', rhs: { int: '2' } },
         op: '+',
-        rhs: { lhs: { value: '2' }, op: '+', rhs: { value: '3' } }
+        rhs: { int: '3' }
     })
-    expect(parser.parse('(1 + 2) + 3')).to eq({
-        lhs: { lhs: { value: '1' }, op: '+', rhs: { value: '2' } },
+    expect(parser.parse('1 + (2 + 3)')).to eq({
+        lhs: { int: '1' },
         op: '+',
-        rhs: { value: '3' }
+        rhs: { lhs: { int: '2' }, op: '+', rhs: { int: '3' } }
     })
   end
 
   it "parses multiplicative expressions" do
-    expect(parser.parse('1 * 2')).to eq(lhs: { value: '1' }, op: '*', rhs: { value: '2' })
+    expect(parser.parse('1 * 2')).to eq(lhs: { int: '1' }, op: '*', rhs: { int: '2' })
     expect(parser.parse('1 * 2 * 3')).to eq({
-        lhs: { lhs: { value: '1' }, op: '*', rhs: { value: '2' } },
+        lhs: { lhs: { int: '1' }, op: '*', rhs: { int: '2' } },
         op: '*',
-        rhs: { value: '3' }
+        rhs: { int: '3' }
     })
     expect(parser.parse('1 * (2 * 3)')).to eq({
-        lhs: { value: '1' },
+        lhs: { int: '1' },
         op: '*',
-        rhs: { lhs: { value: '2' }, op: '*', rhs: { value: '3' } }
+        rhs: { lhs: { int: '2' }, op: '*', rhs: { int: '3' } }
+    })
+  end
+
+  it "parses general arithmetic expressions" do
+    expect(parser.parse('1 + 2 * 3')).to eq({
+        lhs: { int: '1' },
+        op: '+',
+        rhs: { lhs: { int: '2' }, op: '*', rhs: { int: '3' } }
+    })
+    expect(parser.parse('1 * 2 + 3')).to eq({
+        lhs: { lhs: { int: '1' }, op: '*', rhs: { int: '2' } },
+        op: '+',
+        rhs: { int: '3' }
+    })
+  end
+
+  it "parses boolean expressions" do
+    expect(parser.parse('true and false')).to eq(lhs: { bool: 'true' }, op: 'and', rhs: { bool: 'false' })
+    expect(parser.parse('true and true or false')).to eq({
+        lhs: { lhs: { bool: 'true' }, op: 'and', rhs: { bool: 'true' } },
+        op: 'or',
+        rhs: { bool: 'false' }
+    })
+    expect(parser.parse('true and (true or false)')).to eq({
+        lhs: { bool: 'true' },
+        op: 'and',
+        rhs: { lhs: { bool: 'true' }, op: 'or', rhs: { bool: 'false' } }
     })
   end
 end
