@@ -23,6 +23,16 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval("true and false")).to eq(false)
       expect(eval("(true or false) and true")).to eq(true)
     end
+
+    it "performs equality comparisons" do
+      expect(eval("1 = 1")).to eq(true)
+      expect(eval("1 = 2")).to eq(false)
+
+      expect(eval("true = true")).to eq(true)
+      expect(eval("true = false")).to eq(false)
+
+      expect(eval("true = 1")).to eq(false)
+    end
   end
 
   def eval(expr)

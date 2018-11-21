@@ -18,5 +18,7 @@ class JiraTeamMetrics::MqlInterpreter
 
     rule(lhs: simple(:lhs), op: 'and', rhs: simple(:rhs)) { lhs && rhs }
     rule(lhs: simple(:lhs), op: 'or', rhs: simple(:rhs)) { lhs || rhs }
+
+    rule(lhs: simple(:lhs), op: '=', rhs: simple(:rhs)) { lhs == rhs }
   end
 end
