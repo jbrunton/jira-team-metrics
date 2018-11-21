@@ -20,4 +20,18 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
         rhs: { value: '3' }
     })
   end
+
+  it "parses multiplicative expressions" do
+    expect(parser.parse('1 * 2')).to eq(lhs: { value: '1' }, op: '*', rhs: { value: '2' })
+    expect(parser.parse('1 * 2 * 3')).to eq({
+        lhs: { lhs: { value: '1' }, op: '*', rhs: { value: '2' } },
+        op: '*',
+        rhs: { value: '3' }
+    })
+    expect(parser.parse('1 * (2 * 3)')).to eq({
+        lhs: { value: '1' },
+        op: '*',
+        rhs: { lhs: { value: '2' }, op: '*', rhs: { value: '3' } }
+    })
+  end
 end
