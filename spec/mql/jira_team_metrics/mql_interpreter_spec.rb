@@ -11,5 +11,10 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       value = JiraTeamMetrics::MqlInterpreter.new.eval("1 + 2")
       expect(value).to eq(3)
     end
+
+    it "performs complex arithmetic" do
+      value = JiraTeamMetrics::MqlInterpreter.new.eval("(1 + 2) * 3")
+      expect(value).to eq(9)
+    end
   end
 end
