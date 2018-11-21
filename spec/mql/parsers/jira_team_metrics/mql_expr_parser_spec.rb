@@ -14,5 +14,10 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
         op: '+',
         rhs: { lhs: { value: '2' }, op: '+', rhs: { value: '3' } }
     })
+    expect(parser.parse('(1 + 2) + 3')).to eq({
+        lhs: { lhs: { value: '1' }, op: '+', rhs: { value: '2' } },
+        op: '+',
+        rhs: { value: '3' }
+    })
   end
 end
