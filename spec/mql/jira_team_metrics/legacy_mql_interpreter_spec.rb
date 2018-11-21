@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe JiraTeamMetrics::MqlInterpreter do
+RSpec.describe JiraTeamMetrics::LegacyMqlInterpreter do
   let(:board) { create(:board) }
 
   describe "#eval" do
@@ -8,7 +8,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
 
       it "returns all issues" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("")
         expect(issues).to eq([issue])
       end
     end
@@ -17,12 +17,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
 
       it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-101'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-101'")
         expect(issues).to eq([issue])
       end
 
       it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-102'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-102'")
         expect(issues).to be_empty
       end
     end
@@ -31,19 +31,19 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue) { create(:issue, fields: {'MyField' => 'foo'}, board: board) }
 
       it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'foo'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("MyField = 'foo'")
         expect(issues).to eq([issue])
       end
 
       it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'bar'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("MyField = 'bar'")
         expect(issues).to be_empty
       end
 
       it "filters names with spaces" do
         issue2 = create(:issue, fields: {'My Field' => 'foo'}, board: board)
         issue3 = create(:issue, fields: {'My Field' => 'bar'}, board: board)
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue2, issue3]).eval("'My Field' = 'foo'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue2, issue3]).eval("'My Field' = 'foo'")
         expect(issues).to eq([issue2])
       end
     end
@@ -52,12 +52,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue) { create(:issue, issue_type: 'Bug', board: board) }
 
       it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Bug'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("issuetype = 'Bug'")
         expect(issues).to eq([issue])
       end
 
       it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Story'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("issuetype = 'Story'")
         expect(issues).to be_empty
       end
     end
@@ -73,7 +73,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
             'completedTime > -8 days' => [issue_b, issue_c],
             'startedTime < -7 days' => [issue_a, issue_b]
         }.each do |expr, expected_issues|
-          issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval(expr)
+          issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval(expr)
           expect(issues).to eq(expected_issues)
         end
       end
@@ -95,7 +95,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue_c) { create(:issue, fields: {'MyField' => 'C'}, board: board) }
 
       it "returns issues that match the disjunction" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("MyField = 'A' or MyField = 'B'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("MyField = 'A' or MyField = 'B'")
         expect(issues).to eq([issue_a, issue_b])
       end
     end
@@ -106,7 +106,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue_c) { create(:issue, fields: {'FieldA' => 'bar', 'FieldB' => 'baz'}, board: board) }
 
       it "returns issues that match the conjunction" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("FieldA = 'foo' and FieldB = 'bar'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("FieldA = 'foo' and FieldB = 'bar'")
         expect(issues).to eq([issue_b])
       end
     end
@@ -117,7 +117,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue_c) { create(:issue, fields: {'FieldA' => 'bar', 'FieldB' => 'baz'}, board: board) }
 
       it "returns the issues that match the expression" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("(FieldA = 'foo' and FieldB = 'bar') or (FieldB = 'baz' and FieldA = 'bar')")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("(FieldA = 'foo' and FieldB = 'bar') or (FieldB = 'baz' and FieldA = 'bar')")
         expect(issues).to eq([issue_b, issue_c])
       end
     end
@@ -128,12 +128,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue_c) { create(:issue, fields: {'MyField' => 'C'}, board: board) }
 
       it "negates the expression" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not MyField = 'A'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not MyField = 'A'")
         expect(issues).to eq([issue_b, issue_c])
       end
 
       it "negates compound expressions" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not (MyField = 'A' or MyField = 'B')")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not (MyField = 'A' or MyField = 'B')")
         expect(issues).to eq([issue_c])
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue_b) { create(:issue) }
 
       it "returns issues for which it holds true" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b]).eval("startedTime")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue_a, issue_b]).eval("startedTime")
         expect(issues).to eq([issue_a])
       end
     end
@@ -152,12 +152,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue) { create(:issue, fields: {'Teams' => ['Android']}, board: board) }
 
       it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'Android'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("Teams includes 'Android'")
         expect(issues).to eq([issue])
       end
 
       it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'iOS'")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue]).eval("Teams includes 'iOS'")
         expect(issues).to be_empty
       end
     end
@@ -168,12 +168,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
 
       it "sorts the return values by the sort clause, ascending" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key asc")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key asc")
         expect(issues).to eq([issue1, issue2])
       end
 
       it "sorts the return values by the sort clause, descending" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
+        issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
         expect(issues).to eq([issue2, issue1])
       end
     end

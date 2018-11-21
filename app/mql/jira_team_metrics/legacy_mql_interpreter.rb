@@ -1,4 +1,4 @@
-class JiraTeamMetrics::MqlInterpreter
+class JiraTeamMetrics::LegacyMqlInterpreter
 
   def initialize(board, issues)
     @board = board

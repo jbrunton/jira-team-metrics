@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe JiraTeamMetrics::MqlInterpreter do
+RSpec.describe JiraTeamMetrics::MqlLexer do
   class TestParser < Parslet::Parser
     include JiraTeamMetrics::MqlLexer
     root :token

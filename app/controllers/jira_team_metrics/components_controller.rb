@@ -9,7 +9,7 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
         issue.in_progress_during?(@report_params.date_range) &&
         issue.duration_in_range(@report_params.date_range) > 0
     end
-    @filtered_issues = JiraTeamMetrics::MqlInterpreter.new(@board, issues).eval(@report_params.to_query)
+    @filtered_issues = JiraTeamMetrics::LegacyMqlInterpreter.new(@board, issues).eval(@report_params.to_query)
 
     epics_by_project = @filtered_issues
       .group_by{ |issue| issue.project }
@@ -48,7 +48,7 @@ class JiraTeamMetrics::ComponentsController < JiraTeamMetrics::ApplicationContro
   def throughput_drilldown
     @query = @report_params.to_query
     @issues = @board.completed_issues(@report_params.date_range)
-    @issues = JiraTeamMetrics::MqlInterpreter.new(@board, @issues).eval(@query)
+    @issues = JiraTeamMetrics::LegacyMqlInterpreter.new(@board, @issues).eval(@query)
     @selected_date = DateTime.parse(params[:selected_date])
     @selection_header = case @report_params.step_interval
       when 'Daily'
