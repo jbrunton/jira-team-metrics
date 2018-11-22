@@ -25,7 +25,7 @@ RSpec.describe JiraTeamMetrics::MqlLexer do
         'ident_with_digits_123',
         'a'
     ].each do |identifier|
-      expect(parser.parse(identifier)).to eq(identifier: identifier)
+      expect(parser.parse(identifier)).to eq(ident: identifier)
     end
   end
 

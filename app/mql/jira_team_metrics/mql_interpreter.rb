@@ -4,21 +4,28 @@ class JiraTeamMetrics::MqlInterpreter
 
     parser = JiraTeamMetrics::MqlExprParser.new
     transform = MqlTransform.new
-    transform.apply(parser.parse(query))
+    ast = transform.apply(parser.parse(query))
+    ast.eval(nil)
   end
 
   class MqlTransform < Parslet::Transform
-    rule(int: simple(:int)) { Integer(int) }
-    rule(bool: simple(:bool)) { ActiveModel::Type::Boolean.new.cast(bool.to_s) }
+    rule(int: simple(:int)) do
+      value = Integer(int)
+      JiraTeamMetrics::ValueExpr.new(value)
+    end
+    rule(bool: simple(:bool)) do
+      value = ActiveModel::Type::Boolean.new.cast(bool.to_s)
+      JiraTeamMetrics::ValueExpr.new(value)
+    end
 
-    rule(lhs: simple(:lhs), op: '+', rhs: simple(:rhs)) { lhs + rhs }
-    rule(lhs: simple(:lhs), op: '-', rhs: simple(:rhs)) { lhs - rhs }
-    rule(lhs: simple(:lhs), op: '*', rhs: simple(:rhs)) { lhs * rhs }
-    rule(lhs: simple(:lhs), op: '/', rhs: simple(:rhs)) { lhs / rhs }
+    rule(lhs: simple(:lhs), op: '+', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }
+    rule(lhs: simple(:lhs), op: '-', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :-, rhs) }
+    rule(lhs: simple(:lhs), op: '*', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :*, rhs) }
+    rule(lhs: simple(:lhs), op: '/', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :/, rhs) }
 
-    rule(lhs: simple(:lhs), op: 'and', rhs: simple(:rhs)) { lhs && rhs }
-    rule(lhs: simple(:lhs), op: 'or', rhs: simple(:rhs)) { lhs || rhs }
+    rule(lhs: simple(:lhs), op: 'and', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :&, rhs) }
+    rule(lhs: simple(:lhs), op: 'or', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :|, rhs) }
 
-    rule(lhs: simple(:lhs), op: '=', rhs: simple(:rhs)) { lhs == rhs }
+    rule(lhs: simple(:lhs), op: '=', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :==, rhs) }
   end
 end

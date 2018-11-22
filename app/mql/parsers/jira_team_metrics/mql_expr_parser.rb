@@ -5,7 +5,7 @@ class JiraTeamMetrics::MqlExprParser < Parslet::Parser
   rule(:rparen) { str(")") >> space? }
 
   rule(:expression) { binop | primary_expression }
-  rule(:primary_expression) { lparen >> expression >> rparen | int | bool }
+  rule(:primary_expression) { lparen >> expression >> rparen | int | bool | ident }
 
   rule(:mul_op) { match['*/'].as(:op) >> space? }
   rule(:add_op) { match['+-'].as(:op) >> space? }

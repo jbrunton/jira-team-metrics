@@ -12,6 +12,10 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
     expect(parser.parse('false')).to eq(bool: 'false')
   end
 
+  it "parses identifiers" do
+    expect(parser.parse('issuetype')).to eq(ident: 'issuetype')
+  end
+
   it "parses arithmetic expressions" do
     expect(parser.parse('1 + 2')).to eq(lhs: { int: '1' }, op: '+', rhs: { int: '2' })
     expect(parser.parse('1 + 2 + 3')).to eq({
