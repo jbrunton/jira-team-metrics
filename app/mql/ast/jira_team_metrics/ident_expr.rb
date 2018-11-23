@@ -15,7 +15,7 @@ class JiraTeamMetrics::IdentExpr
 
     def ==(value)
       @issues.select do |issue|
-        issue.send(@field_name) == value
+        JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name) == value
       end
     end
 

@@ -38,7 +38,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       bug = create(:issue, issue_type: 'Bug')
       story = create(:issue, issue_type: 'Story')
 
-      expect(eval("issue_type = 'Bug'", [bug, story])).to eq([bug])
+      expect(eval("issuetype = 'Bug'", [bug, story])).to eq([bug])
     end
   end
 
