@@ -33,9 +33,16 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
       expect(eval("true = 1")).to eq(false)
     end
+
+    it "evaluates field comparisons" do
+      bug = create(:issue, issue_type: 'Bug')
+      story = create(:issue, issue_type: 'Story')
+
+      expect(eval("issue_type = 'Bug'", [bug, story])).to eq([bug])
+    end
   end
 
-  def eval(expr)
-    interpreter.eval(expr)
+  def eval(expr, issues = [])
+    interpreter.eval(expr, issues)
   end
 end

@@ -16,6 +16,14 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
     expect(parser.parse('issuetype')).to eq(ident: 'issuetype')
   end
 
+  it "parses field comparisons" do
+    expect(parser.parse("issuetype = 'Bug'")).to eq({
+        field: { ident: 'issuetype' },
+        op: '=',
+        expr: { str: 'Bug' }
+    })
+  end
+
   it "parses arithmetic expressions" do
     expect(parser.parse('1 + 2')).to eq(lhs: { int: '1' }, op: '+', rhs: { int: '2' })
     expect(parser.parse('1 + 2 + 3')).to eq({

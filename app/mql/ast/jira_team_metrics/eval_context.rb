@@ -1,4 +1,4 @@
-class JiraTeamMetrics::Context
+class JiraTeamMetrics::EvalContext
   attr_reader :issues
 
   def initialize(issues)

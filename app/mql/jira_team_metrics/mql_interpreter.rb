@@ -1,11 +1,12 @@
 class JiraTeamMetrics::MqlInterpreter
-  def eval(query)
+  def eval(query, issues)
     Rails.logger.info "Evaluating MQL query: #{query}"
 
     parser = JiraTeamMetrics::MqlExprParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))
-    ast.eval(nil)
+    binding.pry if ast.class == Hash
+    ast.eval(JiraTeamMetrics::EvalContext.new(issues))
   end
 
   class MqlTransform < Parslet::Transform
@@ -17,15 +18,20 @@ class JiraTeamMetrics::MqlInterpreter
       value = ActiveModel::Type::Boolean.new.cast(bool.to_s)
       JiraTeamMetrics::ValueExpr.new(value)
     end
+    rule(str: simple(:str)) { JiraTeamMetrics::ValueExpr.new(str.to_s) }
 
-    rule(lhs: simple(:lhs), op: '+', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }
-    rule(lhs: simple(:lhs), op: '-', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :-, rhs) }
-    rule(lhs: simple(:lhs), op: '*', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :*, rhs) }
-    rule(lhs: simple(:lhs), op: '/', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :/, rhs) }
+    rule(ident: simple(:ident)) do
+      JiraTeamMetrics::IdentExpr.new(ident.to_s)
+    end
 
-    rule(lhs: simple(:lhs), op: 'and', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :&, rhs) }
-    rule(lhs: simple(:lhs), op: 'or', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :|, rhs) }
+    rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }
+    rule(lhs: subtree(:lhs), op: '-', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :-, rhs) }
+    rule(lhs: subtree(:lhs), op: '*', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :*, rhs) }
+    rule(lhs: subtree(:lhs), op: '/', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :/, rhs) }
 
-    rule(lhs: simple(:lhs), op: '=', rhs: simple(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :==, rhs) }
+    rule(lhs: subtree(:lhs), op: 'and', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :&, rhs) }
+    rule(lhs: subtree(:lhs), op: 'or', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :|, rhs) }
+
+    rule(lhs: subtree(:lhs), op: '=', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :==, rhs) }
   end
 end
