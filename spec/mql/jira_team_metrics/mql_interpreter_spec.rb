@@ -34,11 +34,17 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval("true = 1")).to eq(false)
     end
 
-    it "evaluates field comparisons" do
+    it "evaluates fields on LHS of expressions" do
       bug = create(:issue, issue_type: 'Bug')
       story = create(:issue, issue_type: 'Story')
 
       expect(eval("issuetype = 'Bug'", [bug, story])).to eq([bug])
+    end
+
+    it "fails when fields are used on the right hand side" do
+      expect{
+        eval("'Bug' = issuetype", [])
+      }.to raise_error(JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::IDENT_RHS_ERROR)
     end
   end
 

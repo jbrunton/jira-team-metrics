@@ -4,6 +4,9 @@ class JiraTeamMetrics::IdentExpr
   end
 
   def eval(ctx)
+    if (ctx.expr_type == :rhs) then
+      raise JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::IDENT_RHS_ERROR
+    end
     ComparisonContext.new(@field_name, ctx.issues)
   end
 
