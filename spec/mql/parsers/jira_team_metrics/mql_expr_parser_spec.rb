@@ -18,9 +18,9 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
 
   it "parses field comparisons" do
     expect(parser.parse("issuetype = 'Bug'")).to eq({
-        field: { ident: 'issuetype' },
+        lhs: { ident: 'issuetype' },
         op: '=',
-        expr: { str: 'Bug' }
+        rhs: { str: 'Bug' }
     })
   end
 
