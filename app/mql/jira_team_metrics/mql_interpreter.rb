@@ -7,7 +7,6 @@ class JiraTeamMetrics::MqlInterpreter
     ast = transform.apply(parser.parse(query))
 
     if ast.class == Hash
-      binding.pry
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
