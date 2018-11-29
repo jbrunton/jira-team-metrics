@@ -1,7 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::MqlExprParser do
-  let(:parser) { JiraTeamMetrics::MqlExprParser.new }
+  class TestExprParser < Parslet::Parser
+    include JiraTeamMetrics::MqlLexer
+    include JiraTeamMetrics::MqlOpParser
+    include JiraTeamMetrics::MqlExprParser
+
+    root :expression
+  end
+
+  let(:parser) { TestExprParser.new }
 
   it "parses integers" do
     expect(parser.parse('123')).to eq(int: '123')
@@ -94,27 +102,6 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
   it "parses not expressions" do
     expect(parser.parse('not 1')).to eq({
       not: { int: '1' }
-    })
-  end
-
-  it "parses sort expressions" do
-    expect(parser.parse("issuetype = 'Bug' sort by started_time asc")).to eq({
-      sort: {
-        expr: {
-          lhs: { field: {ident: 'issuetype' } },
-          op: '=',
-          rhs: { str: 'Bug' }
-        },
-        sort_by: { ident: 'started_time' },
-        order: 'asc'
-      }
-    })
-    expect(parser.parse("true sort by 'My Field' asc")).to eq({
-      sort: {
-        expr: { bool: 'true' },
-        sort_by: { str: 'My Field' },
-        order: 'asc'
-      }
     })
   end
 end

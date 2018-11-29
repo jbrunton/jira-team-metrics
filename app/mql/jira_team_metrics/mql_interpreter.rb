@@ -2,7 +2,7 @@ class JiraTeamMetrics::MqlInterpreter
   def eval(query, board, issues)
     Rails.logger.info "Evaluating MQL query: #{query}"
 
-    parser = JiraTeamMetrics::MqlExprParser.new
+    parser = JiraTeamMetrics::MqlStatementParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))
 
