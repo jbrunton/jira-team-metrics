@@ -21,7 +21,7 @@ class JiraTeamMetrics::ReportParams
 
   def to_query
     query_builder = JiraTeamMetrics::QueryBuilder.new(@query, :mql)
-    query_builder.and("filter = '#{@filter}'") unless @filter.blank?
+    query_builder.and("filter('#{@filter}')") unless @filter.blank?
     query_builder.and("hierarchyLevel = '#{@hierarchy_level}'") unless @hierarchy_level.blank?
     query_builder.query
   end
