@@ -81,7 +81,13 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
 
   it "parses function calls" do
     expect(parser.parse('fun()')).to eq({
-      fun: { ident: 'fun' }
+      fun: { ident: 'fun', args: [] }
+    })
+    expect(parser.parse('fun(1)')).to eq({
+      fun: { ident: 'fun', args: [{int: '1'}] }
+    })
+    expect(parser.parse("fun(1, 'foo')")).to eq({
+      fun: { ident: 'fun', args: [{int: '1'}, {str: 'foo'}] }
     })
   end
 end

@@ -10,7 +10,7 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   class MqlTransform < Parslet::Transform
-    rule(fun: { ident: simple(:ident) }) { JiraTeamMetrics::FuncCallExpr.new(ident.to_s) }
+    rule(fun: { ident: simple(:ident), args: subtree(:args) }) { JiraTeamMetrics::FuncCallExpr.new(ident.to_s, args) }
 
     rule(int: simple(:int)) do
       value = Integer(int)

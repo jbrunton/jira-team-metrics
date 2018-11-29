@@ -1,17 +1,21 @@
 class JiraTeamMetrics::FuncCallExpr
-  def initialize(func_name)
+  def initialize(func_name, args)
     @func_name = func_name
+    @args = args
   end
 
   def eval(ctx)
-    func = FUNCTIONS[@func_name]
+    params = @args.map{ |arg| arg.eval(ctx) }
+    signature = "#{@func_name}(#{params.map{ |arg| arg.class}.join(',')})"
+    func = FUNCTIONS[signature]
     if (func.nil?) then
-      raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % @func_name
+      raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
-    func.call()
+    func.call(*params)
   end
 private
   FUNCTIONS = {
-    'today' => lambda { DateTime.now().to_date }
+    'today()' => lambda { DateTime.now().to_date },
+    'date(String)' => lambda { |date_string| DateTime.parse(date_string) }
   }
 end
