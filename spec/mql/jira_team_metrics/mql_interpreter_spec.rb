@@ -144,7 +144,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     end
 
     context "when given a select statement" do
-      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
       let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
       let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
       let(:issues) { [issue1, issue2, issue3] }
@@ -152,11 +152,21 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       it "selects the given issues" do
         query = <<~MQL
           select *
-          from issues
+          from issues()
           where MyField = 'A' sort by key asc
         MQL
         results = eval(query, issues, board)
         expect(results).to eq([issue1, issue2])
+      end
+
+      it "selects the issues for the given status category" do
+        query = <<~MQL
+          select *
+          from issues('Done')
+          where MyField = 'A' sort by key asc
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue1])
       end
     end
   end

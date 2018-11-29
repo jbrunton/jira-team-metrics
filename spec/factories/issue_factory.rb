@@ -7,7 +7,7 @@ FactoryBot.define do
     fields { {} }
     transitions []
     links []
-    status 'Done'
+    status 'To Do'
     sequence(:global_rank) { |k| (k+200).to_s }
 
     transient do

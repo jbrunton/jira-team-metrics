@@ -8,6 +8,7 @@ class JiraTeamMetrics::MqlInterpreter
     ast = transform.apply(parser.parse(clean_query))
 
     if ast.class == Hash
+      binding.pry
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
@@ -33,6 +34,10 @@ class JiraTeamMetrics::MqlInterpreter
 
     rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
       JiraTeamMetrics::SortExpr.new(expr, sort_by, order)
+    end
+
+    rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
+      JiraTeamMetrics::SelectStatement.new(from, where)
     end
 
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }

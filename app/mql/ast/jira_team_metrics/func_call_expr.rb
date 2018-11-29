@@ -37,6 +37,8 @@ private
       else
         ctx.issues.select { |issue| filter.include?(issue) }
       end
-    end
+    end,
+    'issues()' => lambda { |ctx| ctx.issues },
+    'issues(String)' => lambda { |ctx, cat| ctx.issues.select{ |i| i.status_category == cat } }
   }
 end
