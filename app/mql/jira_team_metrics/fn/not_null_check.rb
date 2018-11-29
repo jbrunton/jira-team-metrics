@@ -5,7 +5,7 @@ class JiraTeamMetrics::Fn::NotNullCheck
 
   def self.register(ctx)
     ctx.register_function(
-      'has(JiraTeamMetrics::FieldExpr::ComparisonContext)',
+      'has(JiraTeamMetrics::AST::FieldExpr::ComparisonContext)',
       JiraTeamMetrics::Fn::NotNullCheck.new)
   end
 end

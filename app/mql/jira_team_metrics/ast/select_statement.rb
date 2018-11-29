@@ -1,4 +1,4 @@
-class JiraTeamMetrics::SelectStatement
+class JiraTeamMetrics::AST::SelectStatement
   def initialize(data_source, expr)
     @data_source = data_source
     @expr = expr

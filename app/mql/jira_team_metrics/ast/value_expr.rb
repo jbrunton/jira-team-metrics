@@ -1,4 +1,4 @@
-class JiraTeamMetrics::ValueExpr
+class JiraTeamMetrics::AST::ValueExpr
   def initialize(value)
     @value = value
   end

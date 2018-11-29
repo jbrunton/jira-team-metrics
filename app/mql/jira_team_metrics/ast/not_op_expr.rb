@@ -1,4 +1,4 @@
-class JiraTeamMetrics::NotOpExpr
+class JiraTeamMetrics::AST::NotOpExpr
   def initialize(rhs)
     @rhs = rhs
   end
