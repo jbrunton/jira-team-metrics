@@ -1,4 +1,4 @@
-class JiraTeamMetrics::SortExpr
+class JiraTeamMetrics::AST::SortExpr
   def initialize(expr, sort_by, order)
     @expr = expr
     @sort_by = sort_by
@@ -17,7 +17,7 @@ class JiraTeamMetrics::SortExpr
   end
 
   def field_name(ctx)
-    @field_name ||= if @sort_by.class == JiraTeamMetrics::ValueExpr
+    @field_name ||= if @sort_by.class == JiraTeamMetrics::AST::ValueExpr
       @sort_by.eval(ctx.copy(:none))
     else
       (@sort_by[:identifier] || @sort_by[:value]).to_s

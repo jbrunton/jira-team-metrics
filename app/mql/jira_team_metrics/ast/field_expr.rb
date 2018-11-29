@@ -1,4 +1,4 @@
-class JiraTeamMetrics::FieldExpr
+class JiraTeamMetrics::AST::FieldExpr
   def initialize(field_name)
     @field_name = field_name
   end
