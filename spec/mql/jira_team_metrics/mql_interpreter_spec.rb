@@ -37,6 +37,14 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval("true = 1")).to eq(false)
     end
 
+    it "performs inequality comparisons" do
+      expect(eval('1 < 2')).to eq(true)
+      expect(eval('2 < 1')).to eq(false)
+
+      expect(eval('2 > 1')).to eq(true)
+      expect(eval('1 > 2')).to eq(false)
+    end
+
     it "evaluates fields on LHS of expressions" do
       bug = create(:issue, issue_type: 'Bug')
       story = create(:issue, issue_type: 'Story')
