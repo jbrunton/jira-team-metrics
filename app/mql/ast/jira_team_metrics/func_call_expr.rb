@@ -38,7 +38,11 @@ private
         ctx.issues.select { |issue| filter.include?(issue) }
       end
     end,
-    'issues()' => lambda { |ctx| ctx.issues },
-    'issues(String)' => lambda { |ctx, cat| ctx.issues.select{ |i| i.status_category == cat } }
+    'issues()' => JiraTeamMetrics::DataSource.new(:issue),
+    'issues(String)' => JiraTeamMetrics::DataSource.new(:issue),
+    'epics()' => JiraTeamMetrics::DataSource.new(:epic),
+    'epics(String)' => JiraTeamMetrics::DataSource.new(:epic),
+    'projects()' => JiraTeamMetrics::DataSource.new(:project),
+    'projects(String)' => JiraTeamMetrics::DataSource.new(:project)
   }
 end

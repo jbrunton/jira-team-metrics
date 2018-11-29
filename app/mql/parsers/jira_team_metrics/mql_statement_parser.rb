@@ -16,7 +16,7 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
   rule(:select_statement) do
     str('select') >> space? >> str('*') >> space? >>
       str('from') >> space? >> function_call.as(:from) >> space? >>
-      str('where') >> space? >> sort_expression.as(:where)
+      (str('where') >> space? >> sort_expression).maybe.as(:where)
   end
 
   rule(:statement) do

@@ -6,6 +6,10 @@ class JiraTeamMetrics::SelectStatement
 
   def eval(ctx)
     issues = @data_source.eval(ctx)
-    @expr.eval(ctx.copy(:none, issues: issues))
+    if @expr.nil?
+      issues
+    else
+      @expr.eval(ctx.copy(:none, issues: issues))
+    end
   end
 end
