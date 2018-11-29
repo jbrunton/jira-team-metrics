@@ -52,7 +52,7 @@ RSpec.describe JiraTeamMetrics::ReportParams do
         step_interval: step_interval,
         team: team
       })
-      expect(report_params.to_query).to eq("((some query) and (filter = 'My Filter')) and (hierarchyLevel = 'Scope')")
+      expect(report_params.to_query).to eq("((some query) and (filter('My Filter'))) and (hierarchyLevel = 'Scope')")
     end
   end
 end

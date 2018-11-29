@@ -1,181 +1,150 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::MqlInterpreter do
+  let(:interpreter) { JiraTeamMetrics::MqlInterpreter.new }
+
   let(:board) { create(:board) }
 
+  let(:now) { DateTime.new(2018, 1, 1, 10, 30) }
+  before(:each) { travel_to now }
+
   describe "#eval" do
-    context "when given a blank query" do
-      let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
-
-      it "returns all issues" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("")
-        expect(issues).to eq([issue])
-      end
+    it "evaluates int constants" do
+      expect(eval("1")).to eq(1)
+      expect(eval("-2")).to eq(-2)
     end
 
-    context "when given an issue field comparison" do
-      let(:issue) { create(:issue, key: 'ISSUE-101', board: board) }
-
-      it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-101'")
-        expect(issues).to eq([issue])
-      end
-
-      it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("key = 'ISSUE-102'")
-        expect(issues).to be_empty
-      end
+    it "evaluates bool constants" do
+      expect(eval('true')).to eq(true)
+      expect(eval('false')).to eq(false)
     end
 
-    context "when given a jira field comparison" do
-      let(:issue) { create(:issue, fields: {'MyField' => 'foo'}, board: board) }
-
-      it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'foo'")
-        expect(issues).to eq([issue])
-      end
-
-      it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("MyField = 'bar'")
-        expect(issues).to be_empty
-      end
-
-      it "filters names with spaces" do
-        issue2 = create(:issue, fields: {'My Field' => 'foo'}, board: board)
-        issue3 = create(:issue, fields: {'My Field' => 'bar'}, board: board)
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue2, issue3]).eval("'My Field' = 'foo'")
-        expect(issues).to eq([issue2])
-      end
+    it "performs arithmetic" do
+      expect(eval("1 + 2")).to eq(3)
+      expect(eval("(1 + 2) * 3")).to eq(9)
     end
 
-    context "when given an object field comparison" do
-      let(:issue) { create(:issue, issue_type: 'Bug', board: board) }
-
-      it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Bug'")
-        expect(issues).to eq([issue])
-      end
-
-      it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("issuetype = 'Story'")
-        expect(issues).to be_empty
-      end
+    it "performs boolean operations" do
+      expect(eval("true and false")).to eq(false)
+      expect(eval("(true or false) and true")).to eq(true)
     end
 
-    context "when given a date comparison" do
-      let(:issue_a) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 10) }
-      let(:issue_b) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 8, completed_time: DateTime.now - 6) }
-      let(:issue_c) { create(:issue, issue_type: 'Bug', board: board, started_time: DateTime.now - 6, completed_time: DateTime.now - 2) }
+    it "performs equality comparisons" do
+      expect(eval("1 = 1")).to eq(true)
+      expect(eval("1 = 2")).to eq(false)
 
-      it "filters issues by the date" do
-        {
-            'completedTime > -4 days' => [issue_c],
-            'completedTime > -8 days' => [issue_b, issue_c],
-            'startedTime < -7 days' => [issue_a, issue_b]
-        }.each do |expr, expected_issues|
-          issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval(expr)
-          expect(issues).to eq(expected_issues)
-        end
-      end
+      expect(eval("true = true")).to eq(true)
+      expect(eval("true = false")).to eq(false)
+
+      expect(eval("true = 1")).to eq(false)
     end
 
-    context "when given a project comparison" do
-      xit "returns issues in the given project"
-      xit "filters out issues that aren't in the given project"
+    it "performs inequality comparisons" do
+      expect(eval('1 < 2')).to eq(true)
+      expect(eval('2 < 2')).to eq(false)
+
+      expect(eval('2 > 1')).to eq(true)
+      expect(eval('2 > 2')).to eq(false)
+
+      expect(eval('1 <= 2')).to eq(true)
+      expect(eval('2 <= 2')).to eq(true)
+      expect(eval('3 <= 2')).to eq(false)
+
+      expect(eval('2 >= 1')).to eq(true)
+      expect(eval('2 >= 2')).to eq(true)
+      expect(eval('2 >= 3')).to eq(false)
     end
 
-    context "when given an epic comparison" do
-      xit "returns issues in the given epic"
-      xit "filters out issues that aren't in the given epic"
+    it "evaluates fields on LHS of expressions" do
+      bug = create(:issue, issue_type: 'Bug')
+      story = create(:issue, issue_type: 'Story')
+
+      expect(eval("issuetype = 'Bug'", [bug, story])).to eq([bug])
     end
 
-    context "when given a disjunction" do
-      let(:issue_a) { create(:issue, fields: {'MyField' => 'A'}, board: board) }
-      let(:issue_b) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
-      let(:issue_c) { create(:issue, fields: {'MyField' => 'C'}, board: board) }
-
-      it "returns issues that match the disjunction" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("MyField = 'A' or MyField = 'B'")
-        expect(issues).to eq([issue_a, issue_b])
-      end
+    it "fails when fields are used on the right hand side" do
+      expect{
+        eval("'Bug' = issuetype", [])
+      }.to raise_error(JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR)
     end
 
-    context "when given a conjunction" do
-      let(:issue_a) { create(:issue, fields: {'FieldA' => 'foo', 'FieldB' => 'baz'}, board: board) }
-      let(:issue_b) { create(:issue, fields: {'FieldA' => 'foo', 'FieldB' => 'bar'}, board: board) }
-      let(:issue_c) { create(:issue, fields: {'FieldA' => 'bar', 'FieldB' => 'baz'}, board: board) }
-
-      it "returns issues that match the conjunction" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("FieldA = 'foo' and FieldB = 'bar'")
-        expect(issues).to eq([issue_b])
-      end
+    it "invokes functions" do
+      expect(eval('today()')).to eq(now.to_date)
+      expect(eval("date('2018-06-01')")).to eq(DateTime.new(2018, 6, 1))
+      expect(eval('date(2018, 6, 1)')).to eq(DateTime.new(2018, 6, 1))
     end
 
-    context "when given a nested expression" do
-      let(:issue_a) { create(:issue, fields: {'FieldA' => 'foo', 'FieldB' => 'baz'}, board: board) }
-      let(:issue_b) { create(:issue, fields: {'FieldA' => 'foo', 'FieldB' => 'bar'}, board: board) }
-      let(:issue_c) { create(:issue, fields: {'FieldA' => 'bar', 'FieldB' => 'baz'}, board: board) }
-
-      it "returns the issues that match the expression" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("(FieldA = 'foo' and FieldB = 'bar') or (FieldB = 'baz' and FieldA = 'bar')")
-        expect(issues).to eq([issue_b, issue_c])
-      end
+    it "evaluates relative days" do
+      expect(eval('today() + 7')).to eq(now.to_date + 7.days)
     end
 
-    context "when given a negated expression" do
-      let(:issue_a) { create(:issue, fields: {'MyField' => 'A'}, board: board) }
-      let(:issue_b) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
-      let(:issue_c) { create(:issue, fields: {'MyField' => 'C'}, board: board) }
-
-      it "negates the expression" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not MyField = 'A'")
-        expect(issues).to eq([issue_b, issue_c])
-      end
-
-      it "negates compound expressions" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b, issue_c]).eval("not (MyField = 'A' or MyField = 'B')")
-        expect(issues).to eq([issue_c])
-      end
+    it "evaluates not null checks" do
+      issue1 = create(:issue, started_time: now)
+      issue2 = create(:issue)
+      expect(eval("has(startedTime)", [issue1, issue2])).to eq([issue1])
     end
 
-    context "when given a boolean expression" do
-      let(:issue_a) { create(:issue, started_time: DateTime.now) }
-      let(:issue_b) { create(:issue) }
-
-      it "returns issues for which it holds true" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue_a, issue_b]).eval("startedTime")
-        expect(issues).to eq([issue_a])
-      end
+    it "evaluates includes expressions" do
+      issue1 = create(:issue, fields: { 'teams' => ['Android'] })
+      issue2 = create(:issue, fields: { 'teams' => ['iOS'] })
+      expect(eval("teams includes 'iOS'", [issue1, issue2])).to eq([issue2])
     end
 
-    context "when given an includes expression" do
-      let(:issue) { create(:issue, fields: {'Teams' => ['Android']}, board: board) }
+    it "evaluates filter expressions" do
+      board = create(:board)
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+      board.filters.create(name: 'iOS', issue_keys: ['ISS-102'], filter_type: :config_filter)
 
-      it "returns issues that match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'Android'")
-        expect(issues).to eq([issue])
-      end
+      results = eval("teams includes 'iOS'", [issue1, issue2], board)
 
-      it "filters out issues that do not match the given value" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue]).eval("Teams includes 'iOS'")
-        expect(issues).to be_empty
-      end
+      expect(results).to eq([issue2])
+    end
+
+    it "evaluates not expressions on values" do
+      expect(eval('not true')).to eq(false)
+      expect(eval('not (1 = 2)')).to eq(true)
+    end
+
+    it "evaluates not expressions on issues" do
+      board = create(:board)
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+      board.filters.create(name: 'iOS', issue_keys: ['ISS-102'], filter_type: :config_filter)
+
+      results = eval("not (teams includes 'iOS')", [issue1, issue2], board)
+
+      expect(results).to eq([issue1])
+    end
+
+    it "evaluates binary operations on issue subexpressions" do
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android', 'iOS'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+
+      results = eval("(teams includes 'iOS') and not (teams includes 'Android')", [issue1, issue2], board)
+
+      expect(results).to eq([issue2])
     end
 
     context "when given a sort clause" do
       let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
       let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
       let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
+      let(:issues) { [issue1, issue2, issue3] }
 
       it "sorts the return values by the sort clause, ascending" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key asc")
-        expect(issues).to eq([issue1, issue2])
+        results = eval("MyField = 'A' sort by key asc", issues, board)
+        expect(results).to eq([issue1, issue2])
       end
 
       it "sorts the return values by the sort clause, descending" do
-        issues = JiraTeamMetrics::MqlInterpreter.new(board, [issue1, issue2, issue3]).eval("MyField = 'A' sort by key desc")
-        expect(issues).to eq([issue2, issue1])
+        results = eval("MyField = 'A' sort by key desc", issues, board)
+        expect(results).to eq([issue2, issue1])
       end
     end
+  end
+
+  def eval(expr, issues = [], board = nil)
+    interpreter.eval(expr, board, issues)
   end
 end
