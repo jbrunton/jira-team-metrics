@@ -1,13 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::MqlLexer do
-  class TestParser < Parslet::Parser
+  class TestLexer < Parslet::Parser
     include JiraTeamMetrics::MqlLexer
     rule(:token) { int | bool | ident | string }
     root :token
   end
 
-  let(:parser) { TestParser.new }
+  let(:parser) { TestLexer.new }
+
 
   it "parses integers" do
     expect(parser.parse('123')).to eq(int: '123')
