@@ -89,7 +89,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :jql_filter)
         when JiraTeamMetrics::BoardConfig::MqlFilter
-          issues = JiraTeamMetrics::LegacyMqlInterpreter.new(board, board.issues).eval(filter.query)
+          issues = JiraTeamMetrics::MqlInterpreter.new.eval(filter.query, board, board.issues)
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :mql_filter)
         when JiraTeamMetrics::BoardConfig::ConfigFilter

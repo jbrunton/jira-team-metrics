@@ -109,14 +109,14 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
 private
   def sections_for(issues, report_options)
-    backing_interpreter = JiraTeamMetrics::LegacyMqlInterpreter.new(@board, issues)
-    backing_issues = backing_interpreter.eval(report_options.backing_query)
-    sections_interpreter = JiraTeamMetrics::LegacyMqlInterpreter.new(@board, backing_issues)
+    backing_interpreter = JiraTeamMetrics::MqlInterpreter.new
+    backing_issues = backing_interpreter.eval(report_options.backing_query, @board, issues)
+    sections_interpreter = JiraTeamMetrics::MqlInterpreter.new
     if report_options.sections.any?
       report_options.sections.map do |section|
         {
           title: section.title,
-          issues: sections_interpreter.eval(section.mql),
+          issues: sections_interpreter.eval(section.mql, @board, backing_issues),
           collapsed: section.collapsed
         }
       end
