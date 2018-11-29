@@ -12,8 +12,11 @@ class JiraTeamMetrics::FuncCallExpr
 private
   def lookup_function(args)
     signature = "#{@func_name}(#{args.map{ |arg| arg.class}.join(', ')})"
-    func = FUNCTIONS[signature]
-    if (func.nil?)
+    func = FUNCTIONS[signature] ||= begin
+      generic_signature = "#{@func_name}(#{Array.new(args.count, 'Object').join(', ')})"
+      FUNCTIONS[generic_signature]
+    end
+    if func.nil?
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
     func
@@ -22,7 +25,8 @@ private
   FUNCTIONS = {
     'today()' => lambda { |_| DateTime.now().to_date },
     'date(String)' => lambda { |_, date_string| DateTime.parse(date_string) },
-    'date(Integer, Integer, Integer)' => lambda { |_, year, month, day| DateTime.new(year, month, day) },
+    # note: values may be either Integer or Fixnum depending on platform
+    'date(Object, Object, Object)' => lambda { |_, year, month, day| DateTime.new(year, month, day) },
     'has(JiraTeamMetrics::FieldExpr::ComparisonContext)' => lambda do |_, value|
       value.not_null
     end,
