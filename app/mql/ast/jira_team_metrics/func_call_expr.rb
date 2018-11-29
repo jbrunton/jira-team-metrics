@@ -7,15 +7,16 @@ class JiraTeamMetrics::FuncCallExpr
   def eval(ctx)
     args = @params.map{ |param| param.eval(ctx.copy(:none)) }
     func = lookup_function(args)
-    if (func.nil?)
-      raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
-    end
     func.call(ctx, *args)
   end
 private
   def lookup_function(args)
     signature = "#{@func_name}(#{args.map{ |arg| arg.class}.join(', ')})"
-    FUNCTIONS[signature]
+    func = FUNCTIONS[signature]
+    if (func.nil?)
+      raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
+    end
+    func
   end
 
   FUNCTIONS = {
