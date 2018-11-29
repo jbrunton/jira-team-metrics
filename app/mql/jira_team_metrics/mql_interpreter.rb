@@ -4,7 +4,8 @@ class JiraTeamMetrics::MqlInterpreter
 
     parser = JiraTeamMetrics::MqlStatementParser.new
     transform = MqlTransform.new
-    ast = transform.apply(parser.parse(query))
+    clean_query = query.gsub("\n", ' ').strip
+    ast = transform.apply(parser.parse(clean_query))
 
     if ast.class == Hash
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"

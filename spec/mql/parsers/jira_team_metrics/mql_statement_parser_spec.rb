@@ -23,4 +23,8 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
       }
     })
   end
+
+  it "parses sort statements" do
+
+  end
 end

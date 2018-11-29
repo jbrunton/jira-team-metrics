@@ -142,6 +142,23 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(results).to eq([issue2, issue1])
       end
     end
+
+    context "when given a select statement" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
+      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
+      let(:issues) { [issue1, issue2, issue3] }
+
+      it "selects the given issues" do
+        query = <<~MQL
+          select *
+          from issues
+          where MyField = 'A' sort by key asc
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue1, issue2])
+      end
+    end
   end
 
   def eval(expr, issues = [], board = nil)
