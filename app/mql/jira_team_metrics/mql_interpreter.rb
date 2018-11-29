@@ -4,7 +4,7 @@ class JiraTeamMetrics::MqlInterpreter
 
     parser = JiraTeamMetrics::MqlStatementParser.new
     transform = MqlTransform.new
-    clean_query = query.gsub("\n", ' ').strip
+    clean_query = query.tr("\n", ' ').strip
     ast = transform.apply(parser.parse(clean_query))
 
     if ast.class == Hash
