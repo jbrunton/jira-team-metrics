@@ -1,4 +1,4 @@
-class JiraTeamMetrics::IssueFilter
+class JiraTeamMetrics::Fn::IssueFilter
   def call(ctx, filter_name)
     filter = ctx.board.filters.select{ |f| f.name == filter_name }.first
     if filter.nil?
@@ -11,6 +11,6 @@ class JiraTeamMetrics::IssueFilter
   def self.register(ctx)
     ctx.register_function(
       'filter(String)',
-      JiraTeamMetrics::IssueFilter.new)
+      JiraTeamMetrics::Fn::IssueFilter.new)
   end
 end

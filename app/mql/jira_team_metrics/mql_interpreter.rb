@@ -19,12 +19,12 @@ class JiraTeamMetrics::MqlInterpreter
 
   def build_context(board, issues)
     context = JiraTeamMetrics::EvalContext.new(board, issues)
-    JiraTeamMetrics::DateToday.register(context)
-    JiraTeamMetrics::DateConstructor.register(context)
-    JiraTeamMetrics::DateParser.register(context)
-    JiraTeamMetrics::NotNullCheck.register(context)
-    JiraTeamMetrics::IssueFilter.register(context)
-    JiraTeamMetrics::DataSource.register(context)
+    JiraTeamMetrics::Fn::DateToday.register(context)
+    JiraTeamMetrics::Fn::DateConstructor.register(context)
+    JiraTeamMetrics::Fn::DateParser.register(context)
+    JiraTeamMetrics::Fn::NotNullCheck.register(context)
+    JiraTeamMetrics::Fn::IssueFilter.register(context)
+    JiraTeamMetrics::Fn::DataSource.register(context)
     context
   end
 

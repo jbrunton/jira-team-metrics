@@ -1,4 +1,4 @@
-class JiraTeamMetrics::DataSource
+class JiraTeamMetrics::Fn::DataSource
   include JiraTeamMetrics::ProjectsHelper
 
   def initialize(scope_type)
@@ -16,12 +16,12 @@ class JiraTeamMetrics::DataSource
 
   def self.register(ctx)
     projects_function_name = projects_path_plural(ctx.board.domain)
-    ctx.register_function('issues()', JiraTeamMetrics::DataSource.new(:issue))
-    ctx.register_function('issues(String)', JiraTeamMetrics::DataSource.new(:issue))
-    ctx.register_function('epics()', JiraTeamMetrics::DataSource.new(:epic))
-    ctx.register_function('epics(String)', JiraTeamMetrics::DataSource.new(:epic))
-    ctx.register_function("#{projects_function_name}()", JiraTeamMetrics::DataSource.new(:project))
-    ctx.register_function("#{projects_function_name}(String)", JiraTeamMetrics::DataSource.new(:project))
+    ctx.register_function('issues()', JiraTeamMetrics::Fn::DataSource.new(:issue))
+    ctx.register_function('issues(String)', JiraTeamMetrics::Fn::DataSource.new(:issue))
+    ctx.register_function('epics()', JiraTeamMetrics::Fn::DataSource.new(:epic))
+    ctx.register_function('epics(String)', JiraTeamMetrics::Fn::DataSource.new(:epic))
+    ctx.register_function("#{projects_function_name}()", JiraTeamMetrics::Fn::DataSource.new(:project))
+    ctx.register_function("#{projects_function_name}(String)", JiraTeamMetrics::Fn::DataSource.new(:project))
   end
 
   private
