@@ -12,8 +12,8 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
   let(:completed_issues) {
     [
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 8, completed_time: now - 7),
-      create(:issue, board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 7, completed_time: now - 6)
+      create(:issue, status: 'Done', board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 8, completed_time: now - 7),
+      create(:issue, status: 'Done', board: board, fields: { 'Teams' => ['My Team'] }, epic: scoped_epic, started_time: now - 7, completed_time: now - 6)
     ]
   }
 
