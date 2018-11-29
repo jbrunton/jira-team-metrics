@@ -96,4 +96,18 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
       not: { int: '1' }
     })
   end
+
+  it "parses sort expressions" do
+    expect(parser.parse("issuetype = 'Bug' sort by started_time asc")).to eq({
+      sort: {
+        expr: {
+          lhs: { field: {ident: 'issuetype' } },
+          op: '=',
+          rhs: { str: 'Bug' }
+        },
+        sort_by: { ident: 'started_time' },
+        order: 'asc'
+      }
+    })
+  end
 end
