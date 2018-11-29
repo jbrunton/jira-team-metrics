@@ -19,6 +19,6 @@ class JiraTeamMetrics::MqlExprParser < Parslet::Parser
       field |
       string
   end
-  
+
   root :expression
 end

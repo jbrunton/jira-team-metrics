@@ -71,6 +71,12 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval("date('2018-06-01')")).to eq(DateTime.new(2018, 6, 1))
       expect(eval('date(2018, 6, 1)')).to eq(DateTime.new(2018, 6, 1))
     end
+
+    it "evaluates includes expressions" do
+      issue1 = create(:issue, fields: { 'teams' => ['Android'] })
+      issue2 = create(:issue, fields: { 'teams' => ['iOS'] })
+      expect(eval("teams includes 'iOS'", [issue1, issue2])).to eq([issue2])
+    end
   end
 
   def eval(expr, issues = [])

@@ -16,11 +16,15 @@ class JiraTeamMetrics::FieldExpr
       @issues = issues
     end
 
-    def ==(value)
+    def eval(op, rhs_value)
       @issues.select do |issue|
-        JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name) == value
+        field = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
+        if (!field.nil?) then
+          field.send(op, rhs_value)
+        else
+          false
+        end
       end
     end
-
   end
 end
