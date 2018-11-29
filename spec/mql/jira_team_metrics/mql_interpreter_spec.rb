@@ -74,6 +74,16 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval('date(2018, 6, 1)')).to eq(DateTime.new(2018, 6, 1))
     end
 
+    it "evaluates relative days" do
+      expect(eval('today() + 7')).to eq(now.to_date + 7.days)
+    end
+
+    it "evaluates not null checks" do
+      issue1 = create(:issue, started_time: now)
+      issue2 = create(:issue)
+      expect(eval("has(startedTime)", [issue1, issue2])).to eq([issue1])
+    end
+
     it "evaluates includes expressions" do
       issue1 = create(:issue, fields: { 'teams' => ['Android'] })
       issue2 = create(:issue, fields: { 'teams' => ['iOS'] })

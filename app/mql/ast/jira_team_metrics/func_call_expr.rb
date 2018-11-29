@@ -1,23 +1,30 @@
 class JiraTeamMetrics::FuncCallExpr
-  def initialize(func_name, args)
+  def initialize(func_name, params)
     @func_name = func_name
-    @args = args
+    @params = params
   end
 
   def eval(ctx)
-    params = @args.map{ |arg| arg.eval(ctx) }
-    signature = "#{@func_name}(#{params.map{ |arg| arg.class}.join(', ')})"
-    func = FUNCTIONS[signature]
+    args = @params.map{ |param| param.eval(ctx.copy(:none)) }
+    func = lookup_function(args)
     if (func.nil?)
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
-    func.call(ctx, *params)
+    func.call(ctx, *args)
   end
 private
+  def lookup_function(args)
+    signature = "#{@func_name}(#{args.map{ |arg| arg.class}.join(', ')})"
+    FUNCTIONS[signature]
+  end
+
   FUNCTIONS = {
     'today()' => lambda { |_| DateTime.now().to_date },
     'date(String)' => lambda { |_, date_string| DateTime.parse(date_string) },
     'date(Integer, Integer, Integer)' => lambda { |_, year, month, day| DateTime.new(year, month, day) },
+    'has(JiraTeamMetrics::FieldExpr::ComparisonContext)' => lambda do |_, value|
+      value.not_null
+    end,
     'filter(String)' => lambda do |ctx, filter_name|
       filter = ctx.board.filters.select{ |f| f.name == filter_name }.first
       if filter.nil?

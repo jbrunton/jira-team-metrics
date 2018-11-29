@@ -9,11 +9,11 @@ class JiraTeamMetrics::EvalContext
     @expr_type = expr_type
   end
 
-  def copy(opts = {})
+  def copy(expr_type, opts = {})
     JiraTeamMetrics::EvalContext.new(
       board,
       opts[:issues] || issues,
-      opts[:expr_type] || expr_type
+      expr_type
     )
   end
 end

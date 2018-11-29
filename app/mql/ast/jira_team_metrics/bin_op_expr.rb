@@ -6,8 +6,8 @@ class JiraTeamMetrics::BinOpExpr
   end
 
   def eval(ctx)
-    lhs_value = @lhs.eval(ctx.copy(expr_type: :lhs))
-    rhs_value = @rhs.eval(ctx.copy(expr_type: :rhs))
+    lhs_value = @lhs.eval(ctx.copy(:lhs))
+    rhs_value = @rhs.eval(ctx.copy(:rhs))
     if lhs_value.class == JiraTeamMetrics::FieldExpr::ComparisonContext
       lhs_value.eval(@op, rhs_value)
     else

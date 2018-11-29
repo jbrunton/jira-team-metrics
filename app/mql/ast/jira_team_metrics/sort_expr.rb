@@ -6,9 +6,9 @@ class JiraTeamMetrics::SortExpr
   end
 
   def eval(ctx)
-    expr_value = @expr.eval(ctx.copy())
+    expr_value = @expr.eval(ctx.copy(:none))
 
-    sorted_issues = expr_value.sort_by { |issue| sort_key_for(issue) }
+    sorted_issues = expr_value.sort_by { |issue| sort_key_for(issue, ctx) }
     if @order == 'desc'
       sorted_issues.reverse
     else
@@ -16,12 +16,16 @@ class JiraTeamMetrics::SortExpr
     end
   end
 
-  def field_name
-    @field_name ||= (@sort_by[:identifier] || @sort_by[:value]).to_s
+  def field_name(ctx)
+    @field_name ||= if @sort_by.class == JiraTeamMetrics::ValueExpr
+      @sort_by.eval(ctx.copy(:none))
+    else
+      (@sort_by[:identifier] || @sort_by[:value]).to_s
+    end
   end
 
-  def sort_key_for(issue)
-    value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name)
+  def sort_key_for(issue, ctx)
+    value = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(field_name(ctx))
     if value.nil? then
       [0, nil]
     else

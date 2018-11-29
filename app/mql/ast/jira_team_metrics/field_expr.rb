@@ -26,5 +26,11 @@ class JiraTeamMetrics::FieldExpr
         end
       end
     end
+
+    def not_null
+      @issues.select do |issue|
+        !JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name).nil?
+      end
+    end
   end
 end

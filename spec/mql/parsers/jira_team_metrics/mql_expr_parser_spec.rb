@@ -109,5 +109,12 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
         order: 'asc'
       }
     })
+    expect(parser.parse("true sort by 'My Field' asc")).to eq({
+      sort: {
+        expr: { bool: 'true' },
+        sort_by: { str: 'My Field' },
+        order: 'asc'
+      }
+    })
   end
 end
