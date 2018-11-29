@@ -12,7 +12,21 @@ class JiraTeamMetrics::MqlInterpreter
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
-    ast.eval(JiraTeamMetrics::EvalContext.new(board, issues))
+    ctx = build_context(board, issues)
+    ast.eval(ctx)
+  end
+
+  private
+
+  def build_context(board, issues)
+    context = JiraTeamMetrics::EvalContext.new(board, issues)
+    JiraTeamMetrics::DateToday.register(context)
+    JiraTeamMetrics::DateConstructor.register(context)
+    JiraTeamMetrics::DateParser.register(context)
+    JiraTeamMetrics::NotNullCheck.register(context)
+    JiraTeamMetrics::IssueFilter.register(context)
+    JiraTeamMetrics::DataSource.register(context)
+    context
   end
 
   class MqlTransform < Parslet::Transform

@@ -12,6 +12,15 @@ class JiraTeamMetrics::DataSource
     end
   end
 
+  def self.register(ctx)
+    ctx.register_function('issues()', JiraTeamMetrics::DataSource.new(:issue))
+    ctx.register_function('issues(String)', JiraTeamMetrics::DataSource.new(:issue))
+    ctx.register_function('epics()', JiraTeamMetrics::DataSource.new(:epic))
+    ctx.register_function('epics(String)', JiraTeamMetrics::DataSource.new(:epic))
+    ctx.register_function('projects()', JiraTeamMetrics::DataSource.new(:project))
+    ctx.register_function('projects(String)', JiraTeamMetrics::DataSource.new(:project))
+  end
+
   private
 
   def filter_scope(issues)
