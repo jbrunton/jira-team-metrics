@@ -142,9 +142,69 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(results).to eq([issue2, issue1])
       end
     end
+
+    context "when given a select statement" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
+      let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:project, fields: {'MyField' => 'B'}, board: board) }
+      let(:issues) { [issue1, issue2, issue3] }
+
+      it "selects the given issues" do
+        query = <<~MQL
+          select *
+          from issues()
+          where MyField = 'A' sort by key asc
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue1, issue2])
+      end
+
+      it "selects the issues for the given status category" do
+        query = <<~MQL
+          select *
+          from issues('Done')
+          where MyField = 'A' sort by key asc
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue1])
+      end
+
+      it "selects from epic data sources" do
+        query = <<~MQL
+          select *
+          from epics()
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue2])
+      end
+
+      it "selects from project data sources" do
+        query = <<~MQL
+          select *
+          from projects()
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([issue3])
+      end
+    end
+
+    context "for custom project types" do
+      let(:domain) { create(:domain, project_issue_type: 'Saga') }
+      let(:board) { create(:board, domain: domain) }
+      let(:issue) { create(:issue, issue_type: 'Saga', board: board) }
+
+      it "renames the project data sources" do
+        query = <<~MQL
+          select *
+          from sagas()
+        MQL
+        results = eval(query, [issue], board)
+        expect(results).to eq([issue])
+      end
+    end
   end
 
   def eval(expr, issues = [], board = nil)
-    interpreter.eval(expr, board, issues)
+    interpreter.eval(expr, board || create(:board), issues)
   end
 end

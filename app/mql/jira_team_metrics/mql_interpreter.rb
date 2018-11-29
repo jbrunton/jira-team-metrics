@@ -2,15 +2,30 @@ class JiraTeamMetrics::MqlInterpreter
   def eval(query, board, issues)
     Rails.logger.info "Evaluating MQL query: #{query}"
 
-    parser = JiraTeamMetrics::MqlExprParser.new
+    parser = JiraTeamMetrics::MqlStatementParser.new
     transform = MqlTransform.new
-    ast = transform.apply(parser.parse(query))
+    clean_query = query.tr("\n", ' ').strip
+    ast = transform.apply(parser.parse(clean_query))
 
     if ast.class == Hash
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
-    ast.eval(JiraTeamMetrics::EvalContext.new(board, issues))
+    ctx = build_context(board, issues)
+    ast.eval(ctx)
+  end
+
+  private
+
+  def build_context(board, issues)
+    context = JiraTeamMetrics::EvalContext.new(board, issues)
+    JiraTeamMetrics::Fn::DateToday.register(context)
+    JiraTeamMetrics::Fn::DateConstructor.register(context)
+    JiraTeamMetrics::Fn::DateParser.register(context)
+    JiraTeamMetrics::Fn::NotNullCheck.register(context)
+    JiraTeamMetrics::Fn::IssueFilter.register(context)
+    JiraTeamMetrics::Fn::DataSource.register(context)
+    context
   end
 
   class MqlTransform < Parslet::Transform
@@ -32,6 +47,10 @@ class JiraTeamMetrics::MqlInterpreter
 
     rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
       JiraTeamMetrics::SortExpr.new(expr, sort_by, order)
+    end
+
+    rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
+      JiraTeamMetrics::SelectStatement.new(from, where)
     end
 
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }

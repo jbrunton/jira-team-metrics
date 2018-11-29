@@ -18,6 +18,7 @@ module JiraTeamMetrics
     require 'gretel'
 
     config.autoload_paths << "#{config.root}/app/mql/ast"
+    config.autoload_paths << "#{config.root}/app/mql/functions"
     config.autoload_paths << "#{config.root}/app/mql/parsers"
 
     config.after_initialize do

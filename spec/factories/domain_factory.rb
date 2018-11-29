@@ -1,7 +1,21 @@
 FactoryBot.define do
   factory :domain, class: JiraTeamMetrics::Domain do
-    config_string "url: https://jira.example.com\nprojects:\n  issue_type: Project\n  inward_link_type: is included in\n  outward_link_type: includes"
     statuses({ 'Backlog' => 'To Do', 'In Progress' => 'In Progress', 'Done' => 'Done' })
     active true
+    transient do
+      project_issue_type 'Project'
+    end
+
+    before(:create) do |domain, evaluator|
+      if domain.config_string.nil?
+        domain.config_string = <<~CONFIG
+          url: https://jira.example.com
+          projects:
+            issue_type: #{evaluator.project_issue_type}
+            inward_link_type: is included in
+            outward_link_type: includes
+        CONFIG
+      end
+    end
   end
 end
