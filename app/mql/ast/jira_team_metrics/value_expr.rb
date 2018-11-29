@@ -3,7 +3,7 @@ class JiraTeamMetrics::ValueExpr
     @value = value
   end
 
-  def eval(ctx)
+  def eval(_)
     @value
   end
 end
