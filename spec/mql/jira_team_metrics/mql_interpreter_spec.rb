@@ -187,9 +187,24 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(results).to eq([issue3])
       end
     end
+
+    context "for custom project types" do
+      let(:domain) { create(:domain, project_issue_type: 'Saga') }
+      let(:board) { create(:board, domain: domain) }
+      let(:issue) { create(:issue, issue_type: 'Saga', board: board) }
+
+      it "renames the project data sources" do
+        query = <<~MQL
+          select *
+          from sagas()
+        MQL
+        results = eval(query, [issue], board)
+        expect(results).to eq([issue])
+      end
+    end
   end
 
   def eval(expr, issues = [], board = nil)
-    interpreter.eval(expr, board, issues)
+    interpreter.eval(expr, board || create(:board), issues)
   end
 end
