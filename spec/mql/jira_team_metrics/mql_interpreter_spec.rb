@@ -53,6 +53,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     it "invokes functions" do
       expect(eval('today()')).to eq(now.to_date)
       expect(eval("date('2018-06-01')")).to eq(DateTime.new(2018, 6, 1))
+      expect(eval('date(2018, 6, 1)')).to eq(DateTime.new(2018, 6, 1))
     end
   end
 

@@ -6,7 +6,7 @@ class JiraTeamMetrics::FuncCallExpr
 
   def eval(ctx)
     params = @args.map{ |arg| arg.eval(ctx) }
-    signature = "#{@func_name}(#{params.map{ |arg| arg.class}.join(',')})"
+    signature = "#{@func_name}(#{params.map{ |arg| arg.class}.join(', ')})"
     func = FUNCTIONS[signature]
     if (func.nil?) then
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
@@ -16,6 +16,7 @@ class JiraTeamMetrics::FuncCallExpr
 private
   FUNCTIONS = {
     'today()' => lambda { DateTime.now().to_date },
-    'date(String)' => lambda { |date_string| DateTime.parse(date_string) }
+    'date(String)' => lambda { |date_string| DateTime.parse(date_string) },
+    'date(Integer, Integer, Integer)' => lambda { |year, month, day| DateTime.new(year, month, day) },
   }
 end
