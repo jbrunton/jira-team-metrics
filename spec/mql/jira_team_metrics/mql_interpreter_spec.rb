@@ -3,6 +3,9 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::MqlInterpreter do
   let(:interpreter) { JiraTeamMetrics::MqlInterpreter.new }
 
+  let(:now) { DateTime.new(2018, 1, 1, 10, 30) }
+  before(:each) { travel_to now }
+
   describe "#eval" do
     it "evaluates int constants" do
       expect(eval("1")).to eq(1)
@@ -44,7 +47,11 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     it "fails when fields are used on the right hand side" do
       expect{
         eval("'Bug' = issuetype", [])
-      }.to raise_error(JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::IDENT_RHS_ERROR)
+      }.to raise_error(JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR)
+    end
+
+    it "invokes functions" do
+      expect(eval('today()')).to eq(now.to_date)
     end
   end
 

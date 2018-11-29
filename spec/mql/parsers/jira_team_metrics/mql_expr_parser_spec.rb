@@ -12,13 +12,13 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
     expect(parser.parse('false')).to eq(bool: 'false')
   end
 
-  it "parses identifiers" do
-    expect(parser.parse('issuetype')).to eq(ident: 'issuetype')
+  it "parses fields" do
+    expect(parser.parse('issuetype')).to eq(field: { ident: 'issuetype' })
   end
 
   it "parses field comparisons" do
     expect(parser.parse("issuetype = 'Bug'")).to eq({
-        lhs: { ident: 'issuetype' },
+        lhs: { field: { ident: 'issuetype' } },
         op: '=',
         rhs: { str: 'Bug' }
     })
@@ -76,6 +76,12 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
         lhs: { bool: 'true' },
         op: 'and',
         rhs: { lhs: { bool: 'true' }, op: 'or', rhs: { bool: 'false' } }
+    })
+  end
+
+  it "parses function calls" do
+    expect(parser.parse('fun()')).to eq({
+      fun: { ident: 'fun' }
     })
   end
 end

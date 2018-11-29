@@ -10,6 +10,8 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   class MqlTransform < Parslet::Transform
+    rule(fun: { ident: simple(:ident) }) { JiraTeamMetrics::FuncCallExpr.new(ident.to_s) }
+
     rule(int: simple(:int)) do
       value = Integer(int)
       JiraTeamMetrics::ValueExpr.new(value)
@@ -20,8 +22,8 @@ class JiraTeamMetrics::MqlInterpreter
     end
     rule(str: simple(:str)) { JiraTeamMetrics::ValueExpr.new(str.to_s) }
 
-    rule(ident: simple(:ident)) do
-      JiraTeamMetrics::IdentExpr.new(ident.to_s)
+    rule(field: { ident: simple(:ident) }) do
+      JiraTeamMetrics::FieldExpr.new(ident.to_s)
     end
 
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :+, rhs) }

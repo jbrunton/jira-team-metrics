@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe JiraTeamMetrics::MqlLexer do
   class TestParser < Parslet::Parser
     include JiraTeamMetrics::MqlLexer
+    rule(:token) { int | bool | ident | string }
     root :token
   end
 
@@ -34,7 +35,7 @@ RSpec.describe JiraTeamMetrics::MqlLexer do
   end
 
   it "parses strings" do
-    expect(parser.parse("'a string'")).to eq(value: 'a string')
+    expect(parser.parse("'a string'")).to eq(str: 'a string')
   end
 
   it "fails on invalid strings" do
