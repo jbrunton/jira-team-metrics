@@ -17,10 +17,6 @@ module JiraTeamMetrics
     require 'pickadate-rails'
     require 'gretel'
 
-    config.autoload_paths << "#{config.root}/app/mql/ast"
-    config.autoload_paths << "#{config.root}/app/mql/functions"
-    config.autoload_paths << "#{config.root}/app/mql/parsers"
-
     config.after_initialize do
       unless ActiveRecord::Base.connection.migration_context.needs_migration?
         JiraTeamMetrics::DatabaseService.new.prepare_database
