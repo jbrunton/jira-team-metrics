@@ -20,8 +20,10 @@ private
     'date(Integer, Integer, Integer)' => lambda { |_, year, month, day| DateTime.new(year, month, day) },
     'filter(String)' => lambda do |ctx, filter_name|
       filter = ctx.board.filters.select{ |f| f.name == filter_name }.first
-      ctx.issues.select do |issue|
-        filter.include?(issue)
+      if filter.nil?
+        []
+      else
+        ctx.issues.select { |issue| filter.include?(issue) }
       end
     end
   }

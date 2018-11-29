@@ -45,5 +45,7 @@ class JiraTeamMetrics::MqlInterpreter
     rule(lhs: subtree(:lhs), op: '>=', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :>=, rhs) }
 
     rule(lhs: subtree(:lhs), op: 'includes', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :include?, rhs) }
+
+    rule(not: subtree(:rhs)) { JiraTeamMetrics::NotOpExpr.new(rhs) }
   end
 end

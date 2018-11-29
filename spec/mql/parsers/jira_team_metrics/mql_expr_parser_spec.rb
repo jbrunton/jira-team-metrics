@@ -90,4 +90,10 @@ RSpec.describe JiraTeamMetrics::MqlExprParser do
       fun: { ident: 'fun', args: [{int: '1'}, {str: 'foo'}] }
     })
   end
+
+  it "parses not expressions" do
+    expect(parser.parse('not 1')).to eq({
+      not: { int: '1' }
+    })
+  end
 end

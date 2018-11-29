@@ -88,6 +88,32 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
       expect(results).to eq([issue2])
     end
+
+    it "evaluates not expressions on values" do
+      expect(eval('not true')).to eq(false)
+      expect(eval('not (1 = 2)')).to eq(true)
+    end
+
+    it "evaluates not expressions on issues" do
+      board = create(:board)
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+      board.filters.create(name: 'iOS', issue_keys: ['ISS-102'], filter_type: :config_filter)
+
+      results = eval("not (teams includes 'iOS')", [issue1, issue2], board)
+
+      expect(results).to eq([issue1])
+    end
+
+    it "evaluates binary operations on issue subexpressions" do
+      board = create(:board)
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android', 'iOS'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+
+      results = eval("(teams includes 'iOS') and not (teams includes 'Android')", [issue1, issue2], board)
+
+      expect(results).to eq([issue2])
+    end
   end
 
   def eval(expr, issues = [], board = nil)
