@@ -21,7 +21,7 @@ class JiraTeamMetrics::MqlExprParser < Parslet::Parser
 
   rule(:mul_op) { match['*/'].as(:op) >> space? }
   rule(:add_op) { match['+-'].as(:op) >> space? }
-  rule(:ineq_op) { match['<>'].as(:op) >> space? }
+  rule(:ineq_op) { (str('<=') | str('>=') | match['<>']).as(:op) >> space? }
   rule(:eq_op) { str('=').as(:op) >> space? }
   rule(:and_op) { str('and').as(:op) >> space? }
   rule(:or_op) { str('or').as(:op) >> space? }

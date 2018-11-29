@@ -37,5 +37,7 @@ class JiraTeamMetrics::MqlInterpreter
     rule(lhs: subtree(:lhs), op: '=', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :==, rhs) }
     rule(lhs: subtree(:lhs), op: '<', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :<, rhs) }
     rule(lhs: subtree(:lhs), op: '>', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :>, rhs) }
+    rule(lhs: subtree(:lhs), op: '<=', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :<=, rhs) }
+    rule(lhs: subtree(:lhs), op: '>=', rhs: subtree(:rhs)) { JiraTeamMetrics::BinOpExpr.new(lhs, :>=, rhs) }
   end
 end

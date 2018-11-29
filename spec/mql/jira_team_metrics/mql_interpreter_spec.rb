@@ -39,10 +39,18 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
     it "performs inequality comparisons" do
       expect(eval('1 < 2')).to eq(true)
-      expect(eval('2 < 1')).to eq(false)
+      expect(eval('2 < 2')).to eq(false)
 
       expect(eval('2 > 1')).to eq(true)
-      expect(eval('1 > 2')).to eq(false)
+      expect(eval('2 > 2')).to eq(false)
+
+      expect(eval('1 <= 2')).to eq(true)
+      expect(eval('2 <= 2')).to eq(true)
+      expect(eval('3 <= 2')).to eq(false)
+
+      expect(eval('2 >= 1')).to eq(true)
+      expect(eval('2 >= 2')).to eq(true)
+      expect(eval('2 >= 3')).to eq(false)
     end
 
     it "evaluates fields on LHS of expressions" do
