@@ -5,6 +5,7 @@
       <br><span class="mono">key = 'ISSUE-101'</span>
       <br><span class="mono">issuetype = 'Story'</span>
       <br><span class="mono">Teams includes 'Android'</span>
+      <br><span class="mone">has(completedTime)</span>
     </p>
     <p><strong>Date ranges:</strong>
       <br><span class="mono">completedTime >= date('2018-01-01)'</span>
@@ -16,7 +17,6 @@
     <p><strong>Set operations:</strong>
       <br><span class="mono">not filter('MyFilter')</span>
       <br><span class="mono">filter('MyFilter') and issuetype = 'Bug'</span>
-      <br><span class="mono">not (filter('MyFilter') or issuetype = 'Bug')</span>
     </p>
   </div>
   <div class="eight wide column">
