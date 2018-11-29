@@ -8,15 +8,21 @@ class JiraTeamMetrics::FuncCallExpr
     params = @args.map{ |arg| arg.eval(ctx) }
     signature = "#{@func_name}(#{params.map{ |arg| arg.class}.join(', ')})"
     func = FUNCTIONS[signature]
-    if (func.nil?) then
+    if (func.nil?)
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
-    func.call(*params)
+    func.call(ctx, *params)
   end
 private
   FUNCTIONS = {
-    'today()' => lambda { DateTime.now().to_date },
-    'date(String)' => lambda { |date_string| DateTime.parse(date_string) },
-    'date(Integer, Integer, Integer)' => lambda { |year, month, day| DateTime.new(year, month, day) },
+    'today()' => lambda { |_| DateTime.now().to_date },
+    'date(String)' => lambda { |_, date_string| DateTime.parse(date_string) },
+    'date(Integer, Integer, Integer)' => lambda { |_, year, month, day| DateTime.new(year, month, day) },
+    'filter(String)' => lambda do |ctx, filter_name|
+      filter = ctx.board.filters.select{ |f| f.name == filter_name }.first
+      ctx.issues.select do |issue|
+        filter.include?(issue)
+      end
+    end
   }
 end

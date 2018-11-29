@@ -1,12 +1,16 @@
 class JiraTeamMetrics::MqlInterpreter
-  def eval(query, issues)
+  def eval(query, board, issues)
     Rails.logger.info "Evaluating MQL query: #{query}"
 
     parser = JiraTeamMetrics::MqlExprParser.new
     transform = MqlTransform.new
     ast = transform.apply(parser.parse(query))
-    binding.pry if ast.class == Hash
-    ast.eval(JiraTeamMetrics::EvalContext.new(issues))
+
+    if ast.class == Hash
+      raise JiraTeamMetrics::ParserError, "Unable to parse expression"
+    end
+
+    ast.eval(JiraTeamMetrics::EvalContext.new(board, issues))
   end
 
   class MqlTransform < Parslet::Transform

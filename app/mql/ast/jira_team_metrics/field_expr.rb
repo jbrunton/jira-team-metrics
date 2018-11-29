@@ -4,7 +4,7 @@ class JiraTeamMetrics::FieldExpr
   end
 
   def eval(ctx)
-    if (ctx.expr_type == :rhs) then
+    if ctx.expr_type == :rhs
       raise JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR
     end
     ComparisonContext.new(@field_name, ctx.issues)
@@ -19,7 +19,7 @@ class JiraTeamMetrics::FieldExpr
     def eval(op, rhs_value)
       @issues.select do |issue|
         field = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
-        if (!field.nil?) then
+        if !field.nil?
           field.send(op, rhs_value)
         else
           false
