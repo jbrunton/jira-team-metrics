@@ -8,7 +8,7 @@ module JiraTeamMetrics::MqlExprParser
   rule(:comma) { str(",") >> space? }
 
   rule(:field) { ident.as(:field) }
-  rule(:expression_list) { primary_expression >> (comma >> primary_expression).repeat }
+  rule(:expression_list) { primary_expression.repeat(1,1) >> (comma >> primary_expression).repeat }
   rule(:function_call) { (ident >> lparen >> (expression_list.repeat(0,1)).as(:args) >> rparen).as(:fun) }
   rule(:not_expression) { str('not') >> space? >> expression.as(:not) }
 

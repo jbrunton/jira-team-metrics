@@ -204,6 +204,43 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     end
   end
 
+  context "select expressions" do
+    let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
+    let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+    let(:issue3) { create(:project, fields: {'MyField' => 'B'}, board: board) }
+
+    it "selects by field" do
+      query = <<~MQL
+          select key, issuetype
+          from issues()
+          where MyField = 'A'
+      MQL
+      results = eval(query, [issue1, issue2, issue3])
+      expect(results).to eq([
+        ["ISSUE-101", "Story"],
+        ["ISSUE-102", "Epic"]
+      ])
+    end
+  end
+
+  context "aggregate functions" do
+    context "#count" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
+      let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:project, fields: {'MyField' => 'B'}, board: board) }
+
+      it "aggregates by count" do
+        query = <<~MQL
+          select count()
+          from issues()
+          where MyField = 'A'
+        MQL
+        result = eval(query, [issue1, issue2, issue3])
+        expect(result).to eq([2])
+      end
+    end
+  end
+
   def eval(expr, issues = [], board = nil)
     interpreter.eval(expr, board || create(:board), issues)
   end

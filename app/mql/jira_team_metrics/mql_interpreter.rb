@@ -21,12 +21,21 @@ class JiraTeamMetrics::MqlInterpreter
 
   def build_context(board, issues)
     context = JiraTeamMetrics::EvalContext.new(board, issues)
+
+    # aggregation functions
+    JiraTeamMetrics::Fn::CountAll.register(context)
+
+    # date functions
     JiraTeamMetrics::Fn::DateToday.register(context)
     JiraTeamMetrics::Fn::DateConstructor.register(context)
     JiraTeamMetrics::Fn::DateParser.register(context)
+
+    # data sources
+    JiraTeamMetrics::Fn::DataSource.register(context)
+
+    # misc.
     JiraTeamMetrics::Fn::NotNullCheck.register(context)
     JiraTeamMetrics::Fn::IssueFilter.register(context)
-    JiraTeamMetrics::Fn::DataSource.register(context)
     context
   end
 
@@ -55,7 +64,11 @@ class JiraTeamMetrics::MqlInterpreter
       JiraTeamMetrics::AST::SelectStatement.new(from, where)
     end
 
+    rule(stmt: { select_exprs: subtree(:select_exprs), from: subtree(:from), where: subtree(:where) }) do
+      JiraTeamMetrics::AST::SelectStatement.new(from, where, select_exprs)
+    end
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :+, rhs) }
+
     rule(lhs: subtree(:lhs), op: '-', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :-, rhs) }
     rule(lhs: subtree(:lhs), op: '*', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :*, rhs) }
     rule(lhs: subtree(:lhs), op: '/', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :/, rhs) }

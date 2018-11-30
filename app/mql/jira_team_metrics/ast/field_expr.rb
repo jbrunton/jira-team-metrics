@@ -32,5 +32,11 @@ class JiraTeamMetrics::AST::FieldExpr
         !JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name).nil?
       end
     end
+
+    def select_field
+      @issues.map do |issue|
+        JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
+      end
+    end
   end
 end
