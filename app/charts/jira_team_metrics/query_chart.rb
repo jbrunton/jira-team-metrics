@@ -16,7 +16,9 @@ class JiraTeamMetrics::QueryChart
   def chart_opts
     {
       page: 'enable',
-      pageSize: 20
+      pageSize: 20,
+      cssClassNames: {
+      }
     }
   end
 
