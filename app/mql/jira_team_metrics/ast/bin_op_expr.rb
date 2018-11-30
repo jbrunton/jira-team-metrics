@@ -7,11 +7,10 @@ class JiraTeamMetrics::AST::BinOpExpr
 
   def eval(ctx)
     lhs_value = @lhs.eval(ctx)
+    rhs_value = @rhs.eval(ctx)
 
     if lhs_value.class == JiraTeamMetrics::Eval::ColumnExprRef
-      if ctx.expr_type == :select
-        
-      end
+
     else
 
 
