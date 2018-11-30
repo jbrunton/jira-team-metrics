@@ -1,0 +1,11 @@
+
+<h1>Query Data</h1>
+
+<%= render partial: 'partials/search_form' %>
+
+<%= render partial: 'partials/chart', locals: {
+chart_id: generate_id,
+chart_type: 'Table',
+url: "#{board_api_path(@board)}/query.json"
+} %>
+
