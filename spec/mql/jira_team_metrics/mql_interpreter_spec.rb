@@ -88,9 +88,9 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       board = create(:board)
       issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android'] })
       issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
-      board.filters.create(name: 'iOS', issue_keys: ['ISS-102'], filter_type: :config_filter)
+      board.filters.create(name: 'iOS', issue_keys: 'ISS-102', filter_type: :config_filter)
 
-      results = eval("teams includes 'iOS'", [issue1, issue2], board)
+      results = eval("filter('iOS')", [issue1, issue2], board)
 
       expect(results).to eq([issue2])
     end

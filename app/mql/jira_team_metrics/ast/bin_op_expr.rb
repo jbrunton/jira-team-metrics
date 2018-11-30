@@ -9,9 +9,9 @@ class JiraTeamMetrics::AST::BinOpExpr
     lhs_value = @lhs.eval(ctx)
     rhs_value = @rhs.eval(ctx)
 
-    if [lhs_value.class, rhs_value.class].include?(Array) && rhs_value.class != lhs_value.class
-      raise JiraTeamMetrics::ParserError, "Mismatched expression types for bin op: #{lhs_value.class}, #{rhs_value.class}"
-    end
+    # if [lhs_value.class, rhs_value.class].include?(Array) && rhs_value.class != lhs_value.class
+    #   raise JiraTeamMetrics::ParserError, "Mismatched expression types for bin op: #{lhs_value.class}, #{rhs_value.class}"
+    # end
     lhs_value.send(@op, rhs_value)
   end
 end

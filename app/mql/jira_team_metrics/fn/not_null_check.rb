@@ -5,7 +5,7 @@ class JiraTeamMetrics::Fn::NotNullCheck
 
   def self.register(ctx)
     ctx.register_function(
-      'has(JiraTeamMetrics::Eval::ColumnExprRef)',
+      'has(Object)',
       JiraTeamMetrics::Fn::NotNullCheck.new)
   end
 end
