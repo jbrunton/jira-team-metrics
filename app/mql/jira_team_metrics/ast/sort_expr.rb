@@ -6,7 +6,7 @@ class JiraTeamMetrics::AST::SortExpr
   end
 
   def eval(ctx)
-    expr_value = @expr.eval(ctx.copy(:none))
+    expr_value = @expr.eval(ctx)
 
     sorted_issues = expr_value.sort_by { |issue| sort_key_for(issue, ctx) }
     if @order == 'desc'

@@ -10,13 +10,13 @@ class JiraTeamMetrics::AST::SelectStatement
     if @where_expr.nil?
       where_issues = from_issues
     else
-      where_issues = @where_expr.eval(ctx.copy(:none, table: from_issues))
+      where_issues = @where_expr.eval(ctx.copy(:where, table: from_issues))
     end
     if @select_exprs.nil?
       where_issues
     else
       columns = @select_exprs.map do |select_expr|
-        col_result = select_expr.eval(ctx.copy(:none, table: where_issues))
+        col_result = select_expr.eval(ctx.copy(:select, table: where_issues))
         if col_result.class == JiraTeamMetrics::Eval::ColumnExprRef
           col_result.select_field
         else

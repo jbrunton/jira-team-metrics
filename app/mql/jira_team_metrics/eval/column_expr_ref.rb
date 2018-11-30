@@ -1,14 +1,16 @@
 class JiraTeamMetrics::Eval::ColumnExprRef
-  def initialize(field_name, issues)
+  attr_reader :table
+  attr_reader :field_name
+
+  def initialize(field_name, table)
     @field_name = field_name
-    @issues = issues
+    @table = table
   end
 
   def eval(op, rhs_value)
-    @issues.select do |issue|
-      field = JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
-      if !field.nil?
-        field.send(op, rhs_value)
+    @table.select_where(field_name) do |field_value|
+      if !field_value.nil?
+        field_value.send(op, rhs_value)
       else
         false
       end

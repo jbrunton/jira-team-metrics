@@ -5,7 +5,7 @@ class JiraTeamMetrics::AST::FuncCallExpr
   end
 
   def eval(ctx)
-    args = @params.map{ |param| param.eval(ctx.copy(:none)) }
+    args = @params.map{ |param| param.eval(ctx) }
     func = ctx.lookup_function(@func_name, args)
     func.call(ctx, *args)
   end

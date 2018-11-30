@@ -221,6 +221,19 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         ["ISSUE-102", "Epic"]
       ])
     end
+
+    it "selects complex expressions" do
+      query = <<~MQL
+          select (key + ' ' + issuetype)
+          from issues()
+          where MyField = 'A'
+      MQL
+      results = eval(query, [issue1, issue2, issue3])
+      expect(results).to eq([
+        ["ISSUE-101 Story"],
+        ["ISSUE-102 Epic"]
+      ])
+    end
   end
 
   context "aggregate functions" do

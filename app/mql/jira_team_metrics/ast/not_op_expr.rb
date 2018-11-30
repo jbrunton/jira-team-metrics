@@ -4,7 +4,7 @@ class JiraTeamMetrics::AST::NotOpExpr
   end
 
   def eval(ctx)
-    rhs_value = @rhs.eval(ctx.copy(:none))
+    rhs_value = @rhs.eval(ctx)
     if rhs_value.class == Array
       ctx.table.select{ |issue| !rhs_value.include?(issue) }
     else

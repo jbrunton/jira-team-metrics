@@ -4,9 +4,10 @@ class JiraTeamMetrics::AST::FieldExpr
   end
 
   def eval(ctx)
-    if ctx.expr_type == :rhs
-      raise JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR
+    if ctx.expr_type == :select
+      ctx.table.select_column(@field_name)
+    else
+      JiraTeamMetrics::Eval::ColumnExprRef.new(@field_name, ctx.table)
     end
-    JiraTeamMetrics::Eval::ColumnExprRef.new(@field_name, ctx.table)
   end
 end
