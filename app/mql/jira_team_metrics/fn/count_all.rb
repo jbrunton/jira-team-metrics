@@ -1,6 +1,6 @@
 class JiraTeamMetrics::Fn::CountAll
   def call(ctx)
-    ctx.issues.count
+    ctx.table.count
   end
 
   def self.register(ctx)

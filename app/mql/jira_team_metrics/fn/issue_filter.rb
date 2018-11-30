@@ -4,7 +4,7 @@ class JiraTeamMetrics::Fn::IssueFilter
     if filter.nil?
       []
     else
-      ctx.issues.select { |issue| filter.include?(issue) }
+      ctx.table.select { |issue| filter.include?(issue) }
     end
   end
 

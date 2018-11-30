@@ -6,7 +6,7 @@ class JiraTeamMetrics::Fn::DataSource
   end
 
   def call(ctx, status_category = nil)
-    issues = filter_scope(ctx.issues)
+    issues = filter_scope(ctx.table)
     if status_category.nil?
       issues
     else

@@ -7,6 +7,6 @@ class JiraTeamMetrics::AST::FieldExpr
     if ctx.expr_type == :rhs
       raise JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR
     end
-    JiraTeamMetrics::Eval::ColumnExprRef.new(@field_name, ctx.issues)
+    JiraTeamMetrics::Eval::ColumnExprRef.new(@field_name, ctx.table)
   end
 end

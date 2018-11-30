@@ -1,11 +1,11 @@
 class JiraTeamMetrics::EvalContext
   attr_reader :board
-  attr_reader :issues
+  attr_reader :table
   attr_reader :expr_type
 
-  def initialize(board, issues, expr_type = :none, functions = {})
+  def initialize(board, table, expr_type = :none, functions = {})
     @board = board
-    @issues = issues
+    @table = table
     @expr_type = expr_type
     @functions = functions
   end
@@ -13,7 +13,7 @@ class JiraTeamMetrics::EvalContext
   def copy(expr_type, opts = {})
     JiraTeamMetrics::EvalContext.new(
       board,
-      opts[:issues] || issues,
+      opts[:table] || @table,
       expr_type,
       @functions
     )
