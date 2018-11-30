@@ -10,7 +10,7 @@ class JiraTeamMetrics::AST::SelectStatement
     if @where_expr.nil?
       filtered_table = from_table
     else
-      filtered_table = from_table.rows.each_with_index.select do |_, row_index|
+      filtered_table = from_table.select do |row_index|
         @where_expr.eval(ctx.copy(:where, table: from_table, row_index: row_index))
       end
     end

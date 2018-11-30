@@ -11,4 +11,12 @@ class JiraTeamMetrics::Eval::MqlTable
     col_index = columns.index(col_name)
     @rows[row_index][col_index]
   end
+
+  def select_rows
+    selected_rows = []
+    @rows.each_with_index do |row, row_index|
+      selected_rows << row if yield(row_index)
+    end
+    JiraTeamMetrics::Eval::MqlTable.new(@columns, selected_rows)
+  end
 end

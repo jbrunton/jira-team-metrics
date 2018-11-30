@@ -4,7 +4,11 @@ class JiraTeamMetrics::MqlInterpreter
 
     return issues if query.blank?
 
-    parser = JiraTeamMetrics::MqlStatementParser.new
+    if issues.nil?
+      parser = JiraTeamMetrics::MqlExprParser.new
+    else
+      parser = JiraTeamMetrics::MqlStatementParser.new
+    end
     transform = MqlTransform.new
     clean_query = query.tr("\n", ' ').strip
     ast = transform.apply(parser.parse(clean_query))
@@ -15,14 +19,22 @@ class JiraTeamMetrics::MqlInterpreter
 
     ctx = build_context(board, issues)
 
-    result = ast.eval(ctx)
+    if !issues.nil? && ast.class != JiraTeamMetrics::AST::SelectStatement
+      result = ctx.table.rows.each_with_index.select do |_, row_index|
+        ast.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
+      end.map{|x,_|x}
+    else
+      result = ast.eval(ctx)
+    end
+
     result.class == JiraTeamMetrics::Eval::MqlIssuesTable ? result.rows : result
   end
 
   private
 
   def build_context(board, issues)
-    context = JiraTeamMetrics::EvalContext.new(board, JiraTeamMetrics::Eval::MqlIssuesTable.new(issues))
+    table = JiraTeamMetrics::Eval::MqlIssuesTable.new(issues)
+    context = JiraTeamMetrics::EvalContext.new(board, table)
 
     # aggregation functions
     JiraTeamMetrics::Fn::CountAll.register(context)
