@@ -8,7 +8,7 @@ class JiraTeamMetrics::AST::BinOpExpr
   def eval(ctx)
     lhs_value = @lhs.eval(ctx.copy(:lhs))
     rhs_value = @rhs.eval(ctx.copy(:rhs))
-    if lhs_value.class == JiraTeamMetrics::AST::FieldExpr::ComparisonContext
+    if lhs_value.class == JiraTeamMetrics::Eval::ColumnExprRef
       lhs_value.eval(@op, rhs_value)
     else
       if [lhs_value.class, rhs_value.class].include?(Array) && rhs_value.class != lhs_value.class

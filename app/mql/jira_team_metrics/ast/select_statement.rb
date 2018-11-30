@@ -17,7 +17,7 @@ class JiraTeamMetrics::AST::SelectStatement
     else
       columns = @select_exprs.map do |select_expr|
         col_result = select_expr.eval(ctx.copy(:none, issues: where_issues))
-        if col_result.class == JiraTeamMetrics::AST::FieldExpr::ComparisonContext
+        if col_result.class == JiraTeamMetrics::Eval::ColumnExprRef
           col_result.select_field
         else
           col_result
