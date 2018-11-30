@@ -1,7 +1,7 @@
 
 <h1>Query Data</h1>
 
-<%= render partial: 'partials/search_form' %>
+<%= render partial: 'partials/search_form', locals: { show_search_options: false } %>
 
 <%= render partial: 'partials/chart', locals: {
 chart_id: generate_id,

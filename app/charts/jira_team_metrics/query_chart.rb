@@ -6,7 +6,7 @@ class JiraTeamMetrics::QueryChart
 
   def data_table
     interpreter = JiraTeamMetrics::MqlInterpreter.new
-    results = interpreter.eval(@params.to_query, @board, @board.issues)
+    results = interpreter.eval(@params.query, @board, @board.issues)
     JiraTeamMetrics::DataTableBuilder.new
       .data(results)
       .pick(:key, :summary, :started_time, :completed_time)
