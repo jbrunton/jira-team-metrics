@@ -4,11 +4,7 @@ class JiraTeamMetrics::MqlInterpreter
 
     return issues if query.blank?
 
-    if issues.nil?
-      parser = JiraTeamMetrics::MqlExprParser.new
-    else
-      parser = JiraTeamMetrics::MqlStatementParser.new
-    end
+    parser = JiraTeamMetrics::MqlStatementParser.new
     transform = MqlTransform.new
     clean_query = query.tr("\n", ' ').strip
     ast = transform.apply(parser.parse(clean_query))
@@ -20,9 +16,9 @@ class JiraTeamMetrics::MqlInterpreter
     ctx = build_context(board, issues)
 
     if !issues.nil? && ast.class != JiraTeamMetrics::AST::SelectStatement
-      result = ctx.table.rows.each_with_index.select do |_, row_index|
+      result = ctx.table.select_rows do |row_index|
         ast.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
-      end.map{|x,_|x}
+      end
     else
       result = ast.eval(ctx)
     end

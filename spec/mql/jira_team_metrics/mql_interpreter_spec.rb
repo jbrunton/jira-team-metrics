@@ -248,7 +248,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
     end
   end
 
-  def eval(expr, issues = [], board = nil)
+  def eval(expr, issues = nil, board = nil)
     interpreter.eval(expr, board || create(:board), issues)
   end
 end
