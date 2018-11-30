@@ -1,11 +1,13 @@
 class JiraTeamMetrics::EvalContext
   attr_reader :board
   attr_reader :table
+  attr_reader :row_index
   attr_reader :expr_type
 
-  def initialize(board, table, expr_type = :none, functions = {})
+  def initialize(board, table, row_index = nil, expr_type = :none, functions = {})
     @board = board
     @table = table
+    @row_index = row_index
     @expr_type = expr_type
     @functions = functions
   end
@@ -14,6 +16,7 @@ class JiraTeamMetrics::EvalContext
     JiraTeamMetrics::EvalContext.new(
       board,
       opts[:table] || @table,
+      opts[:row_index] || @row_index,
       expr_type,
       @functions
     )

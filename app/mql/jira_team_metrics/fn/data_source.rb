@@ -6,11 +6,11 @@ class JiraTeamMetrics::Fn::DataSource
   end
 
   def call(ctx, status_category = nil)
-    issues = filter_scope(ctx.table)
+    issues = filter_scope(ctx.table.rows)
     if status_category.nil?
-      issues
+      JiraTeamMetrics::Eval::MqlIssuesTable.new(issues)
     else
-      issues.select { |issue| issue.status_category == status_category }
+      JiraTeamMetrics::Eval::MqlIssuesTable.new(issues.select { |issue| issue.status_category == status_category })
     end
   end
 

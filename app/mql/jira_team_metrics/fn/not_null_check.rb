@@ -1,6 +1,6 @@
 class JiraTeamMetrics::Fn::NotNullCheck
   def call(_, value)
-    value.not_null
+    !value.nil?
   end
 
   def self.register(ctx)

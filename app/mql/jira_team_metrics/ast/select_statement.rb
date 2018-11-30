@@ -6,27 +6,21 @@ class JiraTeamMetrics::AST::SelectStatement
   end
 
   def eval(ctx)
-    from_issues = @data_source.eval(ctx)
+    from_table = @data_source.eval(ctx)
     if @where_expr.nil?
-      where_issues = from_issues
+      filtered_table = from_table
     else
-      where_issues = @where_expr.eval(ctx.copy(:where, table: from_issues))
+      filtered_table = from_table.rows.each_with_index.select do |_, row_index|
+        @where_expr.eval(ctx.copy(:where, table: from_table, row_index: row_index))
+      end
     end
     if @select_exprs.nil?
-      where_issues
+      filtered_table
     else
-      columns = @select_exprs.map do |select_expr|
-        col_result = select_expr.eval(ctx.copy(:select, table: where_issues))
-        if col_result.class == JiraTeamMetrics::Eval::ColumnExprRef
-          col_result.select_field
-        else
-          col_result
+      filtered_table.rows.each_with_index.map do |_, row_index|
+        @select_exprs.map do |select_expr|
+          select_expr.eval(ctx.copy(:select, table: filtered_table, row_index: row_index))
         end
-      end
-      if columns.first.class == Array
-        columns.transpose
-      else
-        columns
       end
     end
   end

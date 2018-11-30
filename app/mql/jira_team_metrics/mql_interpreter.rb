@@ -14,13 +14,15 @@ class JiraTeamMetrics::MqlInterpreter
     end
 
     ctx = build_context(board, issues)
-    ast.eval(ctx)
+
+    result = ast.eval(ctx)
+    result.class == JiraTeamMetrics::Eval::MqlIssuesTable ? result.rows : result
   end
 
   private
 
   def build_context(board, issues)
-    context = JiraTeamMetrics::EvalContext.new(board, issues)
+    context = JiraTeamMetrics::EvalContext.new(board, JiraTeamMetrics::Eval::MqlIssuesTable.new(issues))
 
     # aggregation functions
     JiraTeamMetrics::Fn::CountAll.register(context)

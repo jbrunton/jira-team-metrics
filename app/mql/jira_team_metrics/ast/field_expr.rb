@@ -4,10 +4,6 @@ class JiraTeamMetrics::AST::FieldExpr
   end
 
   def eval(ctx)
-    if ctx.expr_type == :select
-      ctx.table.select_column(@field_name)
-    else
-      JiraTeamMetrics::Eval::ColumnExprRef.new(@field_name, ctx.table)
-    end
+    ctx.table.select_field(@field_name, ctx.row_index)
   end
 end

@@ -7,25 +7,29 @@ class JiraTeamMetrics::Eval::ColumnExprRef
     @table = table
   end
 
-  def eval(op, rhs_value)
-    @table.select_where(field_name) do |field_value|
-      if !field_value.nil?
-        field_value.send(op, rhs_value)
-      else
-        false
-      end
-    end
+  def bind(ctx)
+    ctx.table.select_field(@field_name, ctx.row_index)
   end
 
-  def not_null
-    @issues.select do |issue|
-      !JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name).nil?
-    end
-  end
-
-  def select_field
-    @issues.map do |issue|
-      JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
-    end
-  end
+  # def eval(op, rhs_value)
+  #   @table.select_where(field_name) do |field_value|
+  #     if !field_value.nil?
+  #       field_value.send(op, rhs_value)
+  #     else
+  #       false
+  #     end
+  #   end
+  # end
+  #
+  # def not_null
+  #   @issues.select do |issue|
+  #     !JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name).nil?
+  #   end
+  # end
+  #
+  # def select_field
+  #   @issues.map do |issue|
+  #     JiraTeamMetrics::IssueFieldResolver.new(issue).resolve(@field_name)
+  #   end
+  # end
 end
