@@ -109,12 +109,29 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
   end
 
   it "parses group-by statements" do
-    expect(parser.parse('select count() from issues() group by key')).to eq({
+    expect(parser.parse('select key, count() from issues() group by key')).to eq({
       stmt: {
-        select: { exprs: [{ int: '1' }] },
-        from: { fun: { ident: 'issues', args: [] } },
-        where: { expr: { bool: 'true' } },
-        group: { expr: { field: { ident: 'key' } } },
+        select: {
+          select_clause: {
+            exprs: [
+              { field: { ident: 'key' } },
+              { fun: { ident: 'count', args: [] } }
+            ]
+          }
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          }
+        },
+        where: nil,
+        group: {
+          group_clause: {
+            expr: { field: { ident: 'key' } }
+          }
+        },
         sort: nil
       }
     })
