@@ -29,7 +29,7 @@ class JiraTeamMetrics::MqlInterpreter
   private
 
   def build_context(board, issues)
-    table = JiraTeamMetrics::Eval::MqlIssuesTable.new(issues)
+    table = issues ? JiraTeamMetrics::Eval::MqlIssuesTable.new(issues) : nil
     context = JiraTeamMetrics::EvalContext.new(board, table)
 
     # aggregation functions
@@ -50,37 +50,53 @@ class JiraTeamMetrics::MqlInterpreter
   end
 
   class MqlTransform < Parslet::Transform
-    rule(fun: { ident: simple(:ident), args: subtree(:args) }) { JiraTeamMetrics::AST::FuncCallExpr.new(ident.to_s, args) }
+    rule(fun: { ident: simple(:ident), args: subtree(:args) }) do
+      JiraTeamMetrics::AST::FuncCallExpr.new(ident.to_s, args)
+    end
 
     rule(int: simple(:int)) do
       value = Integer(int)
       JiraTeamMetrics::AST::ValueExpr.new(value)
     end
+
     rule(bool: simple(:bool)) do
       value = ActiveModel::Type::Boolean.new.cast(bool.to_s)
       JiraTeamMetrics::AST::ValueExpr.new(value)
     end
-    rule(str: simple(:str)) { JiraTeamMetrics::AST::ValueExpr.new(str.to_s) }
+
+    rule(str: simple(:str)) do
+      JiraTeamMetrics::AST::ValueExpr.new(str.to_s)
+    end
 
     rule(field: { ident: simple(:ident) }) do
       JiraTeamMetrics::AST::FieldExpr.new(ident.to_s)
     end
 
-    rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
-      JiraTeamMetrics::AST::SortExpr.new(expr, sort_by, order)
+    # rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
+    #   JiraTeamMetrics::AST::SortExpr.new(expr, sort_by, order)
+    # end
+
+    # rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
+    #   JiraTeamMetrics::AST::SelectStatement.new(from, where)
+    # end
+    #
+    # rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
+    #   JiraTeamMetrics::AST::SelectStatement.new(from, where)
+    # end
+
+    rule(stmt: {
+      select_exprs: subtree(:select_exprs),
+      from: subtree(:from),
+      where: { expr: subtree(:where_expr) },
+      sort: { expr: subtree(:sort_expr), order: subtree(:sort_order) }
+    }) do
+      JiraTeamMetrics::AST::SelectStatement.new(select_exprs, from, where_expr, sort_expr, sort_order)
     end
 
-    rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
-      JiraTeamMetrics::AST::SelectStatement.new(from, where)
+    rule(stmt: { expr: (subtree(:expr)) }) do
+      JiraTeamMetrics::AST::ExprStatement.new(expr)
     end
 
-    rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
-      JiraTeamMetrics::AST::SelectStatement.new(from, where)
-    end
-
-    rule(stmt: { select_exprs: subtree(:select_exprs), from: subtree(:from), where: subtree(:where) }) do
-      JiraTeamMetrics::AST::SelectStatement.new(from, where, select_exprs)
-    end
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :+, rhs) }
 
     rule(lhs: subtree(:lhs), op: '-', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :-, rhs) }

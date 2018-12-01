@@ -1,8 +1,10 @@
 class JiraTeamMetrics::AST::SelectStatement
-  def initialize(data_source, where_expr, select_exprs = nil)
+  def initialize(select_exprs, data_source, where_expr, sort_expr, sort_order)
+    @select_exprs = select_exprs
     @data_source = data_source
     @where_expr = where_expr
-    @select_exprs = select_exprs
+    @sort_expr = sort_expr
+    @sort_order = sort_order
   end
 
   def eval(ctx)
@@ -17,11 +19,12 @@ class JiraTeamMetrics::AST::SelectStatement
     if @select_exprs.nil?
       filtered_table
     else
-      filtered_table.rows.each_with_index.map do |_, row_index|
+      filtered_table.select_rows.map do |row_index|
         @select_exprs.map do |select_expr|
           select_expr.eval(ctx.copy(:select, table: filtered_table, row_index: row_index))
         end
       end
     end
+    filtered_table
   end
 end
