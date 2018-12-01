@@ -19,12 +19,11 @@ class JiraTeamMetrics::AST::SelectStatement
     if @select_exprs.nil?
       filtered_table
     else
-      filtered_table.select_rows.map do |row_index|
+      filtered_table.map_rows do |row_index|
         @select_exprs.map do |select_expr|
           select_expr.eval(ctx.copy(:select, table: filtered_table, row_index: row_index))
         end
       end
     end
-    filtered_table
   end
 end

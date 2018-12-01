@@ -14,4 +14,12 @@ class JiraTeamMetrics::Eval::MqlIssuesTable < JiraTeamMetrics::Eval::MqlTable
     end
     JiraTeamMetrics::Eval::MqlIssuesTable.new(selected_rows)
   end
+
+  def map_rows
+    mapped_rows = []
+    @rows.each_with_index do |_, row_index|
+      mapped_rows << yield(row_index)
+    end
+    JiraTeamMetrics::Eval::MqlIssuesTable.new(mapped_rows)
+  end
 end

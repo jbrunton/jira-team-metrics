@@ -19,4 +19,12 @@ class JiraTeamMetrics::Eval::MqlTable
     end
     JiraTeamMetrics::Eval::MqlTable.new(@columns, selected_rows)
   end
+
+  def map_rows
+    mapped_rows = []
+    @rows.each_with_index do |_, row_index|
+      mapped_rows << yield(row_index)
+    end
+    JiraTeamMetrics::Eval::MqlTable.new(@columns, mapped_rows)
+  end
 end
