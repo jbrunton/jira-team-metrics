@@ -15,13 +15,13 @@ class JiraTeamMetrics::MqlInterpreter
 
     ctx = build_context(board, issues)
 
-    if !issues.nil? && ast.class != JiraTeamMetrics::AST::SelectStatement
-      result = ctx.table.select_rows do |row_index|
-        ast.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
-      end
-    else
+    # if !issues.nil? && ast.class != JiraTeamMetrics::AST::SelectStatement
+    #   result = ctx.table.select_rows do |row_index|
+    #     ast.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
+    #   end
+    # else
       result = ast.eval(ctx)
-    end
+    # end
 
     result.class == JiraTeamMetrics::Eval::MqlIssuesTable ? result.rows : result
   end
@@ -68,6 +68,10 @@ class JiraTeamMetrics::MqlInterpreter
 
     rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
       JiraTeamMetrics::AST::SortExpr.new(expr, sort_by, order)
+    end
+
+    rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
+      JiraTeamMetrics::AST::SelectStatement.new(from, where)
     end
 
     rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
