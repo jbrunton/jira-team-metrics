@@ -83,22 +83,33 @@ class JiraTeamMetrics::MqlInterpreter
     # rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
     #   JiraTeamMetrics::AST::SelectStatement.new(from, where)
     # end
+    #
+
+    SelectClause = Struct.new(:exprs)
+    FromClause = Struct.new(:data_source)
+    WhereClause = Struct.new(:expr)
+    SortClause = Struct.new(:expr, :order)
+
+    rule(select_clause: { op: '*' }) { SelectClause.new(nil) }
+    rule(select_clause: { exprs: subtree(:exprs) }) { SelectClause.new(exprs) }
+    rule(from_clause: { data_source: subtree(:data_source) }) { FromClause.new(data_source) }
+    #rule(where_clause: nil) { WhereClause.new(nil) }
+    rule(where_clause: { expr: subtree(:expr) }) { WhereClause.new(expr) }
+    #rule(sort_clause: nil) { SortClause.new(nil, nil) }
+    rule(sort_clause: { expr: subtree(:expr), order: subtree(:order) }) { SortClause.new(expr, order) }
 
     rule(stmt: {
+      select: subtree(:select),
       from: subtree(:from),
-      where: { expr: subtree(:where_expr) },
-      sort: { expr: subtree(:sort_expr), order: subtree(:sort_order) }
+      where: subtree(:where),
+      sort: subtree(:sort)
     }) do
-      JiraTeamMetrics::AST::SelectStatement.new(nil, from, where_expr, sort_expr, sort_order)
-    end
-
-    rule(stmt: {
-      select_exprs: subtree(:select_exprs),
-      from: subtree(:from),
-      where: { expr: subtree(:where_expr) },
-      sort: { expr: subtree(:sort_expr), order: subtree(:sort_order) }
-    }) do
-      JiraTeamMetrics::AST::SelectStatement.new(select_exprs, from, where_expr, sort_expr, sort_order)
+      JiraTeamMetrics::AST::SelectStatement.new(
+        select.exprs,
+        from.data_source,
+        where.try(:expr),
+        sort.try(:expr),
+        sort.try(:order))
     end
 
     rule(stmt: { expr: (subtree(:expr)) }) do
