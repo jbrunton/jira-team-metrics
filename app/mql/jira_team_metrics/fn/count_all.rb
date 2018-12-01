@@ -1,6 +1,6 @@
 class JiraTeamMetrics::Fn::CountAll
   def call(ctx)
-    ctx.table.rows.count
+    ctx.table.rows[ctx.row_index].last.count
   end
 
   def self.register(ctx)

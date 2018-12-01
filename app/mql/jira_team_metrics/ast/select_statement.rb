@@ -12,6 +12,7 @@ class JiraTeamMetrics::AST::SelectStatement
     @results = @data_source.eval(ctx)
     apply_where_clause(ctx)
     apply_sort_clause(ctx)
+    apply_group_clause(ctx)
     apply_select_clause(ctx)
     @results
   end
@@ -40,6 +41,14 @@ class JiraTeamMetrics::AST::SelectStatement
     unless @sort_expr.nil?
       @results = @results.sort_rows(@sort_order) do |row_index|
         @sort_expr.eval(ctx.copy(:sort, table: @results, row_index: row_index))
+      end
+    end
+  end
+
+  def apply_group_clause(ctx)
+    unless @group_expr.nil?
+      @results = @results.group_by('group') do |row_index|
+        @group_expr.eval(ctx.copy(:group, table: @results, row_index: row_index))
       end
     end
   end

@@ -30,4 +30,14 @@ class JiraTeamMetrics::Eval::MqlIssuesTable < JiraTeamMetrics::Eval::MqlTable
     JiraTeamMetrics::Eval::MqlIssuesTable.new(
       order == 'desc' ? sorted_rows.reverse : sorted_rows)
   end
+
+  def group_by(expr_name)
+    grouped_results = @rows.each_with_index.group_by do |_, row_index|
+      group_key = yield(row_index)
+      group_key
+    end.map{ |key, rows| [key, rows.map{ |row, _| row }] }
+    JiraTeamMetrics::Eval::MqlTable.new(
+      [expr_name],
+      grouped_results)
+  end
 end

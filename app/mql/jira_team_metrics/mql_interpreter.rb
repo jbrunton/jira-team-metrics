@@ -24,7 +24,7 @@ class JiraTeamMetrics::MqlInterpreter
       result = ast.eval(ctx)
     # end
 
-    result.class == JiraTeamMetrics::Eval::MqlIssuesTable ? result.rows : result
+    result.class == JiraTeamMetrics::Eval::MqlTable ? result.rows : result
   end
 
   private
