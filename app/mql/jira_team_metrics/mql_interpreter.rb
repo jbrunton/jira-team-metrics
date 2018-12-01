@@ -85,6 +85,14 @@ class JiraTeamMetrics::MqlInterpreter
     # end
 
     rule(stmt: {
+      from: subtree(:from),
+      where: { expr: subtree(:where_expr) },
+      sort: { expr: subtree(:sort_expr), order: subtree(:sort_order) }
+    }) do
+      JiraTeamMetrics::AST::SelectStatement.new(nil, from, where_expr, sort_expr, sort_order)
+    end
+
+    rule(stmt: {
       select_exprs: subtree(:select_exprs),
       from: subtree(:from),
       where: { expr: subtree(:where_expr) },

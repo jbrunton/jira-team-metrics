@@ -3,17 +3,7 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
   include JiraTeamMetrics::MqlOpParser
   include JiraTeamMetrics::MqlExprParser
 
-  rule(:sort_clause) {
-    str('sort by') >>
-      space? >> (string | ident).as(:expr) >>
-      space? >> (str('desc') | str('asc')).as(:order)
-  }
-
   rule(:expression_stmt) { expression.as(:expr) }
-
-  rule(:sort_stmt) do
-    (expression.as(:expr) >> space? >> sort_clause).as(:sort)
-  end
 
   rule(:select_statement) do
     str('select') >> space? >> (str('*') | expression_list.as(:select_exprs)) >> space? >>
