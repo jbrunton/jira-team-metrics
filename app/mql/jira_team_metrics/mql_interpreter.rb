@@ -16,21 +16,13 @@ class JiraTeamMetrics::MqlInterpreter
 
     ctx = build_context(board, issues)
 
-    # if !issues.nil? && ast.class != JiraTeamMetrics::AST::SelectStatement
-    #   result = ctx.table.select_rows do |row_index|
-    #     ast.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
-    #   end
-    # else
-      result = ast.eval(ctx)
-    # end
-
-    result.class <= JiraTeamMetrics::Eval::MqlTable ? result.rows : result
+    ast.eval(ctx)
   end
 
   private
 
   def build_context(board, issues)
-    table = issues ? JiraTeamMetrics::Eval::MqlIssuesTable.new(issues) : nil
+    table = issues ? JiraTeamMetrics::Eval::MqlTable.issues_table(issues) : nil
     context = JiraTeamMetrics::EvalContext.new(board, table)
 
     # aggregation functions

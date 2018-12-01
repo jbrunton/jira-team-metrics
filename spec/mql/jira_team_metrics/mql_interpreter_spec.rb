@@ -251,6 +251,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
   end
 
   def eval(expr, issues = nil, board = nil)
-    interpreter.eval(expr, board || create(:board), issues)
+    result = interpreter.eval(expr, board || create(:board), issues)
+    result.class <= JiraTeamMetrics::Eval::MqlTable ? result.rows : result
   end
 end

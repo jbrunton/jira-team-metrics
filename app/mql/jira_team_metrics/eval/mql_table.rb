@@ -7,9 +7,25 @@ class JiraTeamMetrics::Eval::MqlTable
     @rows = rows
   end
 
+  def to_data_table
+    JiraTeamMetrics::DataTable.new(
+      @columns,
+      @rows.each_with_index.map do |_, row_index|
+        @columns.map do |col_name|
+          select_field(col_name, row_index)
+        end
+      end
+    )
+  end
+
   def select_field(col_name, row_index)
-    col_index = columns.index(col_name)
-    @rows[row_index][col_index]
+    row = @rows[row_index]
+    if row.class == JiraTeamMetrics::Issue
+      JiraTeamMetrics::IssueFieldResolver.new(row).resolve(col_name)
+    else
+      col_index = columns.index(col_name)
+      row[col_index]
+    end
   end
 
   def select_rows
@@ -20,12 +36,12 @@ class JiraTeamMetrics::Eval::MqlTable
     JiraTeamMetrics::Eval::MqlTable.new(@columns, selected_rows)
   end
 
-  def map_rows
+  def map_rows(col_names)
     mapped_rows = []
     @rows.each_with_index do |_, row_index|
       mapped_rows << yield(row_index)
     end
-    JiraTeamMetrics::Eval::MqlTable.new(@columns, mapped_rows)
+    JiraTeamMetrics::Eval::MqlTable.new(col_names, mapped_rows)
   end
 
   def sort_rows(order)
@@ -44,5 +60,12 @@ class JiraTeamMetrics::Eval::MqlTable
     JiraTeamMetrics::Eval::MqlTable.new(
       [expr_name],
       grouped_results)
+  end
+
+  def self.issues_table(issues)
+    JiraTeamMetrics::Eval::MqlTable.new(
+      ['key', 'summary', 'issuetype'],
+      issues
+    )
   end
 end

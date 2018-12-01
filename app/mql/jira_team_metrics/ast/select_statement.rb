@@ -29,7 +29,8 @@ class JiraTeamMetrics::AST::SelectStatement
 
   def apply_select_clause(ctx)
     unless @select_exprs.nil?
-      @results = @results.map_rows do |row_index|
+      col_names = @select_exprs.map{ |expr| expr.expr_name }
+      @results = @results.map_rows(col_names) do |row_index|
         @select_exprs.map do |select_expr|
           select_expr.eval(ctx.copy(:select, table: @results, row_index: row_index))
         end
