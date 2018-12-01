@@ -11,6 +11,7 @@ class JiraTeamMetrics::AST::SelectStatement
   def eval(ctx)
     @results = @data_source.eval(ctx)
     apply_where_clause(ctx)
+    apply_sort_clause(ctx)
     apply_select_clause(ctx)
     @results
   end
@@ -31,6 +32,14 @@ class JiraTeamMetrics::AST::SelectStatement
         @select_exprs.map do |select_expr|
           select_expr.eval(ctx.copy(:select, table: @results, row_index: row_index))
         end
+      end
+    end
+  end
+
+  def apply_sort_clause(ctx)
+    unless @sort_expr.nil?
+      @results = @results.sort_rows(@sort_order) do |row_index|
+        @sort_expr.eval(ctx.copy(:sort, table: @results, row_index: row_index))
       end
     end
   end

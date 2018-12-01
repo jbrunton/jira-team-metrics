@@ -120,23 +120,6 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(results).to eq([issue2])
     end
 
-    context "when given a sort clause" do
-      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
-      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
-      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
-      let(:issues) { [issue1, issue2, issue3] }
-
-      xit "sorts the return values by the sort clause, ascending" do
-        results = eval("MyField = 'A' sort by key asc", issues, board)
-        expect(results).to eq([issue1, issue2])
-      end
-
-      xit "sorts the return values by the sort clause, descending" do
-        results = eval("MyField = 'A' sort by key desc", issues, board)
-        expect(results).to eq([issue2, issue1])
-      end
-    end
-
     context "when given a select statement" do
       let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
       let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
@@ -196,6 +179,23 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         MQL
         results = eval(query, [issue], board)
         expect(results).to eq([issue])
+      end
+    end
+
+    context "when given a sort clause" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
+      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
+      let(:issues) { [issue1, issue2, issue3] }
+
+      it "sorts the return values by the sort clause, ascending" do
+        results = eval("select * from issues() where MyField = 'A' sort by key asc", issues, board)
+        expect(results).to eq([issue1, issue2])
+      end
+
+      it "sorts the return values by the sort clause, descending" do
+        results = eval("select * from issues() where MyField = 'A' sort by key desc", issues, board)
+        expect(results).to eq([issue2, issue1])
       end
     end
   end

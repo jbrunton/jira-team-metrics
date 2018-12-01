@@ -27,4 +27,13 @@ class JiraTeamMetrics::Eval::MqlTable
     end
     JiraTeamMetrics::Eval::MqlTable.new(@columns, mapped_rows)
   end
+
+  def sort_rows(order)
+    sorted_rows = @rows.each_with_index.sort_by do |_, row_index|
+      yield(row_index)
+    end.map{ |row, _| row }
+    JiraTeamMetrics::Eval::MqlTable.new(
+      @columns,
+      order == 'desc' ? sorted_rows.reverse : sorted_rows)
+  end
 end
