@@ -10,6 +10,7 @@ class JiraTeamMetrics::MqlInterpreter
     ast = transform.apply(parser.parse(clean_query))
 
     if ast.class == Hash
+      binding.pry
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
@@ -89,6 +90,7 @@ class JiraTeamMetrics::MqlInterpreter
     FromClause = Struct.new(:data_source)
     WhereClause = Struct.new(:expr)
     SortClause = Struct.new(:expr, :order)
+    GroupClause = Struct.new(:expr)
 
     rule(select_clause: { op: '*' }) { SelectClause.new(nil) }
     rule(select_clause: { exprs: subtree(:exprs) }) { SelectClause.new(exprs) }
@@ -97,12 +99,14 @@ class JiraTeamMetrics::MqlInterpreter
     rule(where_clause: { expr: subtree(:expr) }) { WhereClause.new(expr) }
     #rule(sort_clause: nil) { SortClause.new(nil, nil) }
     rule(sort_clause: { expr: subtree(:expr), order: subtree(:order) }) { SortClause.new(expr, order) }
+    rule(group_clause: { expr: subtree(:expr) }) { GroupClause.new(expr) }
 
     rule(stmt: {
       select: subtree(:select),
       from: subtree(:from),
       where: subtree(:where),
-      sort: subtree(:sort)
+      sort: subtree(:sort),
+      group: subtree(:group)
     }) do
       JiraTeamMetrics::AST::SelectStatement.new(
         select.exprs,
