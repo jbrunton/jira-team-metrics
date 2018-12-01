@@ -6,9 +6,20 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
   it "parses select-from statements" do
     expect(parser.parse('select 1 from issues()')).to eq({
       stmt: {
-        select: { exprs: [{ int: '1' }] },
-        from: { fun: { ident: 'issues', args: [] } },
+        select: {
+          select_clause: {
+            exprs: [{ int: '1' }]
+          }
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          }
+        },
         where: nil,
+        group: nil,
         sort: nil
       }
     })
@@ -17,10 +28,25 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
   it "parses select-from-sort statements" do
     expect(parser.parse('select 1 from issues() sort by 1 asc')).to eq({
       stmt: {
-        select: { exprs: [{ int: '1' }] },
-        from: { fun: { ident: 'issues', args: [] } },
+        select: {
+          select_clause: {
+            exprs: [{ int: '1' }]
+          }
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          },
+        },
         where: nil,
-        sort: { expr: { int: '1' }, order: 'asc' }
+        group: nil,
+        sort: {
+          sort_clause: {
+            expr: { int: '1' }, order: 'asc'
+          }
+        }
       }
     })
   end
@@ -28,9 +54,24 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
   it "parses select-from-where statements" do
     expect(parser.parse('select 1 from issues() where true')).to eq({
       stmt: {
-        select: { exprs: [{ int: '1' }] },
-        from: { fun: { ident: 'issues', args: [] } },
-        where: { expr: { bool: 'true' } },
+        select: {
+          select_clause: {
+            exprs: [{ int: '1' }]
+          },
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          },
+        },
+        where: {
+          where_clause: {
+            expr: { bool: 'true' }
+          },
+        },
+        group: nil,
         sort: nil
       }
     })
@@ -39,10 +80,42 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
   it "parses select-from-where-sort statements" do
     expect(parser.parse('select 1 from issues() where true sort by false desc')).to eq({
       stmt: {
+        select: {
+          select_clause: {
+            exprs: [{ int: '1' }]
+          },
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          },
+        },
+        where: {
+          where_clause: {
+            expr: { bool: 'true' }
+          }
+        },
+        group: nil,
+        sort: {
+          sort_clause: {
+            expr: { bool: 'false' },
+            order: 'desc'
+          }
+        }
+      }
+    })
+  end
+
+  it "parses group-by statements" do
+    expect(parser.parse('select count() from issues() group by key')).to eq({
+      stmt: {
         select: { exprs: [{ int: '1' }] },
         from: { fun: { ident: 'issues', args: [] } },
         where: { expr: { bool: 'true' } },
-        sort: { expr: { bool: 'false' }, order: 'desc' }
+        group: { expr: { field: { ident: 'key' } } },
+        sort: nil
       }
     })
   end

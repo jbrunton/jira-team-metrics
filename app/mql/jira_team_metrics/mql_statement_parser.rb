@@ -23,6 +23,12 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
     ).as(:where_clause)
   end
 
+  rule(:group_clause) do
+    (str('group by') >> space? >>
+      expression.as(:expr) >> space?
+    ).as(:group_clause)
+  end
+
   rule(:sort_clause) do
     (str('sort by') >> space? >>
       expression.as(:expr) >> space? >>
@@ -34,6 +40,7 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
     select_clause.as(:select) >> space? >>
       from_clause.as(:from) >> space? >>
       where_clause.maybe.as(:where) >> space? >>
+      group_clause.maybe.as(:group) >> space? >>
       sort_clause.maybe.as(:sort) >> space?
   end
 
