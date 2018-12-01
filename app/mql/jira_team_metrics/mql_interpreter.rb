@@ -113,7 +113,8 @@ class JiraTeamMetrics::MqlInterpreter
         from.data_source,
         where.try(:expr),
         sort.try(:expr),
-        sort.try(:order))
+        sort.try(:order),
+        group.try(:expr))
     end
 
     rule(stmt: { expr: (subtree(:expr)) }) do

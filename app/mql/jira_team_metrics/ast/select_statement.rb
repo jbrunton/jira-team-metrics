@@ -1,27 +1,35 @@
 class JiraTeamMetrics::AST::SelectStatement
-  def initialize(select_exprs, data_source, where_expr, sort_expr, sort_order)
+  def initialize(select_exprs, data_source, where_expr, sort_expr, sort_order, group_expr)
     @select_exprs = select_exprs
     @data_source = data_source
     @where_expr = where_expr
     @sort_expr = sort_expr
     @sort_order = sort_order
+    @group_expr = group_expr
   end
 
   def eval(ctx)
-    from_table = @data_source.eval(ctx)
-    if @where_expr.nil?
-      filtered_table = from_table
-    else
-      filtered_table = from_table.select_rows do |row_index|
-        @where_expr.eval(ctx.copy(:where, table: from_table, row_index: row_index))
+    @results = @data_source.eval(ctx)
+    apply_where_clause(ctx)
+    apply_select_clause(ctx)
+    @results
+  end
+
+  private
+
+  def apply_where_clause(ctx)
+    unless @where_expr.nil?
+      @results = @results.select_rows do |row_index|
+        @where_expr.eval(ctx.copy(:where, table: @results, row_index: row_index))
       end
     end
-    if @select_exprs.nil?
-      filtered_table
-    else
-      filtered_table.map_rows do |row_index|
+  end
+
+  def apply_select_clause(ctx)
+    unless @select_exprs.nil?
+      @results = @results.map_rows do |row_index|
         @select_exprs.map do |select_expr|
-          select_expr.eval(ctx.copy(:select, table: filtered_table, row_index: row_index))
+          select_expr.eval(ctx.copy(:select, table: @results, row_index: row_index))
         end
       end
     end
