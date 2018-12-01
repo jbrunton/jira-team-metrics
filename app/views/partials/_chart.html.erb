@@ -9,9 +9,12 @@
     <% end %>
 
     <% if defined?(select_handler) %>
-        chartBuilder.selectHandler(<%= select_handler %>);
+    chartBuilder.selectHandler(<%= select_handler %>);
     <% end %>
 
+    <% if defined?(ready_handler) %>
+    chartBuilder.readyHandler(<%= ready_handler %>);
+    <% end %>
 
     var chart = chartBuilder.build();
     google.charts.setOnLoadCallback(chart.refresh);

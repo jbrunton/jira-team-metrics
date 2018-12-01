@@ -53,6 +53,11 @@ ChartBuilder.prototype.selectHandler = function(selectHandler) {
   return this;
 }
 
+ChartBuilder.prototype.readyHandler = function(readyHandler) {
+  this._opts.readyHandler = readyHandler;
+  return this;
+}
+
 ChartBuilder.prototype.build = function() {
   return new Chart(this._opts);
 }
@@ -63,6 +68,7 @@ function Chart(opts) {
   this._chartOpts = opts.chartOpts;
   this._relativeHeight = opts.relativeHeight;
   this._url = opts.url;
+  this._readyHandler = opts.readyHandler;
   this._selectHandler = opts.selectHandler;
 
   _.bindAll(this, _.functions(Chart.prototype));
@@ -84,6 +90,9 @@ Chart.prototype.draw = function(jsonData) {
   $container.css('height', $container.width() * this._relativeHeight);
 
   this._gchart = new google.visualization[this._chartType](document.getElementById(this._id));
+  if (this._readyHandler) {
+    google.visualization.events.addListener(this._gchart, 'ready', this._readyHandler)
+  }
   this._gchart.draw(this._data, this._chartOpts);
   if (this._selectHandler) {
     google.visualization.events.addListener(this._gchart, 'select', this._selectHandler);

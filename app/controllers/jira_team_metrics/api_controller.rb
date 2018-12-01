@@ -37,6 +37,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: JiraTeamMetrics::ScopeCfdBuilder.new(@scope, @rolling_window).build
   end
 
+  def query
+    render json: chart_data_for(:query)
+  end
+
 private
   def chart_data_for(chart_name)
     chart_class = "JiraTeamMetrics::#{chart_name.to_s.camelize}Chart".constantize

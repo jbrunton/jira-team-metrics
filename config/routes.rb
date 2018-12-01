@@ -20,6 +20,8 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/domain/boards/:board_id/issues/:issue_key', to: 'issues#show'
   put '/domain/boards/:board_id/issues/:issue_key/flag_outlier', to: 'issues#flag_outlier'
 
+  get '/reports/boards/:board_id/query', to: 'reports#query'
+
   get '/reports/boards/:board_id/timesheets', to: 'reports#timesheets'
   get '/reports/boards/:board_id/throughput', to: 'reports#throughput'
 
@@ -38,6 +40,7 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
 
+  get '/api/boards/:board_id/query.json', to: 'api#query'
   get '/api/boards/:board_id/scatterplot.json', to: 'api#scatterplot'
   get '/api/boards/:board_id/aging_wip.json', to: 'api#aging_wip'
   get '/api/boards/:board_id/throughput.json', to: 'api#throughput'
