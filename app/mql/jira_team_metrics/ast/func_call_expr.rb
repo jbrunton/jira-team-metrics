@@ -9,4 +9,8 @@ class JiraTeamMetrics::AST::FuncCallExpr
     func = ctx.lookup_function(@func_name, args)
     func.call(ctx, *args)
   end
+
+  def expr_name
+    "#{@func_name}()"
+  end
 end

@@ -47,7 +47,7 @@ class JiraTeamMetrics::AST::SelectStatement
 
   def apply_group_clause(ctx)
     unless @group_expr.nil?
-      @results = @results.group_by('group') do |row_index|
+      @results = @results.group_by(@group_expr.expr_name) do |row_index|
         @group_expr.eval(ctx.copy(:group, table: @results, row_index: row_index))
       end
     end

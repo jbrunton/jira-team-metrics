@@ -240,7 +240,7 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
 
       it "aggregates by count" do
         query = <<~MQL
-          select group, count()
+          select MyField, count()
           from issues()
           group by MyField
         MQL

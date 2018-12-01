@@ -11,4 +11,8 @@ class JiraTeamMetrics::AST::NotOpExpr
       !rhs_value
     end
   end
+
+  def expr_name
+    "not #{@rhs.expr_name}"
+  end
 end

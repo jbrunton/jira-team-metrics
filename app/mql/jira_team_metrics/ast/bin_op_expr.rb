@@ -10,4 +10,8 @@ class JiraTeamMetrics::AST::BinOpExpr
     rhs_value = @rhs.eval(ctx)
     lhs_value.send(@op, rhs_value)
   end
+
+  def expr_name
+    "#{@lhs.expr_name} #{@op} #{@rhs.expr_name}"
+  end
 end

@@ -6,4 +6,8 @@ class JiraTeamMetrics::AST::ValueExpr
   def eval(_)
     @value
   end
+
+  def expr_name
+    @value.to_s
+  end
 end
