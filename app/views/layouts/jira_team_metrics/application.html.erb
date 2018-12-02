@@ -20,15 +20,21 @@
 
   <body>
     <header class="nav-extended">
-      <div class="nav-wrapper ui container">
-        <h1>
-          <a href="<%= root_url %>">Jira Team Metrics</a>
-        </h1>
-      </div>
-      <div class="nav-content ui container">
-        <%= breadcrumbs class: 'ui breadcrumb',
-            separator: '<i class="right chevron icon divider"></i>' %>
-      </div>
+      <% if params[:dashboard] %>
+        <div class="nav-content ui container">
+          <%= breadcrumbs { |links| links.last.text } %>
+        </div>
+      <% else %>
+        <div class="nav-wrapper ui container">
+          <h1>
+            <a href="<%= root_url %>">Jira Team Metrics</a>
+          </h1>
+        </div>
+        <div class="nav-content ui container">
+          <%= breadcrumbs class: 'ui breadcrumb',
+              separator: '<i class="right chevron icon divider"></i>' %>
+        </div>
+      <% end %>
       <div class="ui divider"></div>
     </header>
 
@@ -37,16 +43,18 @@
       <div id="pickadate-container"></div>
     </main>
 
-    <footer class="ui basic center aligned segment">
-      <div class="ui divider"></div>
-      <% unless @board.nil? %>
-          <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>
-      <% end %>
-      <p>
-        Jira Team Metrics v<%= JiraTeamMetrics::VERSION %> &middot;
-        <a href="https://github.com/jbrunton/jira-team-metrics/blob/master/CHANGELOG.md">Changelog</a>
-      </p>
-    </footer>
+    <% unless params[:dashboard] %>
+      <footer class="ui basic center aligned segment">
+        <div class="ui divider"></div>
+        <% unless @board.nil? %>
+            <p><%= @board.name %> last synchronized: <%= pretty_print_time(@board.last_synced) %></p>
+        <% end %>
+        <p>
+          Jira Team Metrics v<%= JiraTeamMetrics::VERSION %> &middot;
+          <a href="https://github.com/jbrunton/jira-team-metrics/blob/master/CHANGELOG.md">Changelog</a>
+        </p>
+      </footer>
+    <% end %>
 
   </body>
 </html>
