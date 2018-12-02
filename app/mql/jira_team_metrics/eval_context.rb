@@ -2,24 +2,20 @@ class JiraTeamMetrics::EvalContext
   attr_reader :board
   attr_reader :table
   attr_reader :row_index
-  attr_reader :expr_type
 
-  def initialize(board, table, row_index = nil, expr_type = :none, functions = {})
+  def initialize(board, table, row_index = nil, functions = nil)
     @board = board
     @table = table
     @row_index = row_index
-    @expr_type = expr_type
-    @functions = functions
+    @functions = functions || {}
   end
 
-  def copy(expr_type, opts = {})
+  def copy(table, row_index = nil)
     JiraTeamMetrics::EvalContext.new(
-      board,
-      opts[:table] || @table,
-      opts[:row_index] || @row_index,
-      expr_type,
-      @functions
-    )
+      @board,
+      table || @table,
+      row_index || @row_index,
+      @functions)
   end
 
   def register_function(signature, function)
@@ -36,5 +32,27 @@ class JiraTeamMetrics::EvalContext
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
     func
+  end
+
+  def self.build(board, issues)
+    table = issues ? JiraTeamMetrics::Eval::MqlTable.issues_table(issues) : nil
+    context = JiraTeamMetrics::EvalContext.new(board, table)
+
+    # aggregation functions
+    JiraTeamMetrics::Fn::CountAll.register(context)
+
+    # date functions
+    JiraTeamMetrics::Fn::DateToday.register(context)
+    JiraTeamMetrics::Fn::DateConstructor.register(context)
+    JiraTeamMetrics::Fn::DateParser.register(context)
+
+    # data sources
+    JiraTeamMetrics::Fn::DataSource.register(context)
+
+    # misc.
+    JiraTeamMetrics::Fn::NotNullCheck.register(context)
+    JiraTeamMetrics::Fn::IssueFilter.register(context)
+
+    context
   end
 end

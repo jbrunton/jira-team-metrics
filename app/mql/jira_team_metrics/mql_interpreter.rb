@@ -13,33 +13,12 @@ class JiraTeamMetrics::MqlInterpreter
       raise JiraTeamMetrics::ParserError, "Unable to parse expression"
     end
 
-    ctx = build_context(board, issues)
+    ctx = JiraTeamMetrics::EvalContext.build(board, issues)
 
     ast.eval(ctx)
   end
 
   private
-
-  def build_context(board, issues)
-    table = issues ? JiraTeamMetrics::Eval::MqlTable.issues_table(issues) : nil
-    context = JiraTeamMetrics::EvalContext.new(board, table)
-
-    # aggregation functions
-    JiraTeamMetrics::Fn::CountAll.register(context)
-
-    # date functions
-    JiraTeamMetrics::Fn::DateToday.register(context)
-    JiraTeamMetrics::Fn::DateConstructor.register(context)
-    JiraTeamMetrics::Fn::DateParser.register(context)
-
-    # data sources
-    JiraTeamMetrics::Fn::DataSource.register(context)
-
-    # misc.
-    JiraTeamMetrics::Fn::NotNullCheck.register(context)
-    JiraTeamMetrics::Fn::IssueFilter.register(context)
-    context
-  end
 
   class MqlTransform < Parslet::Transform
     rule(fun: { ident: simple(:ident), args: subtree(:args) }) do
@@ -64,19 +43,6 @@ class JiraTeamMetrics::MqlInterpreter
       JiraTeamMetrics::AST::FieldExpr.new(ident.to_s)
     end
 
-    # rule(sort: { expr: subtree(:expr), sort_by: subtree(:sort_by), order: subtree(:order) }) do
-    #   JiraTeamMetrics::AST::SortExpr.new(expr, sort_by, order)
-    # end
-
-    # rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
-    #   JiraTeamMetrics::AST::SelectStatement.new(from, where)
-    # end
-    #
-    # rule(stmt: { from: subtree(:from), where: subtree(:where) }) do
-    #   JiraTeamMetrics::AST::SelectStatement.new(from, where)
-    # end
-    #
-
     SelectClause = Struct.new(:exprs)
     FromClause = Struct.new(:data_source)
     WhereClause = Struct.new(:expr)
@@ -86,9 +52,7 @@ class JiraTeamMetrics::MqlInterpreter
     rule(select_clause: { op: '*' }) { SelectClause.new(nil) }
     rule(select_clause: { exprs: subtree(:exprs) }) { SelectClause.new(exprs) }
     rule(from_clause: { data_source: subtree(:data_source) }) { FromClause.new(data_source) }
-    #rule(where_clause: nil) { WhereClause.new(nil) }
     rule(where_clause: { expr: subtree(:expr) }) { WhereClause.new(expr) }
-    #rule(sort_clause: nil) { SortClause.new(nil, nil) }
     rule(sort_clause: { expr: subtree(:expr), order: subtree(:order) }) { SortClause.new(expr, order) }
     rule(group_clause: { expr: subtree(:expr) }) { GroupClause.new(expr) }
 
@@ -99,13 +63,14 @@ class JiraTeamMetrics::MqlInterpreter
       sort: subtree(:sort),
       group: subtree(:group)
     }) do
-      JiraTeamMetrics::AST::SelectStatement.new(
-        select.exprs,
-        from.data_source,
-        where.try(:expr),
-        sort.try(:expr),
-        sort.try(:order),
-        group.try(:expr))
+      JiraTeamMetrics::AST::SelectStatement.new({
+        select_exprs: select.exprs,
+        data_source: from.data_source,
+        where_expr: where.try(:expr),
+        sort_expr: sort.try(:expr),
+        sort_order: sort.try(:order),
+        group_expr: group.try(:expr)
+      })
     end
 
     rule(stmt: { expr: (subtree(:expr)) }) do

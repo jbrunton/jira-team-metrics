@@ -10,7 +10,7 @@ class JiraTeamMetrics::AST::ExprStatement
     else
       # treat as an expression to filter the table
       ctx.table.select_rows do |row_index|
-        @expr.eval(ctx.copy(:where, table: ctx.table, row_index: row_index))
+        @expr.eval(ctx.copy(ctx.table, row_index))
       end
     end
   end
