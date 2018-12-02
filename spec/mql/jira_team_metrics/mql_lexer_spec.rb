@@ -25,7 +25,8 @@ RSpec.describe JiraTeamMetrics::MqlLexer do
         'camelCase',
         'snake_case',
         'ident_with_digits_123',
-        'a'
+        'a',
+        '{With Spaces}'
     ].each do |identifier|
       expect(parser.parse(identifier)).to eq(ident: identifier)
     end

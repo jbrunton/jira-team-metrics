@@ -1,4 +1,7 @@
 class JiraTeamMetrics::AST::FuncCallExpr
+  attr_reader :func_name
+  attr_reader :params
+
   def initialize(func_name, params)
     @func_name = func_name
     @params = params

@@ -20,7 +20,7 @@ class JiraTeamMetrics::Eval::MqlTable
 
   def select_field(col_name, row_index)
     row = @rows[row_index]
-    if row.class == JiraTeamMetrics::Issue
+    if [JiraTeamMetrics::Issue, JiraTeamMetrics::Epic].include?(row.class)
       JiraTeamMetrics::IssueFieldResolver.new(row).resolve(col_name)
     else
       col_index = columns.index(col_name)

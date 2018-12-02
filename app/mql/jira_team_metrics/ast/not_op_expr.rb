@@ -1,10 +1,12 @@
 class JiraTeamMetrics::AST::NotOpExpr
-  def initialize(rhs)
-    @rhs = rhs
+  attr_reader :expr
+
+  def initialize(expr)
+    @expr = expr
   end
 
   def eval(ctx)
-    rhs_value = @rhs.eval(ctx)
+    rhs_value = @expr.eval(ctx)
     if rhs_value.class == Array
       ctx.table.select{ |issue| !rhs_value.include?(issue) }
     else
@@ -13,6 +15,11 @@ class JiraTeamMetrics::AST::NotOpExpr
   end
 
   def expr_name
-    "not #{@rhs.expr_name}"
+    name = "not #{@expr.expr_name}"
+    if @expr.class == JiraTeamMetrics::AST::ValueExpr
+      name
+    else
+      "(#{name})"
+    end
   end
 end

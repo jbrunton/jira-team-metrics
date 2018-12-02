@@ -1,4 +1,8 @@
 class JiraTeamMetrics::AST::ExprStatement
+  attr_reader :expr
+  attr_reader :sort_expr
+  attr_reader :sort_order
+
   def initialize(expr, sort_expr, sort_order)
     @expr = expr
     @sort_expr = sort_expr

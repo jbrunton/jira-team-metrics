@@ -1,4 +1,8 @@
 class JiraTeamMetrics::AST::BinOpExpr
+  attr_reader :lhs
+  attr_reader :op
+  attr_reader :rhs
+
   def initialize(lhs, op, rhs)
     @lhs = lhs
     @op = op
@@ -16,6 +20,13 @@ class JiraTeamMetrics::AST::BinOpExpr
   end
 
   def expr_name
-    "#{@lhs.expr_name} #{@op} #{@rhs.expr_name}"
+    name = "#{@lhs.expr_name} #{@op} #{@rhs.expr_name}"
+    if @lhs.class == JiraTeamMetrics::AST::ValueExpr &&
+      @rhs.class == JiraTeamMetrics::AST::ValueExpr
+    then
+      name
+    else
+      "(#{name})"
+    end
   end
 end
