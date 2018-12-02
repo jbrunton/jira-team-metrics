@@ -33,7 +33,7 @@ class JiraTeamMetrics::QuicklinkBuilder
   end
 
   def build_for(board)
-    "#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
+    "#{Rails.application.config.relative_url_root}#{reports_path(board)}/#{@report_name}?#{build_opts.to_query}"
   end
 
   def self.throughput_quicklink(board, opts)
