@@ -2,9 +2,9 @@ class JiraTeamMetrics::Fn::IssueFilter
   def call(ctx, filter_name)
     filter = ctx.board.filters.select{ |f| f.name == filter_name }.first
     if filter.nil?
-      []
+      raise "Filter #{filter_name} has not been defined."
     else
-      ctx.issues.select { |issue| filter.include?(issue) }
+      filter.include?(ctx.table.rows.at(ctx.row_index))
     end
   end
 

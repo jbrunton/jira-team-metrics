@@ -1,11 +1,11 @@
 class JiraTeamMetrics::Fn::NotNullCheck
   def call(_, value)
-    value.not_null
+    !value.nil?
   end
 
   def self.register(ctx)
     ctx.register_function(
-      'has(JiraTeamMetrics::AST::FieldExpr::ComparisonContext)',
+      'has(Object)',
       JiraTeamMetrics::Fn::NotNullCheck.new)
   end
 end

@@ -10,7 +10,7 @@ class JiraTeamMetrics::ThroughputChart
   def data_table
     issues = @board.completed_issues(@params.date_range)
     issues = JiraTeamMetrics::TeamScopeReport.issues_for_team(issues, @params.team) if @params.team
-    issues = JiraTeamMetrics::MqlInterpreter.new.eval(@params.to_query, @board, issues)
+    issues = JiraTeamMetrics::MqlInterpreter.new.eval(@params.to_query, @board, issues).rows
 
     data_table = JiraTeamMetrics::DataTableBuilder.new
         .data(issues)

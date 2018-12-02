@@ -55,17 +55,11 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(eval('2 >= 3')).to eq(false)
     end
 
-    it "evaluates fields on LHS of expressions" do
+    it "evaluates fields" do
       bug = create(:issue, issue_type: 'Bug')
       story = create(:issue, issue_type: 'Story')
 
       expect(eval("issuetype = 'Bug'", [bug, story])).to eq([bug])
-    end
-
-    it "fails when fields are used on the right hand side" do
-      expect{
-        eval("'Bug' = issuetype", [])
-      }.to raise_error(JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::FIELD_RHS_ERROR)
     end
 
     it "invokes functions" do
@@ -94,9 +88,9 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       board = create(:board)
       issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android'] })
       issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
-      board.filters.create(name: 'iOS', issue_keys: ['ISS-102'], filter_type: :config_filter)
+      board.filters.create(name: 'iOS', issue_keys: 'ISS-102', filter_type: :config_filter)
 
-      results = eval("teams includes 'iOS'", [issue1, issue2], board)
+      results = eval("filter('iOS')", [issue1, issue2], board)
 
       expect(results).to eq([issue2])
     end
@@ -126,21 +120,14 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(results).to eq([issue2])
     end
 
-    context "when given a sort clause" do
-      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
-      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
-      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
-      let(:issues) { [issue1, issue2, issue3] }
+    it "evaluates sort expressions" do
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android', 'iOS'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+      issue3 = create(:issue, key: 'ISS-103', board: board, fields: { 'teams' => ['Android'] })
 
-      it "sorts the return values by the sort clause, ascending" do
-        results = eval("MyField = 'A' sort by key asc", issues, board)
-        expect(results).to eq([issue1, issue2])
-      end
+      results = eval("(teams includes 'iOS') sort by key desc", [issue1, issue2, issue3], board)
 
-      it "sorts the return values by the sort clause, descending" do
-        results = eval("MyField = 'A' sort by key desc", issues, board)
-        expect(results).to eq([issue2, issue1])
-      end
+      expect(results).to eq([issue2, issue1])
     end
 
     context "when given a select statement" do
@@ -153,7 +140,8 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         query = <<~MQL
           select *
           from issues()
-          where MyField = 'A' sort by key asc
+          where MyField = 'A'
+          sort by key asc
         MQL
         results = eval(query, issues, board)
         expect(results).to eq([issue1, issue2])
@@ -163,7 +151,8 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         query = <<~MQL
           select *
           from issues('Done')
-          where MyField = 'A' sort by key asc
+          where MyField = 'A'
+          sort by key asc
         MQL
         results = eval(query, issues, board)
         expect(results).to eq([issue1])
@@ -202,9 +191,77 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         expect(results).to eq([issue])
       end
     end
+
+    context "when given a sort clause" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', board: board) }
+      let(:issue2) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:issue, fields: {'MyField' => 'B'}, board: board) }
+      let(:issues) { [issue1, issue2, issue3] }
+
+      it "sorts the return values by the sort clause, ascending" do
+        results = eval("select * from issues() where MyField = 'A' sort by key asc", issues, board)
+        expect(results).to eq([issue1, issue2])
+      end
+
+      it "sorts the return values by the sort clause, descending" do
+        results = eval("select * from issues() where MyField = 'A' sort by key desc", issues, board)
+        expect(results).to eq([issue2, issue1])
+      end
+    end
   end
 
-  def eval(expr, issues = [], board = nil)
-    interpreter.eval(expr, board || create(:board), issues)
+  context "select expressions" do
+    let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
+    let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+    let(:issue3) { create(:project, fields: {'MyField' => 'B'}, board: board) }
+
+    it "selects by field" do
+      query = <<~MQL
+          select key, issuetype
+          from issues()
+          where MyField = 'A'
+      MQL
+      results = eval(query, [issue1, issue2, issue3])
+      expect(results).to eq([
+        ["ISSUE-101", "Story"],
+        ["ISSUE-102", "Epic"]
+      ])
+    end
+
+    it "selects complex expressions" do
+      query = <<~MQL
+          select (key + ' ' + issuetype)
+          from issues()
+          where MyField = 'A'
+      MQL
+      results = eval(query, [issue1, issue2, issue3])
+      expect(results).to eq([
+        ["ISSUE-101 Story"],
+        ["ISSUE-102 Epic"]
+      ])
+    end
+  end
+
+  context "aggregate functions" do
+    context "#count" do
+      let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
+      let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
+      let(:issue3) { create(:project, fields: {'MyField' => 'B'}, board: board) }
+
+      it "aggregates by count" do
+        query = <<~MQL
+          select MyField, count()
+          from issues()
+          group by MyField
+        MQL
+        result = eval(query, [issue1, issue2, issue3])
+        expect(result).to eq([['A', 2], ['B', 1]])
+      end
+    end
+  end
+
+  def eval(expr, issues = nil, board = nil)
+    result = interpreter.eval(expr, board || create(:board), issues)
+    result.class <= JiraTeamMetrics::Eval::MqlTable ? result.rows : result
   end
 end

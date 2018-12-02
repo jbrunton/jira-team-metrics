@@ -1,4 +1,8 @@
 class JiraTeamMetrics::AST::BinOpExpr
+  attr_reader :lhs
+  attr_reader :op
+  attr_reader :rhs
+
   def initialize(lhs, op, rhs)
     @lhs = lhs
     @op = op
@@ -6,15 +10,23 @@ class JiraTeamMetrics::AST::BinOpExpr
   end
 
   def eval(ctx)
-    lhs_value = @lhs.eval(ctx.copy(:lhs))
-    rhs_value = @rhs.eval(ctx.copy(:rhs))
-    if lhs_value.class == JiraTeamMetrics::AST::FieldExpr::ComparisonContext
-      lhs_value.eval(@op, rhs_value)
+    lhs_value = @lhs.eval(ctx)
+    rhs_value = @rhs.eval(ctx)
+    if lhs_value.nil?
+      nil
     else
-      if [lhs_value.class, rhs_value.class].include?(Array) && rhs_value.class != lhs_value.class
-        raise JiraTeamMetrics::ParserError, "Mismatched expression types for bin op: #{lhs_value.class}, #{rhs_value.class}"
-      end
       lhs_value.send(@op, rhs_value)
+    end
+  end
+
+  def expr_name
+    name = "#{@lhs.expr_name} #{@op} #{@rhs.expr_name}"
+    if @lhs.class == JiraTeamMetrics::AST::ValueExpr &&
+      @rhs.class == JiraTeamMetrics::AST::ValueExpr
+    then
+      name
+    else
+      "(#{name})"
     end
   end
 end
