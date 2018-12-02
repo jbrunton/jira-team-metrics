@@ -1,7 +1,7 @@
 class JiraTeamMetrics::Fn::DataSource
   include JiraTeamMetrics::ProjectsHelper
 
-  def initialize(scope_type)
+  def initialize(scope_type = nil)
     @scope_type = scope_type
   end
 
@@ -16,8 +16,10 @@ class JiraTeamMetrics::Fn::DataSource
 
   def self.register(ctx)
     projects_function_name = projects_path_plural(ctx.board.domain)
-    ctx.register_function('issues()', JiraTeamMetrics::Fn::DataSource.new(:issue))
-    ctx.register_function('issues(String)', JiraTeamMetrics::Fn::DataSource.new(:issue))
+    ctx.register_function('issues()', JiraTeamMetrics::Fn::DataSource.new)
+    ctx.register_function('issues(String)', JiraTeamMetrics::Fn::DataSource.new)
+    ctx.register_function('scope()', JiraTeamMetrics::Fn::DataSource.new(:scope))
+    ctx.register_function('scope(String)', JiraTeamMetrics::Fn::DataSource.new(:scope))
     ctx.register_function('epics()', JiraTeamMetrics::Fn::DataSource.new(:epic))
     ctx.register_function('epics(String)', JiraTeamMetrics::Fn::DataSource.new(:epic))
     ctx.register_function("#{projects_function_name}()", JiraTeamMetrics::Fn::DataSource.new(:project))
@@ -32,6 +34,8 @@ class JiraTeamMetrics::Fn::DataSource
         issues.select{ |issue| issue.is_project? }
       when :epic
         issues.select{ |issue| issue.is_epic? }
+      when :scope
+        issues.select{ |issue| issue.is_scope? }
       else
         issues
     end
