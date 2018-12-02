@@ -18,8 +18,6 @@ class JiraTeamMetrics::MqlInterpreter
     ast.eval(ctx)
   end
 
-  private
-
   class MqlTransform < Parslet::Transform
     rule(fun: { ident: simple(:ident), args: subtree(:args) }) do
       JiraTeamMetrics::AST::FuncCallExpr.new(ident.to_s, args)
