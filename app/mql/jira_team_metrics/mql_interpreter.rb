@@ -73,8 +73,8 @@ class JiraTeamMetrics::MqlInterpreter
       })
     end
 
-    rule(stmt: { expr: (subtree(:expr)) }) do
-      JiraTeamMetrics::AST::ExprStatement.new(expr)
+    rule(stmt: { expr: (subtree(:expr)), sort: subtree(:sort) }) do
+      JiraTeamMetrics::AST::ExprStatement.new(expr, sort.try(:expr), sort.try(:order))
     end
 
     rule(lhs: subtree(:lhs), op: '+', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :+, rhs) }

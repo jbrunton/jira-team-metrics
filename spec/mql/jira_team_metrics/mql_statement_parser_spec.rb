@@ -144,6 +144,25 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
           lhs: { field: { ident: 'startedTime' } },
           op: '-',
           rhs: { int: '7' }
+        },
+        sort: nil
+      }
+    })
+  end
+
+  it "parses sort-expression statements" do
+    expect(parser.parse("issuetype = 'Bug' sort by createdTime")).to eq({
+      stmt: {
+        expr: {
+          lhs: { field: { ident: 'issuetype' } },
+          op: '=',
+          rhs: { str: 'Bug' } },
+        sort: {
+          sort_clause:
+            {
+              expr: { field: { ident: 'createdTime' } },
+              order: nil
+            }
         }
       }
     })

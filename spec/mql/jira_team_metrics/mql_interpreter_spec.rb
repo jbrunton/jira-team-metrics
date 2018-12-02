@@ -120,6 +120,16 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(results).to eq([issue2])
     end
 
+    it "evaluates sort expressions" do
+      issue1 = create(:issue, key: 'ISS-101', board: board, fields: { 'teams' => ['Android', 'iOS'] })
+      issue2 = create(:issue, key: 'ISS-102', board: board, fields: { 'teams' => ['iOS'] })
+      issue3 = create(:issue, key: 'ISS-103', board: board, fields: { 'teams' => ['Android'] })
+
+      results = eval("(teams includes 'iOS') sort by key desc", [issue1, issue2, issue3], board)
+
+      expect(results).to eq([issue2, issue1])
+    end
+
     context "when given a select statement" do
       let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
       let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }

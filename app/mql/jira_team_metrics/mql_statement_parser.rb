@@ -32,7 +32,7 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
   rule(:sort_clause) do
     (str('sort by') >> space? >>
       expression.as(:expr) >> space? >>
-      (str('asc') | str('desc')).as(:order) >> space?
+      (str('asc') | str('desc')).maybe.as(:order) >> space?
     ).as(:sort_clause)
   end
 
@@ -44,8 +44,12 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
       sort_clause.maybe.as(:sort) >> space?
   end
 
+  rule(:expr_statement) do
+    expression.as(:expr) >> space? >> sort_clause.maybe.as(:sort)
+  end
+
   rule(:statement) do
-    select_statement.as(:stmt) | expression_stmt.as(:stmt)
+    select_statement.as(:stmt) | expr_statement.as(:stmt)
   end
 
   root :statement
