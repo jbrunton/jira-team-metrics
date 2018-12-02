@@ -64,7 +64,7 @@ class JiraTeamMetrics::Eval::MqlTable
 
   def self.issues_table(issues)
     JiraTeamMetrics::Eval::MqlTable.new(
-      ['key', 'summary', 'issuetype'],
+      ['key', 'issuetype', 'summary', 'status', 'resolution'],
       issues
     )
   end
