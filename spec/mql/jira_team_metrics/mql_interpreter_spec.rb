@@ -240,6 +240,20 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         ["ISSUE-102 Epic"]
       ])
     end
+
+    it "names columns by as expressions" do
+      query = <<~MQL
+          select key as MyKey
+          from issues()
+          where MyField = 'A'
+      MQL
+      results = interpreter.eval(query, board, [issue1, issue2, issue3])
+      expect(results.columns).to eq(['MyKey'])
+      expect(results.rows).to eq([
+          ["ISSUE-101"],
+          ["ISSUE-102"]
+      ])
+    end
   end
 
   context "aggregate functions" do

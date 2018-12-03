@@ -3,7 +3,7 @@ class JiraTeamMetrics::MqlStatementParser < Parslet::Parser
   include JiraTeamMetrics::MqlOpParser
   include JiraTeamMetrics::MqlExprParser
 
-  rule(:expression_stmt) { expression.as(:expr) }
+  #rule(:expression_stmt) { expression.as(:expr) }
 
   rule(:select_clause) do
     (str('select') >> space? >>

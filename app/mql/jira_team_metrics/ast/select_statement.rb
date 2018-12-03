@@ -11,9 +11,9 @@ class JiraTeamMetrics::AST::SelectStatement
   def eval(ctx)
     @results = @data_source.eval(ctx)
     apply_where_clause(ctx)
-    apply_sort_clause(ctx)
     apply_group_clause(ctx)
     apply_select_clause(ctx)
+    apply_sort_clause(ctx)
     @results
   end
 
