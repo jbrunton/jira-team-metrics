@@ -93,5 +93,9 @@ class JiraTeamMetrics::MqlInterpreter
     rule(lhs: subtree(:lhs), op: 'includes', rhs: subtree(:rhs)) { JiraTeamMetrics::AST::BinOpExpr.new(lhs, :include?, rhs) }
 
     rule(not: subtree(:rhs)) { JiraTeamMetrics::AST::NotOpExpr.new(rhs) }
+
+    rule(as: { expr: subtree(:expr), name: subtree(:name) }) do
+      JiraTeamMetrics::AST::AsExpr.new(expr, name.field_name)
+    end
   end
 end
