@@ -33,7 +33,10 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def metadata
+  end
 
+  def sync_history
+    @sync_histories = JiraTeamMetrics::SyncHistory.where('created_at >= ?', DateTime.now.to_date - 7.days)
   end
 
 private

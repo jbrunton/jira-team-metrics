@@ -10,6 +10,7 @@ JiraTeamMetrics::Engine.routes.draw do
   post '/domain/sync', to: 'domains#sync'
   post '/domain', to: 'domains#update'
   get'/domain/metadata', to: 'domains#metadata'
+  get'/domain/sync_history', to: 'domains#sync_history'
 
   get '/domain/boards/search', to: 'boards#search'
   get '/domain/boards/:board_id', to: 'boards#show'

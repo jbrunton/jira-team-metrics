@@ -1,0 +1,35 @@
+<% breadcrumb :sync_history %>
+
+<h1>Sync History</h1>
+
+<table class="ui table">
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th># Issues</th>
+      <th>Started</th>
+      <th>Completed</th>
+      <th>Duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sync_histories.each do |history| %>
+      <tr>
+        <td>
+          <% if history.jira_board_id.nil? %>
+            <b>Synced Domain</b>
+          <% elsif history.sync_history_id.nil? %>
+            <b>Synced <%= JiraTeamMetrics::Board.find_by(jira_id: history.jira_board_id).name %></b>
+          <% else %>
+            &nbsp; &nbsp;
+            <%= JiraTeamMetrics::Board.find_by(jira_id: history.jira_board_id).name %>
+          <% end %>
+        </td>
+        <td><%= history.issues_count %></td>
+        <td><%= pretty_print_time(history.started_time) %></td>
+        <td><%= pretty_print_time(history.completed_time) %></td>
+        <td><%= pretty_print_number((history.completed_time - history.started_time) / 60.0) %> mins</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

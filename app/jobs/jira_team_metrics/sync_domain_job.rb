@@ -6,7 +6,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
       active_domain = JiraTeamMetrics::Domain.get_active_instance
       domain = copy_domain(active_domain)
 
-      JiraTeamMetrics::SyncHistory.log(domain) do
+      JiraTeamMetrics::SyncHistory.log(domain) do |sync_history_id|
         @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
         boards, statuses, fields = fetch_data(domain, credentials)
         update_cache(domain, boards, statuses, fields)
@@ -15,7 +15,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
           board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
           JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
           board.save
-          JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months)
+          JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months, sync_history_id)
         end
         activate(domain)
       end

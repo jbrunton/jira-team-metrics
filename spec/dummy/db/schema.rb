@@ -88,15 +88,14 @@ ActiveRecord::Schema.define(version: 2018_12_27_180050) do
   end
 
   create_table "jira_team_metrics_sync_histories", force: :cascade do |t|
-    t.integer "domain_id"
-    t.integer "board_id"
+    t.string "jira_board_id"
     t.integer "issues_count"
     t.datetime "started_time"
     t.datetime "completed_time"
+    t.integer "sync_history_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["board_id"], name: "index_jira_team_metrics_sync_histories_on_board_id"
-    t.index ["domain_id"], name: "index_jira_team_metrics_sync_histories_on_domain_id"
+    t.index ["sync_history_id"], name: "index_jira_team_metrics_sync_histories_on_sync_history_id"
   end
 
 end

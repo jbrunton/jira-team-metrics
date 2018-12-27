@@ -1,10 +1,10 @@
 class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   queue_as :default
 
-  def perform(jira_id, domain, credentials, months)
+  def perform(jira_id, domain, credentials, months, sync_history_id = nil)
     begin
       board = find_target_board(jira_id, domain)
-      JiraTeamMetrics::SyncHistory.log(board) do
+      JiraTeamMetrics::SyncHistory.log(board, sync_history_id) do
         @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
         sync_issues(board, credentials, months)
