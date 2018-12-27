@@ -5,6 +5,8 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   serialize :fields
   has_many :boards, :dependent => :delete_all
 
+  has_many :issues, :through => :boards
+
   after_save :clear_cache
 
   def domain

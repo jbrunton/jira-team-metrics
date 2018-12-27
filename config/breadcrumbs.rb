@@ -7,6 +7,10 @@ crumb :metadata do
   link 'Metadata', domain_metadata_path
 end
 
+crumb :sync_history do
+  link 'Sync History', domain_sync_history_path
+end
+
 crumb :board do |board|
   link board.name, board
 end
