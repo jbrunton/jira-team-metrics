@@ -4,12 +4,14 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   def perform(jira_id, domain, credentials, months)
     begin
       board = find_target_board(jira_id, domain)
-      @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
+      JiraTeamMetrics::SyncHistory.log(board) do
+        @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
-      sync_issues(board, credentials, months)
-      create_filters(board, credentials)
-      build_reports(board)
-      activate(board)
+        sync_issues(board, credentials, months)
+        create_filters(board, credentials)
+        build_reports(board)
+        activate(board)
+      end
       @notifier.notify_complete
     ensure
       end_sync(domain) if domain.active?
