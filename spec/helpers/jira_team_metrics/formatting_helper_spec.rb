@@ -4,6 +4,8 @@ RSpec.describe JiraTeamMetrics::FormattingHelper do
   describe "#pretty_print_date" do
     let(:date) { DateTime.new(2018, 1, 1).in_time_zone('UTC') }
 
+    before(:each) { travel_to date }
+
     it "formats a date" do
       expect(helper.pretty_print_date(date)).to eq('01 Jan 2018 UTC')
     end
@@ -12,8 +14,12 @@ RSpec.describe JiraTeamMetrics::FormattingHelper do
       expect(helper.pretty_print_date(date, show_tz: false)).to eq('01 Jan 2018')
     end
 
-    it "can format without the year" do
+    it "can format without the year when the date is the current year" do
       expect(helper.pretty_print_date(date, show_tz: false, hide_year: true)).to eq('01 Jan')
+    end
+
+    it "adds the year when necessary" do
+      expect(helper.pretty_print_date(DateTime.new(2019, 1, 1), show_tz: false, hide_year: true)).to eq('01 Jan 2019')
     end
 
     it "can format without the date" do

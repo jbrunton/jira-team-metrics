@@ -49,6 +49,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     epic_keys = board.issues
       .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
       .map { |issue| issue.fields['Epic Link'] }
+      .uniq
 
     if epic_keys.length > 0
       epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA')
@@ -56,6 +57,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
         board.issues.create(i)
       end
     end
+
+    JiraTeamMetrics::IssueLinkerService.new(board).build_graph
 
     board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
