@@ -91,7 +91,7 @@ private
 
     url = "rest/api/2/search?"
     url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
-    url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
+    url += "&jql=#{URI.encode(opts[:query], /\W/)}" if opts[:query]
     url += "&startAt=#{opts[:startAt]}" if opts[:startAt]
     url += "&maxResults=#{max_results}"
 
