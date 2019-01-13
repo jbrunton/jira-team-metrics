@@ -1,10 +1,12 @@
 class JiraTeamMetrics::IssueLinkerService
-  def initialize(board)
+  def initialize(board, notifier)
     @board = board
     @project_type = board.domain.config.project_type
+    @notifier = notifier
   end
 
   def build_graph
+    @notifier.notify_status('updating issue links')
     link_epics
     unless @project_type.nil?
       link_parents

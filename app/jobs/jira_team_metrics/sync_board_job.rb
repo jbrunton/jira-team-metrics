@@ -35,30 +35,13 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def sync_issues(board, credentials, months)
-    @notifier.notify_status('fetching issues from JIRA')
-    issues = fetch_issues_for_query(board, board.sync_query(months), credentials, 'fetching issues from JIRA')
+    issue_sync_service = JiraTeamMetrics::IssueSyncService.new(board, credentials, @notifier)
+    issue_linker_service = JiraTeamMetrics::IssueLinkerService.new(board, @notifier)
 
-    @notifier.notify_status('updating cache')
-    issues.each do |i|
-      board.issues.create(i)
-    end
-
-    @notifier.notify_status('following issue links')
-    JiraTeamMetrics::IssueLinkerService.new(board).build_graph
-
-    epic_keys = board.issues
-      .select { |issue| !issue.fields['Epic Link'].nil? && issue.epic.nil? }
-      .map { |issue| issue.fields['Epic Link'] }
-      .uniq
-
-    if epic_keys.length > 0
-      epics = fetch_issues_for_query(board, "key in (#{epic_keys.join(',')})", credentials, 'fetching epics from JIRA')
-      epics.each do |i|
-        board.issues.create(i)
-      end
-    end
-
-    JiraTeamMetrics::IssueLinkerService.new(board).build_graph
+    issue_sync_service.sync_issues(months)
+    issue_linker_service.build_graph
+    issue_sync_service.sync_epics
+    issue_linker_service.build_graph
 
     board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
@@ -77,14 +60,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     board.delete
   end
 
-  def fetch_issues_for_query(board, query, credentials, status)
-    client = JiraTeamMetrics::JiraClient.new(board.domain.config.url, credentials)
-    JiraTeamMetrics::HttpErrorHandler.new(@notifier).invoke do
-      client.search_issues(board.domain, query: query) do |progress|
-        @notifier.notify_progress(status + ' (' + progress.to_s + '%)', progress)
-      end
-    end
-  end
+
 
   def create_filters(board, credentials)
     board.config.filters.each do |filter|
