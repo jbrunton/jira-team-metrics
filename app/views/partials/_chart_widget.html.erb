@@ -1,19 +1,43 @@
 <script>
   $(function() {
-    var url = '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27';
+    // var url = '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27';
+    //
+    // google.charts.setOnLoadCallback(loadChart);
+    //
+    // function drawChart(response) {
+    //   var data = new google.visualization.DataTable(response.data);
+    //   var chartOpts = response.chartOpts;
+    //   var chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
+    //   chart.draw(data, chartOpts);
+    // }
+    //
+    // function loadChart() {
+    //   $.get(url, drawChart);
+    // }
 
-    google.charts.setOnLoadCallback(loadChart);
-
-    function drawChart(response) {
-      var data = new google.visualization.DataTable(response.data);
-      var chartOpts = response.chartOpts;
-      var chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
-      chart.draw(data, chartOpts);
-    }
-
-    function loadChart() {
-      $.get(url, drawChart);
-    }
+    var app = new Vue({
+      el: '#chart_widget_div',
+      data: {
+        url: '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27',
+        data: null,
+        chartOpts: null,
+        chart: null
+      },
+      created: function() {
+        google.charts.setOnLoadCallback(this.loadChart);
+      },
+      methods: {
+        loadChart: function() {
+          $.get(this.url, this.drawChart);
+        },
+        drawChart: function(response) {
+          this.data = new google.visualization.DataTable(response.data);
+          this.chartOpts = response.chartOpts;
+          this.chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
+          this.chart.draw(this.data, this.chartOpts);
+        }
+      }
+    })
   });
 </script>
 
