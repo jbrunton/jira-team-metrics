@@ -52,7 +52,7 @@
           {
             this.$holder.blur();
           },
-          onSet: (context) => this.fromDate = moment(context.select).format('YYYY-MM-DD')
+          onSet: (context) => this.toDate = moment(context.select).format('YYYY-MM-DD')
         });
       },
       methods: {
@@ -90,7 +90,7 @@
       },
       watch: {
         url: function(url) {
-          alert(url);
+          this.loadChart()
         }
       }
     });
@@ -158,7 +158,7 @@
     </div>
   </form>
 
-  <div v-show="chart == null" style="margin: 100px 0;">
+  <div v-show="data == null" style="margin: 100px 0;">
     <div class="ui active centered inline loader"></div>
   </div>
 
