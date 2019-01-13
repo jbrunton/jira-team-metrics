@@ -85,7 +85,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
 private
   def copy_board(prototype)
     attrs = prototype.slice('jira_id', 'name', 'query', 'config_string')
-    prototype.domain.boards.create(attrs.merge('active': false))
+    prototype.domain.boards.create(attrs.merge(active: false))
   end
 
   def activate(board)

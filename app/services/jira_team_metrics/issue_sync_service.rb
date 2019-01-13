@@ -29,8 +29,10 @@ class JiraTeamMetrics::IssueSyncService
       .uniq
 
     if epic_keys.length > 0
-      epic_keys.each_slice(EPIC_SLICE_SIZE) do |slice_keys|
-        epics = fetch_issues_for_query("key in (#{slice_keys.join(',')})", 'fetching epics from JIRA')
+      batch_count = (epic_keys.to_f / EPIC_SLICE_SIZE).ceil
+      epic_keys.each_slice(EPIC_SLICE_SIZE).each_with_index do |slice_keys, batch_index|
+        message = "fetching epics from JIRA (batch #{batch_index + 1} of #{batch_count})"
+        epics = fetch_issues_for_query("key in (#{slice_keys.join(',')})", message)
         epics.each { |epic_attrs| @board.issues.create(epic_attrs) }
       end
     end
