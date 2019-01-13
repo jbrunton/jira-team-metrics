@@ -36,7 +36,9 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def sync_history
-    @sync_histories = JiraTeamMetrics::SyncHistory.where('created_at >= ?', DateTime.now.to_date - 7.days)
+    @sync_histories = JiraTeamMetrics::SyncHistory
+      .where('started_time is not null AND completed_time is not null')
+      .where('created_at >= ?', DateTime.now.to_date - 7.days)
   end
 
 private
