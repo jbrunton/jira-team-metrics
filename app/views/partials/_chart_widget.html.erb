@@ -1,7 +1,7 @@
 <script>
   $(function() {
     var app = new Vue({
-      el: '#chart_widget_div',
+      el: '#chart_widget_app',
       data: {
         url: '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27',
         data: null,
@@ -13,6 +13,7 @@
       },
       methods: {
         loadChart: function() {
+          this.chart = null;
           $.get(this.url, this.drawChart);
         },
         drawChart: function(response) {
@@ -27,6 +28,10 @@
 </script>
 
 
-<div id="chart_widget_div">
+<div id="chart_widget_app">
+  <div v-if="chart == null" style="margin: 100px 0;">
+    <div class="ui active centered inline loader"></div>
+  </div>
+  <div id="chart_widget_div"></div>
 
 </div>
