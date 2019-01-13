@@ -4,6 +4,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   before_action :set_domain
   before_action :set_board
 
+  def time_period_options
+    render json: @timesheet_options.to_json
+  end
+
   def scatterplot
     render json: chart_data_for(:scatterplot)
   end

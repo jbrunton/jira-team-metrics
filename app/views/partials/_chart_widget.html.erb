@@ -6,10 +6,18 @@
         url: '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27',
         data: null,
         chartOpts: null,
-        chart: null
+        chart: null,
+
+        monthPeriodOptions: [],
+        relativePeriodOptions: [],
+        timesheetPeriodOptions: [],
+        selectedMonthPeriod: null,
+        selectedRelativePeriod: null,
+        selectedTimesheetPeriod: null
       },
       created: function() {
         google.charts.setOnLoadCallback(this.loadChart);
+        $.get('/metrics/api/boards/754/time_period_options.json', this.updateTimePeriods);
       },
       methods: {
         loadChart: function() {
@@ -21,6 +29,15 @@
           this.chartOpts = response.chartOpts;
           this.chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
           this.chart.draw(this.data, this.chartOpts);
+        },
+        updateTimePeriods: function(response) {
+          this.monthPeriodOptions = response.month_periods
+          this.selectedMonthPeriod = response.selected_month_period
+          this.relativePeriodOptions = response.relative_periods
+          this.selectedRelativePeriod = response.selected_relative_period
+          this.timesheetPeriodOptions = response.timesheet_periods
+          this.selectedTimesheetPeriod = response.selected_timesheet_period
+          $('.dropdown').dropdown();
         }
       }
     })
@@ -28,7 +45,60 @@
 </script>
 
 
+
 <div id="chart_widget_app">
+  <div class="ui tiny menu">
+    <span class="item">
+      Jump to time period
+    </span>
+    <div class="item">
+      <div id="month-dropdown" class="ui selection dropdown">
+        <div class="text">Select Month</div>
+        <input type="hidden" v-model="selectedMonthPeriod" />
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="header">Months</div>
+          <a v-for="option in monthPeriodOptions" class="item quicklink"
+             v-bind:data-start="option.start_date"
+             v-bind:data-end="option.end_date">
+            {{ option.label }}
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <div id="relative-dropdown" class="ui selection dropdown">
+        <div class="text">Select Relative Timeframe</div>
+        <input type="hidden" v-model="selectedRelativePeriod" />
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="header">Relative Timeframes</div>
+          <a v-for="option in relativePeriodOptions" class="item quicklink"
+             v-bind:data-start="option.start_date"
+             v-bind:data-end="option.end_date">
+            {{ option.label }}
+          </a>
+        </div>
+      </div>
+    </div>
+    <% unless @timesheet_options.timesheet_periods.nil? %>
+      <div class="item">
+        <div id="timesheet-dropdown" class="ui selection dropdown">
+          <div class="text">Select Timesheet Period</div>
+          <input type="hidden" v-model="selectedTimesheetPeriod" />
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="header">Timesheet Periods</div>
+            <a v-for="option in timesheetPeriodOptions" class="item quicklink"
+               v-bind:data-start="option.start_date"
+               v-bind:data-end="option.end_date">
+              {{ option.label }}
+            </a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
   <div v-if="chart == null" style="margin: 100px 0;">
     <div class="ui active centered inline loader"></div>
   </div>
