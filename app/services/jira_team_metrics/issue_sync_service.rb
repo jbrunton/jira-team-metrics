@@ -1,4 +1,11 @@
 class JiraTeamMetrics::IssueSyncService
+  # to keep urls below 2000 chars. Assuming:
+  #   - up to 130 chars for the url prefix and other query params
+  #   - up to 10 chars for the Jira key for each epic
+  #   - 11 chars required per epic key (including comma separator)
+  # then number of epics = (2000 - 130) / 11 = 170
+  EPIC_SLICE_SIZE = 170
+
   def initialize(board, credentials, notifier)
     @board = board
     @credentials = credentials
@@ -22,9 +29,9 @@ class JiraTeamMetrics::IssueSyncService
       .uniq
 
     if epic_keys.length > 0
-      epics = fetch_issues_for_query("key in (#{epic_keys.join(',')})", 'fetching epics from JIRA')
-      epics.each do |i|
-        @board.issues.create(i)
+      epic_keys.each_slice(EPIC_SLICE_SIZE) do |slice_keys|
+        epics = fetch_issues_for_query("key in (#{slice_keys.join(',')})", 'fetching epics from JIRA')
+        epics.each { |epic_attrs| @board.issues.create(epic_attrs) }
       end
     end
   end
