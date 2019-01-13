@@ -12,11 +12,48 @@
         timesheetPeriodOptions: [],
         selectedMonthPeriod: null,
         selectedRelativePeriod: null,
-        selectedTimesheetPeriod: null
+        selectedTimesheetPeriod: null,
+
+        fromDate: '<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>',
+        toDate: '<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>'
       },
       created: function() {
         google.charts.setOnLoadCallback(this.loadChart);
-        $.get('/metrics/api/boards/754/time_period_options.json', this.updateTimePeriods);
+        $.get('/metrics/api/boards/754/time_period_options.json', this.initializeTimePeriods);
+      },
+      mounted: function() {
+        $('#from_date').pickadate({
+          selectMonths: true, // Creates a dropdown to control month
+          selectYears: 15, // Creates a dropdown of 15 years to control year,
+          today: 'Today',
+          clear: 'Clear',
+          close: 'Ok',
+          formatSubmit: 'yyyy-mm-dd',
+          hiddenName: true,
+          max: true,
+          container: '#pickadate-container',
+          onClose : function()
+          {
+            this.$holder.blur();
+          },
+          onSet: (context) => this.fromDate = moment(context.select).format('YYYY-MM-DD')
+        });
+        $('#to_date').pickadate({
+          selectMonths: true, // Creates a dropdown to control month
+          selectYears: 15, // Creates a dropdown of 15 years to control year,
+          today: 'Today',
+          clear: 'Clear',
+          close: 'Ok',
+          formatSubmit: 'yyyy-mm-dd',
+          hiddenName: true,
+          max: true,
+          container: '#pickadate-container',
+          onClose : function()
+          {
+            this.$holder.blur();
+          },
+          onSet: (context) => this.fromDate = moment(context.select).format('YYYY-MM-DD')
+        });
       },
       methods: {
         loadChart: function() {
@@ -29,7 +66,7 @@
           this.chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
           this.chart.draw(this.data, this.chartOpts);
         },
-        updateTimePeriods: function(response) {
+        initializeTimePeriods: function(response) {
           this.monthPeriodOptions = response.month_periods
           this.selectedMonthPeriod = response.selected_month_period
           this.relativePeriodOptions = response.relative_periods
@@ -38,13 +75,25 @@
           this.selectedTimesheetPeriod = response.selected_timesheet_period
           $('.dropdown').dropdown({ on: 'hover' });
         },
+        updateTimePeriod: function(event) {
+          alert($(event.target).data('start'))
+        },
+        onDateSelected: function(context) {
+          var date = moment(context.select).format('YYYY-MM-DD');
+          alert(date);
+        }
       },
       computed: {
         url: function() {
-          return '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27';
+          return `/metrics/api/boards/754/scatterplot.json?from_date=${this.fromDate}&to_date=${this.toDate}&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27`;
+        }
+      },
+      watch: {
+        url: function(url) {
+          alert(url);
         }
       }
-    })
+    });
   });
 </script>
 
@@ -58,11 +107,12 @@
     </span>
 
     <div class="item">
-      <select class="ui dropdown" v-model="selectedMonthPeriod">
+      <select class="ui dropdown" v-model="selectedMonthPeriod"
+              @change="updateTimePeriod">
         <option disabled value="">Select Month</option>
         <option v-for="option in monthPeriodOptions"
-           v-bind:data-start="option.start_date"
-           v-bind:data-end="option.end_date">
+                v-bind:data-start="option.start_date"
+                v-bind:data-end="option.end_date">
           {{ option.label }}
         </option>
       </select>
@@ -73,7 +123,8 @@
         <option disabled value="">Select Relative Timeframe</option>
         <option v-for="option in relativePeriodOptions"
                 v-bind:data-start="option.start_date"
-                v-bind:data-end="option.end_date">
+                v-bind:data-end="option.end_date"
+                @click="alert('')">
           {{ option.label }}
         </option>
       </select>
@@ -92,7 +143,22 @@
 
   </div>
 
-  <div v-if="chart == null" style="margin: 100px 0;">
+  <form id="filter-params" class="ui form">
+    <div class="fields">
+      <div class="two wide field">
+        <label for="from_date">From Date</label>
+        <input name="from_date" id="from_date" type="text" class="datepicker"
+               :data-value="fromDate">
+      </div>
+      <div class="two wide field">
+        <label for="to_date">To Date</label>
+        <input name="to_date" id="to_date" type="text" class="datepicker"
+               :data-value="toDate">
+      </div>
+    </div>
+  </form>
+
+  <div v-show="chart == null" style="margin: 100px 0;">
     <div class="ui active centered inline loader"></div>
   </div>
 
