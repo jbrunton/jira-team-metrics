@@ -23,7 +23,12 @@ RSpec.describe JiraTeamMetrics::ConfigFileService do
       }
     }])
   end
-  let(:service) { JiraTeamMetrics::IssueLinkerService.new(board) }
+  let(:notifier) do
+    notifier = instance_double('JiraTeamMetrics::StatusNotifier')
+    allow(notifier).to receive(:notify_status).with('updating issue links')
+    notifier
+  end
+  let(:service) { JiraTeamMetrics::IssueLinkerService.new(board, notifier) }
 
   before(:each) do
     service.build_graph
