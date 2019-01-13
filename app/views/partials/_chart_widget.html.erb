@@ -1,0 +1,23 @@
+<script>
+  $(function() {
+    var url = '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27';
+
+    google.charts.setOnLoadCallback(loadChart);
+
+    function drawChart(response) {
+      var data = new google.visualization.DataTable(response.data);
+      var chartOpts = response.chartOpts;
+      var chart = new google.visualization.ComboChart(document.getElementById('chart_widget_div'));
+      chart.draw(data, chartOpts);
+    }
+
+    function loadChart() {
+      $.get(url, drawChart);
+    }
+  });
+</script>
+
+
+<div id="chart_widget_div">
+
+</div>
