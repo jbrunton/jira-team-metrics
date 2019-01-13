@@ -3,7 +3,6 @@
     var app = new Vue({
       el: '#chart_widget_app',
       data: {
-        url: '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27',
         data: null,
         chartOpts: null,
         chart: null,
@@ -37,7 +36,12 @@
           this.selectedRelativePeriod = response.selected_relative_period
           this.timesheetPeriodOptions = response.timesheet_periods
           this.selectedTimesheetPeriod = response.selected_timesheet_period
-          $('.dropdown').dropdown();
+          $('.dropdown').dropdown({ on: 'hover' });
+        },
+      },
+      computed: {
+        url: function() {
+          return '/metrics/api/boards/754/scatterplot.json?from_date=2018-12-14&to_date=2019-01-13&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27';
         }
       }
     })
@@ -47,61 +51,51 @@
 
 
 <div id="chart_widget_app">
+
   <div class="ui tiny menu">
     <span class="item">
       Jump to time period
     </span>
+
     <div class="item">
-      <div id="month-dropdown" class="ui selection dropdown">
-        <div class="text">Select Month</div>
-        <input type="hidden" v-model="selectedMonthPeriod" />
-        <i class="dropdown icon"></i>
-        <div class="menu">
-          <div class="header">Months</div>
-          <a v-for="option in monthPeriodOptions" class="item quicklink"
-             v-bind:data-start="option.start_date"
-             v-bind:data-end="option.end_date">
-            {{ option.label }}
-          </a>
-        </div>
-      </div>
+      <select class="ui dropdown" v-model="selectedMonthPeriod">
+        <option disabled value="">Select Month</option>
+        <option v-for="option in monthPeriodOptions"
+           v-bind:data-start="option.start_date"
+           v-bind:data-end="option.end_date">
+          {{ option.label }}
+        </option>
+      </select>
     </div>
+
     <div class="item">
-      <div id="relative-dropdown" class="ui selection dropdown">
-        <div class="text">Select Relative Timeframe</div>
-        <input type="hidden" v-model="selectedRelativePeriod" />
-        <i class="dropdown icon"></i>
-        <div class="menu">
-          <div class="header">Relative Timeframes</div>
-          <a v-for="option in relativePeriodOptions" class="item quicklink"
-             v-bind:data-start="option.start_date"
-             v-bind:data-end="option.end_date">
-            {{ option.label }}
-          </a>
-        </div>
-      </div>
+      <select class="ui dropdown" v-model="selectedRelativePeriod">
+        <option disabled value="">Select Relative Timeframe</option>
+        <option v-for="option in relativePeriodOptions"
+                v-bind:data-start="option.start_date"
+                v-bind:data-end="option.end_date">
+          {{ option.label }}
+        </option>
+      </select>
     </div>
-    <% unless @timesheet_options.timesheet_periods.nil? %>
-      <div class="item">
-        <div id="timesheet-dropdown" class="ui selection dropdown">
-          <div class="text">Select Timesheet Period</div>
-          <input type="hidden" v-model="selectedTimesheetPeriod" />
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            <div class="header">Timesheet Periods</div>
-            <a v-for="option in timesheetPeriodOptions" class="item quicklink"
-               v-bind:data-start="option.start_date"
-               v-bind:data-end="option.end_date">
-              {{ option.label }}
-            </a>
-          </div>
-        </div>
-      </div>
-    <% end %>
+
+    <div class="item">
+      <select class="ui dropdown" v-model="selectedTimesheetPeriod">
+        <option disabled value="">Select Timesheet Period</option>
+        <option v-for="option in timesheetPeriodOptions"
+                v-bind:data-start="option.start_date"
+                v-bind:data-end="option.end_date">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+
   </div>
+
   <div v-if="chart == null" style="margin: 100px 0;">
     <div class="ui active centered inline loader"></div>
   </div>
+
   <div id="chart_widget_div"></div>
 
 </div>
