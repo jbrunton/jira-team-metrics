@@ -57,7 +57,7 @@
       },
       methods: {
         loadChart: function() {
-          this.chart = null;
+          this.data = null;
           $.get(this.url, this.drawChart);
         },
         drawChart: function(response) {
@@ -86,6 +86,12 @@
       computed: {
         url: function() {
           return `/metrics/api/boards/754/scatterplot.json?from_date=${this.fromDate}&to_date=${this.toDate}&filter=&hierarchy_level=Scope&query=resolution+%3D+%27Done%27+or+resolution+%3D+%27Fixed%27`;
+        },
+        showIndicator: function() {
+          return this.data == null;
+        },
+        showChart: function() {
+          return this.data != null;
         }
       },
       watch: {
@@ -158,10 +164,10 @@
     </div>
   </form>
 
-  <div v-show="data == null" style="margin: 100px 0;">
+  <div v-show="showIndicator" style="margin: 100px 0;">
     <div class="ui active centered inline loader"></div>
   </div>
 
-  <div id="chart_widget_div"></div>
+  <div v-show="showChart" id="chart_widget_div" style="width: 100%;"></div>
 
 </div>
