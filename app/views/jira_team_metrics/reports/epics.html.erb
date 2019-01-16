@@ -25,6 +25,16 @@
                     <div class="six wide column">
                       <h3><%= issue_summary(epic) %></h3>
                     </div>
+                    <div class="four wide column">
+                      <table class="ui very basic table">
+                      <% @report_options.card_layout.fields.each do |field_name| %>
+                          <tr>
+                          <td><%= field_name %></td>
+                          <td><%= issue_field(epic, field_name) %></td>
+                          </tr>
+                      <% end %>
+                      </table>
+                    </div>
                     <div class="six wide column">
                       <div class="ui three tiny statistics">
                         <div class="statistic">
@@ -56,8 +66,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="four wide middle aligned column">
+                      <div class="ui divider"></div>
                       <a class="ui fluid teal button" href="<%= epic_report_path(epic) %>">
                         <i class="chart line icon"></i>
                         Progress Report

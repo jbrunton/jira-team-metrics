@@ -27,7 +27,11 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
             'title' => 'In Progress',
             'mql' => "status = 'In Progress'"
           }
-        ]
+        ],
+        'backing_query' => 'epics backing query',
+        'card_layout' => {
+          'fields' => ['Product Owner']
+        }
       },
       'projects' => {
         'sections' => [
@@ -35,7 +39,11 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
             'title' => 'In Progress',
             'mql' => "status = 'In Progress'"
           }
-        ]
+        ],
+        'backing_query' => 'projects backing query',
+        'card_layout' => {
+          'fields' => ['Product Owner']
+        }
       },
       'scatterplot' => {
         'default_query' => 'scatterplot default query'
@@ -178,7 +186,9 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
                       'In Progress',
                       "status = 'In Progress'"
                   )
-              ]
+              ],
+              'epics backing query',
+              JiraTeamMetrics::BaseConfig::CardLayout.new(['Product Owner'])
           )
       )
     end
@@ -203,7 +213,9 @@ RSpec.describe JiraTeamMetrics::DomainConfig do
                       'In Progress',
                       "status = 'In Progress'"
                   )
-              ]
+              ],
+              'projects backing query',
+            JiraTeamMetrics::BaseConfig::CardLayout.new(['Product Owner'])
           )
       )
     end
