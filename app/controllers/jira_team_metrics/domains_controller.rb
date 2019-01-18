@@ -39,6 +39,7 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
     @sync_histories = JiraTeamMetrics::SyncHistory
       .where('started_time is not null AND completed_time is not null')
       .where('created_at >= ?', DateTime.now.to_date - 7.days)
+      .order('coalesce(sync_history_id, id) DESC', 'created_at ASC')
   end
 
 private
