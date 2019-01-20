@@ -2,7 +2,11 @@
 
 <h1>Epic Reports</h1>
 
+<div class="ui grid">
+  <div class="<%= @sections.count.humanize %> column row">
+
 <% @sections.each do |section| %>
+    <div class="column">
     <div class="ui horizontal divider">
       <h3><%= section[:title] %></h3>
     </div>
@@ -20,63 +24,45 @@
         <% section[:issues].each do |epic| %>
             <div class="ui card <%= 'below-fold hidden' if section[:collapsed] %>">
               <div class="content">
-                <div class="ui divided grid">
-                  <div class="row">
-                    <div class="six wide column">
-                      <h3><%= issue_summary(epic) %></h3>
+                <h4><%= issue_summary(epic) %></h4>
+                <table class="ui very basic table">
+                <% @report_options.card_layout.fields.each do |field_name| %>
+                    <tr>
+                    <td><%= field_name %></td>
+                    <td><%= issue_field(epic, field_name) %></td>
+                    </tr>
+                <% end %>
+                </table>
+                <div class="ui two mini statistics">
+                  <div class="statistic">
+                    <div class="value">
+                      <%= epic.scope.count %>
                     </div>
-                    <div class="four wide column">
-                      <table class="ui very basic table">
-                      <% @report_options.card_layout.fields.each do |field_name| %>
-                          <tr>
-                          <td><%= field_name %></td>
-                          <td><%= issue_field(epic, field_name) %></td>
-                          </tr>
-                      <% end %>
-                      </table>
+                    <div class="label">
+                      Issues
                     </div>
-                    <div class="six wide column">
-                      <div class="ui three tiny statistics">
-                        <div class="statistic">
-                          <div class="value">
-                            <%= epic.scope.count %>
-                          </div>
-                          <div class="label">
-                            Issues
-                          </div>
-                        </div>
-                        <div class="statistic">
-                          <div class="value">
-                            <%= pretty_print_number(epic.forecaster.percent_done, round: true, percentage: true) %>
-                          </div>
-                          <div class="label">
-                            Progress
-                          </div>
-                        </div>
-                        <div class="statistic">
-                          <div class="text value">
-                            <%= pretty_print_date(epic.forecaster.forecast(14), show_tz: false, hide_year: true) %>
-                          </div>
-                          <div class="label">
-                            <% if epic.completed? %>
-                              Completed
-                            <% else %>
-                              Forecast
-                            <% end %>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="ui divider"></div>
-                      <a class="ui fluid teal button" href="<%= epic_report_path(epic) %>">
-                        <i class="chart line icon"></i>
-                        Progress Report
-                      </a>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">
+                      <%= pretty_print_number(epic.forecaster.percent_done, round: true, percentage: true) %>
+                    </div>
+                    <div class="label">
+                      Progress
                     </div>
                   </div>
                 </div>
+                <div class="ui divider"></div>
+                <a class="ui fluid tiny teal button" href="<%= epic_report_path(epic) %>">
+                  <i class="chart line icon"></i>
+                  Progress Report
+                </a>
               </div>
             </div>
         <% end %>
       </div>
     </div>
+    </div>
 <% end %>
+
+  </div>
+</div>
