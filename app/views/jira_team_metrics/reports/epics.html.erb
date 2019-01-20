@@ -12,6 +12,9 @@
         <% unless section[:min].nil? %>
           Min <%= section[:min] %>
         <% end %>
+        <% unless section[:max].nil? %>
+          Max <%= section[:max] %>
+        <% end %>
       </span>
       <h3><%= section[:issues].count %> <%= section[:title] %></h3>
     </div>
