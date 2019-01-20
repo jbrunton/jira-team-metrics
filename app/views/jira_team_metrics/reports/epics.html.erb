@@ -2,13 +2,18 @@
 
 <h1>Epic Reports</h1>
 
-<div class="ui grid">
+<div class="epic-kanban ui grid">
   <div class="<%= @sections.count.humanize %> column row">
 
 <% @sections.each do |section| %>
-    <div class="column">
-    <div class="ui horizontal divider">
-      <h3><%= section[:title] %></h3>
+    <div class="column <%= 'invalid_wip' if section[:invalid_wip] %>">
+    <div>
+      <span class="right floated">
+        <% unless section[:min].nil? %>
+          Min <%= section[:min] %>
+        <% end %>
+      </span>
+      <h3><%= section[:issues].count %> <%= section[:title] %></h3>
     </div>
     <div class="show-more-container">
       <% if section[:issues].empty? %>

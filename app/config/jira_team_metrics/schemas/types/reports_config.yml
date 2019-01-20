@@ -21,6 +21,8 @@ optional:
             mql: "//str"
           optional:
             collapsed: "//bool"
+            min: "//int"
+            max: "//int"
   projects:
     type: "//rec"
     optional:
