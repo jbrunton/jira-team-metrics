@@ -25,14 +25,18 @@
             <div class="ui card <%= 'below-fold hidden' if section[:collapsed] %>">
               <div class="content">
                 <h4><%= issue_summary(epic) %></h4>
-                <table class="ui very basic table">
+              </div>
+              <div class="content">
+                <table style="width: 100%;">
                 <% @report_options.card_layout.fields.each do |field_name| %>
                     <tr>
                     <td><%= field_name %></td>
-                    <td><%= issue_field(epic, field_name) %></td>
+                    <td><b><%= issue_field(epic, field_name) %></b></td>
                     </tr>
                 <% end %>
                 </table>
+              </div>
+              <div class="content">
                 <div class="ui two mini statistics">
                   <div class="statistic">
                     <div class="value">
@@ -51,7 +55,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="ui divider"></div>
+              </div>
+              <div class="extra content">
                 <a class="ui fluid tiny teal button" href="<%= epic_report_path(epic) %>">
                   <i class="chart line icon"></i>
                   Progress Report
