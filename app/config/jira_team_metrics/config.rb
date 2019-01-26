@@ -15,6 +15,10 @@ class JiraTeamMetrics::Config
     schema.check!(config_hash)
   end
 
+  def get(key, default = nil)
+    @config_hash.dig(*key.split('.')) || default
+  end
+
   def self.config_for(object)
     case object.class
       when JiraTeamMetrics::Domain

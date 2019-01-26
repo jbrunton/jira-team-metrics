@@ -1,19 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::Config do
-  let(:config_hash) do
-    {
-      'foo' => 'bar'
-    }
-  end
-
   let(:schema) do
     <<~SCHEMA
     type: "//rec"
-    optional:
-      foo:
+    required:
+      bar:
         type: "//str"
+      foo:
+        type: "//rec"
+        required:
+          bar: "//str"
+        optional:
+          baz: "//str"
     SCHEMA
+  end
+
+  let(:config_hash) do
+    {
+      'foo' => {
+        'bar' => 'baz'
+      },
+      'bar' => 'qux',
+    }
   end
 
   it "initializes #config_hash" do
@@ -31,6 +40,23 @@ RSpec.describe JiraTeamMetrics::Config do
       config_hash['unexpected_field'] = 'foo'
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
       expect { config.validate }.to raise_error(Rx::ValidationError, /Hash had extra keys/)
+    end
+  end
+
+  context "#get" do
+    it "returns the value for the key" do
+      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+      expect(config.get('bar')).to eq('qux')
+    end
+
+    it "returns the value for a nested key" do
+      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+      expect(config.get('foo.bar')).to eq('baz')
+    end
+
+    it "returns a default value if none exists" do
+      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+      expect(config.get('foo.baz', 'quux')).to eq('quux')
     end
   end
 end
