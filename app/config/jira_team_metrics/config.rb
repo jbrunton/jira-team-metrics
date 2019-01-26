@@ -1,9 +1,10 @@
 class JiraTeamMetrics::Config
   attr_reader :config_hash
 
-  def initialize(config_hash, schema)
+  def initialize(config_hash, schema = nil, parent = nil)
     @config_hash = config_hash
     @schema = schema
+    @parent = parent
   end
 
   def validate
@@ -16,7 +17,7 @@ class JiraTeamMetrics::Config
   end
 
   def get(key, default = nil)
-    @config_hash.dig(*key.split('.')) || default
+    @config_hash.dig(*key.split('.')) || @parent.try(:get, key) || default
   end
 
   def self.config_for(object)
