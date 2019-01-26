@@ -57,7 +57,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     elsif is_epic?
       fields['Teams'] || []
     else
-      fields['Teams'] || epic.try(:teams) || []
+      scope_teams || []
     end
   end
 
@@ -198,5 +198,17 @@ private
     if status_category == 'Done' || completed_times.all?{ |time| !time.nil? }
       completed_times.compact.max
     end
+  end
+
+  def scope_teams
+    teams = fields['Teams']
+    teams ||= begin
+      if epic != nil && epic.project == project
+        # For now, only inherit teams from epics for the project we're interested in. This is mostly for legacy reasons
+        # and at some point this will be changed to always inherit regardless.
+        epic.teams
+      end
+    end
+    teams
   end
 end
