@@ -29,7 +29,8 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    @sections = sections_for(@board.epics, @board.config.epics_report_options(@domain))
+    @report_options = @board.config.epics_report_options(@domain)
+    @sections = sections_for(@board.epics, @report_options)
   end
 
   def epic
@@ -114,10 +115,15 @@ private
     sections_interpreter = JiraTeamMetrics::MqlInterpreter.new
     if report_options.sections.any?
       report_options.sections.map do |section|
+        epics = sections_interpreter.eval(section.mql, @board, backing_issues).rows
+        invalid_wip = !section.min.nil? && epics.count < section.min
         {
           title: section.title,
-          issues: sections_interpreter.eval(section.mql, @board, backing_issues).rows,
-          collapsed: section.collapsed
+          issues: epics,
+          collapsed: section.collapsed,
+          min: section.min,
+          max: section.max,
+          invalid_wip: invalid_wip
         }
       end
     else

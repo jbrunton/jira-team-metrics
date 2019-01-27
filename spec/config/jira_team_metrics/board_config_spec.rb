@@ -190,9 +190,11 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
           [
               JiraTeamMetrics::BaseConfig::ReportSection.new(
                   'Board In Progress',
-                  "status = 'In Progress'"
+                  "status = 'In Progress'",
               )
-          ]
+          ],
+          nil,
+          JiraTeamMetrics::BaseConfig::CardLayout.new([])
       )
 
 
@@ -209,8 +211,10 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
               JiraTeamMetrics::BaseConfig::ReportSection.new(
                   'Domain In Progress',
                   "status = 'In Progress'"
-              )
-          ]
+              ),
+          ],
+          nil,
+          JiraTeamMetrics::BaseConfig::CardLayout.new([])
       )
 
       actual_options = board_config.epics_report_options(domain)

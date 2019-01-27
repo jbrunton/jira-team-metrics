@@ -18,10 +18,14 @@ class JiraTeamMetrics::BaseConfig
 
   def report_options_for(report_name)
     if config_hash['reports'] && config_hash['reports'][report_name]
-      sections = config_hash['reports'][report_name]['sections'].map do |section_hash|
-        ReportSection.new(section_hash['title'], section_hash['mql'], section_hash['collapsed'])
+      report_config = config_hash['reports'][report_name]
+      sections = report_config['sections'].map do |section_hash|
+        ReportSection.new(section_hash['title'], section_hash['mql'], section_hash['collapsed'],
+          section_hash['min'], section_hash['max'])
       end
-      ReportOptions.new(sections, config_hash['reports'][report_name]['backing_query'])
+      card_layout = CardLayout.new(report_config.try(:[], 'card_layout').try(:[], 'fields') || [])
+      backing_query = report_config['backing_query']
+      ReportOptions.new(sections, backing_query, card_layout)
     end
   end
 
@@ -31,6 +35,7 @@ class JiraTeamMetrics::BaseConfig
     end
   end
 
-  ReportSection = Struct.new(:title, :mql, :collapsed)
-  ReportOptions = Struct.new(:sections, :backing_query)
+  ReportSection = Struct.new(:title, :mql, :collapsed, :min, :max)
+  ReportOptions = Struct.new(:sections, :backing_query, :card_layout)
+  CardLayout = Struct.new(:fields)
 end

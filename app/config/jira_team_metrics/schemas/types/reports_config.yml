@@ -5,6 +5,12 @@ optional:
     type: "//rec"
     optional:
       backing_query: "//str"
+      card_layout:
+        type: "//rec"
+        optional:
+          fields:
+            type: "//arr"
+            contents: "//str"
     required:
       sections:
         type: "//arr"
@@ -15,10 +21,18 @@ optional:
             mql: "//str"
           optional:
             collapsed: "//bool"
+            min: "//int"
+            max: "//int"
   projects:
     type: "//rec"
     optional:
       backing_query: "//str"
+      card_layout:
+        type: "//rec"
+        optional:
+          fields:
+            type: "//arr"
+            contents: "//str"
     required:
       sections:
         type: "//arr"
