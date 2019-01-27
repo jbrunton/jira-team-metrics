@@ -136,7 +136,7 @@ private
 
   def build_issues_by_epic(report)
     issues_by_epic = report.scope
-      .group_by{ |issue| issue.epic }
+      .group_by{ |issue| issue.epic if issue.epic.try(:project) == @project }
 
     empty_epics = @report.epics
       .select{ |epic| !issues_by_epic.keys.include?(epic) }

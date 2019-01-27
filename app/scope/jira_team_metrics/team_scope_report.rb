@@ -87,7 +87,13 @@ private
       @epics = @issues.select { |issue| issue.is_epic? }
     else
       # training data, so we're more interested in actual issues and epics, regardless of jira hygiene
-      @epics = @issues.map { |issue| issue.epic }.compact.uniq
+      @epics = @issues
+        .map { |issue| issue.epic }.compact.uniq
+
+      if @project.board.config.epic_counting_strategy(@project.board.domain) == 'once'
+        # filter out epics from other projects if their individual issues are included
+        @epics = @epics.select { |epic| epic.project == @project }
+      end
     end
     @unscoped_epics = @epics.select{ |epic| epic.issues(recursive: false).empty? }
     @scope = @issues.select { |issue| issue.is_scope? }

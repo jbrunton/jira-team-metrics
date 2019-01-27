@@ -13,6 +13,11 @@ optional:
       issue_type: "//str"
       inward_link_type: "//str"
       outward_link_type: "//str"
+  epics:
+    type: "//rec"
+    optional:
+      counting_strategy: "//str"
+      link_missing: "//bool"
   status_category_overrides:
     type: "//arr"
     contents:
