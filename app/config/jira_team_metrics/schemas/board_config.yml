@@ -3,6 +3,11 @@ type: "//rec"
 optional:
   default_query:
     type: "//str"
+  epics:
+    type: "//rec"
+    optional:
+      counting_strategy: "//str"
+      link_missing: "//bool"
   filters:
     type: "//arr"
     contents:

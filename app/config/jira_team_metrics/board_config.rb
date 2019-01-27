@@ -14,6 +14,16 @@ class JiraTeamMetrics::BoardConfig < JiraTeamMetrics::BaseConfig
     config_hash['default_query'] || ''
   end
 
+  def link_missing_epics?(domain)
+    link_missing = config_hash.dig('epics', 'link_missing')
+    link_missing = domain.config.link_missing_epics? if link_missing.nil?
+    link_missing
+  end
+
+  def epic_counting_strategy(domain)
+    config_hash.dig('epics', 'counting_strategy') || domain.config.epic_counting_strategy
+  end
+
   def predictive_scope
     if config_hash['predictive_scope'].nil?
       nil
