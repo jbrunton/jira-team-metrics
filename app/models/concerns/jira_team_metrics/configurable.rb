@@ -7,15 +7,16 @@ module JiraTeamMetrics::Configurable
   end
 
   def config
-    config_class = "#{self.class.name}Config".constantize
-    config_class.new(config_hash)
+    # config_class = "#{self.class.name}Config".constantize
+    # config_class.new(config_hash)
+    @config ||= JiraTeamMetrics::Config.for(self)
   end
 
-  private
   def config_hash
     YAML.load(config_string || '') || {}
   end
 
+  private
   def validate_config
     begin
       config.validate
