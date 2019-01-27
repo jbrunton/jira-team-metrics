@@ -90,7 +90,7 @@ private
       @epics = @issues
         .map { |issue| issue.epic }.compact.uniq
 
-      if @project.board.config.epic_counting_strategy(@project.domain) == 'once'
+      if @project.board.config.epic_counting_strategy(@project.board.domain) == 'once'
         # filter out epics from other projects if their individual issues are included
         @epics = @epics.select { |epic| epic.project == @project }
       end
