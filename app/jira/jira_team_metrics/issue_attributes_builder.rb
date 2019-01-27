@@ -69,7 +69,10 @@ private
             when 'string', 'any', 'date'
               field_value
             when 'array'
-              field_value.map{ |x| x['value'] }
+              field_value.map do |x|
+                x['value'] ||
+                  x['name'] # for fix versions
+              end
             when 'user', 'resolution'
               field_value['name']
             else
