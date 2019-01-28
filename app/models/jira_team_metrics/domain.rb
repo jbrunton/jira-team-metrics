@@ -46,8 +46,7 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def is_project?(issue)
-    @project_type ||= config.project_type.try(:issue_type)
-    @project_type == issue.issue_type
+    config.projects.issue_type == issue.issue_type
   end
 
   def self.get_active_instance

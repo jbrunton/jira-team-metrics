@@ -5,6 +5,7 @@ class JiraTeamMetrics::Config
     @config_hash = config_hash
     @schema = schema
     @parent = parent
+    @config_value = ConfigValues.new(config_hash, schema)
   end
 
   def validate
@@ -20,9 +21,9 @@ class JiraTeamMetrics::Config
     @config_hash.dig(*key.split('.')) || @parent.try(:get, key) || default
   end
 
-  def project_type
-    get('project_type')
-  end
+  # def project_type
+  #   get('project_type')
+  # end
 
   def self.for(object)
     if object.class == JiraTeamMetrics::Domain
@@ -38,5 +39,43 @@ class JiraTeamMetrics::Config
 
   def self.domain_config(config_hash)
     JiraTeamMetrics::Config.new(config_hash, 'board_config')
+  end
+
+  def method_missing(method, *args)
+    @config_value.method_missing(method, *args)
+  end
+
+  class ConfigValues
+    def initialize(config_hash, schema)
+      @config_hash = config_hash
+      @schema = schema
+
+      @fields = (@schema['required'] || {}).merge(@schema['optional'] || {})
+      @field_types = @fields.map{ |field, field_type| [field, field_type.class == String ? field_type : field_type['type']] }.to_h
+      @values = {}
+    end
+
+    def method_missing(method, *args)
+      method_name = method.to_s
+      @values.fetch(method) do
+        if @field_types.keys.include?(method_name)
+          field_type = @field_types[method_name]
+          if field_type == '//rec'
+            config_value_hash = @config_hash[method_name] || {}
+            @values[method] = ConfigValues.new(config_value_hash, @fields[method_name])
+          else
+            @values[method] = @config_hash[method_name]
+          end
+        else
+          raise "Unknown key: #{method}"
+        end
+      end
+    end
+
+    private
+    def schema_for(key)
+      field = (@schema['required'][key] || @schema['optional'][key])
+      field.class == String ? field : field['type']
+    end
   end
 end

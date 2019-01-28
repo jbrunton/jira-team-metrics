@@ -30,8 +30,7 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/epics/:issue_key', to: 'reports#epic'
 
   unless ActiveRecord::Base.connection.migration_context.needs_migration?
-    project_type = JiraTeamMetrics::Domain.get_active_instance.config.project_type
-    unless project_type.nil?
+    unless JiraTeamMetrics::Domain.get_active_instance.config.projects.issue_type.blank?
       get "/reports/boards/:board_id/#{projects_path_plural}", to: 'reports#projects'
       get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key", to: 'reports#project'
       get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/scope/:team", to: 'reports#project_scope'
