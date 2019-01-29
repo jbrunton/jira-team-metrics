@@ -165,7 +165,7 @@ private
     if add_predicted_scope?(epic)
       predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
       predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
-      predicted_size.round.times { @scope << build_predicted_story_for(epic) } unless predicted_size.nil?
+      predicted_size.round.times { |k| @scope << build_predicted_story_for(epic, k) } unless predicted_size.nil?
     end
   end
 
@@ -175,7 +175,7 @@ private
     issues_for_team.empty? && epic.status_category != 'Done'
   end
 
-  def build_predicted_story_for(epic)
+  def build_predicted_story_for(epic, k)
     JiraTeamMetrics::Issue.new({
       issue_type: 'Story',
       board: epic.board,
