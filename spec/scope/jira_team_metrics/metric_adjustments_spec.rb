@@ -50,7 +50,7 @@ RSpec.describe JiraTeamMetrics::MetricAdjustments do
     end
   end
 
-  describe "#adjusted_epic_scope" do
+  describe "#adjusted_throughput" do
     it "returns the adjusted throughput for the team" do
       expect(metric_adjustments.adjusted_throughput('ios', 4.0)).to eq(3.0)
     end

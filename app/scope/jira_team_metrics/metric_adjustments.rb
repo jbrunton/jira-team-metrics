@@ -13,6 +13,10 @@ class JiraTeamMetrics::MetricAdjustments
     team_adjustment.adjusted_throughput(trained_throughput)
   end
 
+  def override_for(short_team_name, epic)
+    @team_adjustments.dig(short_team_name, :epic_overrides, epic.key)
+  end
+
   def as_string(project, short_team_name)
     yaml_string = project.fields[project.board.config.predictive_scope.adjustments_field]
     YAML.load(yaml_string)[short_team_name].to_yaml.gsub("---\n", '').gsub("\n", '<br>').html_safe
@@ -24,6 +28,7 @@ class JiraTeamMetrics::MetricAdjustments
         [team, {
           epic_scope: parse_number(team_adjustments['issues_per_epic']),
           throughput: parse_number(team_adjustments['throughput']),
+          epic_overrides: team_adjustments['epic_overrides'] || {},
           epic_scope_factor: parse_number(team_adjustments['adjust_issues_per_epic_by']),
           throughput_factor: parse_number(team_adjustments['adjust_throughput_by'])
         }]

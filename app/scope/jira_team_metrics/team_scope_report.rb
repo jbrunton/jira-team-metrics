@@ -162,21 +162,30 @@ private
   def build_predicted_scope_for(epic)
     return if @team == 'None'
 
-    issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
-    if issues_for_team.empty? && !@predicted_epic_scope.nil? && epic.status_category != 'Done'
-      @predicted_epic_scope.round.times do |k|
-        @scope << JiraTeamMetrics::Issue.new({
-          issue_type: 'Story',
-          board: epic.board,
-          epic: epic,
-          summary: "Predicted scope #{k + 1}",
-          fields: { 'Epic Link' => epic.key },
-          transitions: [],
-          issue_created: DateTime.now.to_date,
-          status: 'Predicted'
-        })
-      end
+    if add_predicted_scope?(epic)
+      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
+      predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
+      predicted_size.round.times { |k| @scope << build_predicted_story_for(epic, k) } unless predicted_size.nil?
     end
+  end
+
+  def add_predicted_scope?(epic)
+    return false if @team == 'None'
+    issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
+    issues_for_team.empty? && epic.status_category != 'Done'
+  end
+
+  def build_predicted_story_for(epic, k)
+    JiraTeamMetrics::Issue.new({
+      issue_type: 'Story',
+      board: epic.board,
+      epic: epic,
+      summary: "Predicted scope #{k + 1}",
+      fields: { 'Epic Link' => epic.key },
+      transitions: [],
+      issue_created: DateTime.now.to_date,
+      status: 'Predicted'
+    })
   end
 
   def zero_predicted_scope
