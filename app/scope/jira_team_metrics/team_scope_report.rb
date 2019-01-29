@@ -167,20 +167,24 @@ private
       predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
       predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
       unless predicted_size.nil?
-        predicted_size.round.times do |k|
-          @scope << JiraTeamMetrics::Issue.new({
-            issue_type: 'Story',
-            board: epic.board,
-            epic: epic,
-            summary: "Predicted scope #{k + 1}",
-            fields: { 'Epic Link' => epic.key },
-            transitions: [],
-            issue_created: DateTime.now.to_date,
-            status: 'Predicted'
-          })
+        predicted_size.round.times do
+          @scope << build_predicted_story_for(epic)
         end
       end
     end
+  end
+
+  def build_predicted_story_for(epic)
+    JiraTeamMetrics::Issue.new({
+      issue_type: 'Story',
+      board: epic.board,
+      epic: epic,
+      summary: "Predicted scope #{k + 1}",
+      fields: { 'Epic Link' => epic.key },
+      transitions: [],
+      issue_created: DateTime.now.to_date,
+      status: 'Predicted'
+    })
   end
 
   def zero_predicted_scope
