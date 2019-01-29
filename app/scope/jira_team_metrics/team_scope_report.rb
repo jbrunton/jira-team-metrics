@@ -164,7 +164,7 @@ private
 
     issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
     if issues_for_team.empty? && epic.status_category != 'Done'
-      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic)
+      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
       predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
       unless predicted_size.nil?
         predicted_size.round.times do |k|
