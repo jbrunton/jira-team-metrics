@@ -163,18 +163,22 @@ private
     return if @team == 'None'
 
     issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
-    if issues_for_team.empty? && !@predicted_epic_scope.nil? && epic.status_category != 'Done'
-      @predicted_epic_scope.round.times do |k|
-        @scope << JiraTeamMetrics::Issue.new({
-          issue_type: 'Story',
-          board: epic.board,
-          epic: epic,
-          summary: "Predicted scope #{k + 1}",
-          fields: { 'Epic Link' => epic.key },
-          transitions: [],
-          issue_created: DateTime.now.to_date,
-          status: 'Predicted'
-        })
+    if issues_for_team.empty? && epic.status_category != 'Done'
+      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic)
+      predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
+      unless predicted_size.nil?
+        predicted_size.round.times do |k|
+          @scope << JiraTeamMetrics::Issue.new({
+            issue_type: 'Story',
+            board: epic.board,
+            epic: epic,
+            summary: "Predicted scope #{k + 1}",
+            fields: { 'Epic Link' => epic.key },
+            transitions: [],
+            issue_created: DateTime.now.to_date,
+            status: 'Predicted'
+          })
+        end
       end
     end
   end
