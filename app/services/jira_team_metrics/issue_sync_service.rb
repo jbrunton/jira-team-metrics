@@ -38,6 +38,28 @@ class JiraTeamMetrics::IssueSyncService
     end
   end
 
+  def sync_projects
+    linker_service = JiraTeamMetrics::IssueLinkerService.new(@board, @notifier)
+    project_keys = @board.issues
+      .map{ |issue| [issue, linker_service.parent_link_for(issue)] }
+      .select { |issue, project_link| !project_link.nil? && issue.project.nil? }
+      .map { |_, project_link| project_link.dig('issue', 'key') }
+      .uniq
+
+    project_keys.each{ |key| puts "Missing project: #{key}" }
+
+    if project_keys.length > 0
+      batch_count = (project_keys.length.to_f / EPIC_SLICE_SIZE).ceil
+      project_keys.each_slice(EPIC_SLICE_SIZE).each_with_index do |slice_keys, batch_index|
+        message = "fetching projects from JIRA (batch #{batch_index + 1} of #{batch_count})"
+        projects = fetch_issues_for_query("key in (#{slice_keys.join(',')})", message)
+        projects.each do |epic_attrs|
+          @board.issues.create(epic_attrs)
+        end
+      end
+    end
+  end
+
   private
 
   def fetch_issues_for_query(query, status)
