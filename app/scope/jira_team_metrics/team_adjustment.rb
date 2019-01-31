@@ -6,7 +6,7 @@ JiraTeamMetrics::TeamAdjustment = Struct.new(:adjustments) do
   end
 
   def adjusted_throughput(trained_throughput)
-    throughput || begin
+    throughput.try(:/, 7) || begin
       trained_throughput * throughput_factor unless throughput_factor.nil?
     end
   end
