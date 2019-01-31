@@ -38,19 +38,19 @@ RSpec.describe JiraTeamMetrics::TeamAdjustment do
       end
     end
 
-    context "when an epic scope value is given" do
-      before(:each) { adjustments[:throughput] = 3.0 }
+    context "when an throughput value is given" do
+      before(:each) { adjustments[:throughput] = 14.0 }
 
-      it "returns the given epic scope" do
+      it "returns the given throughput (per day)" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
-        expect(team_adjustment.adjusted_throughput(2.0)).to eq(3.0)
+        expect(team_adjustment.adjusted_throughput(2.0)).to eq(2.0)
       end
     end
 
-    context "when an epic scope factor is given" do
+    context "when an throughput factor is given" do
       before(:each) { adjustments[:throughput_factor] = 2.0 }
 
-      it "returns the adjusted epic scope" do
+      it "returns the adjusted throughput" do
         team_adjustment = JiraTeamMetrics::TeamAdjustment.new(adjustments)
         expect(team_adjustment.adjusted_throughput(2.0)).to eq(4.0)
       end
