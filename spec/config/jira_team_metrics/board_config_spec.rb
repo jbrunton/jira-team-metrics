@@ -35,7 +35,10 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
   let(:config_hash) do
     {
       'default_query' => default_query,
-      'reports' => board_reports
+      'reports' => board_reports,
+      'epics' => {
+        'link_missing' => true
+      }
     }
   end
 
@@ -89,6 +92,19 @@ RSpec.describe JiraTeamMetrics::BoardConfig do
       config_hash.delete('default_query')
       board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
       expect(board_config.default_query).to eq('')
+    end
+  end
+
+  context "#link_missing_epics" do
+    it "returns true if given as true" do
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.link_missing_epics?(domain)).to eq(true)
+    end
+
+    it "returns false or nil otherwise" do
+      config_hash['epics'].delete('link_missing')
+      board_config = JiraTeamMetrics::BoardConfig.new(config_hash)
+      expect(board_config.link_missing_epics?(domain)).to eq(nil)
     end
   end
 
