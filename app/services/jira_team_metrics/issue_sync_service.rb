@@ -28,17 +28,33 @@ class JiraTeamMetrics::IssueSyncService
       .map { |issue| issue.fields['Epic Link'] }
       .uniq
 
-    if epic_keys.length > 0
-      batch_count = (epic_keys.length.to_f / EPIC_SLICE_SIZE).ceil
-      epic_keys.each_slice(EPIC_SLICE_SIZE).each_with_index do |slice_keys, batch_index|
-        message = "fetching epics from JIRA (batch #{batch_index + 1} of #{batch_count})"
-        epics = fetch_issues_for_query("key in (#{slice_keys.join(',')})", message)
-        epics.each { |epic_attrs| @board.issues.create(epic_attrs) }
-      end
-    end
+    fetch_issues_by_key(epic_keys, "fetching epics from Jira")
+  end
+
+  def sync_projects
+    linker_service = JiraTeamMetrics::IssueLinkerService.new(@board, @notifier)
+    project_keys = @board.issues
+      .map{ |issue| [issue, linker_service.parent_link_for(issue)] }
+      .select { |issue, project_link| !project_link.nil? && issue.project.nil? }
+      .map { |_, project_link| project_link.dig('issue', 'key') }
+      .uniq
+
+    fetch_issues_by_key(project_keys, "fetching projects from Jira")
   end
 
   private
+
+  def fetch_issues_by_key(keys, description)
+    return if keys.empty?
+    batch_count = (keys.length.to_f / EPIC_SLICE_SIZE).ceil
+    keys.each_slice(EPIC_SLICE_SIZE).each_with_index do |slice_keys, batch_index|
+      message = "#{description} (batch #{batch_index + 1} of #{batch_count})"
+      issues = fetch_issues_for_query("key in (#{slice_keys.join(',')})", message)
+      issues.each do |issue_attrs|
+        @board.issues.create(issue_attrs)
+      end
+    end
+  end
 
   def fetch_issues_for_query(query, status)
     client = JiraTeamMetrics::JiraClient.new(@board.domain.config.url, @credentials)

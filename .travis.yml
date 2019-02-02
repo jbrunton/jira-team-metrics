@@ -1,6 +1,6 @@
 language: ruby
 rvm:
- - 2.3.1
+ - 2.5.1
 before_script:
  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
  - chmod +x ./cc-test-reporter
@@ -12,6 +12,6 @@ before_script:
 script:
  - bundle exec bin/rails -T
  - bundle exec bin/rails db:migrate RAILS_ENV=test
- - bundle exec bin/rails spec
+ - bundle exec rspec
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
