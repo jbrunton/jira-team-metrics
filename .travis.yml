@@ -12,6 +12,6 @@ before_script:
 script:
  - bundle exec bin/rails -T
  - bundle exec bin/rails db:migrate RAILS_ENV=test
- - bundle exec bin/rails spec
+ - bundle exec rspec
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
