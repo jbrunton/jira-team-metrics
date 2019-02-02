@@ -14,7 +14,14 @@ class JiraTeamMetrics::IssueLinkerService
     end
   end
 
-private
+  def parent_link_for(issue)
+    issue.links
+      .select{ |link| link['inward_link_type'] == @project_type.inward_link_type }
+      .sort_by{ |link| link['issue']['issue_type'] == @project_type.issue_type ? 0 : 1 }
+      .first
+  end
+
+  private
   def link_epics
     @board.issues.reload.each do |issue|
       epic_key = issue.fields['Epic Link']
@@ -45,13 +52,6 @@ private
       issue.parent = @board.issues.find_by(key: parent_key)
       issue.save
     end
-  end
-
-  def parent_link_for(issue)
-    issue.links
-      .select{ |link| link['inward_link_type'] == @project_type.inward_link_type }
-      .sort_by{ |link| link['issue']['issue_type'] == @project_type.issue_type ? 0 : 1 }
-      .first
   end
 
   def link_projects

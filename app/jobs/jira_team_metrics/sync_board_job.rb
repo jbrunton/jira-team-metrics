@@ -41,6 +41,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     issue_sync_service.sync_issues(months)
     issue_linker_service.build_graph
     issue_sync_service.sync_epics
+    issue_sync_service.sync_projects
     issue_linker_service.build_graph
 
     board.synced_from = board.sync_from(months)

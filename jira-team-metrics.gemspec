@@ -30,12 +30,13 @@ Gem::Specification.new do |s|
   s.add_dependency "less-rails"
   s.add_dependency "pickadate-rails"
   s.add_dependency "gretel"
+  s.add_dependency "humanize"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "byebug"
   s.add_development_dependency "puma"
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "factory_bot_rails"
+  s.add_development_dependency "factory_bot_rails", "4.11.1" # for some reason 5.0 raises a FactoryBot::DuplicateDefinitionError
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rails-controller-testing"
 end

@@ -28,6 +28,14 @@ class JiraTeamMetrics::DomainConfig < JiraTeamMetrics::BaseConfig
     ProjectType.new(project_hash['issue_type'], project_hash['outward_link_type'], project_hash['inward_link_type'])
   end
 
+  def link_missing_epics?
+    config_hash.dig('epics', 'link_missing')
+  end
+
+  def epic_counting_strategy
+    config_hash.dig('epics', 'counting_strategy')
+  end
+
   def boards
     (config_hash['boards'] || []).map do |config_hash|
       BoardDetails.new(config_hash['board_id'], config_hash['config_file'])

@@ -1,3 +1,3 @@
 module JiraTeamMetrics
-  VERSION = '0.25.5'
+  VERSION = '0.28.0'
 end

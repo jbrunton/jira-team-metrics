@@ -15,11 +15,10 @@ class JiraTeamMetrics::AST::NotOpExpr
   end
 
   def expr_name
-    name = "not #{@expr.expr_name}"
     if @expr.class == JiraTeamMetrics::AST::ValueExpr
-      name
+      "not #{@expr.expr_name}"
     else
-      "(#{name})"
+      "not (#{@expr.expr_name})"
     end
   end
 end

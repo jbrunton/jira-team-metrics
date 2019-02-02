@@ -14,13 +14,14 @@
       <% project_duration = issues_by_epic.values.flatten.map{ |i| i.duration_in_range(@report_params.date_range) }.sum %>
       <tr class="project">
         <td>
+          <%= projects_name_singular %>:
           <% if project.nil? %>
               None
           <% else %>
-              <%= project['issue']['key'] %>
-              (<a href="<%= external_link_url(project, @domain) %>" target="_blank">
-                <i class="external alternate icon"></i></a>)
-              &mdash; <%= project['issue']['summary'] %>
+            <%= link_to(project.key, project) %>
+            (<a href="<%= project.domain_url %>" target="_blank">
+              <i class="external alternate icon"></i></a>)
+              &mdash; <%= project.summary %>
           <% end %>
         </td>
         <td class="effort-stats">
@@ -35,6 +36,7 @@
           <% epic_duration = issues.map{ |i| i.duration_in_range(@report_params.date_range) }.sum %>
           <tr class="epic">
             <td>
+              Epic:
               <% if epic.nil? %>
                   None
               <% else %>
