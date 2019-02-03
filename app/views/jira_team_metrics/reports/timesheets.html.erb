@@ -1,4 +1,5 @@
 <% breadcrumb :report, @board, :timesheets, 'Timesheets' %>
+<% content_for :title, "Timesheets - #{@board.name}" %>
 
 <h3>Timesheets for <%= @board.name %></h3>
 

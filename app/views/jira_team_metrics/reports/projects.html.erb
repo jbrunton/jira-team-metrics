@@ -1,4 +1,5 @@
 <% breadcrumb :projects, @board %>
+<% content_for :title, "#{projects_name_plural} - #{@board.name}" %>
 
 <h1><%= projects_name_singular%> Reports</h1>
 

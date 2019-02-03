@@ -1,4 +1,5 @@
 <% breadcrumb :project, @project %>
+<% content_for :title, "#{projects_name_singular} Report: #{@project.key} - #{@board.name}" %>
 
 <script>
   google.charts.load('current', {'packages':['corechart', 'timeline']});

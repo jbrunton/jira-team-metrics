@@ -1,4 +1,5 @@
 <% breadcrumb :project_throughput_report, @project, @team %>
+<% content_for :title, "#{@team} Throughput - #{@project.key} - #{@board.name}" %>
 
 <% chart_id = generate_id %>
 
