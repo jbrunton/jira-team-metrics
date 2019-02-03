@@ -33,7 +33,7 @@ class JiraTeamMetrics::ScopeCfdBuilder
     date_range = get_date_range(today, forecast_date)
 
     data = [build_header]
-    dates = JiraTeamMetrics::DateRange.new(date_range.start_date, date_range.end_date).to_a
+    dates = date_range.to_a
     dates.each do |date|
       data << cfd_row_for(date).to_array(date, predicted_scope?)
     end
