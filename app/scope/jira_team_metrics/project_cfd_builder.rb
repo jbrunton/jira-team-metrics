@@ -25,18 +25,19 @@ class JiraTeamMetrics::ProjectCfdBuilder
 
     today = DateTime.now.to_date
     target_date = @project_report.project.target_date
-    completion_date = ([today, target_date] + @team_completion_dates.values).compact.max
-    start_date = [@project_report.second_percentile_started_date, today - 60].max
+    date_range = get_date_range(today, target_date)
 
     tooltip_type = {'type' => 'string', 'role' => 'tooltip'}
     data = [[{'label' => 'Date', 'type' => 'date', 'role' => 'domain'}, {'role' => 'annotation'}, 'Total', tooltip_type, 'Done', {'role' => 'annotation'}, {'role' => 'annotationText'}, 'In Progress', 'To Do', 'Predicted']]
-    dates = JiraTeamMetrics::DateRange.new(start_date, completion_date).to_a
+    dates = date_range.to_a
     dates.each do |date|
       annotation, annotation_text = annotation_for(date)
       data << cfd_row_for(date).to_array(date, annotation, annotation_text)
     end
 
-    data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil, nil, nil]
+    unless @project_report.project.completed?
+      data << [date_as_string(today), 'today', nil, nil, nil, nil, nil, nil, nil, nil]
+    end
     unless target_date.nil?
       data << [date_as_string(target_date), 'target', nil, nil, nil, nil, nil, nil, nil, nil]
     end
@@ -159,5 +160,23 @@ class JiraTeamMetrics::ProjectCfdBuilder
     end
 
     team_rate
+  end
+
+  def get_date_range(today, target_date)
+    if @project_report.project.completed?
+      start_date = @project_report.project.started_time - 2
+      end_date = @project_report.project.completed_time - 2
+    else
+      start_date = [
+        # there's often a long tail of issues that were started before the org began to focus on the project. Ignore
+        # these.
+        @project_report.second_percentile_started_date,
+        # while in progress, more than the last two months tends to be redundant.
+        today - 60
+      ].max
+      end_date = ([today, target_date] + @team_completion_dates.values).compact.max
+    end
+
+    JiraTeamMetrics::DateRange.new(start_date, end_date)
   end
 end
