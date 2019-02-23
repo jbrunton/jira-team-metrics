@@ -50,7 +50,7 @@ RSpec.describe JiraTeamMetrics::Config do
   end
 
   context "#get" do
-    it "returns the va  lue for the key" do
+    it "returns the value for the key" do
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
       expect(config.get('bar')).to eq('qux')
     end
@@ -86,6 +86,11 @@ RSpec.describe JiraTeamMetrics::Config do
     it "returns null values when optional" do
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
       expect(config.foo.baz).to eq(nil)
+    end
+
+    it "returns array values" do
+      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+      expect(config.foo.foos.to_a).to eq([])
     end
   end
 end

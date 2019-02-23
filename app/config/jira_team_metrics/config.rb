@@ -63,6 +63,9 @@ class JiraTeamMetrics::Config
           if field_type == '//rec'
             config_value_hash = @config_hash[method_name] || {}
             @values[method] = ConfigValues.new(config_value_hash, @fields[method_name])
+          elsif field_type == '//arr'
+            config_value_arr = @config_hash[method_name] || []
+            @values[method] = ConfigArray.new(config_value_arr, @fields[method_name])
           elsif field_type == '/metrics/reports-config'
             config_value_hash = @config_hash[method_name] || {}
             schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))
@@ -80,6 +83,54 @@ class JiraTeamMetrics::Config
     def schema_for(key)
       field = (@schema['required'][key] || @schema['optional'][key])
       field.class == String ? field : field['type']
+    end
+  end
+
+  class ConfigArray
+    include Enumerable
+
+    def initialize(config_arr, schema)
+      @config_arr = config_arr
+      @schema = schema
+
+      #@fields = (@schema['required'] || {}).merge(@schema['optional'] || {})
+      #@field_types = @fields.map{ |field, field_type| [field, field_type.class == String ? field_type : field_type['type']] }.to_h
+      @values = {}
+    end
+
+    def each(&block)
+      @config_arr.each(&block)
+    end
+
+    def [](index)
+      @values.fetch(index) do
+        binding.pry
+        #@values[index] = ConfigValues.new(c)
+      end
+    end
+
+    def method_missing(method, *args)
+      method_name = method.to_s
+      @values.fetch(method) do
+        if @field_types.keys.include?(method_name)
+          field_type = @field_types[method_name]
+          if field_type == '//rec'
+            config_value_hash = @config_hash[method_name] || {}
+            @values[method] = ConfigValues.new(config_value_hash, @fields[method_name])
+          elsif field_type == '//arr'
+            config_value_arr = @config_hash[method_name] || []
+            @values[method] = ConfigValues.new(config_value_arr, @fields[method_name])
+          elsif field_type == '/metrics/reports-config'
+            config_value_hash = @config_hash[method_name] || {}
+            schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))
+            @values[method] = JiraTeamMetrics::Config.new(config_value_hash, schema, @parent)
+          else
+            @values[method] = @config_hash[method_name]
+          end
+        else
+          raise "Unknown key: #{method}"
+        end
+      end
     end
   end
 end
