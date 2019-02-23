@@ -54,5 +54,5 @@ optional:
   aging_wip:
     type: "//rec"
     optional:
-      completed_query: "//str"
+      default_query: "//str"
       

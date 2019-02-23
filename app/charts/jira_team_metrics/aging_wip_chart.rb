@@ -53,7 +53,7 @@ private
 
   def completed_issues
     query_builder = JiraTeamMetrics::QueryBuilder.new(@params.to_query, :mql)
-        .and(@board.config.aging_wip_completed_query(@board.domain))
+        .and(@board.config.reports.aging_wip.default_query(@board.domain))
     JiraTeamMetrics::MqlInterpreter.new
         .eval(query_builder.query, @board, @board.completed_issues(@params.date_range))
         .rows

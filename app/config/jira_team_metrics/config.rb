@@ -63,6 +63,10 @@ class JiraTeamMetrics::Config
           if field_type == '//rec'
             config_value_hash = @config_hash[method_name] || {}
             @values[method] = ConfigValues.new(config_value_hash, @fields[method_name])
+          elsif field_type == '/metrics/reports-config'
+            config_value_hash = @config_hash[method_name] || {}
+            schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))
+            @values[method] = JiraTeamMetrics::Config.new(config_value_hash, schema, @parent)
           else
             @values[method] = @config_hash[method_name]
           end

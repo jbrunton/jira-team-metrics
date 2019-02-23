@@ -21,7 +21,7 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
     if status == 'Predicted'
       'Predicted'
     else
-      config.status_category_overrides[status] || statuses[status]
+      config.status_category_overrides.map{|x|[x['map'], x['to_category']]}.to_h[status] || statuses[status]
     end
   end
 
