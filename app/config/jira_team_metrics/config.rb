@@ -92,9 +92,6 @@ class JiraTeamMetrics::Config
     def initialize(config_arr, schema)
       @config_arr = config_arr
       @schema = schema
-
-      #@fields = (@schema['required'] || {}).merge(@schema['optional'] || {})
-      #@field_types = @fields.map{ |field, field_type| [field, field_type.class == String ? field_type : field_type['type']] }.to_h
       @values = {}
     end
 
