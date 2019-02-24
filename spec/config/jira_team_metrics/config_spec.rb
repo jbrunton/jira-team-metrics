@@ -106,5 +106,22 @@ RSpec.describe JiraTeamMetrics::Config do
       config = JiraTeamMetrics::Config.new({ 'bars' => [{ 'bar' => 2 }] }, YAML.load(schema))
       expect(config.bars[0].bar).to eq(2)
     end
+
+    it "returns arrays with array contents" do
+      schema = <<~SCHEMA
+      type: "//rec"
+      required:
+        foos:
+          type: "//arr"
+          contents:
+            type: "//arr"
+            contents:
+              type: "//rec"
+              required:
+                bar: "//int"
+      SCHEMA
+      config = JiraTeamMetrics::Config.new({ 'foos' => [[{ 'bar' => 1}]] }, YAML.load(schema))
+      expect(config.foos[0][0].bar).to eq(1)
+    end
   end
 end

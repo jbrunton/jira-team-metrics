@@ -108,6 +108,9 @@ class JiraTeamMetrics::Config
         if schema_contents.is_a?(Hash) && schema_contents['type'] == '//rec'
           config_value_hash = @config_arr[index] || {}
           @values[index] = ConfigValues.new(config_value_hash, @schema['contents'])
+        elsif schema_contents.is_a?(Hash) && schema_contents['type'] == '//arr'
+          config_value_arr = @config_arr[index] || []
+          @values[index] = ConfigArray.new(config_value_arr, @schema['contents'])
         else
           @values[index] = @config_arr[index]
         end
