@@ -150,7 +150,7 @@ private
 
   def build_quicklinks
     query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
-        .and(@board.config.throughput_default_query(@domain))
+        .and(@board.config.reports.throughput.default_query(@domain))
         .query
     opts = {
         from_date: @report.started_date.at_beginning_of_month,
