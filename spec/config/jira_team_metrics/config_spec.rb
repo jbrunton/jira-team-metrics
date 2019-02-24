@@ -13,12 +13,16 @@ RSpec.describe JiraTeamMetrics::Config do
           bar: "//str"
         optional:
           baz: "//str"
-          foos:
-            type: "//arr"
-            contents:
-              type: "//rec"
-              required:
-                bar: "//str"
+    optional:
+      foos:
+        type: "//arr"
+        contents: "//int"
+      bars:
+        type: "//arr"
+        contents:
+          type: "//rec"
+          required:
+            bar: "//str"
     SCHEMA
   end
 
@@ -88,9 +92,19 @@ RSpec.describe JiraTeamMetrics::Config do
       expect(config.foo.baz).to eq(nil)
     end
 
-    it "returns array values" do
+    it "returns empty array for missing array values" do
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
-      expect(config.foo.foos.to_a).to eq([])
+      expect(config.foos.to_a).to eq([])
+    end
+
+    it "returns array scalar values" do
+      config = JiraTeamMetrics::Config.new({ 'foos' => [1, 2] }, YAML.load(schema))
+      expect(config.foos[0]).to eq(1)
+    end
+
+    it "returns array rec values" do
+      config = JiraTeamMetrics::Config.new({ 'bars' => [{ 'bar' => 2 }] }, YAML.load(schema))
+      expect(config.bars[0].bar).to eq(2)
     end
   end
 end

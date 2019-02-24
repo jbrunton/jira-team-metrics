@@ -104,31 +104,12 @@ class JiraTeamMetrics::Config
 
     def [](index)
       @values.fetch(index) do
-        binding.pry
-        #@values[index] = ConfigValues.new(c)
-      end
-    end
-
-    def method_missing(method, *args)
-      method_name = method.to_s
-      @values.fetch(method) do
-        if @field_types.keys.include?(method_name)
-          field_type = @field_types[method_name]
-          if field_type == '//rec'
-            config_value_hash = @config_hash[method_name] || {}
-            @values[method] = ConfigValues.new(config_value_hash, @fields[method_name])
-          elsif field_type == '//arr'
-            config_value_arr = @config_hash[method_name] || []
-            @values[method] = ConfigValues.new(config_value_arr, @fields[method_name])
-          elsif field_type == '/metrics/reports-config'
-            config_value_hash = @config_hash[method_name] || {}
-            schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))
-            @values[method] = JiraTeamMetrics::Config.new(config_value_hash, schema, @parent)
-          else
-            @values[method] = @config_hash[method_name]
-          end
+        schema_contents = @schema['contents']
+        if schema_contents.is_a?(Hash) && schema_contents['type'] == '//rec'
+          config_value_hash = @config_arr[index] || {}
+          @values[index] = ConfigValues.new(config_value_hash, @schema['contents'])
         else
-          raise "Unknown key: #{method}"
+          @values[index] = @config_arr[index]
         end
       end
     end
