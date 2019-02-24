@@ -29,7 +29,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    @report_options = @board.config.epics_report_options(@domain)
+    @report_options = @board.config.reports.epics
     @sections = sections_for(@board.epics, @report_options)
   end
 

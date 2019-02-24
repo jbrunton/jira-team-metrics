@@ -125,7 +125,9 @@ class JiraTeamMetrics::Config
     end
 
     def each(&block)
-      @config_arr.each(&block)
+      @config_arr.count.times do |index|
+        block.call(self[index])
+      end
     end
 
     def [](index)
