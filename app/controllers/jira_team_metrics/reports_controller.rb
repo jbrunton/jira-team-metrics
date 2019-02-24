@@ -12,7 +12,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def projects
-    @sections = sections_for(@board.projects, @board.config.projects_report_options(@domain))
+    @sections = sections_for(@board.projects, @board.config.reports.projects)
   end
 
   def project
