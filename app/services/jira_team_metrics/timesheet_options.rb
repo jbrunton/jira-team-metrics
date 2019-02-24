@@ -17,7 +17,7 @@ class JiraTeamMetrics::TimesheetOptions
     today = DateTime.now.beginning_of_day
 
     enumerate_month_periods(today)
-    enumerate_timesheet_periods(today) unless @timesheets_config.nil?
+    enumerate_timesheet_periods(today) unless @timesheets_config.reporting_period.day_of_week.nil?
     enumerate_relative_periods(today)
 
     self
