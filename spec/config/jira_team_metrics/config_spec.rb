@@ -92,6 +92,17 @@ RSpec.describe JiraTeamMetrics::Config do
       expect(config.foo.baz).to eq(nil)
     end
 
+    it "returns default values when missing" do
+      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+      expect(config.foo.baz(123)).to eq(123)
+    end
+
+    it "checks the parent config when given" do
+      parent = JiraTeamMetrics::Config.new({ 'bar' => 'baz' }, YAML.load(schema))
+      config = JiraTeamMetrics::Config.new({}, YAML.load(schema), parent)
+      expect(config.bar).to eq('baz')
+    end
+
     it "returns empty array for missing array values" do
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
       expect(config.foos.to_a).to eq([])

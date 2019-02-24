@@ -8,7 +8,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def throughput
-    @default_query = @board.config.throughput_default_query(@domain)
+    @default_query = @board.config.reports.throughput.default_query
   end
 
   def projects
@@ -41,7 +41,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def scatterplot
-    @default_query = @board.config.scatterplot_default_query(@domain)
+    @default_query = @board.config.reports.scatterplot.default_query
   end
 
   def aging_wip
