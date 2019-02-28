@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency "gretel"
   s.add_dependency "humanize"
 
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "sqlite3", '1.3.13'
   s.add_development_dependency "byebug"
   s.add_development_dependency "puma"
   s.add_development_dependency "rspec-rails"

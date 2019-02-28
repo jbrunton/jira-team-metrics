@@ -25,11 +25,14 @@ RSpec.describe JiraTeamMetrics::MqlLexer do
         'camelCase',
         'snake_case',
         'ident_with_digits_123',
-        'a',
-        '[With Spaces]'
+        'a'
     ].each do |identifier|
       expect(parser.parse(identifier)).to eq(ident: identifier)
     end
+  end
+
+  it "parses identifiers with spaces" do
+    expect(parser.parse('[With Spaces]')).to eq(ident: 'With Spaces')
   end
 
   it "fails on invalid identifiers" do
