@@ -10,12 +10,14 @@
     <% end %>
   </div>
 
-  <div class="eight wide column">
+  <% if ENV['JIRA_USERNAME'].blank? || ENV['JIRA_PASSWORD'].blank? %>
+    <div class="eight wide column">
       <%= form_input(@credentials, :username) %>
-  </div>
-  <div class="eight wide column">
+    </div>
+    <div class="eight wide column">
       <%= form_input(@credentials, :password, type: :password) %>
-  </div>
+    </div>
+  <% end %>
 
   <% unless @board.nil? %>
       <div class="eight wide column">
