@@ -19,7 +19,11 @@ class JiraTeamMetrics::DomainsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def sync
-    @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+    if ENV['JIRA_USERNAME'].blank? || ENV['JIRA_PASSWORD'].blank?
+      @credentials = JiraTeamMetrics::Credentials.new(credentials_params)
+    else
+      @credentials = JiraTeamMetrics::Credentials.new(username: ENV['JIRA_USERNAME'], password: ENV['JIRA_PASSWORD'])
+    end
     @domain.with_lock do
       if JiraTeamMetrics::ModelUpdater.new(@domain).can_sync?(@credentials) && @credentials.valid?
         @domain.syncing = true
