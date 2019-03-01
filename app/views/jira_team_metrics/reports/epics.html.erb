@@ -1,6 +1,12 @@
 <% breadcrumb :epics, @board %>
 <% content_for :title, "Epics - #{@board.name}" %>
 
+<script>
+  $(function() {
+    $('.ui.progress').progress({ showActivity: false });
+  });
+</script>
+
 <h1>Epic Reports</h1>
 
 <div class="epic-kanban ui grid">
@@ -46,7 +52,7 @@
                 </table>
               </div>
               <div class="content">
-                <div class="ui two mini statistics">
+                <div class="ui three mini statistics">
                   <div class="statistic">
                     <div class="value">
                       <%= epic.scope.count %>
@@ -55,17 +61,28 @@
                       Issues
                     </div>
                   </div>
-                  <div class="statistic">
+                  <div class="green statistic">
                     <div class="value">
-                      <%= pretty_print_number(epic.forecaster.percent_done, round: true, percentage: true) %>
+                      <%= epic.forecaster.in_progress_scope.count %>
                     </div>
                     <div class="label">
-                      Progress
+                      WIP
+                    </div>
+                  </div>
+                  <div class="blue statistic">
+                    <div class="value">
+                      <%= epic.forecaster.completed_scope.count %>
+                    </div>
+                    <div class="label">
+                      Done
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="extra content">
+                <div class="ui blue progress" data-value="<%= epic.forecaster.completed_scope.count %>" data-total="<%= epic.scope.count %>">
+                  <div class="bar">
+                    <div class="progress"></div>
+                  </div>
+                </div>
                 <a class="ui fluid tiny teal button" href="<%= epic_report_path(epic) %>">
                   <i class="chart line icon"></i>
                   Progress Report
