@@ -10,7 +10,7 @@
     <% end %>
   </div>
 
-  <% if ENV['JIRA_USERNAME'].blank? || ENV['JIRA_PASSWORD'].blank? %>
+  <% unless env_credentials? %>
     <div class="eight wide column">
       <%= form_input(@credentials, :username) %>
     </div>
