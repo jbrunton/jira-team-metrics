@@ -53,29 +53,6 @@ RSpec.describe JiraTeamMetrics::Config do
     end
   end
 
-  context "#get" do
-    it "returns the value for the key" do
-      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
-      expect(config.get('bar')).to eq('qux')
-    end
-
-    it "returns the value for a nested key" do
-      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
-      expect(config.get('foo.bar')).to eq('baz')
-    end
-
-    it "returns a default value if none exists" do
-      config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
-      expect(config.get('foo.baz', 'quux')).to eq('quux')
-    end
-
-    it "checks the parent config if given" do
-      parent = JiraTeamMetrics::Config.new({ 'foo' => 'bar' }, YAML.load(schema))
-      config = JiraTeamMetrics::Config.new({}, YAML.load(schema), parent)
-      expect(config.get('foo')).to eq('bar')
-    end
-  end
-
   context "#method_missing" do
     it "returns scalar values" do
       config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))

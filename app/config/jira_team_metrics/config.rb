@@ -17,14 +17,6 @@ class JiraTeamMetrics::Config
     schema.check!(config_hash)
   end
 
-  def get(key, default = nil)
-    @config_hash.dig(*key.split('.')) || @parent.try(:get, key) || default
-  end
-
-  # def project_type
-  #   get('project_type')
-  # end
-
   def self.for(object)
     if object.class == JiraTeamMetrics::Domain
       schema_path = File.join(__dir__, 'schemas', 'domain_config.yml')
