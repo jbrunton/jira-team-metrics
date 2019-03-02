@@ -26,7 +26,9 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
   let(:config_hash) do
     {
       'foo' => 123,
-      'bar' => { 'baz' => 'qux' }
+      'bar' => { 'baz' => 'qux' },
+      'foos' => [123],
+      'bars' => [{ 'baz' => 'qux' }]
     }
   end
 
@@ -59,6 +61,25 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
         config_hash['bar'].delete('baz')
         config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
         expect(config.bar.baz).to eq(nil)
+      end
+    end
+
+    context "array values" do
+      it "returns nested values" do
+        config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+        expect(config.foos.to_a).to eq([123])
+      end
+
+      it "returns an empty array for empty values" do
+        config_hash.delete('foos')
+        config = JiraTeamMetrics::Config.new(config_hash, YAML.load(schema))
+        expect(config.foos.to_a).to eq([])
+      end
+    end
+
+    context "custom types" do
+      xit "returns custom types" do
+
       end
     end
   end
