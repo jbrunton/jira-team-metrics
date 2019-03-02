@@ -1,10 +1,9 @@
 class JiraTeamMetrics::ConfigArray
   include Enumerable
 
-  def initialize(config_arr, schema, parent)
+  def initialize(config_arr, schema)
     @config_arr = config_arr
     @schema = schema
-    @parent = parent
     @values = {}
   end
 
@@ -22,7 +21,7 @@ class JiraTeamMetrics::ConfigArray
         @values[index] = JiraTeamMetrics::ConfigValues.new(config_value_hash, @schema['contents'], nil)
       elsif schema_contents.is_a?(Hash) && schema_contents['type'] == '//arr'
         config_value_arr = @config_arr[index] || []
-        @values[index] = JiraTeamMetrics::ConfigArray.new(config_value_arr, @schema['contents'], nil)
+        @values[index] = JiraTeamMetrics::ConfigArray.new(config_value_arr, @schema['contents'])
       else
         @values[index] = @config_arr[index]
       end
