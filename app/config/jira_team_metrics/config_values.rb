@@ -47,11 +47,6 @@ class JiraTeamMetrics::ConfigValues
   end
 
   private
-  def schema_for(key)
-    field = (@schema['required'][key] || @schema['optional'][key])
-    field.class == String ? field : field['type']
-  end
-
   def parent_for(key)
     unless @parent.nil?
       if @parent.has_key?(key)
