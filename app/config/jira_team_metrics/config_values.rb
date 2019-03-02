@@ -32,7 +32,7 @@ class JiraTeamMetrics::ConfigValues
           @values[method] = @config_hash[method_name]
         end
       else
-        raise "Unknown key: #{method}"
+        raise ArgumentError.new("Unknown config key: #{method}")
       end
     end
     if value.nil?
