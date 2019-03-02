@@ -5,7 +5,7 @@ class JiraTeamMetrics::Config
     @config_hash = config_hash
     @schema = schema
     @parent = parent
-    @config_value = ConfigValues.new(config_hash, schema, @parent)
+    @config_hash = ConfigHash.new(config_hash, schema, @parent)
   end
 
   def validate
@@ -44,14 +44,14 @@ class JiraTeamMetrics::Config
   end
 
   def method_missing(method, *args)
-    @config_value.method_missing(method, *args)
+    @config_hash.method_missing(method, *args)
   end
 
   def has_key?(key)
-    @config_value.has_key?(key)
+    @config_hash.has_key?(key)
   end
 
-  class ConfigValues
+  class ConfigHash
     def initialize(config_hash, schema, parent)
       @config_hash = config_hash
       @schema = schema
@@ -75,7 +75,7 @@ class JiraTeamMetrics::Config
           field_type = @field_types[method_name]
           if field_type == '//rec'
             config_value_hash = @config_hash[method_name] || {}
-            @values[method] = ConfigValues.new(config_value_hash, @fields[method_name], parent_for(method_name))
+            @values[method] = ConfigHash.new(config_value_hash, @fields[method_name], parent_for(method_name))
           elsif field_type == '//arr'
             config_value_arr = @config_hash[method_name] || []
             @values[method] = ConfigArray.new(config_value_arr, @fields[method_name], parent_for(method_name))
@@ -137,7 +137,7 @@ class JiraTeamMetrics::Config
         schema_contents = @schema['contents']
         if schema_contents.is_a?(Hash) && schema_contents['type'] == '//rec'
           config_value_hash = @config_arr[index] || {}
-          @values[index] = ConfigValues.new(config_value_hash, @schema['contents'], nil)
+          @values[index] = ConfigHash.new(config_value_hash, @schema['contents'], nil)
         elsif schema_contents.is_a?(Hash) && schema_contents['type'] == '//arr'
           config_value_arr = @config_arr[index] || []
           @values[index] = ConfigArray.new(config_value_arr, @schema['contents'], nil)
