@@ -5,7 +5,7 @@ class JiraTeamMetrics::Config
     @config_hash = config_hash
     @schema = schema
     @parent = parent
-    @config_hash = ConfigHash.new(config_hash, schema, @parent)
+    @config_values = JiraTeamMetrics::ConfigValues.new(config_hash, schema, @parent)
   end
 
   def validate
@@ -44,107 +44,10 @@ class JiraTeamMetrics::Config
   end
 
   def method_missing(method, *args)
-    @config_hash.method_missing(method, *args)
+    @config_values.method_missing(method, *args)
   end
 
   def has_key?(key)
-    @config_hash.has_key?(key)
-  end
-
-  class ConfigHash
-    def initialize(config_hash, schema, parent)
-      @config_hash = config_hash
-      @schema = schema
-      @parent = parent
-
-      @fields = (@schema['required'] || {}).merge(@schema['optional'] || {})
-      @field_types = @fields.map{ |field, field_type| [field, field_type.class == String ? field_type : field_type['type']] }.to_h
-      @values = {}
-    end
-
-    def has_key?(key)
-      @field_types.keys.include?(key)
-    end
-
-    def method_missing(method, *args)
-      puts "ConfigValues::method_missing(#{method}, #{args.join})"
-      method_name = method.to_s
-      value = @values.fetch(method) do
-        puts "ConfigValues::method_missing - cache miss"
-        if @field_types.keys.include?(method_name)
-          field_type = @field_types[method_name]
-          if field_type == '//rec'
-            config_value_hash = @config_hash[method_name] || {}
-            @values[method] = ConfigHash.new(config_value_hash, @fields[method_name], parent_for(method_name))
-          elsif field_type == '//arr'
-            config_value_arr = @config_hash[method_name] || []
-            @values[method] = ConfigArray.new(config_value_arr, @fields[method_name], parent_for(method_name))
-          elsif field_type == '/metrics/reports-config'
-            config_value_hash = @config_hash[method_name] || {}
-            schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))
-            @values[method] = JiraTeamMetrics::Config.new(config_value_hash, schema, parent_for(method_name))
-          else
-            @values[method] = @config_hash[method_name]
-          end
-        else
-          raise "Unknown key: #{method}"
-        end
-      end
-      if value.nil?
-        if @parent.nil?
-          args[0]
-        else
-          @parent.method_missing(method, *args)
-        end
-      else
-        value
-      end
-    end
-
-    private
-    def schema_for(key)
-      field = (@schema['required'][key] || @schema['optional'][key])
-      field.class == String ? field : field['type']
-    end
-
-    def parent_for(key)
-      unless @parent.nil?
-        if @parent.has_key?(key)
-          @parent.method_missing(key.to_sym)
-        end
-      end
-    end
-  end
-
-  class ConfigArray
-    include Enumerable
-
-    def initialize(config_arr, schema, parent)
-      @config_arr = config_arr
-      @schema = schema
-      @parent = parent
-      @values = {}
-    end
-
-    def each(&block)
-      @config_arr.count.times do |index|
-        block.call(self[index])
-      end
-    end
-
-    def [](index)
-      @values.fetch(index) do
-        schema_contents = @schema['contents']
-        if schema_contents.is_a?(Hash) && schema_contents['type'] == '//rec'
-          config_value_hash = @config_arr[index] || {}
-          @values[index] = ConfigHash.new(config_value_hash, @schema['contents'], nil)
-        elsif schema_contents.is_a?(Hash) && schema_contents['type'] == '//arr'
-          config_value_arr = @config_arr[index] || []
-          @values[index] = ConfigArray.new(config_value_arr, @schema['contents'], nil)
-        else
-          @values[index] = @config_arr[index]
-        end
-      end
-    end
+    @config_values.has_key?(key)
   end
 end
