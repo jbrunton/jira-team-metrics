@@ -20,8 +20,6 @@ RSpec.describe JiraTeamMetrics::Domain do
 
     it "looks up the short team name if given in the config" do
       domain.config_string = "teams:\n- name: Mobile\n  short_name: mobi"
-      domain.save
-      domain.reload
       expect(domain.short_team_name('Mobile')).to eq('mobi')
     end
   end

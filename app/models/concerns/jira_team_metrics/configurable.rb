@@ -7,8 +7,13 @@ module JiraTeamMetrics::Configurable
   end
 
   def reload(options = nil)
+    clear_config
     super
-    @config = nil
+  end
+
+  def config_string=(value)
+    clear_config
+    super
   end
 
   def config
@@ -26,5 +31,9 @@ module JiraTeamMetrics::Configurable
     rescue Rx::ValidationError => e
       errors.add(:config, e.message)
     end
+  end
+
+  def clear_config
+    @config = nil
   end
 end
