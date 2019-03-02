@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>JiraTeamMetrics</title>
+    <title>
+      <%= "#{yield(:title)} - " if content_for?(:title)%>
+      JiraTeamMetrics
+    </title>
     <%= csrf_meta_tags %>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

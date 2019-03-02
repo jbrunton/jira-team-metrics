@@ -1,4 +1,5 @@
 <% breadcrumb :project_scope_report, @project, @team %>
+<% content_for :title, "#{@team} Scope - #{@project.key} - #{@board.name}" %>
 
 <%= render partial: 'partials/progress_widget', locals: { predicted_scope: @report.predicted_scope.count } %>
 

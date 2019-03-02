@@ -10,11 +10,11 @@ module JiraTeamMetrics::MqlLexer
 
   rule(:ident) do
     (
-      (match('[a-zA-Z_]') >> match('[a-zA-Z0-9_]').repeat) |
+      (match('[a-zA-Z_]') >> match('[a-zA-Z0-9_]').repeat).as(:ident) |
         str("[") >>
-          (str("]").absent? >> any).repeat >>
+          (str("]").absent? >> any).repeat.as(:ident) >>
           str("]")
-    ).as(:ident) >> space?
+    ) >> space?
   end
 
   rule :string do
