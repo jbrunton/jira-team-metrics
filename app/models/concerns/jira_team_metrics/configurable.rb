@@ -6,13 +6,8 @@ module JiraTeamMetrics::Configurable
     validate :validate_config
   end
 
-  def reload(options = nil)
-    super
-    @config = nil
-  end
-
   def config
-    @config ||= JiraTeamMetrics::Config.for(self)
+    JiraTeamMetrics::Config.for(self)
   end
 
   def config_hash
@@ -22,7 +17,6 @@ module JiraTeamMetrics::Configurable
   private
   def validate_config
     begin
-      @config = nil
       config.validate
     rescue Rx::ValidationError => e
       errors.add(:config, e.message)
