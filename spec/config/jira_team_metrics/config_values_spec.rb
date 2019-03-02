@@ -77,6 +77,26 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
       end
     end
 
+    context "when given a parent" do
+      it "returns the parent value if none is defined" do
+        parent = JiraTeamMetrics::Config.new({ 'foo' => 123 }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({}, YAML.load(schema), parent)
+        expect(config.foo).to eq(123)
+      end
+
+      it "returns the child value if defined" do
+        parent = JiraTeamMetrics::Config.new({ 'foo' => 123 }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({ 'foo' => 456 }, YAML.load(schema), parent)
+        expect(config.foo).to eq(456)
+      end
+
+      it "returns the parent value for nested attributes if none are defined in the child config" do
+        parent = JiraTeamMetrics::Config.new({ 'bar' => { 'baz' => 'qux' } }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({ 'bar' => {} }, YAML.load(schema), parent)
+        expect(config.bar.baz).to eq('qux')
+      end
+    end
+
     context "custom types" do
       xit "returns custom types" do
 
