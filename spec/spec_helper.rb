@@ -1,6 +1,17 @@
-require 'simplecov'
-SimpleCov.start do
-  add_filter 'app/lib/**/*'
+if ENV['TRAVIS']
+  require 'codeclimate-test-reporter'
+  SimpleCov.start 'rails' do
+    formatter SimpleCov::Formatter::MultiFormatter[
+      SimpleCov::Formatter::HTMLFormatter,
+      CodeClimate::TestReporter::Formatter
+    ]
+    add_filter 'app/lib/rx.rb'
+  end
+else
+  require 'simplecov'
+  SimpleCov.start 'rails' do
+    add_filter 'app/lib/rx.rb'
+  end
 end
 
 require 'webmock/rspec'
