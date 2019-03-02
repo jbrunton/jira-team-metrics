@@ -6,8 +6,13 @@ module JiraTeamMetrics::Configurable
     validate :validate_config
   end
 
+  def reload(options = nil)
+    super
+    @config = nil
+  end
+
   def config
-    JiraTeamMetrics::Config.for(self)
+    @config ||= JiraTeamMetrics::Config.for(self)
   end
 
   def config_hash
