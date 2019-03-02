@@ -14,10 +14,8 @@ class JiraTeamMetrics::ConfigValues
   end
 
   def method_missing(method, *args)
-    puts "ConfigValues::method_missing(#{method}, #{args.join})"
     method_name = method.to_s
     value = @values.fetch(method) do
-      puts "ConfigValues::method_missing - cache miss"
       if @field_types.keys.include?(method_name)
         field_type = @field_types[method_name]
         if field_type == '//rec'
