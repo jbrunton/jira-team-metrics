@@ -19,4 +19,5 @@ group :development, :test do
   gem 'pry-rails'
   gem 'webmock'
   gem 'github_changelog_generator'
+  gem 'codeclimate-test-reporter'
 end
