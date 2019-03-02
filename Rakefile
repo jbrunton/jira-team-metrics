@@ -31,3 +31,12 @@ end
 
 desc "Run the javascript specs"
 task :teaspoon => "app:teaspoon"
+
+
+require 'github_changelog_generator/task'
+
+GitHubChangelogGenerator::RakeTask.new :changelog do |config|
+  config.user = 'jbrunton'
+  config.project = 'jira-team-metrics'
+  config.since_tag = '0.25.0'
+end

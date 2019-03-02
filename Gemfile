@@ -18,4 +18,5 @@ group :development, :test do
   gem 'autoprefixer-rails', '8.6.5'
   gem 'pry-rails'
   gem 'webmock'
+  gem 'github_changelog_generator'
 end
