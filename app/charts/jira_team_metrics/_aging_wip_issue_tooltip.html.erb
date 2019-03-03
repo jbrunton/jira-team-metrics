@@ -1,0 +1,27 @@
+<div class="ui card">
+  <div class="content">
+    <h5><%= @issue.key %> – <%= @issue.summary %></h5>
+  </div>
+  <div class="content">
+    <table>
+      <tr>
+        <td><b>Epic</b></td>
+        <td>
+          <% if @issue.epic.nil? %>
+            None
+          <% else %>
+            <%= @issue.epic.key %> – <%= @issue.epic.summary %>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <b>Duration</b>
+        </td>
+        <td>
+          <%= (@now - @issue.started_time).floor %> days
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
