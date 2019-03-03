@@ -19,8 +19,11 @@ class JiraTeamMetrics::AgingWipChart
     data_table.insert_row(1, ['Percentiles', '70th', now - percentiles[70], now])
     data_table.insert_row(2, ['Percentiles', '50th', now - percentiles[50], now])
 
-    template = ERB.new(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '_aging_wip_tooltip.html.erb')))
-    data_table.insert_column(2, 'tooltip', wip_issues.map{ |i| template.result(TooltipBinding.new(i, now).binding) })
+    issue_tooltip_template = ERB.new(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '_aging_wip_issue_tooltip.html.erb')))
+    percentile_tooltip_template = ERB.new(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '_aging_wip_percentile_tooltip.html.erb')))
+    tooltips = [85, 70, 50].map{ |p| percentile_tooltip_template.result(PercentileTooltipBinding.new(p, percentiles[p]).binding) } +
+      wip_issues.map{ |i| issue_tooltip_template.result(IssueTooltipBinding.new(i, now).binding) }
+    data_table.insert_column(2, 'tooltip', tooltips)
 
     data_table
   end
@@ -48,10 +51,21 @@ class JiraTeamMetrics::AgingWipChart
   end
 
 private
-  class TooltipBinding
+  class IssueTooltipBinding
     def initialize(issue, now)
       @issue = issue
       @now = now
+    end
+
+    def binding
+      super
+    end
+  end
+
+  class PercentileTooltipBinding
+    def initialize(percentile, duration)
+      @percentile = percentile
+      @duration = duration
     end
 
     def binding
