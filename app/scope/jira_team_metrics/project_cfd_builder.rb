@@ -46,7 +46,7 @@ class JiraTeamMetrics::ProjectCfdBuilder
   end
 
   def lookup_team_completion_rates(cfd_type, project_report)
-    rolling_window_days = project_report.project.board.config.rolling_window_days
+    rolling_window_days = project_report.project.board.config.rolling_window.days
     case cfd_type
       when :raw
         @team_completion_dates = project_report.teams.map do |team|

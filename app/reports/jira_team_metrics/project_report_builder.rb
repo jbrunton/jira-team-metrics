@@ -25,7 +25,7 @@ private
   end
 
   def rolling_window_days
-    @project.board.config.rolling_window_days
+    @project.board.config.rolling_window.days
   end
 
   def cfd_data(cfd_type)
