@@ -1,6 +1,4 @@
 class JiraTeamMetrics::AgingWipChart
-  include JiraTeamMetrics::ApplicationHelper
-
   def initialize(board, report_params)
     @board = board
     @params = report_params
