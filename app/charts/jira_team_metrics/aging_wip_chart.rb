@@ -56,6 +56,8 @@ class JiraTeamMetrics::AgingWipChart
 
   private
   class IssueTooltipBinding
+    include JiraTeamMetrics::HtmlHelper
+
     def initialize(issue, now)
       @issue = issue
       @now = now

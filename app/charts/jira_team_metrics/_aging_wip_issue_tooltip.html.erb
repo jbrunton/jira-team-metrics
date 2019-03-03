@@ -5,7 +5,15 @@
   <div class="content">
     <table>
       <tr>
-        <td><b>Epic</b></td>
+        <th class="field-name">
+          <b>Duration</b>
+        </th>
+        <td>
+          <%= (@now - @issue.started_time).floor %> days
+        </td>
+      </tr>
+      <tr>
+        <th class="field-name"><b>Epic</b></th>
         <td>
           <% if @issue.epic.nil? %>
             None
@@ -14,14 +22,16 @@
           <% end %>
         </td>
       </tr>
-      <tr>
-        <td>
-          <b>Duration</b>
-        </td>
-        <td>
-          <%= (@now - @issue.started_time).floor %> days
-        </td>
-      </tr>
+      <% @issue.board.config.reports.aging_wip.fields.each do |field| %>
+        <tr>
+          <th class="field-name">
+            <%= field %>
+          </th>
+          <td>
+            <%= issue_field(@issue, field) %>
+          </td>
+        </tr>
+      <% end %>
     </table>
   </div>
 </div>

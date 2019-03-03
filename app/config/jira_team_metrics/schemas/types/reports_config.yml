@@ -55,4 +55,6 @@ optional:
     type: "//rec"
     optional:
       default_query: "//str"
-      
+      fields:
+        type: "//arr"
+        contents: "//str"
