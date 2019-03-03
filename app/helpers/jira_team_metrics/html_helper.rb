@@ -53,7 +53,13 @@ module JiraTeamMetrics::HtmlHelper
 
   def issue_field(issue, field_name)
     field_value = issue.fields[field_name]
-    if field_value.is_a?(Array)
+    if field_value.nil?
+      if issue.epic.nil?
+        ""
+      else
+        issue_field(issue.epic, field_name)
+      end
+    elsif field_value.is_a?(Array)
       field_value.map{ |v| content_tag(:div, v, class: 'chip') }.join.html_safe
     else
       field_value
