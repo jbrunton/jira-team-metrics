@@ -54,6 +54,14 @@ class JiraTeamMetrics::DataTable
     JiraTeamMetrics::DataTable.new(columns, new_rows)
   end
 
+  def insert_column(column_index, column, values = nil)
+    columns.insert(column_index, column)
+    rows.each_with_index do |row, index|
+      row.insert(column_index, values.nil? ? nil : values[index])
+    end
+    self
+  end
+
   def add_column(column, values = nil)
     columns << column
     rows.each_with_index do |row, index|

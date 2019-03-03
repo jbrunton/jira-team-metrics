@@ -5,9 +5,11 @@
 
 <%= render partial: 'partials/search_form' %>
 
+<div id="aging-wip-chart">
 <%= render partial: 'partials/chart', locals: {
     chart_id: generate_id,
     chart_type: 'Timeline',
     url: "#{board_api_path(@board)}/aging_wip.json"
 } %>
+</div>
 

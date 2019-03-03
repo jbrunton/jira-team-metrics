@@ -1,4 +1,6 @@
 class JiraTeamMetrics::AgingWipChart
+  include JiraTeamMetrics::ApplicationHelper
+
   def initialize(board, report_params)
     @board = board
     @params = report_params
@@ -16,6 +18,9 @@ class JiraTeamMetrics::AgingWipChart
     data_table.insert_row(0, ['Percentiles', '85th', now - percentiles[85], now])
     data_table.insert_row(1, ['Percentiles', '70th', now - percentiles[70], now])
     data_table.insert_row(2, ['Percentiles', '50th', now - percentiles[50], now])
+
+    template = ERB.new(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '_aging_wip_tooltip.html.erb')))
+    data_table.insert_column(2, 'tooltip', wip_issues.map{ |i| template.result(TooltipBinding.new(i, now).binding) })
 
     data_table
   end
@@ -38,11 +43,22 @@ class JiraTeamMetrics::AgingWipChart
   def json_data
     {
       chartOpts: chart_opts,
-      data: data_table.to_json('started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
+      data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
     }
   end
 
 private
+  class TooltipBinding
+    def initialize(issue, now)
+      @issue = issue
+      @now = now
+    end
+
+    def binding
+      super
+    end
+  end
+
   def wip_issues
     issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
     JiraTeamMetrics::MqlInterpreter.new

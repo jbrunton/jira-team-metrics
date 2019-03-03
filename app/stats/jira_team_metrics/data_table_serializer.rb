@@ -23,6 +23,7 @@ private
         'type' => column_opts[:type] || column_type(column_index)
       }
       json_col.merge!('role' => column_opts[:role]) unless column_opts[:role].nil?
+      json_col.merge!('p' => column_opts[:p]) unless column_opts[:p].nil?
       json_col
     end
   end
