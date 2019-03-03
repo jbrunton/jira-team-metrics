@@ -31,9 +31,9 @@ class JiraTeamMetrics::AgingWipChart
   def chart_opts
     {
       colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (DateTime.now - issue.started_time) < percentiles[50]
+        if (DateTime.now - issue.started_time) < percentiles[70]
           '#03a9f4'
-        elsif (DateTime.now - issue.started_time) < percentiles[70]
+        elsif (DateTime.now - issue.started_time) < percentiles[85]
           '#ff9800'
         else
           '#f44336'
