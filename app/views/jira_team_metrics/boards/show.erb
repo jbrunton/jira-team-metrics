@@ -101,7 +101,7 @@
             How the teams' time was allocated across projects
           </td>
         </tr>
-        <% unless @domain.config.project_type.nil? %>
+        <% unless @domain.config.projects.issue_type.nil? %>
         <tr>
           <td class="four wide">
             <a href="<%= projects_report_path(@board) %>"><%= projects_name_singular %> Reports</a>

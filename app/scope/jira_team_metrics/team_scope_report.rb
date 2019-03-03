@@ -69,7 +69,7 @@ class JiraTeamMetrics::TeamScopeReport
   def forecast_completion_date
     @forecast_completion_date ||= begin
       if use_rolling_forecast?
-        rolling_forecast_completion_date(@project.board.config.rolling_window_days)
+        rolling_forecast_completion_date(@project.board.config.rolling_window.days)
       else
         predicted_completion_date
       end
@@ -90,7 +90,7 @@ private
       @epics = @issues
         .map { |issue| issue.epic }.compact.uniq
 
-      if @project.board.config.epic_counting_strategy(@project.board.domain) == 'once'
+      if @project.board.config.epics.counting_strategy == 'once'
         # filter out epics from other projects if their individual issues are included
         @epics = @epics.select { |epic| epic.project == @project }
       end

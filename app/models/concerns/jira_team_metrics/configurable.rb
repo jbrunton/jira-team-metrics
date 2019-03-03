@@ -6,21 +6,34 @@ module JiraTeamMetrics::Configurable
     validate :validate_config
   end
 
-  def config
-    config_class = "#{self.class.name}Config".constantize
-    config_class.new(config_hash)
+  def reload(options = nil)
+    clear_config
+    super
   end
 
-  private
+  def config_string=(value)
+    clear_config
+    super
+  end
+
+  def config
+    @config ||= JiraTeamMetrics::Config.for(self)
+  end
+
   def config_hash
     YAML.load(config_string || '') || {}
   end
 
+  private
   def validate_config
     begin
       config.validate
     rescue Rx::ValidationError => e
       errors.add(:config, e.message)
     end
+  end
+
+  def clear_config
+    @config = nil
   end
 end

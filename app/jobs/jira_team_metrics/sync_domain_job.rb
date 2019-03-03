@@ -15,7 +15,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
           board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
           JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
           board.save
-          JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync_months, sync_history_id)
+          JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync.months, sync_history_id)
         end
         activate(domain)
       end
@@ -43,7 +43,7 @@ private
 
       @notifier.notify_status('fetching fields from JIRA')
       fields = client.get_fields.select do |field|
-        (['Epic Link', 'Global Rank'] + domain.config.fields).include?(field['name'])
+        (['Epic Link', 'Global Rank'] + domain.config.fields.to_a).include?(field['name'])
       end
 
       [boards, statuses, fields]

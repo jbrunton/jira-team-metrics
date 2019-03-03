@@ -29,7 +29,7 @@
   <% unless @board.nil? %>
       <div class="eight wide column">
         <label for="months">Months to sync (Optional)</label>
-        <input id="months" name="months" type="text" class="validate" value="<%= @board.config.sync_months %>">
+        <input id="months" name="months" type="text" class="validate" value="<%= @board.config.sync.months %>">
       </div>
   <% end %>
 </form>

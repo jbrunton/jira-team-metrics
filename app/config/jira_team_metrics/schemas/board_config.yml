@@ -11,27 +11,11 @@ optional:
   filters:
     type: "//arr"
     contents:
-      type: "//any"
-      of:
-        - type: "//rec"
-          required:
-            name: "//str"
-            jql: "//str"
-        - type: "//rec"
-          required:
-            name: "//str"
-            mql: "//str"
-        - type: "//rec"
-          required:
-            name: "//str"
-            issues:
-              type: "//arr"
-              contents:
-                type: "//rec"
-                required:
-                  key: "//str"
-                optional:
-                  reason: "//str"
+      type: "//rec"
+      required:
+        name: "//str"
+        type: "//str"
+        query: "//str"
   predictive_scope:
     type: "//rec"
     required:

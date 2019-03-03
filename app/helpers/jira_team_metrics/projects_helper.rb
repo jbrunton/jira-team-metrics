@@ -8,10 +8,10 @@ module JiraTeamMetrics::ProjectsHelper
   end
 
   def projects_name_singular(domain = nil)
-    (domain || JiraTeamMetrics::Domain.get_active_instance).config.project_type.issue_type
+    (domain || JiraTeamMetrics::Domain.get_active_instance).config.projects.issue_type
   end
 
   def projects_name_plural(domain = nil)
-    (domain || JiraTeamMetrics::Domain.get_active_instance).config.project_type.issue_type.pluralize
+    (domain || JiraTeamMetrics::Domain.get_active_instance).config.projects.issue_type.pluralize
   end
 end

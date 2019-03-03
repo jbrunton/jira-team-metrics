@@ -90,7 +90,7 @@ RSpec.describe JiraTeamMetrics::Board do
       it "updates the config" do
         new_attributes = { config_string: "sync:\n  months: 6" }
         board.update(new_attributes)
-        expect(board.config.sync_months).to eq(6)
+        expect(board.config.sync.months).to eq(6)
       end
     end
   end

@@ -8,11 +8,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def throughput
-    @default_query = @board.config.throughput_default_query(@domain)
+    @default_query = @board.config.reports.throughput.default_query
   end
 
   def projects
-    @sections = sections_for(@board.projects, @board.config.projects_report_options(@domain))
+    @sections = sections_for(@board.projects, @board.config.reports.projects)
   end
 
   def project
@@ -29,7 +29,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def epics
-    @report_options = @board.config.epics_report_options(@domain)
+    @report_options = @board.config.reports.epics
     @sections = sections_for(@board.epics, @report_options)
   end
 
@@ -41,7 +41,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def scatterplot
-    @default_query = @board.config.scatterplot_default_query(@domain)
+    @default_query = @board.config.reports.scatterplot.default_query
   end
 
   def aging_wip
@@ -150,7 +150,7 @@ private
 
   def build_quicklinks
     query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
-        .and(@board.config.throughput_default_query(@domain))
+        .and(@board.config.reports.throughput.default_query(@domain))
         .query
     opts = {
         from_date: @report.started_date.at_beginning_of_month,

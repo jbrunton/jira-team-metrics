@@ -42,7 +42,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     issue_linker_service.build_graph
     issue_sync_service.sync_epics
     issue_sync_service.sync_projects
-    issue_linker_service.build_graph if board.config.link_missing_epics?(board.domain)
+    issue_linker_service.build_graph if board.config.epics.link_missing
 
     board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
@@ -65,20 +65,17 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
 
   def create_filters(board, credentials)
     board.config.filters.each do |filter|
-      case filter
-        when JiraTeamMetrics::BoardConfig::JqlFilter
+      case filter.type
+        when 'jql'
           issues = fetch_issues_for_query(board, filter.query, credentials, 'syncing ' + filter.name + ' filter')
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :jql_filter)
-        when JiraTeamMetrics::BoardConfig::MqlFilter
+        when 'mql'
           issues = JiraTeamMetrics::MqlInterpreter.new.eval(filter.query, board, board.issues).rows
           issue_keys = issues.map { |issue| issue['key'] }.join(' ')
           board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :mql_filter)
-        when JiraTeamMetrics::BoardConfig::ConfigFilter
-          issue_keys = filter.issues.map{ |issue| issue['key'] }.join(' ')
-          board.filters.create(name: filter.name, issue_keys: issue_keys, filter_type: :config_filter)
         else
-          raise "Unexpected filter type: #{filter}"
+          raise "Unexpected filter type: #{filter.type}"
       end
     end
   end

@@ -43,7 +43,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
       it "updates the board" do
         post :update, params: {:board_id => board.jira_id, :board => new_attributes}
         board.reload
-        expect(board.config.sync_months).to eq(6)
+        expect(board.config.sync.months).to eq(6)
       end
 
       it "returns a 200" do
@@ -59,7 +59,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
       it "doesn't update the board" do
         post :update, params: {:board_id => board.jira_id, :board => new_attributes}
-        expect(board.config.sync_months).to eq(nil)
+        expect(board.config.sync.months).to eq(nil)
       end
 
       it "re-renders the 'config' template" do
@@ -78,7 +78,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
       it "doesn't update the board" do
         post :update, params: {:board_id => board.jira_id, :board => new_attributes}
-        expect(board.config.sync_months).to eq(nil)
+        expect(board.config.sync.months).to eq(nil)
       end
 
       it "re-renders the 'config' template" do
@@ -100,7 +100,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
       it "doesn't update the board" do
         post :update, params: {:board_id => board.jira_id, :board => new_attributes}
-        expect(board.config.sync_months).to eq(nil)
+        expect(board.config.sync.months).to eq(nil)
       end
 
       it "re-renders the 'config' template" do

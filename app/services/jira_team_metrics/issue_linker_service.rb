@@ -1,7 +1,7 @@
 class JiraTeamMetrics::IssueLinkerService
   def initialize(board, notifier)
     @board = board
-    @project_type = board.domain.config.project_type
+    @project_type = board.domain.config.projects
     @notifier = notifier
   end
 
