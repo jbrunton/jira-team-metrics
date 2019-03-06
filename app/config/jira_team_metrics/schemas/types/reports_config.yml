@@ -58,3 +58,12 @@ optional:
       fields:
         type: "//arr"
         contents: "//str"
+  custom_reports:
+    type: "//arr"
+    contents:
+      type: "//rec"
+      required:
+        name: "//str"
+        query: "//str"
+      optional:
+        description: "//str"

@@ -141,6 +141,18 @@
             Write custom queries
           </td>
         </tr>
+        <% @board.config.reports.custom_reports.each do |report| %>
+          <tr>
+            <td class="four wide">
+              <a href="<%= reports_path(@board) %>/query?query=<%= report.query %>">
+                <%= report.name %>
+              </a>
+            </td>
+            <td>
+              <%= report.description %>
+            </td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
     <div class="ui segment">
