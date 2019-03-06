@@ -1,3 +1,5 @@
+require 'csv'
+
 class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   include JiraTeamMetrics::ApplicationHelper
 
@@ -38,12 +40,28 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def query
-    render json: chart_data_for(:query)
+    respond_to do |format|
+      format.json { render json: chart_data_for(:query) }
+      format.csv do
+        data_table = chart_for(:query).data_table
+        csv_string = CSV.generate do |csv|
+          csv << data_table.columns
+          data_table.rows.each do |row|
+            csv << row
+          end
+        end
+        render plain: csv_string
+      end
+    end
   end
 
 private
-  def chart_data_for(chart_name)
+  def chart_for(chart_name)
     chart_class = "JiraTeamMetrics::#{chart_name.to_s.camelize}Chart".constantize
-    chart_class.new(@board, @report_params).json_data
+    chart_class.new(@board, @report_params)
+  end
+
+  def chart_data_for(chart_name)
+    chart_for(chart_name).json_data
   end
 end

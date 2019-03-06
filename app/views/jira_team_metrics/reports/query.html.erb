@@ -2,6 +2,8 @@
 
 <%= render partial: 'partials/search_form', locals: { show_search_options: false } %>
 
+<a id="download" href="#">Download</a>
+
 <%= render partial: 'partials/chart', locals: {
   chart_id: generate_id,
   chart_type: 'Table',
@@ -13,5 +15,9 @@
   function readyHandler() {
     var $table = $(document).find('.google-visualization-table table');
     $table.addClass('ui very compact table');
+
+    var csvLink = '<%= "#{board_api_path(@board)}/query.csv?query=" %>' + $('#query').val();
+    $('#download').attr('href', csvLink);
   }
 </script>
+
