@@ -40,6 +40,7 @@ private
     'resolution' => 'resolution',
     'Global Rank' => 'global_rank',
     'startedTime' => 'started_time',
-    'completedTime' => 'completed_time'
+    'completedTime' => 'completed_time',
+    'cycleTime' => 'cycle_time'
   }
 end
