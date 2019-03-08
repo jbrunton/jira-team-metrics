@@ -43,9 +43,13 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       expect(resolver.resolve('epic')).to eq(epic.key)
     end
 
-    it "resolved started and completed times" do
+    it "resolves started and completed times" do
       expect(resolver.resolve('startedTime')).to eq(started_time)
       expect(resolver.resolve('completedTime')).to eq(completed_time)
+    end
+
+    it "resolves cycle time" do
+      expect(resolver.resolve('cycleTime')).to eq(31)
     end
   end
 end
