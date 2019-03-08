@@ -40,7 +40,7 @@ JiraTeamMetrics::Engine.routes.draw do
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
 
-  get '/api/boards/:board_id/query.json', to: 'api#query'
+  get '/api/boards/:board_id/query', to: 'api#query'
   get '/api/boards/:board_id/scatterplot.json', to: 'api#scatterplot'
   get '/api/boards/:board_id/aging_wip.json', to: 'api#aging_wip'
   get '/api/boards/:board_id/throughput.json', to: 'api#throughput'
