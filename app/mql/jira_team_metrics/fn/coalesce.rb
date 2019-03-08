@@ -1,5 +1,5 @@
 class JiraTeamMetrics::Fn::Coalesce
-  def call(ctx, *args)
+  def call(_, *args)
     args.find{ |arg| !arg.nil? }
   end
 
