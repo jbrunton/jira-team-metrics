@@ -28,6 +28,10 @@ class JiraTeamMetrics::EvalContext
       generic_signature = "#{func_name}(#{Array.new(args.count, 'Object').join(', ')})"
       @functions[generic_signature]
     end
+    func ||= begin
+      varargs_signature = "#{func_name}(*)"
+      @functions[varargs_signature]
+    end
     if func.nil?
       raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
@@ -52,6 +56,7 @@ class JiraTeamMetrics::EvalContext
     # misc.
     JiraTeamMetrics::Fn::NotNullCheck.register(context)
     JiraTeamMetrics::Fn::IssueFilter.register(context)
+    JiraTeamMetrics::Fn::Coalesce.register(context)
 
     context
   end
