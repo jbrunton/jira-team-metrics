@@ -20,7 +20,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def update_config(domain, board)
-    board_details = domain.config.boards.find{ |board_details| board_details.board_id.to_s == board.jira_id }
+    board_details = domain.config.boards.find{ |it| it.board_id.to_s == board.jira_id }
     unless board_details.nil?
       JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
       board.save
