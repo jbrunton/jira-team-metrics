@@ -101,6 +101,7 @@ class JiraTeamMetrics::DataTable
 
     add_row([from_value] + Array.new(padding_columns) + percentile_values)
     add_row([to_value] + Array.new(padding_columns) + percentile_values)
+    self
   end
 
   class Selector

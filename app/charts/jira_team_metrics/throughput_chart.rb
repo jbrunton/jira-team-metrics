@@ -19,10 +19,8 @@ class JiraTeamMetrics::ThroughputChart
         .select('completed_time').count('key', as: 'Count')
         .group(if_nil: 0, &method(:group_by))
         .sort_by('completed_time')
-
-    data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
-
-    data_table.add_percentiles('Count', [30, 50, 70])
+        .insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
+        .add_percentiles('Count', [30, 50, 70])
 
     data_table
   end

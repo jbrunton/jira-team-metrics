@@ -14,20 +14,7 @@ class JiraTeamMetrics::ScatterplotChart
       .pick(:completed_time, :cycle_time, :key)
       .build
       .sort_by('completed_time')
-
-    cycle_times = data_table.column_values('cycle_time')
-    percentile_50 = cycle_times.percentile(50)
-    percentile_70 = cycle_times.percentile(70)
-    percentile_85 = cycle_times.percentile(85)
-    percentile_95 = cycle_times.percentile(95)
-
-    data_table
-      .add_column("95th percentile")
-      .add_column("85th percentile")
-      .add_column("70th percentile")
-      .add_column("50th percentile")
-      .add_row([data_table.rows[0][0], nil, nil, percentile_95, percentile_85, percentile_70, percentile_50])
-      .add_row([data_table.rows[data_table.rows.count-2][0], nil, nil, percentile_95, percentile_85, percentile_70, percentile_50])
+      .add_percentiles('cycle_time', [50, 70, 85, 95])
 
     data_table
   end
