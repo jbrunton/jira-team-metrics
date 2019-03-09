@@ -1,6 +1,0 @@
----
-predictive_scope:
-  board_id: 726
-  adjustments_field: Metric Adjustments
-rolling_window:
-  days: 14
