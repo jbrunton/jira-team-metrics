@@ -23,14 +23,16 @@ class JiraTeamMetrics::ThroughputChart
     data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
     throughput_counts = data_table.column_values('Count')
+    percentile_30 = throughput_counts.percentile(30)
     percentile_50 = throughput_counts.percentile(50)
-    percentile_85 = throughput_counts.percentile(15)
+    percentile_70 = throughput_counts.percentile(70)
 
     data_table
+      .add_column("70th percentile")
       .add_column("50th percentile")
-      .add_column("85th percentile")
-      .add_row([data_table.rows[0][0], nil, percentile_50, percentile_85])
-      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_50, percentile_85])
+      .add_column("30th percentile")
+      .add_row([data_table.rows[0][0], nil, percentile_70, percentile_50, percentile_30])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_70, percentile_50, percentile_30])
 
     #add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
 
@@ -58,8 +60,9 @@ class JiraTeamMetrics::ThroughputChart
         height: 500,
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
-            '1' => series_opts('#03a9f4', true),
-            '2' => series_opts('#03a9f4', true)
+            '1' => series_opts('#f44336', true),
+            '2' => series_opts('#ff9800', true),
+            '3' => series_opts('#03a9f4', true)
         },
         vAxis: {
           minValue: 0
