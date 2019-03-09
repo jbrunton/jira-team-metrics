@@ -19,16 +19,20 @@ describe JiraTeamMetrics::ThroughputChart do
         create(:issue, board: board, started_time: date + 7, completed_time: date + 8)
         create(:issue, board: board, started_time: date + 21, completed_time: date + 22)
 
-        data_table = JiraTeamMetrics::ThroughputChart.new(board, report_params).data_table
+        data_table = JiraTeamMetrics::ThroughputChart.new(board, report_params)
+          .data_table
+          .map('30th percentile') { |it| it.try(:round, 2) }
 
         expect(data_table).to eq(JiraTeamMetrics::DataTable.new(
-          ['completed_time', 'Count', 'Rolling Avg / Week (prev 4 weeks)'],
+          ['completed_time', 'Count', '70th percentile', '50th percentile', '30th percentile'],
           [
-            [date,      2, nil],
-            [date + 7,  1, nil],
-            [date + 14, 0, nil],
-            [date + 21, 1, 1.0],
-            [date + 28, 0, 0.5]
+            [date,        2, nil, nil, nil],
+            [date + 7,    1, nil, nil, nil],
+            [date + 14,   0, nil, nil, nil],
+            [date + 21,   1, nil, nil, nil],
+            [date + 28,   0, nil, nil, nil],
+            [date,      nil, 1.0, 1.0, 0.2],
+            [date + 28, nil, 1.0, 1.0, 0.2]
           ]
         ))
       end

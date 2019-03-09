@@ -32,7 +32,7 @@ class JiraTeamMetrics::ThroughputChart
       .add_column("50th percentile")
       .add_column("30th percentile")
       .add_row([data_table.rows[0][0], nil, percentile_70, percentile_50, percentile_30])
-      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_70, percentile_50, percentile_30])
+      .add_row([data_table.rows[data_table.rows.count-2][0], nil, percentile_70, percentile_50, percentile_30])
 
     #add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
 
