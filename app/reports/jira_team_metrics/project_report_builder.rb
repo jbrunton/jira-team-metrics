@@ -51,6 +51,7 @@ private
       rolling_completion_date: team_report.rolling_forecast_completion_date(rolling_window_days),
       rolling_lead_time: team_report.rolling_forecast_lead_time(rolling_window_days),
       predicted_completion_date: team_report.predicted_completion_date,
+      predicted_lead_time: team_report.predicted_lead_time,
       predicted_scope_tooltip: "#{team_report.unscoped_epics.count} unscoped epics, predicting #{rounded_epic_scope || 0} #{'issue'.pluralize(rounded_epic_scope)} / epic."
     }
   end

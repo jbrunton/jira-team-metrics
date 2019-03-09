@@ -178,7 +178,12 @@
         <%= pretty_print_number(team_data[:predicted_throughput] * 7) %>
       </td>
       <td>
-        <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
+        <span class="forecast-date">
+          <%= pretty_print_date(team_data[:predicted_completion_date], show_tz: false) %>
+        </span>
+        <span class="forecast-lead-time">
+          <%= pretty_print_duration(team_data[:predicted_lead_time]) %>
+        </span>
       </td>
       <td>
         <a href="<%= project_scope_report_path(@project, team) %>">Details</a>
@@ -224,15 +229,11 @@
 </table>
 
 <div id="forecast-display-toggle" class="ui text menu">
-  <span class="item">Show</span>
+  <div class="right menu">
+  <span class="item">Show forecasts as</span>
   <a id="toggle-dates" class="item active" onclick="toggleForecasts(false)">dates</a>
   <a id="toggle-lead-times" class="item" onclick="toggleForecasts(true)">lead times</a>
-</div>
-
-<div class="ui three item menu">
-  <a class="item active">Editorials</a>
-  <a class="item">Reviews</a>
-  <a class="item">Upcoming Events</a>
+  </div>
 </div>
 
 <div class="ui center aligned basic segment">
