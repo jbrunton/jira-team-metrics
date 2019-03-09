@@ -90,6 +90,19 @@ class JiraTeamMetrics::DataTable
     JiraTeamMetrics::DataTableSerializer.new(self).to_json(opts)
   end
 
+  def add_percentiles(column_name, percentiles)
+    percentile_values = percentiles.map{ |it| column_values(column_name).percentile(it) }.reverse
+
+    from_value = rows[0][0]
+    to_value = rows[rows.count - 1][0]
+    padding_columns = columns.count - 1
+
+    percentiles.reverse.each { |it| add_column("#{it.ordinalize} percentile") }
+
+    add_row([from_value] + Array.new(padding_columns) + percentile_values)
+    add_row([to_value] + Array.new(padding_columns) + percentile_values)
+  end
+
   class Selector
     attr_reader :data_table
     attr_reader :columns

@@ -22,19 +22,7 @@ class JiraTeamMetrics::ThroughputChart
 
     data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
-    throughput_counts = data_table.column_values('Count')
-    percentile_30 = throughput_counts.percentile(30)
-    percentile_50 = throughput_counts.percentile(50)
-    percentile_70 = throughput_counts.percentile(70)
-
-    data_table
-      .add_column("70th percentile")
-      .add_column("50th percentile")
-      .add_column("30th percentile")
-      .add_row([data_table.rows[0][0], nil, percentile_70, percentile_50, percentile_30])
-      .add_row([data_table.rows[data_table.rows.count-2][0], nil, percentile_70, percentile_50, percentile_30])
-
-    #add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
+    data_table.add_percentiles('Count', [30, 50, 70])
 
     data_table
   end
