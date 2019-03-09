@@ -28,6 +28,20 @@ module JiraTeamMetrics::FormattingHelper
     "#{start_date_fm} - #{end_date_fm}"
   end
 
+  def pretty_print_duration(duration)
+    if duration.nil?
+      '-'
+    else
+      weeks = duration.round / 7
+      days = duration.round % 7
+      if days == 0
+        "#{weeks} #{'week'.pluralize(weeks)}"
+      else
+        "#{weeks} #{'week'.pluralize(weeks)} #{days} #{'day'.pluralize(weeks)}"
+      end
+    end
+  end
+
 private
   def date_format_for(opts, date)
     strfm = ''

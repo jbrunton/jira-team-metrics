@@ -66,12 +66,17 @@ module JiraTeamMetrics::DescriptiveScopeStatistics
       (completed_date - started_date).to_f
   end
 
-  def rolling_forecast_completion_date(days)
+  def rolling_forecast_lead_time(days)
     throughput = rolling_throughput(days)
     if throughput == 0
       nil
     else
-      DateTime.now + remaining_scope.count.to_f / throughput
+      remaining_scope.count.to_f / throughput
     end
+  end
+
+  def rolling_forecast_completion_date(days)
+    lead_time = rolling_forecast_lead_time(days)
+    DateTime.now + lead_time unless lead_time.nil?
   end
 end

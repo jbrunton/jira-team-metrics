@@ -6,6 +6,8 @@
 
   $(function() {
     google.charts.setOnLoadCallback(updateChart);
+
+    //$('.menu').menu();
   });
 
   function updateChart() {
@@ -165,7 +167,12 @@
             project_throughput_report_path(@project, team) %>
       </td>
       <td class="highlight">
-        <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
+        <span class="forecast-date">
+          <%= pretty_print_date(team_data[:rolling_completion_date], show_tz: false) %>
+        </span>
+        <span class="forecast-lead-time">
+          <%= pretty_print_duration(team_data[:rolling_lead_time]) %>
+        </span>
       </td>
       <td class="right aligned">
         <%= pretty_print_number(team_data[:predicted_throughput] * 7) %>
@@ -216,6 +223,18 @@
 
 </table>
 
+<div id="forecast-display-toggle" class="ui text menu">
+  <span class="item">Show</span>
+  <a id="toggle-dates" class="item active" onclick="toggleForecasts(false)">dates</a>
+  <a id="toggle-lead-times" class="item" onclick="toggleForecasts(true)">lead times</a>
+</div>
+
+<div class="ui three item menu">
+  <a class="item active">Editorials</a>
+  <a class="item">Reviews</a>
+  <a class="item">Upcoming Events</a>
+</div>
+
 <div class="ui center aligned basic segment">
   <p>
     Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.
@@ -223,7 +242,22 @@
 </div>
 
 <script>
+  function toggleForecasts(showLeadTimes) {
+    $('#forecast-display-toggle .item').removeClass('active');
+    if (showLeadTimes) {
+      $('.forecast-date').hide();
+      $('.forecast-lead-time').show();
+      $('#toggle-lead-times').addClass('active');
+    } else {
+      $('.forecast-date').show();
+      $('.forecast-lead-time').hide();
+      $('#toggle-dates').addClass('active');
+    }
+  }
+
   $(function() {
+    toggleForecasts(false);
+
     $('#teams-dropdown').dropdown({
       on: 'hover',
       action: 'nothing'
