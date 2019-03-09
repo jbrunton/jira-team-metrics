@@ -18,13 +18,6 @@ optional:
     optional:
       counting_strategy: "//str"
       link_missing: "//bool"
-  status_category_overrides:
-    type: "//arr"
-    contents:
-      type: "//rec"
-      required:
-        map: "//str"
-        to_category: "//str"
   boards:
     type: "//arr"
     contents:
