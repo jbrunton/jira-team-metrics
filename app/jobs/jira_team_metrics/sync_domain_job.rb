@@ -12,9 +12,7 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
         update_cache(domain, boards, statuses, fields)
 
         domain.config.boards.each do |board_details|
-          board = domain.boards.find_or_create_by(jira_id: board_details.board_id)
-          JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
-          board.save
+          board = domain.boards.find_by(jira_id: board_details.board_id)
           JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync.months, sync_history_id)
         end
         activate(domain)
