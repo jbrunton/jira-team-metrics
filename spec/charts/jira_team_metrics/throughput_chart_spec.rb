@@ -22,13 +22,15 @@ describe JiraTeamMetrics::ThroughputChart do
         data_table = JiraTeamMetrics::ThroughputChart.new(board, report_params).data_table
 
         expect(data_table).to eq(JiraTeamMetrics::DataTable.new(
-          ['completed_time', 'Count', 'Rolling Avg / Week (prev 4 weeks)'],
+          ['completed_time', 'Count', '75th percentile', '50th percentile', '25th percentile'],
           [
-            [date,      2, nil],
-            [date + 7,  1, nil],
-            [date + 14, 0, nil],
-            [date + 21, 1, 1.0],
-            [date + 28, 0, 0.5]
+            [date,        2, nil, nil, nil],
+            [date + 7,    1, nil, nil, nil],
+            [date + 14,   0, nil, nil, nil],
+            [date + 21,   1, nil, nil, nil],
+            [date + 28,   0, nil, nil, nil],
+            [date,      nil, 1.0, 1.0, 0.0],
+            [date + 28, nil, 1.0, 1.0, 0.0]
           ]
         ))
       end

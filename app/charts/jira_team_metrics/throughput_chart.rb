@@ -19,10 +19,8 @@ class JiraTeamMetrics::ThroughputChart
         .select('completed_time').count('key', as: 'Count')
         .group(if_nil: 0, &method(:group_by))
         .sort_by('completed_time')
-
-    data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
-
-    add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
+        .insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
+        .add_percentiles('Count', [25, 50, 75])
 
     data_table
   end
@@ -48,7 +46,9 @@ class JiraTeamMetrics::ThroughputChart
         height: 500,
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
-            1 => { lineWidth: 2, pointSize: 0, color: 'steelblue' }
+            '1' => series_opts('#f44336', true),
+            '2' => series_opts('#ff9800', true),
+            '3' => series_opts('#03a9f4', true)
         },
         vAxis: {
           minValue: 0
@@ -112,5 +112,15 @@ private
       when 'Weekly'
         'Rolling Avg / Week (prev 4 weeks)'
     end
+  end
+
+  def series_opts(color, dash)
+    opts = {
+      type: 'steppedArea',
+      color: color,
+      areaOpacity: 0
+    }
+    opts.merge!(lineDashStyle: [4, 4]) if dash
+    opts
   end
 end
