@@ -22,7 +22,17 @@ class JiraTeamMetrics::ThroughputChart
 
     data_table.insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
 
-    add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
+    throughput_counts = data_table.column_values('Count')
+    percentile_50 = throughput_counts.percentile(50)
+    percentile_85 = throughput_counts.percentile(15)
+
+    data_table
+      .add_column("50th percentile")
+      .add_column("85th percentile")
+      .add_row([data_table.rows[0][0], nil, percentile_50, percentile_85])
+      .add_row([data_table.rows[data_table.rows.count-1][0], nil, percentile_50, percentile_85])
+
+    #add_rolling_averages(data_table) unless @params.step_interval == 'Monthly'
 
     data_table
   end
@@ -48,7 +58,8 @@ class JiraTeamMetrics::ThroughputChart
         height: 500,
         series: {
             0 => { lineWidth: 1, pointSize: 4, color: 'indianred' },
-            1 => { lineWidth: 2, pointSize: 0, color: 'steelblue' }
+            '1' => series_opts('#03a9f4', true),
+            '2' => series_opts('#03a9f4', true)
         },
         vAxis: {
           minValue: 0
@@ -112,5 +123,15 @@ private
       when 'Weekly'
         'Rolling Avg / Week (prev 4 weeks)'
     end
+  end
+
+  def series_opts(color, dash)
+    opts = {
+      type: 'steppedArea',
+      color: color,
+      areaOpacity: 0
+    }
+    opts.merge!(lineDashStyle: [4, 4]) if dash
+    opts
   end
 end
