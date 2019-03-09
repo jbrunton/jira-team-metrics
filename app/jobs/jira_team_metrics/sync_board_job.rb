@@ -7,6 +7,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       JiraTeamMetrics::SyncHistory.log(board, sync_history_id) do
         @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
+        update_config(domain, board)
         sync_issues(board, credentials, months)
         create_filters(board, credentials)
         build_reports(board)
@@ -15,6 +16,14 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       @notifier.notify_complete
     ensure
       end_sync(domain) if domain.active?
+    end
+  end
+
+  def update_config(domain, board)
+    board_details = domain.config.boards.find{ |board_details| board_details.board_id.to_s == board.jira_id }
+    unless board_details.nil?
+      JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
+      board.save
     end
   end
 
