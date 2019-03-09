@@ -15,6 +15,7 @@ class JiraTeamMetrics::TeamScopeReport
   attr_reader :adjusted_epic_scope
   attr_reader :predicted_throughput
   attr_reader :predicted_epic_scope
+  attr_reader :predicted_lead_time
   attr_reader :predicted_completion_date
   attr_reader :training_team_reports
   attr_reader :status_color
@@ -141,7 +142,8 @@ private
     @predicted_throughput = @adjusted_throughput || @trained_throughput
 
     if @predicted_throughput > 0
-      @predicted_completion_date = DateTime.now + @remaining_scope.count.to_f / @predicted_throughput
+      @predicted_lead_time = @remaining_scope.count.to_f / @predicted_throughput
+      @predicted_completion_date = DateTime.now + @predicted_lead_time
     end
   end
 
