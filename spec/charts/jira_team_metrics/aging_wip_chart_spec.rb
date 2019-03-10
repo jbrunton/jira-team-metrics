@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 describe JiraTeamMetrics::ThroughputChart do
+  let(:board) { create(:board) }
   let(:date) { DateTime.parse('2018-01-01') }
   let(:report_params) do
-    JiraTeamMetrics::ReportParams.new({
+    JiraTeamMetrics::ReportParams.new(board, {
       date_range: JiraTeamMetrics::DateRange.new(date - 30, date),
       hierarchy_level: 'Scope',
       step_interval: 'Weekly'
@@ -14,7 +15,6 @@ describe JiraTeamMetrics::ThroughputChart do
 
   describe "#data_table" do
     it "returns a table with percentiles" do
-      board = create(:board)
       create(:issue, board: board, started_time: date - 4, completed_time: date - 1)
       create(:issue, board: board, started_time: date - 3, completed_time: date - 1)
       create(:issue, board: board, started_time: date - 2, completed_time: date - 1)

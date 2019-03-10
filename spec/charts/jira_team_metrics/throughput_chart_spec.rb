@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 describe JiraTeamMetrics::ThroughputChart do
+  let(:board) { create(:board) }
   let(:date) { Date.parse('2018-01-01') }
   let(:report_params) do
-    JiraTeamMetrics::ReportParams.new({
+    JiraTeamMetrics::ReportParams.new(board, {
       date_range: JiraTeamMetrics::DateRange.new(date, date + 35),
       hierarchy_level: 'Scope',
       step_interval: 'Weekly'
