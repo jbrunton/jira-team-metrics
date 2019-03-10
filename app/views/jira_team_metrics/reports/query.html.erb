@@ -3,11 +3,6 @@
 
 <h1>Query Data</h1>
 
-
-<div id="app">
-  {{ message }}
-</div>
-
 <div id="query-report">
   <div id="query-params" class="ui form">
     <div class="fields">
@@ -25,8 +20,15 @@
     </div>
   </div>
 
-  <div id="query-results" v-show="chartData">
+  <div v-show="chartData">
+    <div id="query-results">
 
+    </div>
+    <p style="text-align: right;"><a id="download" v-bind:href="downloadUrl">Download</a></p>
+  </div>
+
+  <div v-show="loading" style="margin: 100px 0;">
+    <div class="ui active centered inline loader"></div>
   </div>
 
   <div id="query-error" class="ui negative message" v-if="errorData">
@@ -42,18 +44,21 @@
     data: {
       chartData: null,
       errorData: null,
-      query: '',
+      query: "<%= (@report_params.query || @default_query).html_safe %>",
       errorHeader: '',
-      errorDetails: ''
+      errorDetails: '',
+      loading: false
     },
     methods: {
       loadChart: function () {
         this.chartData = null;
         this.errorData = null;
+        this.loading = true;
         $.get(this.url, this.drawChart)
             .fail(this.onError);
       },
       drawChart: function (response) {
+        this.loading = false;
         this.chartData = new google.visualization.DataTable(response.data);
         this.chartOpts = response.chartOpts;
         this.chart = new google.visualization.Table(document.getElementById('query-results'));
@@ -65,40 +70,22 @@
         $table.addClass('ui very compact table');
       },
       onError: function(response) {
+        this.loading = false;
         if (response.status == 400) {
           this.errorData = response.responseJSON;
         }
       }
     },
+    mounted: function() {
+      this.loadChart();
+    },
     computed: {
       url: function() {
         return `/metrics/api/boards/754/query.json?query=${this.query}`;
+      },
+      downloadUrl: function() {
+        return `/metrics/api/boards/754/query.csv?query=${this.query}`;
       }
     }
   })
 </script>
-
-
-<h1>Legacy</h1>
-
-<%= render partial: 'partials/search_form', locals: { show_search_options: false } %>
-
-<a id="download" href="#">Download</a>
-
-<%= render partial: 'partials/chart', locals: {
-  chart_id: generate_id,
-  chart_type: 'Table',
-  url: "#{board_api_path(@board)}/query.json",
-  ready_handler: 'readyHandler'
-} %>
-
-<script>
-  function readyHandler() {
-    var $table = $(document).find('.google-visualization-table table');
-    $table.addClass('ui very compact table');
-
-    var csvLink = '<%= "#{board_api_path(@board)}/query.csv?query=" %>' + $('#query').val();
-    $('#download').attr('href', csvLink);
-  }
-</script>
-
