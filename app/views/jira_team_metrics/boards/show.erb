@@ -144,7 +144,7 @@
         <% @board.config.reports.custom_reports.each do |report| %>
           <tr>
             <td class="four wide">
-              <a href="<%= reports_path(@board) %>/query?query=<%= report.query %>">
+              <a href="<%= reports_path(@board) %>/query?report_name=<%= report.name %>">
                 <%= report.name %>
               </a>
             </td>

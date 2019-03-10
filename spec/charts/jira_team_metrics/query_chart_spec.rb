@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 describe JiraTeamMetrics::QueryChart do
+  let(:board) { create(:board) }
   let(:date) { Date.parse('2018-01-01') }
   let(:report_params) do
-    JiraTeamMetrics::ReportParams.new({
+    JiraTeamMetrics::ReportParams.new(board, {
       date_range: JiraTeamMetrics::DateRange.new(date, date + 35),
       query: "select key, status from scope() where status = 'Done'"
     })

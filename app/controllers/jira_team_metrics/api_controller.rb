@@ -41,7 +41,17 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
 
   def query
     respond_to do |format|
-      format.json { render json: chart_data_for(:query) }
+      format.json do
+        begin
+          render json: chart_data_for(:query)
+        rescue Parslet::ParseFailed => e
+          render status: :bad_request, json: {
+            error: 'syntax_error',
+            message: 'Syntax Error',
+            details: e.parse_failure_cause.ascii_tree
+          }
+        end
+      end
       format.csv do
         data_table = chart_for(:query).data_table
         csv_string = CSV.generate do |csv|

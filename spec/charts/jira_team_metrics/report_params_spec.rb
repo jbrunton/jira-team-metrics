@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::ReportParams do
+  let(:board) { create(:board) }
   let(:from_date) { '2018-06-01' }
   let(:to_date) { '2018-07-01' }
   let(:query) { 'some query' }
@@ -11,7 +12,7 @@ RSpec.describe JiraTeamMetrics::ReportParams do
 
   describe "#initialize" do
     it "sets default values if not given" do
-      report_params = JiraTeamMetrics::ReportParams.new({})
+      report_params = JiraTeamMetrics::ReportParams.new(board, {})
       expect(report_params.hierarchy_level).to eq('Scope')
       expect(report_params.step_interval).to eq('Daily')
     end
@@ -19,7 +20,7 @@ RSpec.describe JiraTeamMetrics::ReportParams do
 
   describe ".from_params" do
     it "returns an instance built from the given request params" do
-      report_params = JiraTeamMetrics::ReportParams.from_params({
+      report_params = JiraTeamMetrics::ReportParams.from_params(board, {
         from_date: from_date,
         to_date: to_date,
         query: query,
@@ -43,7 +44,7 @@ RSpec.describe JiraTeamMetrics::ReportParams do
 
   describe "#to_query" do
     it "builds an mql query based on the params" do
-      report_params = JiraTeamMetrics::ReportParams.from_params({
+      report_params = JiraTeamMetrics::ReportParams.from_params(board, {
         from_date: from_date,
         to_date: to_date,
         query: query,

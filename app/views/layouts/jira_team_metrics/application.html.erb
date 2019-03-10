@@ -14,6 +14,16 @@
       google.charts.load('current', {'packages':['corechart', 'timeline', 'table']});
     </script>
 
+    <% if ENV['RAILS_ENV'] == 'development' %>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script>
+    <% else %>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js"></script>
+    <% end %>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/mode/sql/sql.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.css" />
+
     <%= stylesheet_link_tag    'jira_team_metrics/application', media: 'all' %>
     <%= javascript_include_tag 'jira_team_metrics/application' %>
 

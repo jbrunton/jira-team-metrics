@@ -1,26 +1,115 @@
 <% breadcrumb :report, @board, :query, 'Custom Query' %>
 <% content_for :title, "Custom Query - #{@board.name}" %>
 
-<h1>Query Data</h1>
+<h1>
+  <% if @report_params.report_name.nil? %>
+    Custom Report
+  <% else %>
+    <%= @report_params.report_name %>
+  <% end %>
+</h1>
 
-<%= render partial: 'partials/search_form', locals: { show_search_options: false } %>
+<div id="query-report">
+  <div id="query-params" class="ui form">
+    <div class="field">
+      <button class="ui labeled icon button" type="submit" id="query-submit" name="query-submit" @click="loadChart">
+        <i class="play icon"></i>
+        Run
+      </button>
+      <button class="ui toggle icon button" v-bind:class="{ active: showHelp }" @click="showHelp = !showHelp">
+        <i class="question icon"></i>
+      </button>
+    </div>
+    <div class="equal width fields">
+      <div class="field">
+        <div class="ui action input">
+          <textarea id="query-editor"><%= @report_params.query %></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<a id="download" href="#">Download</a>
+  <div class="ui segment" v-if="showHelp">
+    <%= render partial: 'partials/query_help' %>
+  </div>
 
-<%= render partial: 'partials/chart', locals: {
-  chart_id: generate_id,
-  chart_type: 'Table',
-  url: "#{board_api_path(@board)}/query.json",
-  ready_handler: 'readyHandler'
-} %>
+  <div v-show="chartData">
+    <div id="query-results">
+
+    </div>
+    <p style="text-align: right;"><a id="download" v-bind:href="downloadUrl">Download</a></p>
+  </div>
+
+  <div v-show="loading" style="margin: 100px 0;">
+    <div class="ui active centered inline loader"></div>
+  </div>
+
+  <div id="query-error" class="ui negative message" v-if="errorData">
+    <div class="header">{{ errorData.message }}</div>
+    <div class="details" style="overflow-x: auto;"><pre>{{ errorData.details }}</pre></div>
+  </div>
+
+</div>
 
 <script>
-  function readyHandler() {
-    var $table = $(document).find('.google-visualization-table table');
-    $table.addClass('ui very compact table');
-
-    var csvLink = '<%= "#{board_api_path(@board)}/query.csv?query=" %>' + $('#query').val();
-    $('#download').attr('href', csvLink);
-  }
+  var app = new Vue({
+    el: '#query-report',
+    data: {
+      chartData: null,
+      errorData: null,
+      query: null,
+      errorHeader: '',
+      errorDetails: '',
+      loading: false,
+      showHelp: false,
+      editor: null
+    },
+    methods: {
+      loadChart: function () {
+        this.query = this.editor.getValue();
+        this.chartData = null;
+        this.errorData = null;
+        this.loading = true;
+        $.get(this.url, this.drawChart)
+            .fail(this.onError);
+      },
+      drawChart: function (response) {
+        this.loading = false;
+        this.chartData = new google.visualization.DataTable(response.data);
+        this.chartOpts = response.chartOpts;
+        this.chart = new google.visualization.Table(document.getElementById('query-results'));
+        google.visualization.events.addListener(this.chart, 'ready', this.onReady);
+        this.chart.draw(this.chartData, this.chartOpts);
+      },
+      onReady: function() {
+        var $table = $(document).find('.google-visualization-table table');
+        $table.addClass('ui very compact table');
+      },
+      onError: function(response) {
+        this.loading = false;
+        if (response.status == 400) {
+          this.errorData = response.responseJSON;
+        }
+      }
+    },
+    mounted: function() {
+      $('#query-help').popup({
+        inline: true
+      });
+      this.editor = CodeMirror.fromTextArea(document.getElementById('query-editor'), {
+        lineNumbers: true,
+        mode: 'sql',
+        readOnly: false
+      });
+      this.loadChart();
+    },
+    computed: {
+      url: function() {
+        return `/metrics/api/boards/754/query.json?query=${encodeURI(this.query)}`;
+      },
+      downloadUrl: function() {
+        return `/metrics/api/boards/754/query.csv?query=${encodeURI(this.query)}`;
+      }
+    }
+  })
 </script>
-

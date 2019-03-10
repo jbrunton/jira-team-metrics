@@ -1,4 +1,5 @@
 class JiraTeamMetrics::ReportParams
+  attr_reader :report_name
   attr_reader :date_range
   attr_reader :query
   attr_reader :filter
@@ -6,7 +7,9 @@ class JiraTeamMetrics::ReportParams
   attr_reader :step_interval
   attr_reader :team
 
-  def initialize(values)
+  def initialize(board, values)
+    @board = board
+    @report_name = values[:report_name]
     @date_range = values[:date_range]
     @query = values[:query]
     @filter = values[:filter]
@@ -15,8 +18,8 @@ class JiraTeamMetrics::ReportParams
     @team = values[:team]
   end
 
-  def self.from_params(params)
-    Builder.new(params).build
+  def self.from_params(board, params)
+    Builder.new(board, params).build
   end
 
   def to_query
@@ -27,14 +30,21 @@ class JiraTeamMetrics::ReportParams
   end
 
   class Builder
-    def initialize(params)
+    def initialize(board, params)
+      @board = board
       @params = params
     end
 
     def build
-      JiraTeamMetrics::ReportParams.new({
+      query = if @params[:report_name].nil?
+        @params[:query]
+      else
+        @board.config.reports.custom_reports.find{ |it| it.name == @params[:report_name] }.query
+      end
+      JiraTeamMetrics::ReportParams.new(@board,{
+        report_name: @params[:report_name],
         date_range: build_date_range,
-        query: @params[:query],
+        query: query,
         filter: @params[:filter],
         hierarchy_level: @params[:hierarchy_level],
         step_interval: @params[:step_interval],
