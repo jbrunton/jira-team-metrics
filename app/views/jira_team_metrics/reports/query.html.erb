@@ -20,11 +20,22 @@
         <i class="question icon"></i>
       </button>
     </div>
-    <div class="equal width fields">
-      <div class="field">
-        <div class="ui action input">
-          <textarea id="query-editor"><%= @report_params.query %></textarea>
-        </div>
+    <div class="field">
+      <textarea id="query-editor"><%= @report_params.query %></textarea>
+    </div>
+
+    <div class="fields">
+      <div class="two wide field">
+        <label for="from_date">From Date</label>
+        <date-picker
+          id="from_date" name="from_date"
+          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>" />
+      </div>
+      <div class="two wide field">
+        <label for="to_date">To Date</label>
+        <date-picker
+          id="to_date" name="to_date"
+          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>" />
       </div>
     </div>
   </div>
@@ -52,6 +63,34 @@
 </div>
 
 <script>
+  Vue.component('date-picker', {
+    props: ['id', 'name', 'value'],
+    data: function() {
+      return {
+        date: null
+      }
+    },
+    mounted: function() {
+      $(this.$el).pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        formatSubmit: 'yyyy-mm-dd',
+        hiddenName: true,
+        max: true,
+        container: '#pickadate-container',
+        onClose : function()
+        {
+          this.$holder.blur();
+        },
+        onSet: (context) => this.date = moment(context.select).format('YYYY-MM-DD')
+      });
+    },
+    template: `<input type="text" class="datepicker" :id="id" :name="name" :value="value" readonly/>`
+  });
+
   var app = new Vue({
     el: '#query-report',
     data: {
