@@ -25,13 +25,13 @@
     </div>
   </div>
 
-  <div id="query-results">
+  <div id="query-results" v-show="chartData">
 
   </div>
 
-  <div id="query-error" class="ui negative message">
-    <div class="header">{{ errorHeader }}</div>
-    <div class="details" style="overflow-x: auto;"><pre>{{ errorDetails }}</pre></div>
+  <div id="query-error" class="ui negative message" v-if="error">
+    <div class="header">{{ error.message }}</div>
+    <div class="details" style="overflow-x: auto;"><pre>{{ error.details }}</pre></div>
   </div>
 
 </div>
@@ -40,22 +40,25 @@
   var app = new Vue({
     el: '#query-report',
     data: {
+      chartData: null,
+      error: null,
       query: '',
       errorHeader: '',
       errorDetails: ''
     },
     methods: {
       loadChart: function () {
-        this.data = null;
+        this.chartData = null;
+        this.error = null;
         $.get(this.url, this.drawChart)
             .fail(this.onError);
       },
       drawChart: function (response) {
-        this.data = new google.visualization.DataTable(response.data);
+        this.chartData = new google.visualization.DataTable(response.data);
         this.chartOpts = response.chartOpts;
         this.chart = new google.visualization.Table(document.getElementById('query-results'));
         google.visualization.events.addListener(this.chart, 'ready', this.onReady);
-        this.chart.draw(this.data, this.chartOpts);
+        this.chart.draw(this.chartData, this.chartOpts);
       },
       onReady: function() {
         var $table = $(document).find('.google-visualization-table table');
@@ -63,8 +66,7 @@
       },
       onError: function(response) {
         if (response.status == 400) {
-          this.errorHeader = response.responseJSON.message;
-          this.errorDetails = response.responseJSON.details;
+          this.error = response.responseJSON;
         }
       }
     },
