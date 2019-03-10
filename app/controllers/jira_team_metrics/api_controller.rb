@@ -50,6 +50,12 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
             message: 'Syntax Error',
             details: e.parse_failure_cause.ascii_tree
           }
+        rescue JiraTeamMetrics::ParserError => e
+          render status: :bad_request, json: {
+            error: 'runtime_error',
+            message: 'Runtime Error',
+            details: e.message
+          }
         end
       end
       format.csv do
