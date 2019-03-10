@@ -14,12 +14,6 @@
       google.charts.load('current', {'packages':['corechart', 'timeline', 'table']});
     </script>
 
-    <% if ENV['RAILS_ENV'] == 'development' %>
-      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script>
-    <% else %>
-      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js"></script>
-    <% end %>
-
     <%= stylesheet_link_tag    'jira_team_metrics/application', media: 'all' %>
     <%= javascript_include_tag 'jira_team_metrics/application' %>
 
