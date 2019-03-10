@@ -23,7 +23,7 @@
     <div class="equal width fields">
       <div class="field">
         <div class="ui action input">
-          <textarea type="text" class="mono" id="query" name="query" id="query"><%= @report_params.query %></textarea>
+          <textarea id="query-editor"><%= @report_params.query %></textarea>
         </div>
       </div>
     </div>
@@ -61,11 +61,12 @@
       errorHeader: '',
       errorDetails: '',
       loading: false,
-      showHelp: false
+      showHelp: false,
+      editor: null
     },
     methods: {
       loadChart: function () {
-        this.query = $('#query').val();
+        this.query = this.editor.getValue();
         this.chartData = null;
         this.errorData = null;
         this.loading = true;
@@ -94,6 +95,11 @@
     mounted: function() {
       $('#query-help').popup({
         inline: true
+      });
+      this.editor = CodeMirror.fromTextArea(document.getElementById('query-editor'), {
+        lineNumbers: true,
+        mode: 'sql',
+        readOnly: false
       });
       this.loadChart();
     },
