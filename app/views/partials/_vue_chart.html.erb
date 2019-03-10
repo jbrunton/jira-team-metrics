@@ -1,0 +1,145 @@
+<div id="query-report">
+  <div id="query-params" class="ui form">
+    <div class="field">
+      <button class="ui labeled icon button" type="submit" id="query-submit" name="query-submit" @click="loadChart">
+        <i class="play icon"></i>
+        Run
+      </button>
+      <button class="ui toggle icon button" v-bind:class="{ active: showHelp }" @click="showHelp = !showHelp">
+        <i class="question icon"></i>
+      </button>
+    </div>
+    <div class="field">
+      <textarea id="query-editor"><%= @report_params.query %></textarea>
+    </div>
+
+    <div class="fields">
+      <div class="two wide field">
+        <label for="from_date">From Date</label>
+        <date-picker
+          id="from_date" name="from_date"
+          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>" />
+      </div>
+      <div class="two wide field">
+        <label for="to_date">To Date</label>
+        <date-picker
+          id="to_date" name="to_date"
+          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>" />
+      </div>
+    </div>
+  </div>
+
+  <div class="ui segment" v-if="showHelp">
+    <%= render partial: 'partials/query_help' %>
+  </div>
+
+  <div v-show="chartData">
+    <div id="query-results">
+
+    </div>
+    <p style="text-align: right;"><a id="download" v-bind:href="downloadUrl">Download</a></p>
+  </div>
+
+  <div v-show="loading" style="margin: 100px 0;">
+    <div class="ui active centered inline loader"></div>
+  </div>
+
+  <div id="query-error" class="ui negative message" v-if="errorData">
+    <div class="header">{{ errorData.message }}</div>
+    <div class="details" style="overflow-x: auto;"><pre>{{ errorData.details }}</pre></div>
+  </div>
+
+</div>
+
+<script>
+  Vue.component('date-picker', {
+    props: ['id', 'name', 'value'],
+    data: function() {
+      return {
+        date: null
+      }
+    },
+    mounted: function() {
+      $(this.$el).pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        formatSubmit: 'yyyy-mm-dd',
+        hiddenName: true,
+        max: true,
+        container: '#pickadate-container',
+        onClose : function()
+        {
+          this.$holder.blur();
+        },
+        onSet: (context) => this.date = moment(context.select).format('YYYY-MM-DD')
+      });
+    },
+    template: `<input type="text" class="datepicker" :id="id" :name="name" :value="value" readonly/>`
+  });
+
+  var app = new Vue({
+    el: '#query-report',
+    data: {
+      chartData: null,
+      errorData: null,
+      chartBaseUrl: '<%= chart_url %>',
+      downloadBaseUrl: '<%= download_url %>',
+      query: null,
+      errorHeader: '',
+      errorDetails: '',
+      loading: false,
+      showHelp: false,
+      editor: null
+    },
+    methods: {
+      loadChart: function () {
+        this.query = this.editor.getValue();
+        this.chartData = null;
+        this.errorData = null;
+        this.loading = true;
+        $.get(this.url, this.drawChart)
+            .fail(this.onError);
+      },
+      drawChart: function (response) {
+        this.loading = false;
+        this.chartData = new google.visualization.DataTable(response.data);
+        this.chartOpts = response.chartOpts;
+        this.chart = new google.visualization.<%= chart_type %>(document.getElementById('query-results'));
+        google.visualization.events.addListener(this.chart, 'ready', this.onReady);
+        this.chart.draw(this.chartData, this.chartOpts);
+      },
+      onReady: function() {
+        var $table = $(document).find('.google-visualization-table table');
+        $table.addClass('ui very compact table');
+      },
+      onError: function(response) {
+        this.loading = false;
+        if (response.status == 400) {
+          this.errorData = response.responseJSON;
+        }
+      }
+    },
+    mounted: function() {
+      $('#query-help').popup({
+        inline: true
+      });
+      this.editor = CodeMirror.fromTextArea(document.getElementById('query-editor'), {
+        lineNumbers: true,
+        mode: 'sql',
+        readOnly: false
+      });
+      this.loadChart();
+    },
+    computed: {
+      url: function() {
+        return `${this.chartBaseUrl}?query=${encodeURI(this.query)}`;
+      },
+      downloadUrl: function() {
+        return `${this.downloadBaseUrl}?query=${encodeURI(this.query)}`;
+      }
+    }
+  })
+</script>
