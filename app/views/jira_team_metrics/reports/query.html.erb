@@ -8,7 +8,7 @@
   {{ message }}
 </div>
 
-<div id="search-params" class="ui form">
+<div id="query-params" class="ui form">
   <div class="fields">
     <div class="sixteen wide field">
       <label>Query <a id="query-help"><i class="question circle outline icon"></i></a>
@@ -17,18 +17,36 @@
         </div>
       </label>
       <div class="ui action input">
-        <input type="text" class="mono" id="query" name="query" value="<%= @report_params.query || @default_query %>"/>
-        <button class="ui button" type="submit" id="search-submit" name="search-submit">Search</button>
+        <input type="text" class="mono" id="query" name="query" />
+        <button class="ui button" type="submit" id="query-submit" name="query-submit" @click="loadChart">Search</button>
       </div>
     </div>
   </div>
 </div>
 
+<div id="query-results">
+
+</div>
+
 <script>
   var app = new Vue({
-    el: '#app',
-    data: {
-      message: 'Hello Vue!'
+    el: '#query-params',
+    methods: {
+      loadChart: function () {
+        this.data = null;
+        $.get(this.url, this.drawChart);
+      },
+      drawChart: function (response) {
+        this.data = new google.visualization.DataTable(response.data);
+        this.chartOpts = response.chartOpts;
+        this.chart = new google.visualization.Table(document.getElementById('query-results'));
+        this.chart.draw(this.data, this.chartOpts);
+      }
+    },
+    computed: {
+      url: function() {
+        return `/metrics/api/boards/754/query.json`;
+      }
     }
   })
 </script>
