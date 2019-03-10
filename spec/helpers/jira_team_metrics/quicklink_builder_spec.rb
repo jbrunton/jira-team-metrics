@@ -32,8 +32,8 @@ RSpec.describe JiraTeamMetrics::QuicklinkBuilder do
       expect(uri.path).to eq("#{reports_path(board)}/throughput")
       params = Rack::Utils.parse_nested_query(uri.query)
       expect(params).to eq({
-          'from_date' => '2018-05-01',
-          'to_date' => '2018-11-01',
+          'from_date' => '2018-04-01',
+          'to_date' => '2018-10-01',
           'hierarchy_level' => 'Scope',
           'step_interval' => 'Monthly'
       })
