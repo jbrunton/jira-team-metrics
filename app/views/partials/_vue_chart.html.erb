@@ -105,11 +105,15 @@
       },
       drawChart: function (response) {
         this.loading = false;
+
         this.chartData = new google.visualization.DataTable(response.data);
-        this.chartOpts = response.chartOpts;
+        var chartOpts = response.chartOpts;
+
         this.chart = new google.visualization.<%= chart_type %>(document.getElementById('query-results'));
         google.visualization.events.addListener(this.chart, 'ready', this.onReady);
-        this.chart.draw(this.chartData, this.chartOpts);
+        this.$nextTick(function() {
+          this.chart.draw(this.chartData, chartOpts);
+        });
       },
       onReady: function() {
         var $table = $(document).find('.google-visualization-table table');

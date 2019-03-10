@@ -21,13 +21,10 @@
   }
 </script>
 
-<%= render partial: 'partials/search_form' %>
-
-<%= render partial: 'partials/chart', locals: {
-    chart_id: chart_id,
+<%= render partial: 'partials/vue_chart', locals: {
     chart_type: 'ComboChart',
-    select_handler: 'selectHandler',
-    url: "#{board_api_path(@board)}/scatterplot.json"
+    chart_url: "#{board_api_path(@board)}/scatterplot.json",
+    download_url: "#{board_api_path(@board)}/query.csv"
 } %>
 
 <div style="margin-top: 20px;">
