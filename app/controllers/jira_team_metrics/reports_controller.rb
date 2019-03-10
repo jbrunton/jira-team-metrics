@@ -47,6 +47,10 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def aging_wip
   end
 
+  def query
+    @query = @report_params.query || @default_query
+  end
+
   def project_scope
     @team = @report_params.team
     @project = @board.issues.find_by(key: params[:issue_key])

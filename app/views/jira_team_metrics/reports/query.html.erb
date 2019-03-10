@@ -1,7 +1,13 @@
 <% breadcrumb :report, @board, :query, 'Custom Query' %>
 <% content_for :title, "Custom Query - #{@board.name}" %>
 
-<h1>Query Data</h1>
+<h1>
+  <% if @report_params.report_name.nil? %>
+    Custom Report
+  <% else %>
+    <%= @report_params.report_name %>
+  <% end %>
+</h1>
 
 <div id="query-report">
   <div id="query-params" class="ui form">
@@ -17,7 +23,9 @@
     <div class="equal width fields">
       <div class="field">
         <div class="ui action input">
-          <textarea type="text" class="mono" id="query" name="query" v-model="query"></textarea>
+          <textarea type="text" class="mono" id="query" name="query" id="query">
+            <%= @report_params.query %>
+          </textarea>
         </div>
       </div>
     </div>
@@ -51,7 +59,7 @@
     data: {
       chartData: null,
       errorData: null,
-      query: "<%= (@report_params.query || @default_query).html_safe %>",
+      query: null,
       errorHeader: '',
       errorDetails: '',
       loading: false,
@@ -59,6 +67,7 @@
     },
     methods: {
       loadChart: function () {
+        this.query = $('#query').val();
         this.chartData = null;
         this.errorData = null;
         this.loading = true;
