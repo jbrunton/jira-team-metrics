@@ -5,19 +5,26 @@
 
 <div id="query-report">
   <div id="query-params" class="ui form">
-    <div class="fields">
-      <div class="sixteen wide field">
-        <label>Query <a id="query-help"><i class="question circle outline icon"></i></a>
-          <div class="ui fluid popup">
-            <%= render partial: 'partials/query_help' %>
-          </div>
-        </label>
+    <div class="field">
+      <button class="ui labeled icon button" type="submit" id="query-submit" name="query-submit" @click="loadChart">
+        <i class="play icon"></i>
+        Run
+      </button>
+      <button class="ui toggle icon button" v-bind:class="{ active: showHelp }" @click="showHelp = !showHelp">
+        <i class="question icon"></i>
+      </button>
+    </div>
+    <div class="equal width fields">
+      <div class="field">
         <div class="ui action input">
-          <input type="text" class="mono" id="query" name="query" v-model="query" />
-          <button class="ui button" type="submit" id="query-submit" name="query-submit" @click="loadChart">Search</button>
+          <textarea type="text" class="mono" id="query" name="query" v-model="query"></textarea>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="ui segment" v-if="showHelp">
+    <%= render partial: 'partials/query_help' %>
   </div>
 
   <div v-show="chartData">
@@ -47,7 +54,8 @@
       query: "<%= (@report_params.query || @default_query).html_safe %>",
       errorHeader: '',
       errorDetails: '',
-      loading: false
+      loading: false,
+      showHelp: false
     },
     methods: {
       loadChart: function () {
@@ -77,6 +85,9 @@
       }
     },
     mounted: function() {
+      $('#query-help').popup({
+        inline: true
+      });
       this.loadChart();
     },
     computed: {
