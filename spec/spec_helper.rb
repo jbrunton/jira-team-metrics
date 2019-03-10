@@ -1,13 +1,5 @@
 require 'simplecov'
 
-if ENV['TRAVIS']
-  require 'codeclimate-test-reporter'
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    CodeClimate::TestReporter::Formatter
-  ]
-end
-
 SimpleCov.start 'rails' do
   add_filter 'app/lib/rx.rb'
 end
