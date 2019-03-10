@@ -64,7 +64,7 @@ private
   end
 
   def set_throughput_defaults(today)
-    @to_date = today.at_beginning_of_month + 1.month
+    @to_date = today.at_beginning_of_month
     @from_date = @to_date - 6.months
     @step_interval = 'Monthly'
   end
