@@ -17,7 +17,7 @@
         </div>
       </label>
       <div class="ui action input">
-        <input type="text" class="mono" id="query" name="query" />
+        <input type="text" class="mono" id="query" name="query" v-model="query" />
         <button class="ui button" type="submit" id="query-submit" name="query-submit" @click="loadChart">Search</button>
       </div>
     </div>
@@ -31,6 +31,9 @@
 <script>
   var app = new Vue({
     el: '#query-params',
+    data: {
+      query: ''
+    },
     methods: {
       loadChart: function () {
         this.data = null;
@@ -40,12 +43,17 @@
         this.data = new google.visualization.DataTable(response.data);
         this.chartOpts = response.chartOpts;
         this.chart = new google.visualization.Table(document.getElementById('query-results'));
+        google.visualization.events.addListener(this.chart, 'ready', this.onReady);
         this.chart.draw(this.data, this.chartOpts);
+      },
+      onReady: function() {
+        var $table = $(document).find('.google-visualization-table table');
+        $table.addClass('ui very compact table');
       }
     },
     computed: {
       url: function() {
-        return `/metrics/api/boards/754/query.json`;
+        return `/metrics/api/boards/754/query.json?query=${this.query}`;
       }
     }
   })
