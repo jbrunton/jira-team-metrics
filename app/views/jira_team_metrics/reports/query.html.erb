@@ -23,9 +23,7 @@
     <div class="equal width fields">
       <div class="field">
         <div class="ui action input">
-          <textarea type="text" class="mono" id="query" name="query" id="query">
-            <%= @report_params.query %>
-          </textarea>
+          <textarea type="text" class="mono" id="query" name="query" id="query"><%= @report_params.query %></textarea>
         </div>
       </div>
     </div>
@@ -101,10 +99,10 @@
     },
     computed: {
       url: function() {
-        return `/metrics/api/boards/754/query.json?query=${this.query}`;
+        return `/metrics/api/boards/754/query.json?query=${encodeURI(this.query)}`;
       },
       downloadUrl: function() {
-        return `/metrics/api/boards/754/query.csv?query=${this.query}`;
+        return `/metrics/api/boards/754/query.csv?query=${encodeURI(this.query)}`;
       }
     }
   })
