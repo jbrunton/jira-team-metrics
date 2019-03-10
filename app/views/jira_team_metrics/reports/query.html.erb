@@ -3,6 +3,39 @@
 
 <h1>Query Data</h1>
 
+
+<div id="app">
+  {{ message }}
+</div>
+
+<div id="search-params" class="ui form">
+  <div class="fields">
+    <div class="sixteen wide field">
+      <label>Query <a id="query-help"><i class="question circle outline icon"></i></a>
+        <div class="ui fluid popup">
+          <%= render partial: 'partials/query_help' %>
+        </div>
+      </label>
+      <div class="ui action input">
+        <input type="text" class="mono" id="query" name="query" value="<%= @report_params.query || @default_query %>"/>
+        <button class="ui button" type="submit" id="search-submit" name="search-submit">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: 'Hello Vue!'
+    }
+  })
+</script>
+
+
+<h1>Legacy</h1>
+
 <%= render partial: 'partials/search_form', locals: { show_search_options: false } %>
 
 <a id="download" href="#">Download</a>
