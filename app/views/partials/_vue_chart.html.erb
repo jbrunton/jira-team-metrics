@@ -1,5 +1,22 @@
 <div id="query-report">
+
+  <date-quick-links></date-quick-links>
+
   <div id="query-params" class="ui form">
+    <div class="fields">
+      <div class="two wide field">
+        <label for="from_date">From Date</label>
+        <date-picker
+          id="from_date" name="from_date"
+          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>"/>
+      </div>
+      <div class="two wide field">
+        <label for="to_date">To Date</label>
+        <date-picker
+          id="to_date" name="to_date"
+          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>"/>
+      </div>
+    </div>
     <div class="field">
       <button class="ui labeled icon button" type="submit" id="query-submit" name="query-submit" @click="loadChart">
         <i class="play icon"></i>
@@ -11,21 +28,6 @@
     </div>
     <div class="field">
       <textarea id="query-editor"><%= @report_params.query %></textarea>
-    </div>
-
-    <div class="fields">
-      <div class="two wide field">
-        <label for="from_date">From Date</label>
-        <date-picker
-          id="from_date" name="from_date"
-          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>" />
-      </div>
-      <div class="two wide field">
-        <label for="to_date">To Date</label>
-        <date-picker
-          id="to_date" name="to_date"
-          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>" />
-      </div>
     </div>
   </div>
 
@@ -77,7 +79,35 @@
         onSet: (context) => this.date = moment(context.select).format('YYYY-MM-DD')
       });
     },
-    template: `<input type="text" class="datepicker" :id="id" :name="name" :value="value" readonly/>`
+    template: `<%= render partial: 'partials/templates/date-picker' %>`
+  });
+
+  Vue.component('date-quick-links', {
+      data: function() {
+          return {
+              monthPeriodOptions: [],
+              relativePeriodOptions: [],
+              timesheetPeriodOptions: [],
+              selectedMonthPeriod: null,
+              selectedRelativePeriod: null,
+              selectedTimesheetPeriod: null
+          };
+      },
+      created: function() {
+          $.get('/metrics/api/boards/754/time_period_options.json', this.initializeTimePeriods);
+      },
+      methods: {
+          initializeTimePeriods: function (response) {
+              this.monthPeriodOptions = response.month_periods
+              this.selectedMonthPeriod = response.selected_month_period
+              this.relativePeriodOptions = response.relative_periods
+              this.selectedRelativePeriod = response.selected_relative_period
+              this.timesheetPeriodOptions = response.timesheet_periods
+              this.selectedTimesheetPeriod = response.selected_timesheet_period
+              $('.dropdown').dropdown({on: 'hover'});
+          },
+      },
+      template: `<%= render partial: 'partials/templates/date-quick-links' %>`
   });
 
   var app = new Vue({
@@ -130,12 +160,13 @@
       $('#query-help').popup({
         inline: true
       });
+      $('.dropdown').dropdown();
       this.editor = CodeMirror.fromTextArea(document.getElementById('query-editor'), {
         lineNumbers: true,
         mode: 'sql',
         readOnly: false
       });
-      this.loadChart();
+      google.charts.setOnLoadCallback(this.loadChart);
     },
     computed: {
       url: function() {

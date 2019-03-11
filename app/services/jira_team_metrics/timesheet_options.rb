@@ -23,6 +23,17 @@ class JiraTeamMetrics::TimesheetOptions
     self
   end
 
+  def to_json
+    {
+        selected_month_period: selected_month_period,
+        selected_timesheet_period: selected_timesheet_period,
+        selected_relative_period: selected_relative_period,
+        month_periods: format_periods(month_periods),
+        timesheet_periods: format_periods(timesheet_periods),
+        relative_periods: format_periods(relative_periods)
+    }
+  end
+
 private
   def enumerate_month_periods(today)
     month = today.beginning_of_month
@@ -69,5 +80,15 @@ private
   def selected_range?(date_range)
     @report_params.date_range.start_date.to_date == date_range.start_date.to_date &&
       @report_params.date_range.end_date.to_date == date_range.end_date.to_date
+  end
+
+  def format_periods(periods)
+    periods.map do |label, range|
+      {
+          label: label,
+          start_date: range.start_date.strftime('%Y-%m-%d'),
+          end_date: range.end_date.strftime('%Y-%m-%d'),
+      }
+    end
   end
 end

@@ -1,0 +1,41 @@
+<div class="ui tiny menu">
+    <span class="item">
+      Jump to time period
+    </span>
+
+  <div class="item">
+    <select class="ui dropdown" v-model="selectedMonthPeriod"
+            @change="updateTimePeriod">
+      <option disabled value="">Select Month</option>
+      <option v-for="option in monthPeriodOptions"
+              v-bind:data-start="option.start_date"
+              v-bind:data-end="option.end_date">
+        {{ option.label }}
+      </option>
+    </select>
+  </div>
+
+  <div class="item">
+    <select class="ui dropdown" v-model="selectedRelativePeriod">
+      <option disabled value="">Select Relative Timeframe</option>
+      <option v-for="option in relativePeriodOptions"
+              v-bind:data-start="option.start_date"
+              v-bind:data-end="option.end_date"
+              @click="alert('')">
+        {{ option.label }}
+      </option>
+    </select>
+  </div>
+
+  <div class="item">
+    <select class="ui dropdown" v-model="selectedTimesheetPeriod">
+      <option disabled value="">Select Timesheet Period</option>
+      <option v-for="option in timesheetPeriodOptions"
+              v-bind:data-start="option.start_date"
+              v-bind:data-end="option.end_date">
+        {{ option.label }}
+      </option>
+    </select>
+  </div>
+
+</div>
