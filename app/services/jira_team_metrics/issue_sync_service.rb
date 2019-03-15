@@ -35,8 +35,8 @@ class JiraTeamMetrics::IssueSyncService
     linker_service = JiraTeamMetrics::IssueLinkerService.new(@board, @notifier)
     project_keys = @board.issues
       .map{ |issue| [issue, linker_service.parent_link_for(issue)] }
-      .select { |issue, project_link| !project_link.nil? && issue.project.nil? }
-      .map { |_, project_link| project_link.dig('issue', 'key') }
+      .select { |issue, parent_link| !parent_link.nil? && issue.parent.nil? }
+      .map { |_, parent_link| parent_link.dig('issue', 'key') }
       .uniq
 
     fetch_issues_by_key(project_keys, "fetching projects from Jira")
