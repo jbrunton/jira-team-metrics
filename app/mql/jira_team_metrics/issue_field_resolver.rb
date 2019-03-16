@@ -31,7 +31,9 @@ private
   end
 
   def jira_field(field_name)
-    @issue.fields[field_name]
+    @issue.fields.map do |fname, fvalue|
+      
+    end
   end
 
   def project_key?(field_name)
@@ -56,15 +58,13 @@ private
     'summary' => 'summary',
     'resolution' => 'resolution',
     'status' => 'status',
-    'statusCategory' => 'status_category',
-    'hierarchyLevel' => 'hierarchy_level',
-    'startedTime' => 'started_time',
-    'completedTime' => 'completed_time',
+    'statuscategory' => 'status_category',
+    'hierarchylevel' => 'hierarchy_level',
+    'startedtime' => 'started_time',
+    'completedtime' => 'completed_time',
+    'cycletime' => 'cycle_time',
     'labels' => 'labels',
     'resolution' => 'resolution',
-    'Global Rank' => 'global_rank',
-    'startedTime' => 'started_time',
-    'completedTime' => 'completed_time',
-    'cycleTime' => 'cycle_time'
+    'global rank' => 'global_rank'
   }
 end

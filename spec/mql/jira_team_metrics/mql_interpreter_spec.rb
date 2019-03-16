@@ -130,6 +130,17 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
       expect(results).to eq([issue2, issue1])
     end
 
+    it "ignores case" do
+      issue = create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board)
+      query = <<~MQL
+        sElEcT *
+        fRoM iSsUeS()
+        wHeRe mYfIeLd = 'a'
+      MQL
+      results = eval(query, [issue], board)
+      expect(results).to eq([issue])
+    end
+
     context "when given a select statement" do
       let(:issue1) { create(:issue, fields: {'MyField' => 'A'}, key: 'ISSUE-101', status: 'Done', board: board) }
       let(:issue2) { create(:epic, fields: {'MyField' => 'A'}, key: 'ISSUE-102', board: board) }
