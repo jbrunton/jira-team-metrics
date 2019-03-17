@@ -1,3 +1,5 @@
+require 'csv'
+
 class JiraTeamMetrics::DataTable
   attr_reader :columns
   attr_reader :rows
@@ -88,6 +90,13 @@ class JiraTeamMetrics::DataTable
 
   def to_json(opts = {})
     JiraTeamMetrics::DataTableSerializer.new(self).to_json(opts)
+  end
+
+  def to_csv
+    CSV.generate do |csv|
+      csv << columns
+      rows.each { |row| csv << row }
+    end
   end
 
   def add_percentiles(column_name, percentiles)

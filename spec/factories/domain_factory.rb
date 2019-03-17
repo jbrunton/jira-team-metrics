@@ -1,6 +1,10 @@
 FactoryBot.define do
   factory :domain, class: JiraTeamMetrics::Domain do
     statuses({ 'Backlog' => 'To Do', 'In Progress' => 'In Progress', 'Done' => 'Done' })
+    fields([
+      {'id' => 'customfield_123', 'name' => 'MyField', 'type' => 'string'},
+      {'id' => 'customfield_456', 'name' => 'teams', 'type' => 'array'}
+    ])
     active true
     transient do
       project_issue_type 'Project'
