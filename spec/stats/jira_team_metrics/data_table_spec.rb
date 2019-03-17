@@ -346,4 +346,17 @@ RSpec.describe JiraTeamMetrics::DataTable do
       })
     end
   end
+
+  describe "#to_csv" do
+    it "returns a CSV representation of the table" do
+      expect(data_table.to_csv).to eq <<~CSV
+        issue_key,issue_type,developer,cycle_time
+        DEV-100,Story,Joe,3
+        DEV-101,Bug,Anne,2
+        DEV-102,Story,,
+        DEV-103,Story,Anne,4
+        DEV-104,Story,Joe,1
+      CSV
+    end
+  end
 end
