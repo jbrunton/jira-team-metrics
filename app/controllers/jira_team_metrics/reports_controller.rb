@@ -41,14 +41,14 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def scatterplot
-    @default_query = @board.config.reports.scatterplot.default_query
+    @query = @board.config.reports.scatterplot.default_query
   end
 
   def aging_wip
   end
 
   def query
-    @query = @report_params.query || @default_query
+    @query = @report_params.query
   end
 
   def project_scope
