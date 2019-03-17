@@ -8,13 +8,16 @@
         <label for="from_date">From Date</label>
         <date-picker
           id="from_date" name="from_date"
-          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>"/>
+          data-value="<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>"
+          v-on:date-changed="fromDateChanged"
+          />
       </div>
       <div class="two wide field">
         <label for="to_date">To Date</label>
         <date-picker
           id="to_date" name="to_date"
-          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>"/>
+          data-value="<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>"
+          v-model="toDate"/>
       </div>
     </div>
     <div class="field">
@@ -54,13 +57,10 @@
 </div>
 
 <script>
+  var eventHub = new Vue();
+
   Vue.component('date-picker', {
     props: ['id', 'name', 'value'],
-    data: function() {
-      return {
-        date: null
-      }
-    },
     mounted: function() {
       $(this.$el).pickadate({
         selectMonths: true, // Creates a dropdown to control month
@@ -76,7 +76,7 @@
         {
           this.$holder.blur();
         },
-        onSet: (context) => this.date = moment(context.select).format('YYYY-MM-DD')
+        onSet: (context) => this.$emit('date-changed', moment(context.select).format('YYYY-MM-DD'))
       });
     },
     template: `<%= render partial: 'partials/templates/date-picker' %>`
@@ -93,8 +93,9 @@
               selectedTimesheetPeriod: null
           };
       },
-      created: function() {
-          $.get('/metrics/api/boards/754/time_period_options.json', this.initializeTimePeriods);
+      mounted: function() {
+        $(this.$el).find('.dropdown').dropdown({on: 'hover'});
+        $.get('/metrics/api/boards/754/time_period_options.json', this.initializeTimePeriods);
       },
       methods: {
           initializeTimePeriods: function (response) {
@@ -104,10 +105,17 @@
               this.selectedRelativePeriod = response.selected_relative_period
               this.timesheetPeriodOptions = response.timesheet_periods
               this.selectedTimesheetPeriod = response.selected_timesheet_period
-              $('.dropdown').dropdown({on: 'hover'});
           },
+        updateTimePeriod: function($event) {
+            //alert(this.selectedMonthPeriod.start_date);
+        }
       },
-      template: `<%= render partial: 'partials/templates/date-quick-links' %>`
+    watch: {
+        selectedMonthPeriod: function() {
+          eventHub.$emit('date-range-changed', this.monthPeriodOptions[this.selectedMonthPeriod]);
+        }
+    },
+    template: `<%= render partial: 'partials/templates/date-quick-links' %>`
   });
 
   var app = new Vue({
@@ -122,11 +130,12 @@
       errorDetails: '',
       loading: false,
       showHelp: false,
-      editor: null
+      editor: null,
+      fromDate: '<%= @report_params.date_range.start_date.strftime('%Y-%m-%d') %>',
+      toDate: '<%= @report_params.date_range.end_date.strftime('%Y-%m-%d') %>'
     },
     methods: {
       loadChart: function () {
-        this.query = this.editor.getValue();
         this.chartData = null;
         this.errorData = null;
         this.loading = true;
@@ -154,26 +163,53 @@
         if (response.status == 400) {
           this.errorData = response.responseJSON;
         }
+      },
+      dateRangeChanged: function(option) {
+        this.fromDate = option.start_date;
+      },
+      fromDateChanged: function(date) {
+        this.fromDate = date;
+      },
+      toDateChanged: function(date) {
+        this.toDate = date;
+      },
+      chartLoaded: function() {
+        // trigger initial load
+        this.query = this.editor.getValue();
+      },
+      editorChanged: function() {
+        this.query = this.editor.getValue();
       }
     },
     mounted: function() {
-      $('#query-help').popup({
-        inline: true
-      });
-      $('.dropdown').dropdown();
       this.editor = CodeMirror.fromTextArea(document.getElementById('query-editor'), {
         lineNumbers: true,
         mode: 'sql',
         readOnly: false
       });
-      google.charts.setOnLoadCallback(this.loadChart);
+      this.editor.on('change', this.editorChanged);
+      google.charts.setOnLoadCallback(this.chartLoaded);
+    },
+    created: function() {
+      eventHub.$on('date-range-changed', this.dateRangeChanged);
+    },
+    beforeDestroy: function() {
+      eventHub.$off('date-range-changed', this.dateRangeChanged);
     },
     computed: {
       url: function() {
-        return `${this.chartBaseUrl}?query=${encodeURI(this.query)}`;
+        return `${this.chartBaseUrl}?${this.queryParams}`;
       },
       downloadUrl: function() {
-        return `${this.downloadBaseUrl}?query=${encodeURI(this.query)}`;
+        return `${this.downloadBaseUrl}?${this.queryParams}`;
+      },
+      queryParams: function() {
+        return `query=${encodeURI(this.query)}&from_date=${this.fromDate}&to_date=${this.toDate}`;
+      }
+    },
+    watch: {
+      queryParams: function(params) {
+        this.loadChart();
       }
     }
   })
