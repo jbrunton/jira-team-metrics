@@ -61,6 +61,7 @@ private
     'startedTime' => 'started_time',
     'completedTime' => 'completed_time',
     'labels' => 'labels',
+    'tags' => 'tags',
     'resolution' => 'resolution',
     'Global Rank' => 'global_rank',
     'startedTime' => 'started_time',

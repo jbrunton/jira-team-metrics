@@ -17,7 +17,8 @@ class JiraTeamMetrics::IssueAttributesBuilder
       'links' => links,
       'status' => status,
       'global_rank' => global_rank,
-      'resolution' => resolution
+      'resolution' => resolution,
+      'json' => @json
     }
   end
 

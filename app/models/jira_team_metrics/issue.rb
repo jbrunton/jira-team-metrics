@@ -1,8 +1,10 @@
 class JiraTeamMetrics::Issue < ApplicationRecord
   serialize :labels
+  serialize :tags
   serialize :transitions
   serialize :fields
   serialize :links
+  serialize :json
   belongs_to :board
 
   belongs_to :epic, optional: true, class_name: 'JiraTeamMetrics::Issue'

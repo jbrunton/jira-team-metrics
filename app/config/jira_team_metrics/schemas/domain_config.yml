@@ -33,4 +33,11 @@ optional:
       required:
         name: "//str"
         short_name: "//str"
+  tags:
+    type: "//arr"
+    contents:
+      type: "//rec"
+      required:
+        name: "//str"
+        path: "//str"
   reports: "/metrics/reports-config"

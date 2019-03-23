@@ -53,6 +53,8 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     issue_sync_service.sync_projects
     issue_linker_service.build_graph if board.config.epics.link_missing
 
+    JiraTeamMetrics::TagsService.new(board, @notifier).apply_tags
+
     board.synced_from = board.sync_from(months)
     board.last_synced = DateTime.now
     board.save

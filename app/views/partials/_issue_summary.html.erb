@@ -33,6 +33,18 @@
       <% end %>
     </td>
   </tr>
+  <tr>
+    <td>Tags</td>
+    <td>
+      <% if issue.tags.any? %>
+        <% issue.tags.each do |tag| %>
+          <span class="ui label"><%= tag %></span>
+        <% end %>
+      <% else %>
+        None
+      <% end %>
+    </td>
+  </tr>
 
   <% issue.fields.keys.select{ |field_name| field_name != 'Global Rank' }.each do |field_name| %>
       <tr>
