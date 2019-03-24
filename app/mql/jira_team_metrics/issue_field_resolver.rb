@@ -58,6 +58,7 @@ private
     'status' => 'status',
     'statusCategory' => 'status_category',
     'hierarchyLevel' => 'hierarchy_level',
+    'createdTime' => 'issue_created',
     'startedTime' => 'started_time',
     'completedTime' => 'completed_time',
     'labels' => 'labels',

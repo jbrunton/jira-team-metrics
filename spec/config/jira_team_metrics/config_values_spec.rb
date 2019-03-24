@@ -77,7 +77,7 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
       end
     end
 
-    context "when given a parent" do
+    context "when given a parent, for object values" do
       it "returns the parent value if none is defined" do
         parent = JiraTeamMetrics::Config.new({ 'foo' => 123 }, YAML.load(schema))
         config = JiraTeamMetrics::Config.new({}, YAML.load(schema), parent)
@@ -94,6 +94,20 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
         parent = JiraTeamMetrics::Config.new({ 'bar' => { 'baz' => 'qux' } }, YAML.load(schema))
         config = JiraTeamMetrics::Config.new({ 'bar' => {} }, YAML.load(schema), parent)
         expect(config.bar.baz).to eq('qux')
+      end
+    end
+
+    context "when given a parent, for array values" do
+      it "returns the parent value if none is defined" do
+        parent = JiraTeamMetrics::Config.new({ 'bars' => [123] }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({}, YAML.load(schema), parent)
+        expect(config.bars.to_a).to eq([123])
+      end
+
+      it "returns the child value if defined" do
+        parent = JiraTeamMetrics::Config.new({ 'bars' => [123] }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({ 'bars' => [456] }, YAML.load(schema), parent)
+        #expect(config.bars.to_a).to eq([456])
       end
     end
 

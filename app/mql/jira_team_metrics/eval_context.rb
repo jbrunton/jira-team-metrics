@@ -33,7 +33,7 @@ class JiraTeamMetrics::EvalContext
       @functions[varargs_signature]
     end
     if func.nil?
-      raise JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
+      raise JiraTeamMetrics::ParserError, JiraTeamMetrics::ParserError::UNKNOWN_FUNCTION % signature
     end
     func
   end
@@ -49,6 +49,7 @@ class JiraTeamMetrics::EvalContext
     JiraTeamMetrics::Fn::DateToday.register(context)
     JiraTeamMetrics::Fn::DateConstructor.register(context)
     JiraTeamMetrics::Fn::DateParser.register(context)
+    JiraTeamMetrics::Fn::DateDiff.register(context)
 
     # data sources
     JiraTeamMetrics::Fn::DataSource.register(context)
