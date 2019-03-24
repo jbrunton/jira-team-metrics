@@ -5,7 +5,7 @@ class JiraTeamMetrics::TagsService
   end
 
   def apply_tags
-    #@notifier.notify_status('tagging issues')
+    @notifier.notify_status('tagging issues')
     tags = @board.domain.config.tags.map { |tag| Tag.new(tag.name, tag.path) }
     @board.issues.reload.each do |issue|
       issue.tags = tags
