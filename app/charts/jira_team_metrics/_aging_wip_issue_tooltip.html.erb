@@ -9,7 +9,7 @@
           <b>Duration</b>
         </th>
         <td>
-          <%= (@now - @issue.in_progress_start).floor %> days
+          <%= (@now - @issue.send(@start_field.to_s)).floor %> days
         </td>
       </tr>
       <tr>

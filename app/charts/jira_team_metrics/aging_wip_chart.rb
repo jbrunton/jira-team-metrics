@@ -7,7 +7,7 @@ class JiraTeamMetrics::AgingWipChart
   def data_table
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(wip_issues)
-      .pick(:key, :summary, :in_progress_start)
+      .pick(:key, :summary, start_field)
       .build
 
     now = DateTime.now
@@ -25,9 +25,9 @@ class JiraTeamMetrics::AgingWipChart
   def chart_opts
     {
       colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (DateTime.now - issue.in_progress_start) < percentiles[70]
+        if (DateTime.now - issue.send(start_field)) < percentiles[70]
           '#03a9f4'
-        elsif (DateTime.now - issue.in_progress_start) < percentiles[85]
+        elsif (DateTime.now - issue.send(start_field)) < percentiles[85]
           '#ff9800'
         else
           '#f44336'
@@ -37,6 +37,10 @@ class JiraTeamMetrics::AgingWipChart
     }
   end
 
+  def start_field
+    @params.aging_type == 'Total' ? :started_time : :in_progress_start
+  end
+
   def json_data
     {
       chartOpts: chart_opts,
@@ -44,9 +48,9 @@ class JiraTeamMetrics::AgingWipChart
     }
   end
 
-  def render_issue_tooltip(issue, now)
+  def render_issue_tooltip(issue, start_field, now)
     @issue_tooltip_template ||= load_template('_aging_wip_issue_tooltip.html.erb')
-    @issue_tooltip_template.result(IssueTooltipBinding.new(issue, now).binding)
+    @issue_tooltip_template.result(IssueTooltipBinding.new(issue, start_field, now).binding)
   end
 
   def render_percentile_tooltip(percentile)
@@ -58,8 +62,9 @@ class JiraTeamMetrics::AgingWipChart
   class IssueTooltipBinding
     include JiraTeamMetrics::HtmlHelper
 
-    def initialize(issue, now)
+    def initialize(issue, start_field, now)
       @issue = issue
+      @start_field = start_field
       @now = now
     end
 
@@ -84,7 +89,7 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def issue_tooltips(wip_issues, now)
-    wip_issues.map{ |i| render_issue_tooltip(i, now) }
+    wip_issues.map{ |i| render_issue_tooltip(i, start_field, now) }
   end
 
   def load_template(file_name)

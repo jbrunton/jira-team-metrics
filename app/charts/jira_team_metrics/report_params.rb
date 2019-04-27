@@ -5,6 +5,7 @@ class JiraTeamMetrics::ReportParams
   attr_reader :filter
   attr_reader :hierarchy_level
   attr_reader :step_interval
+  attr_reader :aging_type
   attr_reader :team
 
   def initialize(board, values)
@@ -15,6 +16,7 @@ class JiraTeamMetrics::ReportParams
     @filter = values[:filter]
     @hierarchy_level = values[:hierarchy_level] || 'Scope'
     @step_interval = values[:step_interval] || 'Daily'
+    @aging_type = values[:aging_type] || 'Total'
     @team = values[:team]
   end
 
@@ -48,6 +50,7 @@ class JiraTeamMetrics::ReportParams
         filter: @params[:filter],
         hierarchy_level: @params[:hierarchy_level],
         step_interval: @params[:step_interval],
+        aging_type: @params[:aging_type],
         team: decode_team
       })
     end
