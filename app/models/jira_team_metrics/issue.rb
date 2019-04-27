@@ -153,7 +153,7 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def duration_in_range(date_range)
-    return 0 if issue_type == 'Epic' || date_range.nil?
+    return 0 if date_range.nil?
     JiraTeamMetrics::IssueHistoryAnalyzer.new(self).time_in_category('In Progress', date_range)
   end
 
