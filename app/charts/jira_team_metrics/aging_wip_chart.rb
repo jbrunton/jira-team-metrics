@@ -7,7 +7,7 @@ class JiraTeamMetrics::AgingWipChart
   def data_table
     data_table = JiraTeamMetrics::DataTableBuilder.new
       .data(wip_issues)
-      .pick(:key, :summary, :started_time)
+      .pick(:key, :summary, :in_progress_start)
       .build
 
     now = DateTime.now
@@ -25,9 +25,9 @@ class JiraTeamMetrics::AgingWipChart
   def chart_opts
     {
       colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (DateTime.now - issue.started_time) < percentiles[70]
+        if (DateTime.now - issue.in_progress_start) < percentiles[70]
           '#03a9f4'
-        elsif (DateTime.now - issue.started_time) < percentiles[85]
+        elsif (DateTime.now - issue.in_progress_start) < percentiles[85]
           '#ff9800'
         else
           '#f44336'
@@ -96,7 +96,7 @@ class JiraTeamMetrics::AgingWipChart
     JiraTeamMetrics::MqlInterpreter.new
         .eval(@params.to_query, @board, issues)
         .rows
-        .sort_by { |issue| issue.started_time }
+        .sort_by { |issue| issue.in_progress_start }
   end
 
   def completed_issues

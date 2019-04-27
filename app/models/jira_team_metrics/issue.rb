@@ -157,6 +157,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     JiraTeamMetrics::IssueHistoryAnalyzer.new(self).time_in_category('In Progress', date_range)
   end
 
+  def in_progress_age
+    date_range = JiraTeamMetrics::DateRange.new(started_time || DateTime.now, [completed_time, DateTime.now].compact.first)
+    duration_in_range(date_range)
+  end
+
+  def in_progress_start
+    DateTime.now - in_progress_age
+  end
+
   def transition_ranges
 
   end
