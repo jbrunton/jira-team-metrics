@@ -15,7 +15,7 @@ class JiraTeamMetrics::AgingWipChart
 
     data_table.insert_column(2, 'style', issue_styles(now))
     data_table.insert_row(0, ['85th', percentiles[85], 'color: #f44336', '85th percentile'])
-    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800', '75th percentile'])
+    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800', '70th percentile'])
     data_table.insert_row(2, ['50th', percentiles[50], 'color: #03a9f4', '50th percentile'])
 
     data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(now))
