@@ -2,12 +2,14 @@ class JiraTeamMetrics::EvalContext
   attr_reader :board
   attr_reader :table
   attr_reader :row_index
+  attr_reader :execution_time
 
-  def initialize(board, table, row_index = nil, functions = nil)
+  def initialize(board, table, row_index = nil, functions = nil, execution_time = nil)
     @board = board
     @table = table
     @row_index = row_index
     @functions = functions || {}
+    @execution_time = execution_time || DateTime.now.to_datetime
   end
 
   def copy(table, row_index = nil)
@@ -15,7 +17,8 @@ class JiraTeamMetrics::EvalContext
       @board,
       table || @table,
       row_index || @row_index,
-      @functions)
+      @functions,
+      @execution_time)
   end
 
   def register_function(signature, function)
@@ -47,6 +50,7 @@ class JiraTeamMetrics::EvalContext
 
     # date functions
     JiraTeamMetrics::Fn::DateToday.register(context)
+    JiraTeamMetrics::Fn::DateNow.register(context)
     JiraTeamMetrics::Fn::DateConstructor.register(context)
     JiraTeamMetrics::Fn::DateParser.register(context)
 
@@ -57,6 +61,7 @@ class JiraTeamMetrics::EvalContext
     JiraTeamMetrics::Fn::NotNullCheck.register(context)
     JiraTeamMetrics::Fn::IssueFilter.register(context)
     JiraTeamMetrics::Fn::Coalesce.register(context)
+    JiraTeamMetrics::Fn::Age.register(context)
 
     context
   end
