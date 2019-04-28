@@ -12,7 +12,7 @@ class JiraTeamMetrics::AgingWipChart
     #
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
-      "select key, summary, now() - age('#{@params.aging_type}') from issues()",
+      "select key, summary, (now() - age('#{@params.aging_type}')) as started_time from issues()",
       @board, wip_issues)
     data_table = results.to_data_table
 

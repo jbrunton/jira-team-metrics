@@ -158,14 +158,15 @@ class JiraTeamMetrics::Issue < ApplicationRecord
   end
 
   def age(age_type, now)
+    to_date = [completed_time, now].compact.first
     case
       when age_type == 'since started'
-        (now - started_time).to_i
+        (to_date - started_time).to_f
       when age_type == 'since created'
-        (now - issue_created.to_datetime).to_i
+        (to_date - issue_created.to_datetime).to_f
       when age_type == 'in progress'
-        date_range = JiraTeamMetrics::DateRange.new(issue_created.to_datetime, [completed_time, now].compact.first)
-        duration_in_range(date_range).to_i
+        date_range = JiraTeamMetrics::DateRange.new(issue_created.to_datetime, to_date)
+        duration_in_range(date_range).to_f
       else
         raise JiraTeamMetrics::ParserError,
           "Unexpected argument for age(): %1s. Expected 'since started', 'since created', 'in progress'" % age_type
