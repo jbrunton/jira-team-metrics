@@ -9,7 +9,7 @@
           <b>Duration</b>
         </th>
         <td>
-          <%= (@now - @issue.send(@start_field.to_s)).floor %> days
+          <%= @issue.age(@age_type, @now) %> days
         </td>
       </tr>
       <tr>

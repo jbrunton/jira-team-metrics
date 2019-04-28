@@ -157,9 +157,19 @@ class JiraTeamMetrics::Issue < ApplicationRecord
     JiraTeamMetrics::IssueHistoryAnalyzer.new(self).time_in_category('In Progress', date_range)
   end
 
-  def in_progress_age
-    date_range = JiraTeamMetrics::DateRange.new(started_time || DateTime.now, [completed_time, DateTime.now].compact.first)
-    duration_in_range(date_range)
+  def age(age_type, now)
+    case
+      when age_type == 'since started'
+        (now - started_time).to_i
+      when age_type == 'since created'
+        (now - issue_created.to_datetime).to_i
+      when age_type == 'in progress'
+        date_range = JiraTeamMetrics::DateRange.new(issue_created.to_datetime, [completed_time, now].compact.first)
+        duration_in_range(date_range).to_i
+      else
+        raise JiraTeamMetrics::ParserError,
+          "Unexpected argument for age(): %1s. Expected 'since started', 'since created', 'in progress'" % age_type
+    end
   end
 
   def in_progress_start
