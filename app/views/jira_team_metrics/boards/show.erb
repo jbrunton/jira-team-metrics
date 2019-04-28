@@ -64,6 +64,12 @@
           <td>
             <span class="ui blue horizontal label">Beta</span>
             See which in progress issues are aging into higher cycle time percentiles
+            <div class="ui small borderless menu">
+              <div class="header item">Quick Links</div>
+              <%= link_to('Time In Progress', "#{reports_path(@board)}/aging_wip?aging_type=in+progress", class: 'item') %>
+              <%= link_to('Age Since Started', "#{reports_path(@board)}/aging_wip?aging_type=since+started", class: 'item') %>
+              <%= link_to('Age Since Completed', "#{reports_path(@board)}/aging_wip?aging_type=since+created", class: 'item') %>
+            </div>
           </td>
         </tr>
         <tr>
