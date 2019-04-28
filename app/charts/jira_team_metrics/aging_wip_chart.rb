@@ -7,16 +7,16 @@ class JiraTeamMetrics::AgingWipChart
   def data_table
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
-      "select key, age('#{@params.aging_type}'), key as annotation from issues()",
+      "select key, age('#{@params.aging_type}'), (key + ' ' + summary) as annotation from issues()",
       @board, wip_issues)
     data_table = results.to_data_table
 
     now = DateTime.now
 
-    data_table.add_column('style', issue_styles(now))
-    data_table.insert_row(0, ['85th', percentiles[85], '85th percentile', 'color: #f44336'])
-    data_table.insert_row(1, ['70th', percentiles[70], '75th percentile', 'color: #ff9800'])
-    data_table.insert_row(2, ['50th', percentiles[50], '50th percentile', 'color: #03a9f4'])
+    data_table.insert_column(2, 'style', issue_styles(now))
+    data_table.insert_row(0, ['85th', percentiles[85], 'color: #f44336', '85th percentile'])
+    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800', '75th percentile'])
+    data_table.insert_row(2, ['50th', percentiles[50], 'color: #03a9f4', '50th percentile'])
 
     data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(now))
 
@@ -34,10 +34,12 @@ class JiraTeamMetrics::AgingWipChart
       legend: { position: 'none' },
       vAxis: { textPosition: 'none' },
       annotations: {
+        alwaysOutside: true,
         textStyle: {
-          fontSize: 12
+          fontSize: 12,
+          color: 'black'
         }
-      }
+      },
     }
   end
 
