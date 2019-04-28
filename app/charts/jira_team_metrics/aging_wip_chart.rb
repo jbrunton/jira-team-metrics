@@ -7,7 +7,7 @@ class JiraTeamMetrics::AgingWipChart
   def data_table
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
-      "select key, age('#{@params.aging_type}'), (key + ' ' + summary) as annotation from issues()",
+      "select key, age('#{@params.aging_type}'), (key + ' - ' + summary) as annotation from issues()",
       @board, wip_issues)
     data_table = results.to_data_table
 
