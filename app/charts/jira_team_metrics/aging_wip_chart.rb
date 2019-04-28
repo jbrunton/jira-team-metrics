@@ -18,32 +18,31 @@ class JiraTeamMetrics::AgingWipChart
 
     now = DateTime.now
 
-    data_table.add_column('style', Array.new(data_table.rows.count, '#07F'))
-    data_table.insert_row(0, ['85th', percentiles[85], '85th percentile', 'color: #03a9f4; fill-opacity: 0.2'])
-    data_table.insert_row(1, ['70th', percentiles[70], '85th percentile', 'color: #ff9800; fill-opacity: 0.2'])
-    data_table.insert_row(2, ['50th', percentiles[50], '85th percentile', 'color: #f44336; fill-opacity: 0.2'])
+    data_table.add_column('style', issue_styles(now))
+    data_table.insert_row(0, ['85th', percentiles[85], '85th percentile', 'color: #f44336'])
+    data_table.insert_row(1, ['70th', percentiles[70], '85th percentile', 'color: #ff9800'])
+    data_table.insert_row(2, ['50th', percentiles[50], '85th percentile', 'color: #03a9f4'])
 
-    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
+    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(now))
+
+    data_table.insert_row(3, [nil, nil, nil, nil, nil])
 
     data_table
   end
 
   def chart_opts
     {
-      colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if issue.age(@params.aging_type, DateTime.now) < percentiles[70]
-          '#03a9f4'
-        elsif issue.age(@params.aging_type, DateTime.now) < percentiles[85]
-          '#ff9800'
-        else
-          '#f44336'
-        end
-      end,
       height: (wip_issues.count + 3) * 41 + 50,
-      bar: {groupWidth: "85%"},
+      chartArea: { width: '85%' },
+      bar: { groupWidth: '80%' },
       tooltip: { isHtml: true },
       legend: { position: 'none' },
-      vAxis: { textPosition: 'none' }
+      vAxis: { textPosition: 'none' },
+      annotations: {
+        textStyle: {
+          fontSize: 12
+        }
+      }
     }
   end
 
@@ -95,8 +94,20 @@ class JiraTeamMetrics::AgingWipChart
     [85, 70, 50].map{ |p| render_percentile_tooltip(p) }
   end
 
-  def issue_tooltips(wip_issues, now)
+  def issue_tooltips(now)
     wip_issues.map{ |i| render_issue_tooltip(i, now) }
+  end
+
+  def issue_styles(now)
+    wip_issues.map do |issue|
+      if issue.age(@params.aging_type, now) < percentiles[70]
+        '#03a9f4'
+      elsif issue.age(@params.aging_type, now) < percentiles[85]
+        '#ff9800'
+      else
+        '#f44336'
+      end
+    end
   end
 
   def load_template(file_name)
@@ -104,11 +115,13 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def wip_issues
-    issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
-    JiraTeamMetrics::MqlInterpreter.new
-        .eval(@params.to_query, @board, issues)
-        .rows
-        .sort_by { |issue| -issue.age(@params.aging_type, DateTime.now) }
+    @wip_issues ||= begin
+      issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
+      JiraTeamMetrics::MqlInterpreter.new
+          .eval(@params.to_query, @board, issues)
+          .rows
+          .sort_by { |issue| -issue.age(@params.aging_type, DateTime.now) }
+    end
   end
 
   def completed_issues
