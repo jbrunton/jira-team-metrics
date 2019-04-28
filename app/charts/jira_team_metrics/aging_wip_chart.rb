@@ -18,10 +18,10 @@ class JiraTeamMetrics::AgingWipChart
 
     now = DateTime.now
 
-    #data_table.add_column('now', Array.new(data_table.rows.count, now))
-    data_table.insert_row(0, ['85th', percentiles[85]])
-    data_table.insert_row(1, ['70th', percentiles[70]])
-    data_table.insert_row(2, ['50th', percentiles[50]])
+    data_table.add_column('style', Array.new(data_table.rows.count, '#07F'))
+    data_table.insert_row(0, ['85th', percentiles[85], 'color: #03a9f4; fill-opacity: 0.2'])
+    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800; fill-opacity: 0.2'])
+    data_table.insert_row(2, ['50th', percentiles[50], 'color: #f44336; fill-opacity: 0.2'])
 
     #data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
 
@@ -47,7 +47,7 @@ class JiraTeamMetrics::AgingWipChart
     {
       chartOpts: chart_opts,
       #data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
-      data: data_table.to_json('age' => { type: 'number' })
+      data: data_table.to_json('age' => { type: 'number' }, 'style' => { role: 'style' })
     }
   end
 
