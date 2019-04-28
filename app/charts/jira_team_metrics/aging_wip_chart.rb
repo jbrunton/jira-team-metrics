@@ -5,11 +5,6 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def data_table
-    # data_table = JiraTeamMetrics::DataTableBuilder.new
-    #   .data(wip_issues)
-    #   .pick(:key, :summary, start_field)
-    #   .build
-    #
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
       "select key, age('#{@params.aging_type}'), key as annotation from issues()",
@@ -20,8 +15,8 @@ class JiraTeamMetrics::AgingWipChart
 
     data_table.add_column('style', issue_styles(now))
     data_table.insert_row(0, ['85th', percentiles[85], '85th percentile', 'color: #f44336'])
-    data_table.insert_row(1, ['70th', percentiles[70], '85th percentile', 'color: #ff9800'])
-    data_table.insert_row(2, ['50th', percentiles[50], '85th percentile', 'color: #03a9f4'])
+    data_table.insert_row(1, ['70th', percentiles[70], '75th percentile', 'color: #ff9800'])
+    data_table.insert_row(2, ['50th', percentiles[50], '50th percentile', 'color: #03a9f4'])
 
     data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(now))
 
@@ -32,8 +27,8 @@ class JiraTeamMetrics::AgingWipChart
 
   def chart_opts
     {
-      height: (wip_issues.count + 3) * 41 + 50,
-      chartArea: { width: '85%' },
+      height: (wip_issues.count + 4) * 24,
+      chartArea: { width: '100%', height: '100%' },
       bar: { groupWidth: '80%' },
       tooltip: { isHtml: true },
       legend: { position: 'none' },
@@ -49,7 +44,6 @@ class JiraTeamMetrics::AgingWipChart
   def json_data
     {
       chartOpts: chart_opts,
-      #data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
       data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'age' => { type: 'number' }, 'annotation' => { role: 'annotation' }, 'style' => { role: 'style' })
     }
   end
