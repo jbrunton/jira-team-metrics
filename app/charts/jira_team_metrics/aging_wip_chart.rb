@@ -12,18 +12,18 @@ class JiraTeamMetrics::AgingWipChart
     #
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
-      "select key, summary, (now() - age('#{@params.aging_type}')) as started_time from issues()",
+      "select key, age('#{@params.aging_type}') from issues()",
       @board, wip_issues)
     data_table = results.to_data_table
 
     now = DateTime.now
 
-    data_table.add_column('now', Array.new(data_table.rows.count, now))
-    data_table.insert_row(0, ['Percentiles', '85th', now - percentiles[85], now])
-    data_table.insert_row(1, ['Percentiles', '70th', now - percentiles[70], now])
-    data_table.insert_row(2, ['Percentiles', '50th', now - percentiles[50], now])
+    #data_table.add_column('now', Array.new(data_table.rows.count, now))
+    data_table.insert_row(0, ['85th', percentiles[85]])
+    data_table.insert_row(1, ['70th', percentiles[70]])
+    data_table.insert_row(2, ['50th', percentiles[50]])
 
-    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
+    #data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
 
     data_table
   end
@@ -46,7 +46,8 @@ class JiraTeamMetrics::AgingWipChart
   def json_data
     {
       chartOpts: chart_opts,
-      data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
+      #data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
+      data: data_table.to_json('age' => { type: 'number' })
     }
   end
 
