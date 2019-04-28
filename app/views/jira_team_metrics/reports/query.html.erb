@@ -105,10 +105,10 @@
     },
     computed: {
       url: function() {
-        return `<%= board_api_path(@board) %>/query.json?query=${encodeURI(this.query)}`;
+        return `<%= board_api_path(@board) %>/query.json?query=${encodeURIComponent(this.query)}`;
       },
       downloadUrl: function() {
-        return `<%= board_api_path(@board) %>/query.csv?query=${encodeURI(this.query)}`;
+        return `<%= board_api_path(@board) %>/query.csv?query=${encodeURIComponent(this.query)}`;
       }
     }
   })

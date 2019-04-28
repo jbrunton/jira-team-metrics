@@ -12,18 +12,18 @@ class JiraTeamMetrics::AgingWipChart
     #
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     results = interpreter.eval(
-      "select key, age('#{@params.aging_type}') from issues()",
+      "select key, age('#{@params.aging_type}'), key as annotation from issues()",
       @board, wip_issues)
     data_table = results.to_data_table
 
     now = DateTime.now
 
     data_table.add_column('style', Array.new(data_table.rows.count, '#07F'))
-    data_table.insert_row(0, ['85th', percentiles[85], 'color: #03a9f4; fill-opacity: 0.2'])
-    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800; fill-opacity: 0.2'])
-    data_table.insert_row(2, ['50th', percentiles[50], 'color: #f44336; fill-opacity: 0.2'])
+    data_table.insert_row(0, ['85th', percentiles[85], '85th percentile', 'color: #03a9f4; fill-opacity: 0.2'])
+    data_table.insert_row(1, ['70th', percentiles[70], '85th percentile', 'color: #ff9800; fill-opacity: 0.2'])
+    data_table.insert_row(2, ['50th', percentiles[50], '85th percentile', 'color: #f44336; fill-opacity: 0.2'])
 
-    #data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
+    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
 
     data_table
   end
@@ -39,7 +39,11 @@ class JiraTeamMetrics::AgingWipChart
           '#f44336'
         end
       end,
-      height: (wip_issues.count + 3) * 41 + 50
+      height: (wip_issues.count + 3) * 41 + 50,
+      bar: {groupWidth: "85%"},
+      tooltip: { isHtml: true },
+      legend: { position: 'none' },
+      vAxis: { textPosition: 'none' }
     }
   end
 
@@ -47,7 +51,7 @@ class JiraTeamMetrics::AgingWipChart
     {
       chartOpts: chart_opts,
       #data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
-      data: data_table.to_json('age' => { type: 'number' }, 'style' => { role: 'style' })
+      data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'age' => { type: 'number' }, 'annotation' => { role: 'annotation' }, 'style' => { role: 'style' })
     }
   end
 
