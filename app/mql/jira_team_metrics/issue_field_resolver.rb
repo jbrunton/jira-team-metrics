@@ -60,11 +60,10 @@ private
     'hierarchyLevel' => 'hierarchy_level',
     'startedTime' => 'started_time',
     'completedTime' => 'completed_time',
+    'createdTime' => 'issue_created',
     'labels' => 'labels',
     'resolution' => 'resolution',
     'Global Rank' => 'global_rank',
-    'startedTime' => 'started_time',
-    'completedTime' => 'completed_time',
     'cycleTime' => 'cycle_time'
   }
 end
