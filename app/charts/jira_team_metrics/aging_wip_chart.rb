@@ -5,10 +5,16 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def data_table
-    data_table = JiraTeamMetrics::DataTableBuilder.new
-      .data(wip_issues)
-      .pick(:key, :summary, start_field)
-      .build
+    # data_table = JiraTeamMetrics::DataTableBuilder.new
+    #   .data(wip_issues)
+    #   .pick(:key, :summary, start_field)
+    #   .build
+    #
+    interpreter = JiraTeamMetrics::MqlInterpreter.new
+    results = interpreter.eval(
+      "select key, summary, now() - age('#{@params.aging_type}') from scope('In Progress')",
+      @board, @board.issues)
+    data_table = results.to_data_table
 
     now = DateTime.now
 

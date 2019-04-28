@@ -112,7 +112,7 @@
         <div class="four wide field">
           <label for="aging_type">Aging Type</label>
           <select name="aging_type" class="ui dropdown" id="aging_type">
-            <% ['Total', 'In Progress'].each do |aging_type| %>
+            <% ['since started', 'since created', 'in progress'].each do |aging_type| %>
               <option value="<%= aging_type %>" <%= 'selected' if @report_params.aging_type == aging_type %>>
                 <%= aging_type %>
               </option>
