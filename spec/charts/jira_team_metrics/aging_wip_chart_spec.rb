@@ -20,22 +20,23 @@ describe JiraTeamMetrics::ThroughputChart do
         create(:issue, board: board, started_time: date - (k+2), completed_time: date - 1)
       end
 
-      wip1 = create(:issue, board: board, status: 'In Progress', started_time: date - 4)
-      wip2 = create(:issue, board: board, status: 'In Progress', started_time: date - 2)
-      wip3 = create(:issue, board: board, status: 'In Progress', started_time: date - 3)
+      wip1 = create(:issue, board: board, status: 'In Progress', started_time: date - 19)
+      wip2 = create(:issue, board: board, status: 'In Progress', started_time: date - 3)
+      wip3 = create(:issue, board: board, status: 'In Progress', started_time: date - 16)
 
       chart = JiraTeamMetrics::AgingWipChart.new(board, report_params)
       data_table = chart.data_table
 
-      expect(data_table.columns).to eq(['key', 'summary', 'tooltip', 'started_time', 'now'])
+      expect(data_table.columns).to eq(['key', 'age', 'tooltip', 'style', 'annotation'])
       expect(data_table.rows).to eq([
         # completed ages from 1..21, 50th = 11, 75th = 15, 85th = 18
-        ['Percentiles', '85th', chart.render_percentile_tooltip(85), date - 18.0, date],
-        ['Percentiles', '70th', chart.render_percentile_tooltip(70), date - 15.0, date],
-        ['Percentiles', '50th', chart.render_percentile_tooltip(50), date - 11.0, date],
-        [wip1.key, wip1.summary, chart.render_issue_tooltip(wip1, date), wip1.started_time, date],
-        [wip3.key, wip3.summary, chart.render_issue_tooltip(wip3, date), wip3.started_time, date],
-        [wip2.key, wip2.summary, chart.render_issue_tooltip(wip2, date), wip2.started_time, date]
+        ['85th', 18.0, chart.render_percentile_tooltip(85), 'color: #f44336', '85th percentile'],
+        ['70th', 15.0, chart.render_percentile_tooltip(70), 'color: #ff9800', '70th percentile'],
+        ['50th', 11.0, chart.render_percentile_tooltip(50), 'color: #03a9f4', '50th percentile'],
+        [nil, nil, nil, nil, nil],
+        [wip1.key, 19.0, chart.render_issue_tooltip(wip1, date), '#f44336', "#{wip1.key} - #{wip1.summary}"],
+        [wip3.key, 16.0, chart.render_issue_tooltip(wip3, date), '#ff9800', "#{wip3.key} - #{wip3.summary}"],
+        [wip2.key, 3.0, chart.render_issue_tooltip(wip2, date), '#03a9f4', "#{wip2.key} - #{wip2.summary}"]
       ])
     end
   end
