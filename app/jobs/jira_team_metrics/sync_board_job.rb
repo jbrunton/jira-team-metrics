@@ -35,7 +35,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
         JiraTeamMetrics::ProjectReportBuilder.new(project).build
       rescue StandardError => e
         logger.error [
-          "Error building reports for #{project.key}:",
+          "Error building reports for project #{project.key} for board jira_id=#{board.jira_id}:",
           e.message,
           e.backtrace
         ].join("\n")
