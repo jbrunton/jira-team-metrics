@@ -96,6 +96,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
     end
   end
 
+  def to_s
+    "Board(name=\"#{name}\", jira_id=#{jira_id})"
+  end
+
 private
   def build_sync_subquery(months)
     if months.nil?
