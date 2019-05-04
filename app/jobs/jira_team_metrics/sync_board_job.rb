@@ -36,7 +36,13 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def build_reports(board)
-    Rails.logger.info "Building reports for #{board.to_s}."
+    if board.training_projects.any?
+      Rails.logger.info "Training data available for #{board.to_s}, building reports."
+    else
+      Rails.logger.info "No training data available for #{board.to_s}, skipping reports."
+      return
+    end
+
     board.projects.each_with_index do |project, index|
       progress = (100.0 * (index + 1) / board.projects.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
@@ -54,6 +60,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def sync_issues(board, credentials, months)
+    Rails.logger.info "Syncing issues for #{board.to_s}."
     issue_sync_service = JiraTeamMetrics::IssueSyncService.new(board, credentials, @notifier)
     issue_linker_service = JiraTeamMetrics::IssueLinkerService.new(board, @notifier)
 

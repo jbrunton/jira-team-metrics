@@ -10,13 +10,8 @@ class JiraTeamMetrics::ReportBuilder
   end
 
   def build
-    if board.training_projects.any?
-      Rails.logger.info "Training data available for #{board.name}, building reports."
-      fragment_keys.each do |fragment_key|
-        build_fragment(fragment_key)
-      end
-    else
-      Rails.logger.info "No training data available for #{board.name}, skipping reports."
+    fragment_keys.each do |fragment_key|
+      build_fragment(fragment_key)
     end
   end
 
