@@ -63,6 +63,8 @@ class JiraTeamMetrics::EvalContext
     JiraTeamMetrics::Fn::Coalesce.register(context)
     JiraTeamMetrics::Fn::Age.register(context)
 
+    JiraTeamMetrics::Fn::EpicScope.register(context)
+
     context
   end
 end
