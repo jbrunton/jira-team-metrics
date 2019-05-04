@@ -80,7 +80,7 @@ private
   end
 
   def issue_request(uri, request)
-    Rails.logger.info "Issuing request: #{uri.to_s}"
+    Rails.logger.debug "Issuing request: #{uri.to_s}"
     Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) do |http|
       http.request(request)
     end

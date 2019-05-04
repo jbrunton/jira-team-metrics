@@ -3,8 +3,11 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
 
   def perform(jira_id, domain, credentials, months, sync_history_id = nil)
     begin
+      Rails.logger.info "Preparing sync for board jira_id=#{jira_id}."
       board = find_target_board(jira_id, domain)
+      Rails.logger.info "Found board #{board}."
       JiraTeamMetrics::SyncHistory.log(board, sync_history_id) do
+        Rails.logger.info "Starting sync for #{board}."
         @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 
         update_config(domain, board)
@@ -12,6 +15,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
         create_filters(board, credentials)
         build_reports(board)
         activate(board)
+        Rails.logger.info "Completed sync for #{board}."
       end
       @notifier.notify_complete
     ensure
@@ -20,22 +24,34 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def update_config(domain, board)
+    Rails.logger.info "Checking for config for #{board}."
     board_details = domain.config.boards.find{ |it| it.board_id.to_s == board.jira_id }
-    unless board_details.nil?
+    if board_details.nil?
+      Rails.logger.info "No config found for #{board}."
+    else
+      Rails.logger.info "Config found for #{board}."
       JiraTeamMetrics::ConfigFileService.load_board_config(board, board_details.config_file)
       board.save
     end
   end
 
   def build_reports(board)
+    if board.training_projects.any?
+      Rails.logger.info "Training data available for #{board}, building reports."
+    else
+      Rails.logger.info "No training data available for #{board}, skipping reports."
+      return
+    end
+
     board.projects.each_with_index do |project, index|
       progress = (100.0 * (index + 1) / board.projects.count).to_i
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
       begin
+        Rails.logger.info "Building reports for #{project.key}, for #{board}"
         JiraTeamMetrics::ProjectReportBuilder.new(project).build
       rescue StandardError => e
         logger.error [
-          "Error building reports for #{project.key}:",
+          "Error building reports for #{project.key}, for #{board}:",
           e.message,
           e.backtrace
         ].join("\n")
@@ -44,6 +60,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
   end
 
   def sync_issues(board, credentials, months)
+    Rails.logger.info "Syncing issues for #{board}."
     issue_sync_service = JiraTeamMetrics::IssueSyncService.new(board, credentials, @notifier)
     issue_linker_service = JiraTeamMetrics::IssueLinkerService.new(board, @notifier)
 

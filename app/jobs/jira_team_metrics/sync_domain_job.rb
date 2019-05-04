@@ -3,17 +3,25 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
 
   def perform(credentials)
     begin
+      Rails.logger.info "Preparing sync for domain."
       active_domain = JiraTeamMetrics::Domain.get_active_instance
       domain = copy_domain(active_domain)
 
       JiraTeamMetrics::SyncHistory.log(domain) do |sync_history_id|
+        Rails.logger.info "Starting sync for domain."
         @notifier = JiraTeamMetrics::StatusNotifier.new(active_domain, "syncing #{domain.config.name}")
         boards, statuses, fields = fetch_data(domain, credentials)
         update_cache(domain, boards, statuses, fields)
 
         domain.config.boards.each do |board_details|
+          Rails.logger.info "Configuring board with jira_id=#{board_details.board_id}."
           board = domain.boards.find_by(jira_id: board_details.board_id)
-          JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync.months, sync_history_id)
+          if board.nil?
+            Rails.logger.warn "Could not find board with jira_id=#{board_details.board_id}."
+          else
+            JiraTeamMetrics::SyncBoardJob.perform_now(board.jira_id, domain, credentials, board.config.sync.months, sync_history_id)
+          end
+          Rails.logger.info "Completed sync for domain."
         end
         activate(domain)
       end
