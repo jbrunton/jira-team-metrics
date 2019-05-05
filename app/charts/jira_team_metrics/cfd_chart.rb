@@ -15,11 +15,11 @@ class JiraTeamMetrics::CfdChart
       'Date', 'Total', 'Tooltip', 'Done', 'In Progress', 'To Do'
     ], [])
 
-    data_table.add_row ['Date(2019, 1, 1)', 10, nil, 1, 3, 6]
-    data_table.add_row ['Date(2019, 1, 2)', 10, nil, 1, 4, 5]
-    data_table.add_row ['Date(2019, 1, 3)', 10, nil, 3, 3, 4]
-    data_table.add_row ['Date(2019, 1, 4)', 10, nil, 4, 4, 2]
-    data_table.add_row ['Date(2019, 1, 5)', 10, nil, 5, 4, 1]
+    data_table.add_row ['Date(2019, 1, 1)', 0, '6', 1, 3, 3]
+    data_table.add_row ['Date(2019, 1, 2)', 0, '8', 1, 4, 3]
+    data_table.add_row ['Date(2019, 1, 3)', 0, '9', 3, 3, 3]
+    data_table.add_row ['Date(2019, 1, 4)', 0, '10', 4, 4, 2]
+    data_table.add_row ['Date(2019, 1, 5)', 0, '10', 5, 4, 1]
 
     data_table
   end
@@ -31,7 +31,40 @@ class JiraTeamMetrics::CfdChart
         height: '80%',
         top: '5%'
       },
-      height: 500
+      height: 500,
+      hAxis: {titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0, textPosition: 'none'},
+      isStacked: true,
+      lineWidth: 1,
+      areaOpacity: 0.4,
+      legend: { position: 'top' },
+      series: {
+        0 => { color: 'grey' },
+        1 => { color: 'blue' },
+        2 => { color: 'green' },
+        3 => { color: 'red' },
+        4 => { color: 'orange' }
+      },
+      crosshair: { trigger: 'focus', orientation: 'vertical', color: 'grey' },
+      focusTarget: 'category',
+      annotations: {
+        textStyle: {
+          color: 'black'
+        },
+        domain: {
+          style: 'line',
+          stem: {
+            color: 'red',
+          }
+        },
+        datum: {
+          style: 'point',
+          stem: {
+            color: 'black',
+            length: '12'
+          }
+        }
+      }
     }
   end
 
