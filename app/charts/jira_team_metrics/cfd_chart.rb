@@ -1,25 +1,46 @@
 class JiraTeamMetrics::CfdChart
   include JiraTeamMetrics::ChartsHelper
 
+  CfdRow = Struct.new(:to_do, :in_progress, :done, :predicted) do
+    include JiraTeamMetrics::ChartsHelper
+
+    def to_array(date)
+      date_string = date_as_string(date)
+      total = (done + in_progress + to_do + predicted)
+      [date_string,
+        0, # total displays as zero
+        total, # total tooltip
+        done,
+        in_progress,
+        to_do]
+    end
+  end
+
   def initialize(board, report_params)
     @board = board
     @params = report_params
   end
 
   def data_table
-    #interpreter = JiraTeamMetrics::MqlInterpreter.new
-    #results = interpreter.eval(@params.query, @board, @board.issues)
-    #results.to_data_table
+    interpreter = JiraTeamMetrics::MqlInterpreter.new
+    @scope = interpreter.eval(@params.query, @board, @board.issues).rows
 
     data_table = JiraTeamMetrics::DataTable.new([
       'Date', 'Total', 'Tooltip', 'Done', 'In Progress', 'To Do'
     ], [])
 
-    data_table.add_row ['Date(2019, 1, 1)', 0, '6', 1, 3, 3]
-    data_table.add_row ['Date(2019, 1, 2)', 0, '8', 1, 4, 3]
-    data_table.add_row ['Date(2019, 1, 3)', 0, '9', 3, 3, 3]
-    data_table.add_row ['Date(2019, 1, 4)', 0, '10', 4, 4, 2]
-    data_table.add_row ['Date(2019, 1, 5)', 0, '10', 5, 4, 1]
+    #@scope = @board.issues
+
+    dates = @params.date_range.to_a
+    dates.each do |date|
+      data_table.add_row cfd_row_for(date).to_array(date)
+    end
+
+    # data_table.add_row ['Date(2019, 1, 1)', 0, '6', 1, 3, 3]
+    # data_table.add_row ['Date(2019, 1, 2)', 0, '8', 1, 4, 3]
+    # data_table.add_row ['Date(2019, 1, 3)', 0, '9', 3, 3, 3]
+    # data_table.add_row ['Date(2019, 1, 4)', 0, '10', 4, 4, 2]
+    # data_table.add_row ['Date(2019, 1, 5)', 0, '10', 5, 4, 1]
 
     data_table
   end
@@ -84,5 +105,26 @@ class JiraTeamMetrics::CfdChart
       'In Progress',
       'To Do'
     ]
+  end
+
+  private
+
+  def cfd_row_for(date)
+    row = CfdRow.new(0, 0, 0, 0)
+
+    @scope.each do |issue|
+      case issue.status_category_on(date)
+        when 'To Do'
+          row.to_do += 1
+        when 'In Progress'
+          row.in_progress += 1
+        when 'Done'
+          row.done += 1
+        when 'Predicted'
+          row.predicted += 1
+      end
+    end
+
+    row
   end
 end
