@@ -19,7 +19,7 @@ describe JiraTeamMetrics::CfdBuilder do
     expect(data_table.columns).to eq(['Date', 'Total', 'Tooltip', 'Done', 'In Progress', 'To Do'])
     expect(data_table.rows).to eq([
       ['Date(2019, 0, 1, 0, 0)', 0, 1, 0, 0, 1],
-      ['Date(2019, 0, 2, 0, 0)', 0, 1, 0, 1, 0],
+      ['Date(2019, 0, 2, 0, 0)', 0, 3, 0, 2, 1],
       ['Date(2019, 0, 3, 0, 0)', 0, 3, 1, 2, 0],
       ['Date(2019, 0, 4, 0, 0)', 0, 3, 2, 1, 0]
     ])
