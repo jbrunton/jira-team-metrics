@@ -19,15 +19,7 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
   end
 
   def cfd
-    if @report_params.query.blank?
-      render status: :bad_request, json: {
-        error: 'runtime_error',
-        message: 'Runtime Error',
-        details: "Please filter by a more specific query, e.g. \"epic = 'ISSUE-101'\""
-      }
-    else
-      render json: chart_data_for(:cfd)
-    end
+    render json: chart_data_for(:cfd)
   end
 
   def progress_cfd
