@@ -21,26 +21,41 @@ class JiraTeamMetrics::CfdChart
     @params = report_params
   end
 
+  def date_range
+    @params.date_range
+  end
+
   def data_table
     interpreter = JiraTeamMetrics::MqlInterpreter.new
     @scope = interpreter.eval(@params.query, @board, @board.issues).rows
+      .select { |issue| issue.is_scope? }
 
     data_table = JiraTeamMetrics::DataTable.new([
       'Date', 'Total', 'Tooltip', 'Done', 'In Progress', 'To Do'
     ], [])
 
-    #@scope = @board.issues
+    dates = date_range.to_a
 
-    dates = @params.date_range.to_a
     dates.each do |date|
-      data_table.add_row cfd_row_for(date).to_array(date)
+      data_table.add_row [date_as_string(date), 0, 0, 0, 0, 0]
     end
 
-    # data_table.add_row ['Date(2019, 1, 1)', 0, '6', 1, 3, 3]
-    # data_table.add_row ['Date(2019, 1, 2)', 0, '8', 1, 4, 3]
-    # data_table.add_row ['Date(2019, 1, 3)', 0, '9', 3, 3, 3]
-    # data_table.add_row ['Date(2019, 1, 4)', 0, '10', 4, 4, 2]
-    # data_table.add_row ['Date(2019, 1, 5)', 0, '10', 5, 4, 1]
+    @scope.each do |issue|
+      completed_time = issue.completed_time || date_range.end_date + 1
+      started_time = issue.started_time || completed_time
+      created_time = issue.issue_created
+
+      dates.each_with_index do |date, index|
+        if created_time <= date && date < started_time
+          data_table.rows[index][5] += 1
+        elsif started_time <= date && date < completed_time
+          data_table.rows[index][4] += 1
+        elsif completed_time <= date
+          data_table.rows[index][3] += 1
+        end
+        data_table.rows[index][2] += 1 unless created_time > date
+      end
+    end
 
     data_table
   end
