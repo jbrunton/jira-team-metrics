@@ -39,10 +39,12 @@ JiraTeamMetrics::Engine.routes.draw do
   end
   get '/reports/boards/:board_id/scatterplot', to: 'reports#scatterplot'
   get '/reports/boards/:board_id/aging_wip', to: 'reports#aging_wip'
+  get '/reports/boards/:board_id/cfd', to: 'reports#cfd'
 
   get '/api/boards/:board_id/query', to: 'api#query'
   get '/api/boards/:board_id/scatterplot.json', to: 'api#scatterplot'
   get '/api/boards/:board_id/aging_wip.json', to: 'api#aging_wip'
+  get '/api/boards/:board_id/cfd.json', to: 'api#cfd'
   get '/api/boards/:board_id/throughput.json', to: 'api#throughput'
   get '/api/boards/:board_id/throughput/:team.json', to: 'api#throughput'
   get '/api/boards/:board_id/progress_cfd/:issue_key.json', to: 'api#progress_cfd'

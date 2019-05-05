@@ -101,10 +101,16 @@ Chart.prototype.draw = function(jsonData) {
   this.loading(false);
 }
 
+Chart.prototype.error = function(response) {
+  this.loading(false);
+  var $container = this._findContainer();
+  $container.html(render('error', { message: response.responseJSON.message, details: response.responseJSON.details }));
+}
+
 Chart.prototype.refresh = function() {
   this.loading(true);
   var url = buildComponentUrl(this._url);
-  $.get(url, this.draw);
+  $.get(url, this.draw).fail(this.error);
 }
 
 Chart.prototype.loading = function(loading) {

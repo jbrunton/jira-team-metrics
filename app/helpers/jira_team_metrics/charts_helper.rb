@@ -5,7 +5,7 @@ module JiraTeamMetrics::ChartsHelper
     elsif date.class == Date
       "Date(#{date.year}, #{date.month - 1}, #{date.day})"
     else
-      nil
+      date
     end
   end
 end

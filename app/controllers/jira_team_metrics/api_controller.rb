@@ -18,6 +18,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart_data_for(:throughput)
   end
 
+  def cfd
+    render json: chart_data_for(:cfd)
+  end
+
   def progress_cfd
     @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
     if @report_params.team
