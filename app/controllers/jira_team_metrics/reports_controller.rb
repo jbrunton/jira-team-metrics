@@ -47,6 +47,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   def aging_wip
   end
 
+  def cfd
+  end
+
   def query
     @query = @report_params.query || @default_query
   end

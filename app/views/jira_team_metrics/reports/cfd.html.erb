@@ -1,0 +1,19 @@
+<% breadcrumb :report, @board, :cfd, 'CFD' %>
+<% content_for :title, "CFD - #{@board.name}" %>
+
+<% chart_id = generate_id %>
+
+<h3>CFD</h3>
+
+<%= render partial: 'partials/search_form' %>
+
+<%= render partial: 'partials/chart', locals: {
+    chart_id: chart_id,
+    chart_type: 'AreaChart',
+    url: "#{board_api_path(@board)}/cfd.json"
+} %>
+
+<div style="margin-top: 20px;">
+  <div id="spinner"></div>
+  <div id="selected-content"></div>
+</div>
