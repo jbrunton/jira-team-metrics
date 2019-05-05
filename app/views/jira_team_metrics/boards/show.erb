@@ -93,7 +93,13 @@
           </td>
           <td>
             <span class="ui blue horizontal label">Beta</span>
-            Cumulative flow diagram for the specified scope
+            Cumulative flow diagrams
+
+            <div class="ui small borderless menu">
+              <div class="header item">Quick Links</div>
+              <%= link_to('Issues CFD', @issues_cfd_ql, class: 'item') %>
+              <%= link_to('Epics CFD', @epics_cfd_ql, class: 'item') %>
+            </div>
           </td>
         </tr>
       </tbody>

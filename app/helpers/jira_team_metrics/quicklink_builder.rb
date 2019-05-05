@@ -18,7 +18,9 @@ class JiraTeamMetrics::QuicklinkBuilder
       when 'throughput'
         set_throughput_defaults(today)
       when 'scatterplot'
-        set_scatterplot_defaults(today)
+        set_defaults_with_hierarchy_level(today)
+      when 'cfd'
+        set_defaults_with_hierarchy_level(today)
       else
         raise "Unexpected report_name: #{@report_name}"
     end
@@ -87,7 +89,7 @@ private
     @step_interval = 'Monthly'
   end
 
-  def set_scatterplot_defaults(today)
+  def set_defaults_with_hierarchy_level(today)
     @to_date = today
     if @hierarchy_level == 'Scope'
       @from_date = @to_date - 30
