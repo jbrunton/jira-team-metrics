@@ -67,7 +67,10 @@ private
       hierarchy_level: @hierarchy_level,
     }
     opts.merge!(step_interval: @step_interval) unless @step_interval.nil?
-    opts.merge!(query: build_query(board)) unless @query.nil?
+
+    query = build_query(board)
+    opts.merge!(query: query) unless query.blank?
+
     opts
   end
 
