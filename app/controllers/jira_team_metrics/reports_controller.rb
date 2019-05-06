@@ -30,7 +30,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def project_histories
     @project = @board.issues.find_by(key: params[:issue_key])
-    @histories = JiraTeamMetrics::SyncHistory.where(jira_board_id: @board.jira_id).order(created_at: :desc)
+    @histories = JiraTeamMetrics::SyncHistory
+      .where(jira_board_id: @board.jira_id)
+      .order(created_at: :desc)
   end
 
   def epics

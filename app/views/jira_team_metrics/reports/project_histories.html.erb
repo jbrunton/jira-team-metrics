@@ -9,12 +9,16 @@
       <th></th>
     </tr>
   </thead>
-<% @histories.each do |history| %>
+<% @histories.each_with_index do |history, index| %>
   <tbody>
     <tr>
       <td><%= pretty_print_time(history.updated_at) %></td>
       <td><%= history.issues_count %></td>
-      <td><%= link_to 'Report', "#{project_report_path(@project)}?history_id=#{history.id}" %></td>
+      <% if index == 0 %>
+        <td><%= link_to 'Report', project_report_path(@project) %></td>
+      <% else %>
+        <td><%= link_to 'Report', "#{project_report_path(@project)}?history_id=#{history.id}" %></td>
+      <% end  %>
     </tr>
   </tbody>
 <% end %>
