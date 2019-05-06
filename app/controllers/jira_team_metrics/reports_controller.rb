@@ -89,14 +89,19 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   helper_method :epic_cfd_data
   helper_method :team_dashboard_data
   helper_method :team_dashboard_data_for
+  helper_method :team_dashboard_timestamp
   helper_method :project_report
 
   def project_cfd_data(cfd_type)
-    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "cfd:#{cfd_type}")
+    JiraTeamMetrics::ReportFragment.fetch_contents_for(report_key, "cfd:#{cfd_type}", params[:history_id])
   end
 
   def epic_cfd_data
     JiraTeamMetrics::ScopeCfdBuilder.new(@epic).build
+  end
+
+  def team_dashboard_timestamp
+    JiraTeamMetrics::ReportFragment.fetch_for(report_key_for(@project), "team_dashboard", params[:history_id]).updated_at
   end
 
   def team_dashboard_data
@@ -104,7 +109,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def team_dashboard_data_for(project)
-    JiraTeamMetrics::ReportFragment.fetch_contents(project.board, report_key_for(project), "team_dashboard")
+    JiraTeamMetrics::ReportFragment.fetch_contents_for(report_key_for(project), "team_dashboard", params[:history_id])
   end
 
   def report_key
