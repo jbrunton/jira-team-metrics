@@ -18,7 +18,7 @@ class JiraTeamMetrics::ReportBuilder
   end
 
   def build_fragment(fragment_key)
-    fragment = board.report_fragments.find_or_create_by(sync_history_id: sync_history_id, report_key: report_key, fragment_key: fragment_key)
+    fragment = JiraTeamMetrics::ReportFragment.create(sync_history_id: sync_history_id, report_key: report_key, fragment_key: fragment_key)
     fragment.contents = fragment_data_for(fragment_key)
     fragment.save
   end
