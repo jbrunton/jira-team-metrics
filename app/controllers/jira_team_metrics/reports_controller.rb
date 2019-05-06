@@ -30,9 +30,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def project_histories
     @project = @board.issues.find_by(key: params[:issue_key])
-    @histories = JiraTeamMetrics::SyncHistory
-      .where(jira_board_id: @board.jira_id)
-      .order(created_at: :desc)
+    @histories = JiraTeamMetrics::ReportFragment.includes(:sync_history)
+      .fragment_histories(@board.jira_id, report_key, 'team_dashboard')
+      .map { |fragment| fragment.sync_history }
   end
 
   def epics
