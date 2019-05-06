@@ -5,11 +5,8 @@ class JiraTeamMetrics::CfdChart
   end
 
   def data_table
-    interpreter = JiraTeamMetrics::MqlInterpreter.new
-    scope = interpreter.eval(@params.query, @board, @board.issues).rows
-      .select { |issue| issue.is_scope? }
-
-    JiraTeamMetrics::CfdBuilder.new(@params.date_range, scope)
+    issues = JiraTeamMetrics::MqlInterpreter.new.eval(@params.to_query, @board, @board.issues).rows
+    JiraTeamMetrics::CfdBuilder.new(@params.date_range, issues)
       .build
       .data_table
   end

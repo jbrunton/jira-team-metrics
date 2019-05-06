@@ -10,6 +10,8 @@ class JiraTeamMetrics::BoardsController < JiraTeamMetrics::ApplicationController
     @epic_cycletimes_ql = epic_cycletimes_ql(today)
     @issue_throughput_ql = issue_throughput_ql(today)
     @epic_throughput_ql = epic_throughput_ql(today)
+    @issues_cfd_ql = issues_cfd_ql(today)
+    @epics_cfd_ql = epics_cfd_ql(today)
   end
 
   def search
@@ -75,6 +77,18 @@ private
 
   def epic_throughput_ql(today)
     JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'throughput', hierarchy_level: 'Epic')
+      .set_defaults(today)
+      .build_for(@board)
+  end
+
+  def issues_cfd_ql(today)
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'cfd', hierarchy_level: 'Scope')
+      .set_defaults(today)
+      .build_for(@board)
+  end
+
+  def epics_cfd_ql(today)
+    JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'cfd', hierarchy_level: 'Epic')
       .set_defaults(today)
       .build_for(@board)
   end

@@ -156,9 +156,7 @@ private
   end
 
   def build_quicklinks
-    query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
-        .and(@board.config.reports.throughput.default_query(@domain))
-        .query
+    query = "project = '#{@project.key}' and Teams includes '#{@team}'"
     opts = {
         from_date: @report.started_date.at_beginning_of_month,
         to_date: @report.completed_date.at_beginning_of_month + 2.months,
@@ -168,6 +166,8 @@ private
     epics_by_month_link = JiraTeamMetrics::QuicklinkBuilder.throughput_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
     issues_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.scatterplot_quicklink(@board, opts.merge(hierarchy_level: 'Scope'))
     epics_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.scatterplot_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
+    issues_cfd_link = JiraTeamMetrics::QuicklinkBuilder.cfd_quicklink(@board, opts.merge(hierarchy_level: 'Scope'))
+    epics_cfd_link = JiraTeamMetrics::QuicklinkBuilder.cfd_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
     {
       'Throughput Reports' => {
         'Issues by Month' => issues_by_month_link,
@@ -176,6 +176,10 @@ private
       'Cycle Time Reports' => {
         'Issue Cycle Times' => issues_scatterplot_link,
         'Epic Cycle Times' => epics_scatterplot_link
+      },
+      'CFD Reports' => {
+        'Issues CFD' => issues_cfd_link,
+        'Epics CFD' => epics_cfd_link
       }
     }
   end
