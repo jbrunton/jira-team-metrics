@@ -13,7 +13,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
         update_config(domain, board)
         sync_issues(board, credentials, months)
         create_filters(board, credentials)
-        build_reports(board)
+        build_reports(board, sync_history_id)
         activate(board)
         Rails.logger.info "Completed sync for #{board}."
       end
@@ -35,7 +35,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
     end
   end
 
-  def build_reports(board)
+  def build_reports(board, sync_history_id)
     if board.training_projects.any?
       Rails.logger.info "Training data available for #{board}, building reports."
     else
@@ -48,7 +48,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       @notifier.notify_progress("updating reports (#{progress}%)", progress)
       begin
         Rails.logger.info "Building reports for #{project.key}, for #{board}"
-        JiraTeamMetrics::ProjectReportBuilder.new(project).build
+        JiraTeamMetrics::ProjectReportBuilder.new(project, sync_history_id).build
       rescue StandardError => e
         logger.error [
           "Error building reports for #{project.key}, for #{board}:",
@@ -83,7 +83,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
 
     board.issues.destroy_all
     board.filters.destroy_all
-    board.report_fragments.destroy_all
+    #board.report_fragments.destroy_all
     board.delete
   end
 

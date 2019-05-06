@@ -4,7 +4,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
-  has_many :report_fragments, :dependent => :delete_all
+  has_many :report_fragments
 
   scope :search, ->(query) {
     where('lower(name) LIKE ?', "%#{query.downcase}%")

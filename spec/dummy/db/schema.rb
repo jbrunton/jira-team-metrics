@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_180050) do
+ActiveRecord::Schema.define(version: 2019_05_06_122234) do
 
   create_table "jira_team_metrics_boards", force: :cascade do |t|
     t.string "jira_id"
@@ -84,7 +84,9 @@ ActiveRecord::Schema.define(version: 2018_12_27_180050) do
     t.text "contents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sync_history_id"
     t.index ["board_id"], name: "index_jira_team_metrics_report_fragments_on_board_id"
+    t.index ["sync_history_id"], name: "index_jira_team_metrics_report_fragments_on_sync_history_id"
   end
 
   create_table "jira_team_metrics_sync_histories", force: :cascade do |t|
