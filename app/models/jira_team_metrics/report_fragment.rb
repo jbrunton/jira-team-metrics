@@ -16,7 +16,7 @@ class JiraTeamMetrics::ReportFragment < ApplicationRecord
     if sync_history_id.nil?
       JiraTeamMetrics::ReportFragment
         .where(report_key: report_key, fragment_key: fragment_key)
-        .order(sync_history_id: :desc)
+        .order(created_at: :desc)
         .first
     else
       JiraTeamMetrics::ReportFragment

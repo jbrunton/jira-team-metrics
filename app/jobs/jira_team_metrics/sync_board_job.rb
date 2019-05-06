@@ -6,7 +6,7 @@ class JiraTeamMetrics::SyncBoardJob < ApplicationJob
       Rails.logger.info "Preparing sync for board jira_id=#{jira_id}."
       board = find_target_board(jira_id, domain)
       Rails.logger.info "Found board #{board}."
-      JiraTeamMetrics::SyncHistory.log(board, sync_history_id) do
+      JiraTeamMetrics::SyncHistory.log(board, sync_history_id) do |sync_history_id|
         Rails.logger.info "Starting sync for #{board}."
         @notifier = JiraTeamMetrics::StatusNotifier.new(board, "syncing #{board.name}")
 

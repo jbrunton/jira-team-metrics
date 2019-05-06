@@ -1,0 +1,22 @@
+<% breadcrumb :project_histories, @project %>
+<% content_for :title, "#{projects_name_singular} Forecast Histories: #{@project.key} - #{@board.name}" %>
+
+<table class="ui table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th># Issues</th>
+      <th></th>
+    </tr>
+  </thead>
+<% @histories.each do |history| %>
+  <tbody>
+    <tr>
+      <td><%= pretty_print_time(history.updated_at) %></td>
+      <td><%= history.issues_count %></td>
+      <td><%= link_to 'Report', "#{project_report_path(@project)}?history_id=#{history.id}" %></td>
+    </tr>
+  </tbody>
+<% end %>
+</table>
+

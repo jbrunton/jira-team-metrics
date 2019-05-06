@@ -28,6 +28,11 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     end
   end
 
+  def project_histories
+    @project = @board.issues.find_by(key: params[:issue_key])
+    @histories = JiraTeamMetrics::SyncHistory.where(jira_board_id: @board.jira_id).order(created_at: :desc)
+  end
+
   def epics
     @report_options = @board.config.reports.epics
     @sections = sections_for(@board.epics, @report_options)
