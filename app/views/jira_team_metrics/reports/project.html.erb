@@ -240,7 +240,7 @@
   <p>
     Rolling metrics measured across previous <%= team_dashboard_data[:rolling_window_days] %> day window. Throughput is closed issues per week.
     <br>
-    Report created: <%= pretty_print_time(team_dashboard_timestamp) %>. View forecast histories.
+    Report created at <%= pretty_print_time(team_dashboard_timestamp) %> (<%= link_to 'view forecast history', "#{project_report_path(@project)}/histories" %>)
   </p>
 </div>
 
