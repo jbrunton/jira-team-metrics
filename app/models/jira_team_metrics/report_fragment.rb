@@ -1,18 +1,8 @@
 class JiraTeamMetrics::ReportFragment < ApplicationRecord
   serialize :contents
-  belongs_to :board
   belongs_to :sync_history
 
-  def self.fetch(board, report_key, fragment_key)
-    board.report_fragments.find_by(report_key: report_key, fragment_key: fragment_key)
-  end
-
-  def self.fetch_contents(board, report_key, fragment_key)
-    fragment = fetch(board, report_key, fragment_key)
-    fragment.contents unless fragment.nil?
-  end
-
-  def self.fetch_for(report_key, fragment_key, sync_history_id)
+  def self.fetch(report_key, fragment_key, sync_history_id = nil)
     if sync_history_id.nil?
       JiraTeamMetrics::ReportFragment
         .where(report_key: report_key, fragment_key: fragment_key)
@@ -24,8 +14,8 @@ class JiraTeamMetrics::ReportFragment < ApplicationRecord
     end
   end
 
-  def self.fetch_contents_for(report_key, fragment_key, sync_history_id)
-    fragment = fetch_for(report_key, fragment_key, sync_history_id)
+  def self.fetch_contents(report_key, fragment_key, sync_history_id = nil)
+    fragment = fetch(report_key, fragment_key, sync_history_id)
     fragment.contents unless fragment.nil?
   end
 end
