@@ -33,6 +33,7 @@ JiraTeamMetrics::Engine.routes.draw do
     unless JiraTeamMetrics::Domain.get_active_instance.config.projects.issue_type.blank?
       get "/reports/boards/:board_id/#{projects_path_plural}", to: 'reports#projects'
       get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key", to: 'reports#project'
+      get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/histories", to: 'reports#project_histories'
       get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/scope/:team", to: 'reports#project_scope'
       get "/reports/boards/:board_id/#{projects_path_plural}/:issue_key/throughput/:team", to: 'reports#project_throughput'
     end

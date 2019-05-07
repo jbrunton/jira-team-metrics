@@ -1,4 +1,6 @@
 class JiraTeamMetrics::SyncHistory < ApplicationRecord
+  has_many :report_fragments
+
   def self.log(target, sync_history_id = nil)
     started_time = DateTime.now
     sync_history = JiraTeamMetrics::SyncHistory.create
