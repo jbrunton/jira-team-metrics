@@ -164,11 +164,11 @@ private
   def build_predicted_scope_for(epic)
     return if @team == 'None'
 
-    if add_predicted_scope?(epic)
-      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
+    predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
+    if predicted_size.nil? && add_predicted_scope?(epic)
       predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
-      predicted_size.round.times { |k| @scope << build_predicted_story_for(epic, k) } unless predicted_size.nil?
     end
+    [predicted_size - actual_size, 0].max.round.times { |k| @scope << build_predicted_story_for(epic, k) } unless predicted_size.nil?
   end
 
   def add_predicted_scope?(epic)
