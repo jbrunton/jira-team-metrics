@@ -15,6 +15,9 @@
     "resolution": {
       "name": "Resolution"
     },
+    "project": {
+      "key": "MYPROJ"
+    },
     "issuelinks": [
       {
         "type": {

@@ -17,7 +17,8 @@ class JiraTeamMetrics::IssueAttributesBuilder
       'links' => links,
       'status' => status,
       'global_rank' => global_rank,
-      'resolution' => resolution
+      'resolution' => resolution,
+      'jira_project' => jira_project
     }
   end
 
@@ -56,6 +57,10 @@ private
 
   def resolution
     @json['fields']['resolution'].try(:[], 'name')
+  end
+
+  def jira_project
+    @json['fields']['project']['key']
   end
 
   def fields
