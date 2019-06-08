@@ -45,6 +45,10 @@ RSpec.describe JiraTeamMetrics::IssueAttributesBuilder do
       expect(attrs['resolution']).to eq('Resolution')
     end
 
+    it "sets the jira project" do
+      expect(attrs['jira_project']).to eq('MYPROJ')
+    end
+
     it "sets the custom fields" do
       expect(attrs['fields']).to eq({
         'Global Rank' => '2|globalrank:'
