@@ -64,6 +64,7 @@ private
     'labels' => 'labels',
     'resolution' => 'resolution',
     'Global Rank' => 'global_rank',
-    'cycleTime' => 'cycle_time'
+    'cycleTime' => 'cycle_time',
+    'jiraProject' => 'jira_project'
   }
 end
