@@ -132,6 +132,7 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
       <<~END
       myt:
         epic_overrides:
+          EPIC-1: 5
           EPIC-2: 5
       END
     end
@@ -150,6 +151,19 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
       predicted_issues = team_report.scope.select { |issue| issue.epic == unscoped_epic && issue.status == 'Predicted' }
       expect(predicted_issues.count).to eq(5)
+    end
+
+    it "adds predicted scope up to the override amount" do
+      training_report = JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues)
+      training_report.build
+      team_report = JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report])
+
+      team_report.build
+
+      actual_issues = scoped_epic.issues(recursive: false)
+      predicted_issues = team_report.scope.select { |issue| issue.epic == scoped_epic && issue.status == 'Predicted' }
+      expect(actual_issues.count).to eq(3)
+      expect(predicted_issues.count).to eq(2)
     end
   end
 end
