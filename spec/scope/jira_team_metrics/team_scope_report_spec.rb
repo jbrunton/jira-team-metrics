@@ -4,11 +4,10 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
   let(:now) { DateTime.now }
 
   let(:board) { create(:board) }
+  let(:project) { create(:project, board: board) }
 
-  let(:project) { create(:issue, board: board) }
-
-  let(:scoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
-  let(:unscoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
+  let(:scoped_epic) { create(:epic, key: 'EPIC-1', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
+  let(:unscoped_epic) { create(:epic, key: 'EPIC-2', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
 
   let(:completed_issues) {
     [
@@ -114,6 +113,43 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
 
       expect(trained_report.trained_throughput).to eq(1.0)
       expect(trained_report.predicted_throughput).to eq(1.0)
+    end
+  end
+
+  context "when given prediction overrides" do
+    let(:config_string) do
+      <<~CONFIG
+      default_query: filter = 'MyFilter'"
+      predictive_scope:
+        adjustments_field: Metric Adjustments
+      teams:
+        - name: My Team
+          short_name: myt
+      CONFIG
+    end
+
+    let(:adjustment_string) do
+      <<~END
+      myt:
+        epic_overrides:
+          EPIC-2: 5
+      END
+    end
+
+    before(:each) do
+      project.fields = { 'Metric Adjustments' => adjustment_string }
+      board.config_string = config_string
+    end
+
+    it "adds predicted scope" do
+      training_report = JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues)
+      training_report.build
+      team_report = JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report])
+
+      team_report.build
+
+      predicted_issues = team_report.scope.select { |issue| issue.epic == unscoped_epic && issue.status == 'Predicted' }
+      expect(predicted_issues.count).to eq(5)
     end
   end
 end
