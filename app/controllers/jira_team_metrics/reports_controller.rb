@@ -28,6 +28,12 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     end
   end
 
+  def refresh
+    @project = @board.issues.find_by(key: params[:issue_key])
+    JiraTeamMetrics::RefreshReportJob.perform_now(@board.jira_id, @project.key, @domain)
+    redirect_to project_report_path(@project)
+  end
+
   def project_histories
     @project = @board.issues.find_by(key: params[:issue_key])
     @report_fragments = JiraTeamMetrics::ReportFragment.includes(:sync_history)

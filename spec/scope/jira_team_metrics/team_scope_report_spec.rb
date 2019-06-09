@@ -4,11 +4,10 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
   let(:now) { DateTime.now }
 
   let(:board) { create(:board) }
+  let(:project) { create(:project, board: board) }
 
-  let(:project) { create(:issue, board: board) }
-
-  let(:scoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
-  let(:unscoped_epic) { create(:issue, issue_type: 'Epic', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
+  let(:scoped_epic) { create(:epic, key: 'EPIC-1', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
+  let(:unscoped_epic) { create(:epic, key: 'EPIC-2', board: board, project: project, fields: { 'Teams' => ['My Team'] }) }
 
   let(:completed_issues) {
     [
@@ -54,66 +53,114 @@ RSpec.describe JiraTeamMetrics::TeamScopeReport do
     end
   end
 
-  let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics) }
+  context "with adjustments" do
+    let(:team_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics) }
 
-  before(:each) { team_report.build }
-  
-  describe "#team" do
-    it "returns the team" do
-      expect(team_report.team).to eq('My Team')
+    before(:each) { team_report.build }
+
+    describe "#team" do
+      it "returns the team" do
+        expect(team_report.team).to eq('My Team')
+      end
     end
-  end
 
-  describe "#project" do
-    it "returns the project" do
-      expect(team_report.project).to eq(project)
+    describe "#project" do
+      it "returns the project" do
+        expect(team_report.project).to eq(project)
+      end
     end
-  end
 
-  describe "#epics" do
-    context "when given no training data" do
-      it "returns the epics with scope" do
-        expect(team_report.epics).to eq([scoped_epic])
+    describe "#epics" do
+      context "when given no training data" do
+        it "returns the epics with scope" do
+          expect(team_report.epics).to eq([scoped_epic])
+        end
+      end
+    end
+
+    describe "#unscoped_epics" do
+      context "when given no training data" do
+        it "returns an empty list" do
+          expect(team_report.unscoped_epics).to eq([])
+        end
+      end
+    end
+
+    describe "#scope" do
+      it "returns the total scope" do
+        expect(team_report.scope).to eq(my_team_issues)
+      end
+    end
+
+    describe "#completed_scope" do
+      it "returns the completed scope" do
+        expect(team_report.completed_scope).to eq(completed_issues)
+      end
+    end
+
+    describe "#remaining_scope" do
+      it "returns the remaining scope" do
+        expect(team_report.remaining_scope).to eq(incomplete_issues)
+      end
+    end
+
+    context "when given training data" do
+      let(:training_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues) }
+      let(:trained_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report]) }
+
+      it "builds predictions" do
+        training_report.build
+        trained_report.build
+
+        expect(trained_report.trained_throughput).to eq(1.0)
+        expect(trained_report.predicted_throughput).to eq(1.0)
       end
     end
   end
 
-  describe "#unscoped_epics" do
-    context "when given no training data" do
-      it "returns an empty list" do
-        expect(team_report.unscoped_epics).to eq([])
-      end
+  context "when given prediction overrides" do
+    let(:config_string) do
+      <<~CONFIG
+      default_query: filter = 'MyFilter'"
+      predictive_scope:
+        adjustments_field: Metric Adjustments
+      teams:
+        - name: My Team
+          short_name: myt
+      CONFIG
     end
-  end
 
-  describe "#scope" do
-    it "returns the total scope" do
-      expect(team_report.scope).to eq(my_team_issues)
+    let(:adjustment_string) do
+      <<~END
+      myt:
+        epic_overrides:
+          EPIC-1: 5
+          EPIC-2: 5
+      END
     end
-  end
 
-  describe "#completed_scope" do
-    it "returns the completed scope" do
-      expect(team_report.completed_scope).to eq(completed_issues)
-    end
-  end
-
-  describe "#remaining_scope" do
-    it "returns the remaining scope" do
-      expect(team_report.remaining_scope).to eq(incomplete_issues)
-    end
-  end
-
-  context "when given training data" do
     let(:training_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues) }
-    let(:trained_report) { JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report]) }
 
-    it "builds predictions" do
+    let(:team_report) do
+      team_report = JiraTeamMetrics::TeamScopeReport.new('My Team', project, my_team_issues + epics, [training_report])
+    end
+
+    before(:each) do
+      project.fields = { 'Metric Adjustments' => adjustment_string }
+      board.config_string = config_string
       training_report.build
-      trained_report.build
+      team_report.build
+    end
 
-      expect(trained_report.trained_throughput).to eq(1.0)
-      expect(trained_report.predicted_throughput).to eq(1.0)
+    it "adds predicted scope" do
+      predicted_issues = team_report.scope.select { |issue| issue.epic == unscoped_epic && issue.status == 'Predicted' }
+      expect(predicted_issues.count).to eq(5)
+    end
+
+    it "adds predicted scope up to the override amount" do
+      predicted_issues = team_report.scope.select { |issue| issue.epic == scoped_epic && issue.status == 'Predicted' }
+      # override = 5, actual = 3, predicted = 5 - 3 = 2
+      expect(predicted_issues.count).to eq(2)
     end
   end
 end
