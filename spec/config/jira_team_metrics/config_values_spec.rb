@@ -96,10 +96,16 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
         expect(config.bar.baz).to eq('qux')
       end
 
-      it "returns the parent value for an array" do
+      it "returns the parent value for an array if nil" do
         parent = JiraTeamMetrics::Config.new({ 'foos' => [1, 2] }, YAML.load(schema))
         config = JiraTeamMetrics::Config.new({ }, YAML.load(schema), parent)
         expect(config.foos.to_a).to eq([1, 2])
+      end
+
+      it "returns an empty array if specified, even when parent is not nil" do
+        parent = JiraTeamMetrics::Config.new({ 'foos' => [1, 2] }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({ 'foos' => [] }, YAML.load(schema), parent)
+        expect(config.foos.to_a).to eq([])
       end
     end
 
