@@ -1,4 +1,6 @@
 class JiraTeamMetrics::ConfigValues
+  attr_accessor :fields
+
   def initialize(config_hash, schema, parent)
     @config_hash = config_hash
     @schema = schema

@@ -140,14 +140,27 @@ private
     sections_interpreter = JiraTeamMetrics::MqlInterpreter.new
     if report_options.sections.any?
       report_options.sections.map do |section|
-        epics = sections_interpreter.eval(section.mql, @board, backing_issues).rows
-        invalid_wip = !section.min.nil? && epics.count < section.min
+        issues = sections_interpreter.eval(section.mql, @board, backing_issues).rows
+        if section.fields.keys.include?('min')
+          section_min = section.min
+          invalid_wip = !section_min.nil? && issues.count < section_min
+        else
+          section_min = nil
+          invalid_wip = false
+        end
+        if section.fields.keys.include?('max')
+          section_max = section.max
+          invalid_wip = invalid_wip || (!section_max.nil? && issues.count > section_max)
+        else
+          section_max = nil
+          invalid_wip = invalid_wip
+        end
         {
           title: section.title,
-          issues: epics,
+          issues: issues,
           collapsed: section.collapsed,
-          min: section.min,
-          max: section.max,
+          min: section_min,
+          max: section_max,
           invalid_wip: invalid_wip
         }
       end
