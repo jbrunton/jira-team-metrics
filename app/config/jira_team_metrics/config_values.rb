@@ -22,8 +22,12 @@ class JiraTeamMetrics::ConfigValues
           config_value_hash = @config_hash[method_name] || {}
           @values[method] = JiraTeamMetrics::ConfigValues.new(config_value_hash, @fields[method_name], parent_for(method_name))
         elsif field_type == '//arr'
-          config_value_arr = @config_hash[method_name] || []
-          @values[method] = JiraTeamMetrics::ConfigArray.new(config_value_arr, @fields[method_name])
+          config_value_arr = @config_hash[method_name]
+          if config_value_arr.nil?
+            @values[method] = parent_for(method_name) || JiraTeamMetrics::ConfigArray.new([], @fields[method_name])
+          else
+            JiraTeamMetrics::ConfigArray.new(config_value_arr, @fields[method_name])
+          end
         elsif field_type == '/metrics/reports-config'
           config_value_hash = @config_hash[method_name] || {}
           schema = YAML.load_file(File.join(__dir__, 'schemas', 'types', 'reports_config.yml'))

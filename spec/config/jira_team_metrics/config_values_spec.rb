@@ -95,6 +95,12 @@ RSpec.describe JiraTeamMetrics::ConfigValues do
         config = JiraTeamMetrics::Config.new({ 'bar' => {} }, YAML.load(schema), parent)
         expect(config.bar.baz).to eq('qux')
       end
+
+      it "returns the parent value for an array" do
+        parent = JiraTeamMetrics::Config.new({ 'foos' => [1, 2] }, YAML.load(schema))
+        config = JiraTeamMetrics::Config.new({ }, YAML.load(schema), parent)
+        expect(config.foos.to_a).to eq([1, 2])
+      end
     end
 
     context "custom types" do
