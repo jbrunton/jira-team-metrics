@@ -3,68 +3,19 @@ require 'rails_helper'
 class OpenStruct
   def deep_to_h
     to_h.transform_values do |v|
-      v.is_a?(OpenStruct) ? v.deep_to_h : v
+      case
+        when v.is_a?(OpenStruct) then v.deep_to_h
+        when v.is_a?(Array) then v.map{ |v| v.is_a?(OpenStruct) ? v.deep_to_h : v }
+        else v
+      end
     end
   end
 end
 
 RSpec.describe JiraTeamMetrics::Config do
-  let(:schema) do
-    <<~SCHEMA
-    type: "//rec"
-    required:
-      bar:
-        type: "//str"
-      foo:
-        type: "//rec"
-        required:
-          bar: "//str"
-        optional:
-          baz: "//str"
-    optional:
-      foos:
-        type: "//arr"
-        contents: "//int"
-      bars:
-        type: "//arr"
-        contents:
-          type: "//rec"
-          required:
-            bar: "//str"
-    SCHEMA
-  end
-
-  let(:config_hash) do
-    {
-      'foo' => {
-        'bar' => 'baz'
-      },
-      'bar' => 'qux',
-    }
-  end
-
   describe ".parse_domain" do
-    it "parses a domain config hash" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
-        url: 'example.com',
-        name: 'My Domain'
-      })
-      expect(config.url).to eq('example.com')
-      expect(config.name).to eq('My Domain')
-    end
-
-    it "allows optional values" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
-        url: 'example.com'
-      })
-      expect(config.url).to eq('example.com')
-      expect(config.name).to eq(nil)
-    end
-  end
-
-  describe ".parse_domain" do
-    it "parses a domain config hash" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
+    let(:full_config_hash) do
+      {
         url: 'example.com',
         name: 'My Domain',
         epics: {
@@ -76,14 +27,28 @@ RSpec.describe JiraTeamMetrics::Config do
             board_id: 123,
             config_file: 'my/config/file.yaml'
           }
+        ],
+        teams: [
+          {
+            name: 'My Team',
+            short_name: 'my'
+          }
         ]
+      }
+    end
+
+    it "parses a domain config hash into an OpenStruct" do
+      config = JiraTeamMetrics::ConfigParser.parse_domain({
+        url: 'example.com',
+        name: 'My Domain'
       })
       expect(config.url).to eq('example.com')
       expect(config.name).to eq('My Domain')
-      expect(config.epics.to_h).to eq({
-        counting_strategy: 'once',
-        link_missing: true
-      })
+    end
+
+    it "parses a full domain config hash" do
+      config = JiraTeamMetrics::ConfigParser.parse_domain(full_config_hash)
+      expect(config.deep_to_h).to eq(full_config_hash)
     end
 
     it "allows optional values" do
@@ -96,7 +61,9 @@ RSpec.describe JiraTeamMetrics::Config do
         epics: {
           counting_strategy: nil,
           link_missing: nil
-        }
+        },
+        boards: [],
+        teams: []
       })
     end
   end
