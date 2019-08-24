@@ -27,12 +27,13 @@ module JiraTeamMetrics::Types
       opt(array_of(type), [])
     end
 
-    def hash(schema)
-      JiraTeamMetrics::Types::Hash.schema(schema)
-    end
-
-    def opt_hash(schema, default = nil)
-      opt(hash(schema), default)
+    def hash(config_hash, schema)
+      config_hash ||= {}
+      config_hash = schema.map do |key, type|
+        value = type[config_hash[key]]
+        [key, value]
+      end.to_h
+      OpenStruct.new(config_hash)
     end
   end
 end
@@ -44,15 +45,10 @@ class JiraTeamMetrics::ConfigParser
     OpenStruct.new(
       url: string[config_hash[:url]],
       name: opt(string)[config_hash[:name]],
-      epics: parse_epics(config_hash[:epics])
-    )
-  end
-
-  def self.parse_epics(config_hash)
-    config_hash ||= {}
-    OpenStruct.new(
-      counting_strategy: opt(string)[config_hash[:counting_strategy]],
-      link_missing: opt(bool)[config_hash[:link_missing]]
+      epics: hash(config_hash[:epics], {
+        counting_strategy: opt(string),
+        link_missing: opt(bool)
+      })
     )
   end
 end
