@@ -33,7 +33,12 @@ RSpec.describe JiraTeamMetrics::Config do
             name: 'My Team',
             short_name: 'my'
           }
-        ]
+        ],
+        reports: {
+          scatterplot: {
+            default_query: 'default scatterplot query'
+          }
+        }
       }
     end
 
@@ -63,7 +68,12 @@ RSpec.describe JiraTeamMetrics::Config do
           link_missing: nil
         },
         boards: [],
-        teams: []
+        teams: [],
+        reports: {
+          scatterplot: {
+            default_query: nil
+          }
+        }
       })
     end
   end
@@ -79,6 +89,11 @@ RSpec.describe JiraTeamMetrics::Config do
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
+        },
+        reports: {
+          scatterplot: {
+            default_query: 'default scatterplot query'
+          }
         }
       }
     end
@@ -115,6 +130,11 @@ RSpec.describe JiraTeamMetrics::Config do
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
+        },
+        reports: {
+          scatterplot: {
+            default_query: nil
+          }
         }
       })
     end

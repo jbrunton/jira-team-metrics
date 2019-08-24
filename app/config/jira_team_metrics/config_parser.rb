@@ -47,7 +47,8 @@ class JiraTeamMetrics::ConfigParser
       name: opt(string)[config_hash[:name]],
       epics: parse_epics(config_hash[:epics]),
       boards: parse_boards(config_hash[:boards]),
-      teams: parse_teams(config_hash[:teams])
+      teams: parse_teams(config_hash[:teams]),
+      reports: parse_reports(config_hash[:reports])
     )
   end
 
@@ -55,7 +56,8 @@ class JiraTeamMetrics::ConfigParser
     OpenStruct.new(
       default_query: opt(string)[config_hash[:default_query]],
       epics: parse_epics(config_hash[:epics]),
-      predictive_scope: parse_predictive_scope(config_hash[:predictive_scope])
+      predictive_scope: parse_predictive_scope(config_hash[:predictive_scope]),
+      reports: parse_reports(config_hash[:reports])
     )
   end
 
@@ -94,6 +96,15 @@ class JiraTeamMetrics::ConfigParser
     OpenStruct.new(
       board_id: int[config_hash[:board_id]],
       adjustments_field: string[config_hash[:adjustments_field]]
+    )
+  end
+
+  def self.parse_reports(config_hash)
+    config_hash ||= {}
+    OpenStruct.new(
+      scatterplot: {
+        default_query: opt(string)[config_hash.try(:[], :scatterplot).try(:[], :default_query)]
+      }
     )
   end
 end
