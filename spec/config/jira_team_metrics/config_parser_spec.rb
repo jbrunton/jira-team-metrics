@@ -67,4 +67,56 @@ RSpec.describe JiraTeamMetrics::Config do
       })
     end
   end
+
+  describe ".parse_board" do
+    let(:full_config_hash) do
+      {
+        default_query: 'default query',
+        epics: {
+          counting_strategy: 'once',
+          link_missing: true
+        },
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        }
+      }
+    end
+
+    it "parses a board config hash into an OpenStruct" do
+      config = JiraTeamMetrics::ConfigParser.parse_board({
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        }
+      })
+      expect(config.predictive_scope.board_id).to eq(123)
+      expect(config.predictive_scope.adjustments_field).to eq('Metrics Adjustments')
+    end
+
+    it "parses a full board config hash" do
+      config = JiraTeamMetrics::ConfigParser.parse_board(full_config_hash)
+      expect(config.deep_to_h).to eq(full_config_hash)
+    end
+
+    it "allows optional values" do
+      config = JiraTeamMetrics::ConfigParser.parse_board({
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        }
+      })
+      expect(config.deep_to_h).to eq({
+        default_query: nil,
+        epics: {
+          counting_strategy: nil,
+          link_missing: nil
+        },
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        }
+      })
+    end
+  end
 end

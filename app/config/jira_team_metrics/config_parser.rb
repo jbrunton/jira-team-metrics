@@ -51,6 +51,14 @@ class JiraTeamMetrics::ConfigParser
     )
   end
 
+  def self.parse_board(config_hash)
+    OpenStruct.new(
+      default_query: opt(string)[config_hash[:default_query]],
+      epics: parse_epics(config_hash[:epics]),
+      predictive_scope: parse_predictive_scope(config_hash[:predictive_scope])
+    )
+  end
+
   private
 
   def self.parse_epics(config_hash)
@@ -79,5 +87,13 @@ class JiraTeamMetrics::ConfigParser
         short_name: string[config_hash[:short_name]]
       )
     end
+  end
+
+  def self.parse_predictive_scope(config_hash)
+    config_hash ||= {}
+    OpenStruct.new(
+      board_id: int[config_hash[:board_id]],
+      adjustments_field: string[config_hash[:adjustments_field]]
+    )
   end
 end
