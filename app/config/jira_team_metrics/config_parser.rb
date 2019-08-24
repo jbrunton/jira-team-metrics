@@ -43,7 +43,16 @@ class JiraTeamMetrics::ConfigParser
   def self.parse_domain(config_hash)
     OpenStruct.new(
       url: string[config_hash[:url]],
-      name: opt(string)[config_hash[:name]]
+      name: opt(string)[config_hash[:name]],
+      epics: parse_epics(config_hash[:epics])
+    )
+  end
+
+  def self.parse_epics(config_hash)
+    config_hash ||= {}
+    OpenStruct.new(
+      counting_strategy: opt(string)[config_hash[:counting_strategy]],
+      link_missing: opt(bool)[config_hash[:link_missing]]
     )
   end
 end
