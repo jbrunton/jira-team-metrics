@@ -18,6 +18,7 @@ module JiraTeamMetrics
     require 'gretel'
     require 'humanize'
     require 'dry-struct'
+    require 'config'
 
     config.after_initialize do
       unless ActiveRecord::Base.connection.migration_context.needs_migration?

@@ -52,7 +52,12 @@ class JiraTeamMetrics::ConfigParser
     )
   end
 
-  def self.parse_board(config_hash)
+  def self.parse_board(board_config, domain_config)
+    config = Config::Options.new
+    config.add_source!(domain_config)
+    config.add_source!(board_config)
+    config.reload!
+    config_hash = config.deep_to_h
     OpenStruct.new(
       default_query: opt(string)[config_hash[:default_query]],
       epics: parse_epics(config_hash[:epics]),
@@ -102,9 +107,9 @@ class JiraTeamMetrics::ConfigParser
   def self.parse_reports(config_hash)
     config_hash ||= {}
     OpenStruct.new(
-      scatterplot: {
+      scatterplot: OpenStruct.new(
         default_query: opt(string)[config_hash.try(:[], :scatterplot).try(:[], :default_query)]
-      }
+      )
     )
   end
 end

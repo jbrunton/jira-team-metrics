@@ -104,13 +104,13 @@ RSpec.describe JiraTeamMetrics::Config do
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
         }
-      })
+      }, {})
       expect(config.predictive_scope.board_id).to eq(123)
       expect(config.predictive_scope.adjustments_field).to eq('Metrics Adjustments')
     end
 
     it "parses a full board config hash" do
-      config = JiraTeamMetrics::ConfigParser.parse_board(full_config_hash)
+      config = JiraTeamMetrics::ConfigParser.parse_board(full_config_hash, {})
       expect(config.deep_to_h).to eq(full_config_hash)
     end
 
@@ -120,7 +120,7 @@ RSpec.describe JiraTeamMetrics::Config do
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
         }
-      })
+      }, {})
       expect(config.deep_to_h).to eq({
         default_query: nil,
         epics: {
@@ -137,6 +137,45 @@ RSpec.describe JiraTeamMetrics::Config do
           }
         }
       })
+    end
+
+    it "inherits domain values" do
+      config = JiraTeamMetrics::ConfigParser.parse_board({
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        }
+      }, {
+        url: 'example.com',
+        reports: {
+          scatterplot: {
+            default_query: 'domain query'
+          }
+        }
+      })
+      expect(config.reports.scatterplot.default_query).to eq('domain query')
+    end
+
+    it "overrides domain values" do
+      config = JiraTeamMetrics::ConfigParser.parse_board({
+        predictive_scope: {
+          board_id: 123,
+          adjustments_field: 'Metrics Adjustments'
+        },
+        reports: {
+          scatterplot: {
+            default_query: 'board query'
+          }
+        }
+      }, {
+        url: 'example.com',
+        reports: {
+          scatterplot: {
+            default_query: 'domain query'
+          }
+        }
+      })
+      expect(config.reports.scatterplot.default_query).to eq('board query')
     end
   end
 end
