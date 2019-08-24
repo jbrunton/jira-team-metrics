@@ -17,6 +17,7 @@ module JiraTeamMetrics
     require 'pickadate-rails'
     require 'gretel'
     require 'humanize'
+    require 'dry-struct'
 
     config.after_initialize do
       unless ActiveRecord::Base.connection.migration_context.needs_migration?
