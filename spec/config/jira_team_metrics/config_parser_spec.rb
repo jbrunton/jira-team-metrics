@@ -37,7 +37,19 @@ RSpec.describe JiraTeamMetrics::Config do
         reports: {
           scatterplot: {
             default_query: 'default scatterplot query'
-          }
+          },
+          throughput: {
+            default_query: 'default throughput query'
+          },
+          aging_wip: {
+            default_query: 'default aging_wip query',
+            fields: ['My Field']
+          },
+          custom_reports: [
+            name: 'My Report',
+            query: 'my report query',
+            description: 'my report description'
+          ]
         }
       }
     end
@@ -72,7 +84,15 @@ RSpec.describe JiraTeamMetrics::Config do
         reports: {
           scatterplot: {
             default_query: nil
-          }
+          },
+          throughput: {
+            default_query: nil
+          },
+          aging_wip: {
+            default_query: nil,
+            fields: []
+          },
+          custom_reports: []
         }
       })
     end
@@ -93,7 +113,19 @@ RSpec.describe JiraTeamMetrics::Config do
         reports: {
           scatterplot: {
             default_query: 'default scatterplot query'
-          }
+          },
+          throughput: {
+            default_query: 'default throughput query'
+          },
+          aging_wip: {
+            default_query: 'default aging_wip query',
+            fields: ['My Field']
+          },
+          custom_reports: [
+            name: 'My Report',
+            query: 'my report query',
+            description: 'my report description'
+          ]
         }
       }
     end
@@ -134,7 +166,15 @@ RSpec.describe JiraTeamMetrics::Config do
         reports: {
           scatterplot: {
             default_query: nil
-          }
+          },
+          throughput: {
+            default_query: nil
+          },
+          aging_wip: {
+            default_query: nil,
+            fields: []
+          },
+          custom_reports: []
         }
       })
     end

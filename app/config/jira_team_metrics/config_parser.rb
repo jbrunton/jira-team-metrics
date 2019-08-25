@@ -55,7 +55,19 @@ class JiraTeamMetrics::ConfigParser
   ReportsSchema = {
     scatterplot: {
       default_query: opt(string)
-    }
+    },
+    throughput: {
+      default_query: opt(string)
+    },
+    aging_wip: {
+      default_query: opt(string),
+      fields: opt_array_of(string)
+    },
+    custom_reports: opt_array_of({
+      name: string,
+      query: string,
+      description: opt(string)
+    })
   }
 
   DomainSchema = {
