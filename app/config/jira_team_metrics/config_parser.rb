@@ -36,11 +36,12 @@ module JiraTeamMetrics::Types
       config_hash = schema.map do |key, type|
         value = if type.is_a?(::Hash)
           parse(config_hash[key], type)
-        elsif type.is_a?(::Method)
-          # TODO: deprecate this path (for method refs)
-          type[config_hash[key]]
         else
-          config_hash[key].nil? ? type[] : type[config_hash[key]]
+          begin
+            config_hash[key].nil? ? type[] : type[config_hash[key]]
+          rescue Dry::Types::ConstraintError => e
+            raise "Invalid type in config for field '#{key}': expected #{type.rule.to_s} but was #{config_hash[key].class}."
+          end
         end
         [key, value]
       end.to_h

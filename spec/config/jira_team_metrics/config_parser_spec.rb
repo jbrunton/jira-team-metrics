@@ -138,6 +138,23 @@ RSpec.describe JiraTeamMetrics::Config do
         }
       })
     end
+
+    it "validates required fields" do
+      expect {
+        JiraTeamMetrics::ConfigParser.parse_domain({
+          name: 'My Domain'
+        })
+      }.to raise_error("Invalid type in config for field 'url': expected type?(String) but was NilClass.")
+    end
+
+    it "typechecks fields" do
+      expect {
+        JiraTeamMetrics::ConfigParser.parse_domain({
+          url: 'example.com',
+          name: 123
+        })
+      }.to raise_error("Invalid type in config for field 'name': expected type?(NilClass) OR type?(String) but was Integer.")
+    end
   end
 
   describe ".parse_board" do
