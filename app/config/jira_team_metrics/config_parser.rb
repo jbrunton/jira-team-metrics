@@ -101,15 +101,4 @@ class JiraTeamMetrics::ConfigParser
     config_hash = config.deep_to_h
     parse(config_hash, BoardSchema)
   end
-
-  private
-
-  def self.parse_reports(config_hash)
-    config_hash ||= {}
-    OpenStruct.new(
-      scatterplot: OpenStruct.new(
-        default_query: opt(string)[config_hash.try(:[], :scatterplot).try(:[], :default_query)]
-      )
-    )
-  end
 end
