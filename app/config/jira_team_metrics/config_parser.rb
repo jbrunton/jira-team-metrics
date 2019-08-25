@@ -52,43 +52,45 @@ end
 class JiraTeamMetrics::ConfigParser
   extend JiraTeamMetrics::Types::ClassMethods
 
-  def self.domain_schema
-    {
-      url: string,
-      name: opt(string),
-      epics: {
-        counting_strategy: opt(string),
-        link_missing: opt(bool)
-      },
-      boards: opt_array_of({
-        board_id: int,
-        config_file: opt(string)
-      }),
-      teams: opt_array_of({
-        name: string,
-        short_name: string
-      }),
-      reports: method(:parse_reports)
+  ReportsSchema = {
+    scatterplot: {
+      default_query: opt(string)
     }
-  end
+  }
 
-  def self.board_schema
-    {
-      default_query: opt(string),
-      epics: {
-        counting_strategy: opt(string),
-        link_missing: opt(bool)
-      },
-      predictive_scope: {
-        board_id: int,
-        adjustments_field: string
-      },
-      reports: method(:parse_reports)
-    }
-  end
+  DomainSchema = {
+    url: string,
+    name: opt(string),
+    epics: {
+      counting_strategy: opt(string),
+      link_missing: opt(bool)
+    },
+    boards: opt_array_of({
+      board_id: int,
+      config_file: opt(string)
+    }),
+    teams: opt_array_of({
+      name: string,
+      short_name: string
+    }),
+    reports: ReportsSchema
+  }
+
+  BoardSchema = {
+    default_query: opt(string),
+    epics: {
+      counting_strategy: opt(string),
+      link_missing: opt(bool)
+    },
+    predictive_scope: {
+      board_id: int,
+      adjustments_field: string
+    },
+    reports: ReportsSchema
+  }
 
   def self.parse_domain(config_hash)
-    parse(config_hash, domain_schema)
+    parse(config_hash, DomainSchema)
   end
 
   def self.parse_board(board_config, domain_config)
@@ -97,7 +99,7 @@ class JiraTeamMetrics::ConfigParser
     config.add_source!(board_config)
     config.reload!
     config_hash = config.deep_to_h
-    parse(config_hash, board_schema)
+    parse(config_hash, BoardSchema)
   end
 
   private
