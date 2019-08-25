@@ -19,7 +19,7 @@ module JiraTeamMetrics::Types
     end
 
     def opt(type, default = nil)
-      type.optional.meta(omittable: true).default(default)
+      type.optional.meta(omittable: true).default(default.freeze)
     end
 
     def array_of(type)
@@ -72,6 +72,21 @@ class JiraTeamMetrics::ConfigParser
     }
   end
 
+  def self.board_schema
+    {
+      default_query: opt(string),
+      epics: {
+        counting_strategy: opt(string),
+        link_missing: opt(bool)
+      },
+      predictive_scope: {
+        board_id: int,
+        adjustments_field: string
+      },
+      reports: method(:parse_reports)
+    }
+  end
+
   def self.parse_domain(config_hash)
     parse(config_hash, domain_schema)
   end
@@ -82,31 +97,10 @@ class JiraTeamMetrics::ConfigParser
     config.add_source!(board_config)
     config.reload!
     config_hash = config.deep_to_h
-    OpenStruct.new(
-      default_query: opt(string)[config_hash[:default_query]],
-      epics: parse_epics(config_hash[:epics]),
-      predictive_scope: parse_predictive_scope(config_hash[:predictive_scope]),
-      reports: parse_reports(config_hash[:reports])
-    )
+    parse(config_hash, board_schema)
   end
 
   private
-
-  def self.parse_epics(config_hash)
-    config_hash ||= {}
-    OpenStruct.new(
-      counting_strategy: opt(string)[config_hash[:counting_strategy]],
-      link_missing: opt(bool)[config_hash[:link_missing]]
-    )
-  end
-
-  def self.parse_predictive_scope(config_hash)
-    config_hash ||= {}
-    OpenStruct.new(
-      board_id: int[config_hash[:board_id]],
-      adjustments_field: string[config_hash[:adjustments_field]]
-    )
-  end
 
   def self.parse_reports(config_hash)
     config_hash ||= {}
