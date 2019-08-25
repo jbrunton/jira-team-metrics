@@ -35,6 +35,34 @@ RSpec.describe JiraTeamMetrics::Config do
           }
         ],
         reports: {
+          epics: {
+            backing_query: 'epics backing query',
+            card_layout: {
+              fields: ['Developer']
+            },
+            sections: [
+              {
+                title: 'Backlog',
+                mql: 'query',
+                collapsed: true,
+                min: 3,
+                max: 8
+              }
+            ]
+          },
+          projects: {
+            backing_query: 'projects backing query',
+            card_layout: {
+              fields: ['Developer']
+            },
+            sections: [
+              {
+                title: 'Backlog',
+                mql: 'query',
+                collapsed: true
+              }
+            ]
+          },
           scatterplot: {
             default_query: 'default scatterplot query'
           },
@@ -82,6 +110,20 @@ RSpec.describe JiraTeamMetrics::Config do
         boards: [],
         teams: [],
         reports: {
+          epics: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
+          projects: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
           scatterplot: {
             default_query: nil
           },
@@ -111,6 +153,34 @@ RSpec.describe JiraTeamMetrics::Config do
           adjustments_field: 'Metrics Adjustments'
         },
         reports: {
+          epics: {
+            backing_query: 'epics backing query',
+            card_layout: {
+              fields: ['Developer']
+            },
+            sections: [
+              {
+                title: 'Backlog',
+                mql: 'query',
+                collapsed: true,
+                min: 3,
+                max: 8
+              }
+            ]
+          },
+          projects: {
+            backing_query: 'projects backing query',
+            card_layout: {
+              fields: ['Developer']
+            },
+            sections: [
+              {
+                title: 'Backlog',
+                mql: 'query',
+                collapsed: true
+              }
+            ]
+          },
           scatterplot: {
             default_query: 'default scatterplot query'
           },
@@ -164,6 +234,20 @@ RSpec.describe JiraTeamMetrics::Config do
           adjustments_field: 'Metrics Adjustments'
         },
         reports: {
+          epics: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
+          projects: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
           scatterplot: {
             default_query: nil
           },

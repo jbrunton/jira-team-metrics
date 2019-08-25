@@ -53,6 +53,30 @@ class JiraTeamMetrics::ConfigParser
   extend JiraTeamMetrics::Types::ClassMethods
 
   ReportsSchema = {
+    epics: {
+      backing_query: opt(string),
+      card_layout: {
+        fields: opt_array_of(string)
+      },
+      sections: opt_array_of({
+        title: string,
+        mql: string,
+        collapsed: opt(bool),
+        min: opt(int),
+        max: opt(int)
+      })
+    },
+    projects: {
+      backing_query: opt(string),
+      card_layout: {
+        fields: opt_array_of(string)
+      },
+      sections: opt_array_of({
+        title: string,
+        mql: string,
+        collapsed: opt(bool)
+      })
+    },
     scatterplot: {
       default_query: opt(string)
     },
