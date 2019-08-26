@@ -5,7 +5,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
   include JiraTeamMetrics::PathHelper
 
-  let!(:domain) { create(:domain) }
+  let!(:domain) { JiraTeamMetrics::Domain.get_active_instance }
   let!(:board) { domain.boards.create(attributes_for(:board, name: 'My Board')) }
 
   describe "GET #show" do
