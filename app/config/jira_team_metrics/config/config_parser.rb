@@ -169,7 +169,6 @@ class JiraTeamMetrics::Config::ConfigParser
     config.add_source!(domain_config) unless domain_config.nil?
     config.add_source!(board_config) unless board_config.nil?
     config.reload!
-    binding.pry
     config_hash = config.deep_to_h
     parse(config_hash, BoardSchema)
   end
