@@ -1,61 +1,64 @@
-module JiraTeamMetrics::Types
-  #include Dry.Types
-  #
-
-
+class JiraTeamMetrics::Config::ConfigParser
   module ClassMethods
     def string
-      JiraTeamMetrics::Types::Strict::String
+      JiraTeamMetrics::Config::Types::String.new
     end
 
     def bool
-      JiraTeamMetrics::Types::Strict::Bool
+      JiraTeamMetrics::Config::Types::Boolean.new
     end
 
     def int
-      JiraTeamMetrics::Types::Strict::Integer
+      JiraTeamMetrics::Config::Types::Integer.new
     end
 
     def hash(schema)
-      JiraTeamMetrics::Types::Hash.schema(schema)
+      JiraTeamMetrics::Config::Types::Hash.new(schema)
     end
 
     def opt(type, default = nil)
-      type.optional.meta(omittable: true).default(default.freeze)
+      JiraTeamMetrics::Config::Types::Optional.new(type, default)
     end
 
     def array_of(type)
       type = hash(type) if type.is_a?(::Hash)
-      JiraTeamMetrics::Types::Strict::Array.of(type)
+      JiraTeamMetrics::Config::Types::Array.new(type)
     end
 
     def opt_array_of(type)
       opt(array_of(type), [])
     end
-
-    def parse(config_hash, schema)
-      config_hash ||= {}
-
-      config_hash = schema.map do |key, type|
-        if type.is_a?(::Hash)
-          value = parse(config_hash[key], type)
-        else
-          begin
-            value = config_hash[key].nil? ? type[] : type[config_hash[key]]
-            value.map { |x| parse(x, schema[key])} if value.is_a?(::Array)
-          rescue Dry::Types::ConstraintError => e
-            raise "Invalid type in config for field '#{key}': expected #{type.rule.to_s} but was #{config_hash[key].class}."
-          end
-        end
-        [key, value]
-      end.to_h
-      OpenStruct.new(config_hash)
-    end
   end
-end
 
-class JiraTeamMetrics::ConfigParser
-  extend JiraTeamMetrics::Types::ClassMethods
+  extend ClassMethods
+
+  def self.parse(config_hash, schema)
+    schema = JiraTeamMetrics::Config::Types::Hash.new(schema) if schema.is_a?(::Hash)
+    #binding.pry
+    schema.type_check!(config_hash)
+    schema.parse(config_hash)
+    # config_hash ||= {}
+    #
+    # config_hash = schema.map do |key, type|
+    #   if type.is_a?(::Hash)
+    #     value = parse(config_hash[key], type)
+    #   else
+    #     begin
+    #       value = type.type_check!(config_hash[key])
+    #       value ||= type.default if type.is_a?(JiraTeamMetrics::Config::Types::Optional)
+    #       if type.is_a?(JiraTeamMetrics::Config::Types::Array) && type.element_type.is_a?(JiraTeamMetrics::Config::Types::Hash)
+    #         value = value.map do |x|
+    #           parse(x, schema[key].element_type.schema)
+    #         end
+    #       end
+    #     rescue TypeError => e
+    #       raise "Invalid type in config for field '#{key}': expected #{type.describe_type} but was #{config_hash[key].class}."
+    #     end
+    #   end
+    #   [key, value]
+    # end.to_h
+    # OpenStruct.new(config_hash)
+  end
 
   ReportsSchema = {
     epics: {

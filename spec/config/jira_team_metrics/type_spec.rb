@@ -19,6 +19,19 @@ RSpec.describe JiraTeamMetrics::Config::Types do
         expect(subject.type_check(123)).to eq(false)
       end
     end
+
+    describe "#type_check!" do
+      it "raises a descriptive error" do
+        expect { subject.type_check!(123) }.
+          to raise_error(TypeError, "Expected String but found Integer")
+      end
+    end
+
+    describe "#parse" do
+      it "parses values" do
+        expect(subject.parse("string")).to eq("string")
+      end
+    end
   end
 
   describe Types::Boolean do
@@ -35,6 +48,19 @@ RSpec.describe JiraTeamMetrics::Config::Types do
         expect(subject.type_check(123)).to eq(false)
       end
     end
+
+    describe "#type_check!" do
+      it "raises a descriptive error" do
+        expect { subject.type_check!(123) }.
+          to raise_error(TypeError, "Expected Boolean but found Integer")
+      end
+    end
+
+    describe "#parse" do
+      it "parses values" do
+        expect(subject.parse(true)).to eq(true)
+      end
+    end
   end
 
   describe Types::Integer do
@@ -48,6 +74,19 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "returns false for other types" do
         expect(subject.type_check(nil)).to eq(false)
         expect(subject.type_check(true)).to eq(false)
+      end
+    end
+
+    describe "#type_check!" do
+      it "raises a descriptive error" do
+        expect { subject.type_check!("string") }.
+          to raise_error(TypeError, "Expected Integer but found String")
+      end
+    end
+
+    describe "#parse" do
+      it "parses values" do
+        expect(subject.parse(123)).to eq(123)
       end
     end
   end
@@ -67,6 +106,14 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "returns false for other types" do
         expect(subject.type_check(123)).to eq(false)
         expect(subject.type_check(true)).to eq(false)
+      end
+    end
+
+    describe "#parse" do
+      it "recursively parses values" do
+        type = Types::Optional.new(Types::Hash.new(name: Types::String.new))
+        struct = type.parse({name: 'foo'})
+        expect(struct.name).to eq('foo')
       end
     end
   end
@@ -90,6 +137,14 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "returns false for other types" do
         expect(subject.type_check(123)).to eq(false)
         expect(subject.type_check(true)).to eq(false)
+      end
+    end
+
+    describe "#parse" do
+      it "recursively parses values" do
+        type = Types::Array.new(Types::Hash.new(name: Types::String.new))
+        arr = type.parse([{name: 'foo'}])
+        expect(arr[0].name).to eq('foo')
       end
     end
   end
@@ -117,6 +172,14 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "returns false for other types" do
         expect(subject.type_check(123)).to eq(false)
         expect(subject.type_check(true)).to eq(false)
+      end
+    end
+
+    describe "parse" do
+      it "returns the hash as an OpenStruct" do
+        struct = subject.parse(id: 123, name: 'foo')
+        expect(struct.id).to eq(123)
+        expect(struct.name).to eq('foo')
       end
     end
   end

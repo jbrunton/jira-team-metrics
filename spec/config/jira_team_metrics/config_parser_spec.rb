@@ -14,6 +14,42 @@ end
 
 RSpec.describe JiraTeamMetrics::Config do
 
+  describe ".parse" do
+    include JiraTeamMetrics::Config::ConfigParser::ClassMethods
+
+    it "parses the schema when valid" do
+      schema = { foo: string }
+      config_hash = { foo: 'bar' }
+      config = JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema)
+      expect(config.foo).to eq('bar')
+    end
+
+
+    it "errors when schema not matched" do
+      schema = { name: string }
+      config_hash = { name: 123 }
+
+      expect { JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema) }.
+        to raise_error("Invalid type in config for field 'name': expected String but was Integer.")
+    end
+
+    it "recursively parses hash elements" do
+      schema = { foo: { bar: string, baz: opt(string) } }
+      config_hash = { foo: { bar: 'bar' } }
+      config = JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema)
+      expect(config.foo.bar).to eq('bar')
+      expect(config.foo.baz).to eq(nil)
+    end
+
+    it "recursively parses array elements" do
+      schema = { foos: array_of({ bar: string, baz: opt(string) }) }
+      config_hash = { foos: [{ bar: 'bar' }] }
+      config = JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema)
+      expect(config.foos[0].bar).to eq('bar')
+      expect(config.foos[0].baz).to eq(nil)
+    end
+  end
+
   describe ".parse_domain" do
     let(:full_config_hash) do
       {
@@ -90,7 +126,7 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "parses a domain config hash into an OpenStruct" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_domain({
         url: 'example.com',
         name: 'My Domain',
         projects: {
@@ -104,7 +140,7 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "parses nested array objects into an OpenStruct" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_domain({
         url: 'example.com',
         projects: {
           issue_type: 'Delivery',
@@ -126,12 +162,12 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "parses a full domain config hash" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain(full_config_hash)
+      config = JiraTeamMetrics::Config::ConfigParser.parse_domain(full_config_hash)
       expect(config.deep_to_h).to eq(full_config_hash)
     end
 
     it "allows optional values" do
-      config = JiraTeamMetrics::ConfigParser.parse_domain({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_domain({
         url: 'example.com',
         projects: {
           issue_type: 'Delivery',
@@ -186,19 +222,19 @@ RSpec.describe JiraTeamMetrics::Config do
 
     it "validates required fields" do
       expect {
-        JiraTeamMetrics::ConfigParser.parse_domain({
+        JiraTeamMetrics::Config::ConfigParser.parse_domain({
           name: 'My Domain'
         })
-      }.to raise_error("Invalid type in config for field 'url': expected type?(String) but was NilClass.")
+      }.to raise_error("Invalid type in config for field 'url': expected String but was NilClass.")
     end
 
     it "typechecks fields" do
       expect {
-        JiraTeamMetrics::ConfigParser.parse_domain({
+        JiraTeamMetrics::Config::ConfigParser.parse_domain({
           url: 'example.com',
           name: 123
         })
-      }.to raise_error("Invalid type in config for field 'name': expected type?(NilClass) OR type?(String) but was Integer.")
+      }.to raise_error("Invalid type in config for field 'name': expected Optional<String> but was Integer.")
     end
   end
 
@@ -263,7 +299,7 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "parses a board config hash into an OpenStruct" do
-      config = JiraTeamMetrics::ConfigParser.parse_board({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board({
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
@@ -274,12 +310,12 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "parses a full board config hash" do
-      config = JiraTeamMetrics::ConfigParser.parse_board(full_config_hash, {})
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board(full_config_hash, {})
       expect(config.deep_to_h).to eq(full_config_hash)
     end
 
     it "allows optional values" do
-      config = JiraTeamMetrics::ConfigParser.parse_board({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board({
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
@@ -326,7 +362,7 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "inherits domain values" do
-      config = JiraTeamMetrics::ConfigParser.parse_board({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board({
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
@@ -343,7 +379,7 @@ RSpec.describe JiraTeamMetrics::Config do
     end
 
     it "overrides domain values" do
-      config = JiraTeamMetrics::ConfigParser.parse_board({
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board({
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'

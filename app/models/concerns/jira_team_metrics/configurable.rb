@@ -17,7 +17,7 @@ module JiraTeamMetrics::Configurable
   end
 
   def config
-    @config ||= JiraTeamMetrics::Config.for(self)
+    @config ||= JiraTeamMetrics::Config::Config.for(self)
   end
 
   def config_hash

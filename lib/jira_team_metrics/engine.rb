@@ -17,7 +17,6 @@ module JiraTeamMetrics
     require 'pickadate-rails'
     require 'gretel'
     require 'humanize'
-    require 'dry-struct'
     require 'config'
 
     config.after_initialize do
