@@ -13,7 +13,6 @@ class JiraTeamMetrics::SyncDomainJob < ApplicationJob
         boards, statuses, fields = fetch_data(domain, credentials)
         update_cache(domain, boards, statuses, fields)
 
-        binding.pry
         domain.config.boards.each do |board_details|
           Rails.logger.info "Configuring board with jira_id=#{board_details.board_id}."
           board = domain.boards.find_by(jira_id: board_details.board_id)

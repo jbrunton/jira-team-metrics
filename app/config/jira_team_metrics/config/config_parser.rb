@@ -35,7 +35,8 @@ class JiraTeamMetrics::Config::ConfigParser
   def self.parse(config_hash, schema)
     schema = JiraTeamMetrics::Config::Types::Hash.new(schema) if schema.is_a?(::Hash)
     #binding.pry
-    schema.type_check!(config_hash)
+    # TODO: add this validation at an appropriate place
+    #schema.type_check!(config_hash)
     schema.parse(config_hash)
     # config_hash ||= {}
     #
@@ -132,9 +133,29 @@ class JiraTeamMetrics::Config::ConfigParser
       counting_strategy: opt(string),
       link_missing: opt(bool)
     },
+    filters: opt_array_of({
+      name: string,
+      type: string,
+      query: string
+    }),
     predictive_scope: {
       board_id: int,
       adjustments_field: string
+    },
+    timesheets: {
+      additional_columns: opt_array_of(string),
+      reporting_period: {
+        day_of_week: int,
+        duration: {
+          days: int
+        }
+      }
+    },
+    rolling_window: {
+      days: int
+    },
+    sync: {
+      months: int
     },
     reports: ReportsSchema
   }
@@ -145,8 +166,8 @@ class JiraTeamMetrics::Config::ConfigParser
 
   def self.parse_board(board_config, domain_config)
     config = Config::Options.new
-    config.add_source!(domain_config)
-    config.add_source!(board_config)
+    config.add_source!(domain_config) unless domain_config.nil?
+    config.add_source!(board_config) unless board_config.nil?
     config.reload!
     config_hash = config.deep_to_h
     parse(config_hash, BoardSchema)

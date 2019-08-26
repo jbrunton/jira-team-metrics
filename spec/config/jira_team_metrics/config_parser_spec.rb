@@ -246,9 +246,31 @@ RSpec.describe JiraTeamMetrics::Config do
           counting_strategy: 'once',
           link_missing: true
         },
+        filters: [
+          {
+            name: 'my filter',
+            type: 'mql',
+            query: 'filter query'
+          }
+        ],
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
+        },
+        timesheets: {
+          additional_columns: ['Capex Budget'],
+          reporting_period: {
+            day_of_week: 1,
+            duration: {
+              days: 7
+            }
+          }
+        },
+        rolling_window: {
+          days: 7
+        },
+        sync: {
+          months: 6
         },
         reports: {
           epics: {
@@ -314,6 +336,64 @@ RSpec.describe JiraTeamMetrics::Config do
       expect(config.deep_to_h).to eq(full_config_hash)
     end
 
+    it "allows null configs" do
+      config = JiraTeamMetrics::Config::ConfigParser.parse_board(nil, {})
+      expect(config.deep_to_h).to eq({
+        default_query: nil,
+        epics: {
+          counting_strategy: nil,
+          link_missing: nil
+        },
+        filters: [],
+        predictive_scope: {
+          board_id: nil,
+          adjustments_field: nil
+        },
+        rolling_window: {
+          days: nil
+        },
+        sync: {
+          months: nil
+        },
+        timesheets: {
+          additional_columns: [],
+          reporting_period: {
+            day_of_week: nil,
+            duration: {
+              days: nil
+            }
+          }
+        },
+        reports: {
+          epics: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
+          projects: {
+            backing_query: nil,
+            card_layout: {
+              fields: []
+            },
+            sections: []
+          },
+          scatterplot: {
+            default_query: nil
+          },
+          throughput: {
+            default_query: nil
+          },
+          aging_wip: {
+            default_query: nil,
+            fields: []
+          },
+          custom_reports: []
+        }
+      })
+    end
+
     it "allows optional values" do
       config = JiraTeamMetrics::Config::ConfigParser.parse_board({
         predictive_scope: {
@@ -327,9 +407,25 @@ RSpec.describe JiraTeamMetrics::Config do
           counting_strategy: nil,
           link_missing: nil
         },
+        filters: [],
         predictive_scope: {
           board_id: 123,
           adjustments_field: 'Metrics Adjustments'
+        },
+        rolling_window: {
+          days: nil
+        },
+        sync: {
+          months: nil
+        },
+        timesheets: {
+          additional_columns: [],
+          reporting_period: {
+            day_of_week: nil,
+            duration: {
+              days: nil
+            }
+          }
         },
         reports: {
           epics: {

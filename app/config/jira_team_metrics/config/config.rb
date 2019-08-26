@@ -33,13 +33,9 @@ class JiraTeamMetrics::Config::Config
     puts "Loading config for #{object.to_s}"
 
     if object.class == JiraTeamMetrics::Domain
-      object.config_hash.blank? ? nil : JiraTeamMetrics::ConfigParser.parse_domain(object.config_hash)
+      object.config_hash.blank? ? nil : JiraTeamMetrics::Config::ConfigParser.parse_domain(object.config_hash)
     elsif object.class == JiraTeamMetrics::Board
-      if object.active?
-        JiraTeamMetrics::ConfigParser.parse_board(object.domain.config_hash, object.config_hash)
-      else
-        OpenStruct.new()
-      end
+      JiraTeamMetrics::Config::ConfigParser.parse_board(object.config_hash, object.domain.config_hash)
     else
       raise "Unexpected class: #{object.class}"
     end
