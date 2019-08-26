@@ -18,17 +18,31 @@ class JiraTeamMetrics::Config
   end
 
   def self.for(object)
+    # if object.class == JiraTeamMetrics::Domain
+    #   schema_path = File.join(__dir__, 'schemas', 'domain_config.yml')
+    #   parent = nil
+    # elsif object.class == JiraTeamMetrics::Board
+    #   schema_path = File.join(__dir__, 'schemas', 'board_config.yml')
+    #   parent = JiraTeamMetrics::Config.for(object.domain)
+    # else
+    #   raise "Unexpected class: #{object.class}"
+    # end
+    # schema = YAML.load_file(schema_path)
+    # JiraTeamMetrics::Config.new(object.config_hash, schema, parent)
+
+    puts "Loading config for #{object.to_s}"
+
     if object.class == JiraTeamMetrics::Domain
-      schema_path = File.join(__dir__, 'schemas', 'domain_config.yml')
-      parent = nil
+      object.config_hash.blank? ? nil : JiraTeamMetrics::ConfigParser.parse_domain(object.config_hash)
     elsif object.class == JiraTeamMetrics::Board
-      schema_path = File.join(__dir__, 'schemas', 'board_config.yml')
-      parent = JiraTeamMetrics::Config.for(object.domain)
+      if object.active?
+        JiraTeamMetrics::ConfigParser.parse_board(object.domain.config_hash, object.config_hash)
+      else
+        OpenStruct.new()
+      end
     else
       raise "Unexpected class: #{object.class}"
     end
-    schema = YAML.load_file(schema_path)
-    JiraTeamMetrics::Config.new(object.config_hash, schema, parent)
   end
 
   def self.domain_config(config_hash)

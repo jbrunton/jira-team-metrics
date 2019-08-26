@@ -13,11 +13,18 @@ class OpenStruct
 end
 
 RSpec.describe JiraTeamMetrics::Config do
+
   describe ".parse_domain" do
     let(:full_config_hash) do
       {
         url: 'example.com',
         name: 'My Domain',
+        fields: ['Developer', 'Tester'],
+        projects: {
+          issue_type: 'Delivery',
+          inward_link_type: 'includes',
+          outward_link_type: 'included in'
+        },
         epics: {
           counting_strategy: 'once',
           link_missing: true
@@ -85,10 +92,37 @@ RSpec.describe JiraTeamMetrics::Config do
     it "parses a domain config hash into an OpenStruct" do
       config = JiraTeamMetrics::ConfigParser.parse_domain({
         url: 'example.com',
-        name: 'My Domain'
+        name: 'My Domain',
+        projects: {
+          issue_type: 'Delivery',
+          inward_link_type: 'includes',
+          outward_link_type: 'included in'
+        }
       })
       expect(config.url).to eq('example.com')
       expect(config.name).to eq('My Domain')
+    end
+
+    it "parses nested array objects into an OpenStruct" do
+      config = JiraTeamMetrics::ConfigParser.parse_domain({
+        url: 'example.com',
+        projects: {
+          issue_type: 'Delivery',
+          inward_link_type: 'includes',
+          outward_link_type: 'included in'
+        },
+        reports: {
+          epics: {
+            sections: [
+              {
+                title: 'Backlog',
+                mql: 'query'
+              }
+            ]
+          }
+        }
+      })
+      expect(config.reports.epics.sections[0].title).to eq('Backlog')
     end
 
     it "parses a full domain config hash" do
@@ -98,11 +132,22 @@ RSpec.describe JiraTeamMetrics::Config do
 
     it "allows optional values" do
       config = JiraTeamMetrics::ConfigParser.parse_domain({
-        url: 'example.com'
+        url: 'example.com',
+        projects: {
+          issue_type: 'Delivery',
+          inward_link_type: 'includes',
+          outward_link_type: 'included in'
+        }
       })
       expect(config.deep_to_h).to eq({
         url: 'example.com',
         name: nil,
+        fields: [],
+        projects: {
+          issue_type: 'Delivery',
+          inward_link_type: 'includes',
+          outward_link_type: 'included in'
+        },
         epics: {
           counting_strategy: nil,
           link_missing: nil

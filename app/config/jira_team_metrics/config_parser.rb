@@ -1,5 +1,7 @@
 module JiraTeamMetrics::Types
-  include Dry.Types
+  #include Dry.Types
+  #
+
 
   module ClassMethods
     def string
@@ -33,12 +35,14 @@ module JiraTeamMetrics::Types
 
     def parse(config_hash, schema)
       config_hash ||= {}
+
       config_hash = schema.map do |key, type|
-        value = if type.is_a?(::Hash)
-          parse(config_hash[key], type)
+        if type.is_a?(::Hash)
+          value = parse(config_hash[key], type)
         else
           begin
-            config_hash[key].nil? ? type[] : type[config_hash[key]]
+            value = config_hash[key].nil? ? type[] : type[config_hash[key]]
+            value.map { |x| parse(x, schema[key])} if value.is_a?(::Array)
           rescue Dry::Types::ConstraintError => e
             raise "Invalid type in config for field '#{key}': expected #{type.rule.to_s} but was #{config_hash[key].class}."
           end
@@ -98,6 +102,12 @@ class JiraTeamMetrics::ConfigParser
   DomainSchema = {
     url: string,
     name: opt(string),
+    fields: opt_array_of(string),
+    projects: {
+      issue_type: string,
+      inward_link_type: string,
+      outward_link_type: string
+    },
     epics: {
       counting_strategy: opt(string),
       link_missing: opt(bool)

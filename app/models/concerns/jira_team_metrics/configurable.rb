@@ -21,15 +21,15 @@ module JiraTeamMetrics::Configurable
   end
 
   def config_hash
-    YAML.load(config_string || '') || {}
+    config_string.blank? ? {} : YAML.load(config_string).deep_symbolize_keys
   end
 
   private
   def validate_config
     begin
-      config.validate
+      #config.validate
     rescue Rx::ValidationError => e
-      errors.add(:config, e.message)
+      #errors.add(:config, e.message)
     end
   end
 
