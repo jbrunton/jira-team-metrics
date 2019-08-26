@@ -169,7 +169,20 @@ class JiraTeamMetrics::Config::ConfigParser
     config.add_source!(domain_config) unless domain_config.nil?
     config.add_source!(board_config) unless board_config.nil?
     config.reload!
+    binding.pry
     config_hash = config.deep_to_h
     parse(config_hash, BoardSchema)
+  end
+end
+
+class OpenStruct
+  def deep_to_h
+    to_h.transform_values do |v|
+      case
+        when v.is_a?(OpenStruct) then v.deep_to_h
+        when v.is_a?(Array) then v.map{ |v| v.is_a?(OpenStruct) ? v.deep_to_h : v }
+        else v
+      end
+    end
   end
 end

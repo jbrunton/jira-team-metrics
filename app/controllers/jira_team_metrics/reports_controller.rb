@@ -43,6 +43,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
 
   def epics
     @report_options = @board.config.reports.epics
+    binding.pry
     @sections = sections_for(@board.epics, @report_options)
   end
 
