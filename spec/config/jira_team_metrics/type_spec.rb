@@ -1,20 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe JiraTeamMetrics::Config::Types do
-  subject { JiraTeamMetrics::Config::Types::String.new }
+  module Types
+    include JiraTeamMetrics::Config::Types
+  end
 
-  describe "#type_check" do
-    it "returns true for Strings" do
-      expect(subject.type_check("string")).to eq(true)
-    end
+  describe Types::String do
 
-    it "returns false for other types" do
-      expect(subject.type_check(nil)).to eq(false)
-      expect(subject.type_check(123)).to eq(false)
+    subject { Types::String.new }
+
+    describe "#type_check" do
+      it "returns true for Strings" do
+        expect(subject.type_check("string")).to eq(true)
+      end
+
+      it "returns false for other types" do
+        expect(subject.type_check(nil)).to eq(false)
+        expect(subject.type_check(123)).to eq(false)
+      end
     end
   end
-  describe "Boolean" do
-    subject { JiraTeamMetrics::Config::Types::Boolean.new }
+
+  describe Types::Boolean do
+    subject { Types::Boolean.new }
 
     describe "#type_check" do
       it "returns true for Booleans" do
@@ -29,8 +37,8 @@ RSpec.describe JiraTeamMetrics::Config::Types do
     end
   end
 
-  describe "Integer" do
-    subject { JiraTeamMetrics::Config::Types::Integer.new }
+  describe Types::Integer do
+    subject { Types::Integer.new }
 
     describe "#type_check" do
       it "returns true for Integers" do
@@ -44,7 +52,22 @@ RSpec.describe JiraTeamMetrics::Config::Types do
     end
   end
 
-  describe "Optional" do
-    subject { JiraTeamMetrics::Config::Types::Optional.new() }
+  describe Types::Optional do
+    subject { Types::Optional.new(Types::String.new) }
+
+    describe "#type_check" do
+      it "returns true for nil values" do
+        expect(subject.type_check(nil)).to eq(true)
+      end
+
+      it "returns true for values of the given type" do
+        expect(subject.type_check("string")).to eq(true)
+      end
+
+      it "returns false for other types" do
+        expect(subject.type_check(123)).to eq(false)
+        expect(subject.type_check(true)).to eq(false)
+      end
+    end
   end
 end
