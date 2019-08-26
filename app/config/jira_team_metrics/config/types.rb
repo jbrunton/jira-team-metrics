@@ -50,7 +50,23 @@ class JiraTeamMetrics::Config
       end
 
       def describe_type
-        "Optional(#{type.describe_type})"
+        "Optional<#{type.describe_type}>"
+      end
+    end
+
+    class Array < AbstractType
+      attr_reader :element_type
+
+      def initialize(element_type)
+        @element_type = element_type
+      end
+
+      def type_check(value)
+        value.is_a?(::Array) && value.all? { |x| element_type.type_check(x) }
+      end
+
+      def describe_type
+        "Array<#{element_type.describe_type}>"
       end
     end
   end

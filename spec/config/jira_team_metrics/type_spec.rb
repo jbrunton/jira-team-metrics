@@ -70,4 +70,27 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       end
     end
   end
+
+  describe Types::Array do
+    subject { Types::Array.new(Types::String.new) }
+
+    describe "#type_check" do
+      it "returns true for empty arrays" do
+        expect(subject.type_check([])).to eq(true)
+      end
+
+      it "returns true for arrays containing the given type" do
+        expect(subject.type_check(["string"])).to eq(true)
+      end
+
+      it "returns false for arrays containing other types" do
+        expect(subject.type_check(["string", 2])).to eq(false)
+      end
+
+      it "returns false for other types" do
+        expect(subject.type_check(123)).to eq(false)
+        expect(subject.type_check(true)).to eq(false)
+      end
+    end
+  end
 end
