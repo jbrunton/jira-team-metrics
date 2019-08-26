@@ -1,23 +1,20 @@
 require 'rails_helper'
 
-RSpec.describe JiraTeamMetrics::Config::Type::AbstractType do
-  describe "String" do
-    subject { JiraTeamMetrics::Config::Type::String.new }
+RSpec.describe JiraTeamMetrics::Config::Types do
+  subject { JiraTeamMetrics::Config::Types::String.new }
 
-    describe "#type_check" do
-      it "returns true for Strings" do
-        expect(subject.type_check("string")).to eq(true)
-      end
+  describe "#type_check" do
+    it "returns true for Strings" do
+      expect(subject.type_check("string")).to eq(true)
+    end
 
-      it "returns false for other types" do
-        expect(subject.type_check(nil)).to eq(false)
-        expect(subject.type_check(123)).to eq(false)
-      end
+    it "returns false for other types" do
+      expect(subject.type_check(nil)).to eq(false)
+      expect(subject.type_check(123)).to eq(false)
     end
   end
-
   describe "Boolean" do
-    subject { JiraTeamMetrics::Config::Type::Boolean.new }
+    subject { JiraTeamMetrics::Config::Types::Boolean.new }
 
     describe "#type_check" do
       it "returns true for Booleans" do
@@ -33,7 +30,7 @@ RSpec.describe JiraTeamMetrics::Config::Type::AbstractType do
   end
 
   describe "Integer" do
-    subject { JiraTeamMetrics::Config::Type::Integer.new }
+    subject { JiraTeamMetrics::Config::Types::Integer.new }
 
     describe "#type_check" do
       it "returns true for Integers" do
@@ -48,6 +45,6 @@ RSpec.describe JiraTeamMetrics::Config::Type::AbstractType do
   end
 
   describe "Optional" do
-    subject { JiraTeamMetrics::Config::Type::Optional.new() }
+    subject { JiraTeamMetrics::Config::Types::Optional.new() }
   end
 end
