@@ -19,7 +19,7 @@ class JiraTeamMetrics::Config::Config
 
   def self.for(object)
     if object.class == JiraTeamMetrics::Domain
-      object.config_hash.blank? ? nil : JiraTeamMetrics::Config::ConfigParser.parse_domain(object.config_hash)
+      JiraTeamMetrics::Config::ConfigParser.parse_domain(object.config_hash)
     elsif object.class == JiraTeamMetrics::Board
       JiraTeamMetrics::Config::ConfigParser.parse_board(object.config_hash, object.domain.config_hash)
     else
