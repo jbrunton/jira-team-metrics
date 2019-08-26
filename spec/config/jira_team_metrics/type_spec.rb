@@ -93,4 +93,31 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       end
     end
   end
+
+  describe Types::Hash do
+    let(:schema) do
+      {
+        id: Types::Integer.new,
+        name: Types::String.new
+      }
+    end
+
+    subject { Types::Hash.new(schema) }
+
+    describe "#type_check" do
+      it "returns true for hashes matching the schema" do
+        expect(subject.type_check({ id: 123, name: 'foo' })).to eq(true)
+      end
+
+      it "returns false for hashes not matching the schema" do
+        expect(subject.type_check({ id: '123', name: 'foo' })).to eq(false)
+        expect(subject.type_check({ id: 123 })).to eq(false)
+      end
+
+      it "returns false for other types" do
+        expect(subject.type_check(123)).to eq(false)
+        expect(subject.type_check(true)).to eq(false)
+      end
+    end
+  end
 end

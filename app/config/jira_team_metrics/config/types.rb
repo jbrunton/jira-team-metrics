@@ -69,5 +69,17 @@ class JiraTeamMetrics::Config
         "Array<#{element_type.describe_type}>"
       end
     end
+
+    class Hash < AbstractType
+      attr_reader :schema
+
+      def initialize(schema)
+        @schema = schema
+      end
+
+      def type_check(value)
+        value.is_a?(::Hash) && schema.map { |key, type| type.type_check(value[key]) }.all?
+      end
+    end
   end
 end
