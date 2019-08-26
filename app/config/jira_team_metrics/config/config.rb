@@ -18,20 +18,6 @@ class JiraTeamMetrics::Config::Config
   end
 
   def self.for(object)
-    # if object.class == JiraTeamMetrics::Domain
-    #   schema_path = File.join(__dir__, 'schemas', 'domain_config.yml')
-    #   parent = nil
-    # elsif object.class == JiraTeamMetrics::Board
-    #   schema_path = File.join(__dir__, 'schemas', 'board_config.yml')
-    #   parent = JiraTeamMetrics::Config.for(object.domain)
-    # else
-    #   raise "Unexpected class: #{object.class}"
-    # end
-    # schema = YAML.load_file(schema_path)
-    # JiraTeamMetrics::Config.new(object.config_hash, schema, parent)
-
-    puts "Loading config for #{object.to_s}"
-
     if object.class == JiraTeamMetrics::Domain
       object.config_hash.blank? ? nil : JiraTeamMetrics::Config::ConfigParser.parse_domain(object.config_hash)
     elsif object.class == JiraTeamMetrics::Board
