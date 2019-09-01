@@ -9,12 +9,6 @@ class JiraTeamMetrics::Config::Config
   def validate
     @schema = JiraTeamMetrics::Config::Types::Hash.new(@schema) if @schema.is_a?(::Hash)
     @schema.type_check!(config_object.deep_to_h)
-    # rx = Rx.new({ :load_core => true })
-    # rx.add_prefix('metrics', 'jira-team-metrics/')
-    # reports_schema_path = File.join(__dir__, 'schemas/types', 'reports_config.yml')
-    # rx.learn_type('jira-team-metrics/reports-config', YAML.load_file(reports_schema_path))
-    # schema = rx.make_schema(@schema)
-    # schema.check!(config_hash)
   end
 
   def self.for(object)

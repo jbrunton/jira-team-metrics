@@ -34,31 +34,7 @@ class JiraTeamMetrics::Config::ConfigParser
 
   def self.parse(config_hash, schema)
     schema = JiraTeamMetrics::Config::Types::Hash.new(schema) if schema.is_a?(::Hash)
-    #binding.pry
-    # TODO: add this validation at an appropriate place
-    #schema.type_check!(config_hash)
     schema.parse(config_hash)
-    # config_hash ||= {}
-    #
-    # config_hash = schema.map do |key, type|
-    #   if type.is_a?(::Hash)
-    #     value = parse(config_hash[key], type)
-    #   else
-    #     begin
-    #       value = type.type_check!(config_hash[key])
-    #       value ||= type.default if type.is_a?(JiraTeamMetrics::Config::Types::Optional)
-    #       if type.is_a?(JiraTeamMetrics::Config::Types::Array) && type.element_type.is_a?(JiraTeamMetrics::Config::Types::Hash)
-    #         value = value.map do |x|
-    #           parse(x, schema[key].element_type.schema)
-    #         end
-    #       end
-    #     rescue TypeError => e
-    #       raise "Invalid type in config for field '#{key}': expected #{type.describe_type} but was #{config_hash[key].class}."
-    #     end
-    #   end
-    #   [key, value]
-    # end.to_h
-    # OpenStruct.new(config_hash)
   end
 
   ReportsSchema = {
