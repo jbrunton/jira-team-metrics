@@ -16,7 +16,7 @@ RSpec.describe JiraTeamMetrics::ConfigFileService do
     context "when given a valid path with an invalid file" do
       it "Raises an error" do
         service = JiraTeamMetrics::ConfigFileService.new('invalid_config.yml', config_path)
-        expect { service.load_config(domain) }.to raise_error(RuntimeError, /Invalid config: Config expected Hash to have key: 'url'/)
+        expect { service.load_config(domain) }.to raise_error(RuntimeError, "Invalid config: Config Invalid type for field 'url': expected String but was NilClass")
       end
     end
 
