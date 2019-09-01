@@ -8,6 +8,10 @@ module JiraTeamMetrics::Config
           raise TypeError, "Expected #{describe_type} but found #{value.class}"
         end
       end
+
+      def is_like_nil?(value)
+        value.nil?
+      end
     end
 
     class String < AbstractType
@@ -77,7 +81,16 @@ module JiraTeamMetrics::Config
       end
 
       def type_check!(value)
-        type.type_check!(value) unless value.nil?
+        return if value.nil?
+        if type.is_a?(Hash)
+          type.type_check!(value, true)
+        else
+          type.type_check!(value)
+        end
+      end
+
+      def is_like_nil?(value)
+        value.nil? || type.is_like_nil?(value)
       end
     end
 
@@ -102,7 +115,9 @@ module JiraTeamMetrics::Config
         value.each { |x| element_type.type_check!(x) }
       end
 
-
+      def is_like_nil?(value)
+        value.nil? || value == []
+      end
     end
 
     class Hash < AbstractType
@@ -113,20 +128,6 @@ module JiraTeamMetrics::Config
           type = Optional.new(Hash.new(type)) if type.is_a?(::Hash)
           [key, type]
         end.to_h
-      end
-
-      def type_check!(value)
-        raise TypeError, "Expected Hash but found #{value.class}" unless value.is_a?(::Hash)
-        schema.each do |key, type|
-          begin
-            type.type_check!(value[key])
-          rescue TypeError
-            raise TypeError, "Invalid type for field '#{key}': expected #{type.describe_type} but was #{value[key].class}"
-          end
-        end
-        value.keys.each do |key|
-          raise TypeError, "Unexpected field '#{key}' found in hash" unless schema.keys.include?(key)
-        end
       end
 
       def describe_type
@@ -141,6 +142,26 @@ module JiraTeamMetrics::Config
           [key, type.parse(value)]
         end.to_h
         OpenStruct.new(parsed_hash)
+      end
+
+      def type_check!(value, opt_hash = false)
+        raise TypeError, "Expected Hash but found #{value.class}" unless value.is_a?(::Hash)
+        unless opt_hash && is_like_nil?(value)
+          schema.each do |key, type|
+            begin
+              type.type_check!(value[key])
+            rescue TypeError
+              raise TypeError, "Invalid type for field '#{key}': expected #{type.describe_type} but was #{value[key].class}"
+            end
+          end
+        end
+        value.keys.each do |key|
+          raise TypeError, "Unexpected field '#{key}' found in hash" unless schema.keys.include?(key)
+        end
+      end
+
+      def is_like_nil?(value)
+        value.nil? || schema.map { |key, type| type.is_like_nil?(value[key]) }.all?
       end
     end
   end

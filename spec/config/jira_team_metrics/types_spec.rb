@@ -31,6 +31,16 @@ RSpec.describe JiraTeamMetrics::Config::Types do
         expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected String but found Integer")
       end
     end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?("string")).to eq(false)
+      end
+    end
   end
 
   describe Types::Boolean do
@@ -57,6 +67,16 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "fails for other types" do
         expect { subject.type_check!(nil) }.to raise_error(TypeError, "Expected Boolean but found NilClass")
         expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected Boolean but found Integer")
+      end
+    end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?(false)).to eq(false)
       end
     end
   end
@@ -86,21 +106,31 @@ RSpec.describe JiraTeamMetrics::Config::Types do
         expect { subject.type_check!(true) }.to raise_error(TypeError, "Expected Integer but found TrueClass")
       end
     end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?(123)).to eq(false)
+      end
+    end
   end
 
   describe Types::Optional do
-    subject { Types::Optional.new(Types::String.new) }
+    subject { Types::Optional.new(Types::Hash.new(id: Types::Integer.new, name: Types::String.new)) }
 
     describe "#describe_type" do
       it "describes the Optional type" do
-        expect(subject.describe_type).to eq("Optional<String>")
+        expect(subject.describe_type).to eq("Optional<Hash[id: Integer, name: String]>")
       end
     end
 
     describe "#parse" do
       it "recursively parses values" do
-        type = Types::Optional.new(Types::Hash.new(name: Types::String.new))
-        value = type.parse({ name: 'foo' })
+        value = subject.parse({ id: 123, name: 'foo' })
+        expect(value.id).to eq(123)
         expect(value.name).to eq('foo')
       end
     end
@@ -111,12 +141,35 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       end
 
       it "passes for values of the given type" do
-        subject.type_check!("string")
+        subject.type_check!({ id: 123, name: 'foo' })
+      end
+
+      it "passes for optional hashes with nil values" do
+        subject.type_check!({ id: nil, name: nil })
+      end
+
+      it "fails for optional hashes with invalid values" do
+        expect { subject.type_check!({ id: 123, name: nil }) }.to raise_error(TypeError, "Invalid type for field 'name': expected String but was NilClass")
       end
 
       it "fails for other types" do
-        expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected String but found Integer")
-        expect { subject.type_check!(true) }.to raise_error(TypeError, "Expected String but found TrueClass")
+        expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected Hash but found Integer")
+        expect { subject.type_check!(true) }.to raise_error(TypeError, "Expected Hash but found TrueClass")
+      end
+    end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns true if the value is like nil for the given schema" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+        expect(subject.is_like_nil?({ id: nil, name: nil })).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?({ id: 123, name: nil })).to eq(false)
       end
     end
   end
@@ -154,6 +207,20 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "fails for non-array types" do
         expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected Array but found Integer")
         expect { subject.type_check!(true) }.to raise_error(TypeError, "Expected Array but found TrueClass")
+      end
+    end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns true if empty" do
+        expect(subject.is_like_nil?([])).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?(["string"])).to eq(false)
       end
     end
   end
@@ -202,6 +269,20 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       it "fails for other types" do
         expect { subject.type_check!(123) }.to raise_error(TypeError, "Expected Hash but found Integer")
         expect { subject.type_check!(true) }.to raise_error(TypeError, "Expected Hash but found TrueClass")
+      end
+    end
+
+    describe "#is_like_nil?" do
+      it "returns true if nil" do
+        expect(subject.is_like_nil?(nil)).to eq(true)
+      end
+
+      it "returns true if the values are all like nil" do
+        expect(subject.is_like_nil?({ id: nil, name: nil })).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(subject.is_like_nil?({ id: 123 })).to eq(false)
       end
     end
   end
