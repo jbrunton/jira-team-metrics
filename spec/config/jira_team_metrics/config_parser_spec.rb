@@ -17,7 +17,6 @@ RSpec.describe JiraTeamMetrics::Config do
       schema = { name: string }
       config_hash = { name: 123 }
 
-      binding.pry
       expect { JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema) }.
         to raise_error("Invalid type in config for field 'name': expected String but was Integer.")
     end
