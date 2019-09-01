@@ -11,10 +11,6 @@ module JiraTeamMetrics::Config
     end
 
     class String < AbstractType
-      def type_check(value)
-        value.is_a?(::String)
-      end
-
       def describe_type
         "String"
       end
@@ -22,13 +18,15 @@ module JiraTeamMetrics::Config
       def parse(value)
         value
       end
+
+      protected
+
+      def type_check(value)
+        value.is_a?(::String)
+      end
     end
 
     class Boolean < AbstractType
-      def type_check(value)
-        value.in? [true, false]
-      end
-
       def describe_type
         "Boolean"
       end
@@ -36,19 +34,27 @@ module JiraTeamMetrics::Config
       def parse(value)
         value
       end
+
+      protected
+
+      def type_check(value)
+        value.in? [true, false]
+      end
     end
 
     class Integer < AbstractType
-      def type_check(value)
-        value.is_a?(::Integer)
-      end
-
       def describe_type
         "Integer"
       end
 
       def parse(value)
         value
+      end
+
+      protected
+
+      def type_check(value)
+        value.is_a?(::Integer)
       end
     end
 
@@ -62,16 +68,16 @@ module JiraTeamMetrics::Config
         @default = default
       end
 
-      def type_check(value)
-        value.nil? || type.type_check(value)
-      end
-
       def describe_type
         "Optional<#{type.describe_type}>"
       end
 
       def parse(value)
         type.parse(value)
+      end
+
+      def type_check!(value)
+        type.type_check!(value) unless value.nil?
       end
     end
 
@@ -83,10 +89,6 @@ module JiraTeamMetrics::Config
         @element_type = element_type
       end
 
-      def type_check(value)
-        value.is_a?(::Array) && value.all? { |x| element_type.type_check(x) }
-      end
-
       def describe_type
         "Array<#{element_type.describe_type}>"
       end
@@ -94,6 +96,13 @@ module JiraTeamMetrics::Config
       def parse(value)
         value.map{ |x| element_type.parse(x) }
       end
+
+      def type_check!(value)
+        raise TypeError, "Expected Array but found #{value.class}" unless value.is_a?(::Array)
+        value.each { |x| element_type.type_check!(x) }
+      end
+
+
     end
 
     class Hash < AbstractType
@@ -106,16 +115,13 @@ module JiraTeamMetrics::Config
         end.to_h
       end
 
-      def type_check(value)
-        value.is_a?(::Hash) && schema.map { |key, type| type.type_check(value[key]) }.all?
-      end
-
       def type_check!(value)
         raise TypeError, "Expected Hash but found #{value.class}" unless value.is_a?(::Hash)
-        binding.pry
         schema.each do |key, type|
-          unless type.type_check(value[key])
-            raise TypeError, "Invalid type in config for field '#{key}': expected #{type.describe_type} but was #{value[key].class}."
+          begin
+            type.type_check!(value[key])
+          rescue TypeError
+            raise TypeError, "Invalid type for field '#{key}': expected #{type.describe_type} but was #{value[key].class}"
           end
         end
       end
