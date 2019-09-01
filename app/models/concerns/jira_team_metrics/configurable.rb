@@ -27,9 +27,9 @@ module JiraTeamMetrics::Configurable
   private
   def validate_config
     begin
-      #config.validate
-    rescue Rx::ValidationError => e
-      #errors.add(:config, e.message)
+      config.validate
+    rescue TypeError => e
+      errors.add(:config, e.message)
     end
   end
 

@@ -112,9 +112,10 @@ module JiraTeamMetrics::Config
 
       def type_check!(value)
         raise TypeError, "Expected Hash but found #{value.class}" unless value.is_a?(::Hash)
+        binding.pry
         schema.each do |key, type|
           unless type.type_check(value[key])
-            raise "Invalid type in config for field '#{key}': expected #{type.describe_type} but was #{value[key].class}."
+            raise TypeError, "Invalid type in config for field '#{key}': expected #{type.describe_type} but was #{value[key].class}."
           end
         end
       end

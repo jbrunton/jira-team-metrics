@@ -17,6 +17,7 @@ RSpec.describe JiraTeamMetrics::Config do
       schema = { name: string }
       config_hash = { name: 123 }
 
+      binding.pry
       expect { JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema) }.
         to raise_error("Invalid type in config for field 'name': expected String but was Integer.")
     end
@@ -223,6 +224,15 @@ RSpec.describe JiraTeamMetrics::Config do
           name: 123
         })
       }.to raise_error("Invalid type in config for field 'name': expected Optional<String> but was Integer.")
+    end
+
+    it "typechecks unexpected fields" do
+      expect {
+        JiraTeamMetrics::Config::ConfigParser.parse_domain({
+          url: 'example.com',
+          foo: 'bar'
+        })
+      }.to raise_error("foo")
     end
   end
 
