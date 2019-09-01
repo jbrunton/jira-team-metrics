@@ -12,15 +12,6 @@ RSpec.describe JiraTeamMetrics::Config do
       expect(config.foo).to eq('bar')
     end
 
-
-    it "errors when schema not matched" do
-      schema = { name: string }
-      config_hash = { name: 123 }
-
-      expect { JiraTeamMetrics::Config::ConfigParser.parse(config_hash, schema) }.
-        to raise_error("Invalid type in config for field 'name': expected String but was Integer.")
-    end
-
     it "recursively parses hash elements" do
       schema = { foo: { bar: string, baz: opt(string) } }
       config_hash = { foo: { bar: 'bar' } }
@@ -206,32 +197,6 @@ RSpec.describe JiraTeamMetrics::Config do
           custom_reports: []
         }
       })
-    end
-
-    it "validates required fields" do
-      expect {
-        JiraTeamMetrics::Config::ConfigParser.parse_domain({
-          name: 'My Domain'
-        })
-      }.to raise_error("Invalid type in config for field 'url': expected String but was NilClass.")
-    end
-
-    it "typechecks fields" do
-      expect {
-        JiraTeamMetrics::Config::ConfigParser.parse_domain({
-          url: 'example.com',
-          name: 123
-        })
-      }.to raise_error("Invalid type in config for field 'name': expected Optional<String> but was Integer.")
-    end
-
-    it "typechecks unexpected fields" do
-      expect {
-        JiraTeamMetrics::Config::ConfigParser.parse_domain({
-          url: 'example.com',
-          foo: 'bar'
-        })
-      }.to raise_error("foo")
     end
   end
 
