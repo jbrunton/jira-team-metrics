@@ -152,11 +152,11 @@ end
 
 class OpenStruct
   def deep_to_h
-    to_h.transform_values do |v|
+    to_h.transform_values do |value|
       case
-        when v.is_a?(OpenStruct) then v.deep_to_h
-        when v.is_a?(Array) then v.map{ |v| v.is_a?(OpenStruct) ? v.deep_to_h : v }
-        else v
+        when value.is_a?(OpenStruct) then value.deep_to_h
+        when value.is_a?(Array) then value.map{ |v| v.is_a?(OpenStruct) ? v.deep_to_h : v }
+        else value
       end
     end
   end

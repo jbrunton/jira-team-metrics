@@ -146,22 +146,29 @@ module JiraTeamMetrics::Config
 
       def type_check!(value, opt_hash = false)
         raise TypeError, "Expected Hash but found #{value.class}" unless value.is_a?(::Hash)
-        unless opt_hash && is_like_nil?(value)
-          schema.each do |key, type|
-            begin
-              type.type_check!(value[key])
-            rescue TypeError
-              raise TypeError, "Invalid type for field '#{key}': expected #{type.describe_type} but was #{value[key].class}"
-            end
-          end
-        end
-        value.keys.each do |key|
-          raise TypeError, "Unexpected field '#{key}' found in hash" unless schema.keys.include?(key)
-        end
+        check_schema!(value) unless opt_hash && is_like_nil?(value)
+        check_unexpected_keys!(value)
       end
 
       def is_like_nil?(value)
         value.nil? || schema.map { |key, type| type.is_like_nil?(value[key]) }.all?
+      end
+
+    private
+      def check_schema!(value)
+        schema.each do |key, type|
+          begin
+            type.type_check!(value[key])
+          rescue TypeError
+            raise TypeError, "Invalid type for field '#{key}': expected #{type.describe_type} but was #{value[key].class}"
+          end
+        end
+      end
+
+      def check_unexpected_keys!(value)
+        value.keys.each do |key|
+          raise TypeError, "Unexpected field '#{key}' found in hash" unless schema.keys.include?(key)
+        end
       end
     end
   end
