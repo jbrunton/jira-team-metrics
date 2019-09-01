@@ -189,7 +189,14 @@ RSpec.describe JiraTeamMetrics::Config::Types do
 
       it "fails for hashes not matching the schema" do
         expect { subject.type_check!({ id: '123', name: 'foo' }) }.to raise_error(TypeError, "Invalid type for field 'id': expected Integer but was String")
+      end
+
+      it "fails for missing required fields" do
         expect { subject.type_check!({ id: 123 }) }.to raise_error(TypeError, "Invalid type for field 'name': expected String but was NilClass")
+      end
+
+      it "fails for unexpected fields" do
+        expect { subject.type_check!({ id: 123, name: 'foo', bar: 'baz' }) }.to raise_error(TypeError, "Unexpected field 'bar' found in hash of type Hash[id: Integer, name: String]")
       end
 
       it "fails for other types" do
