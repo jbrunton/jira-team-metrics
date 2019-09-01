@@ -196,7 +196,7 @@ RSpec.describe JiraTeamMetrics::Config::Types do
       end
 
       it "fails for unexpected fields" do
-        expect { subject.type_check!({ id: 123, name: 'foo', bar: 'baz' }) }.to raise_error(TypeError, "Unexpected field 'bar' found in hash of type Hash[id: Integer, name: String]")
+        expect { subject.type_check!({ id: 123, name: 'foo', bar: 'baz' }) }.to raise_error(TypeError, "Unexpected field 'bar' found in hash")
       end
 
       it "fails for other types" do

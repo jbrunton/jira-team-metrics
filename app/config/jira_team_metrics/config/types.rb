@@ -125,7 +125,7 @@ module JiraTeamMetrics::Config
           end
         end
         value.keys.each do |key|
-          raise TypeError, "Unexpected field '#{key}' found in hash of type #{describe_type}" unless schema.keys.include?(key)
+          raise TypeError, "Unexpected field '#{key}' found in hash" unless schema.keys.include?(key)
         end
       end
 
