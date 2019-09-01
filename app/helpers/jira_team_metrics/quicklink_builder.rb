@@ -77,9 +77,9 @@ private
   def build_query(board)
     default_query = case @report_name
       when 'throughput'
-        board.config.reports.throughput.default_query(@domain)
+        board.config.reports.throughput.default_query
       when 'scatterplot'
-        board.config.reports.scatterplot.default_query(@domain)
+        board.config.reports.scatterplot.default_query
       else
         nil
     end
