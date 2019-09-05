@@ -175,6 +175,15 @@ RSpec.describe JiraTeamMetrics::MqlInterpreter do
         results = eval(query, issues, board)
         expect(results).to eq([issue3])
       end
+
+      it "selects arbitrary expressions" do
+        query = <<~MQL
+          select MyField + '1'
+          from issues('Done')
+        MQL
+        results = eval(query, issues, board)
+        expect(results).to eq([['A1']])
+      end
     end
 
     context "for custom project types" do

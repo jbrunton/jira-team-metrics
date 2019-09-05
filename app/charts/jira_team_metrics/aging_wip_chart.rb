@@ -5,48 +5,54 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def data_table
-    data_table = JiraTeamMetrics::DataTableBuilder.new
-      .data(wip_issues)
-      .pick(:key, :summary, :started_time)
-      .build
+    interpreter = JiraTeamMetrics::MqlInterpreter.new
+    results = interpreter.eval(
+      "select key, age('#{@params.aging_type}'), (key + ' - ' + summary) as annotation from issues()",
+      @board, wip_issues)
+    data_table = results.to_data_table
 
     now = DateTime.now
 
-    data_table.add_column('now', Array.new(data_table.rows.count, now))
-    data_table.insert_row(0, ['Percentiles', '85th', now - percentiles[85], now])
-    data_table.insert_row(1, ['Percentiles', '70th', now - percentiles[70], now])
-    data_table.insert_row(2, ['Percentiles', '50th', now - percentiles[50], now])
+    data_table.insert_column(2, 'style', issue_styles(now))
+    data_table.insert_row(0, ['85th', percentiles[85], 'color: #f44336', '85th percentile'])
+    data_table.insert_row(1, ['70th', percentiles[70], 'color: #ff9800', '70th percentile'])
+    data_table.insert_row(2, ['50th', percentiles[50], 'color: #03a9f4', '50th percentile'])
 
-    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(wip_issues, now))
+    data_table.insert_column(2, 'tooltip', percentile_tooltips + issue_tooltips(now))
+
+    data_table.insert_row(3, [nil, nil, nil, nil, nil])
 
     data_table
   end
 
   def chart_opts
     {
-      colors: ['#f44336', '#ff9800', '#03a9f4'] + wip_issues.map do |issue|
-        if (DateTime.now - issue.started_time) < percentiles[70]
-          '#03a9f4'
-        elsif (DateTime.now - issue.started_time) < percentiles[85]
-          '#ff9800'
-        else
-          '#f44336'
-        end
-      end,
-      height: (wip_issues.count + 3) * 41 + 50
+      height: (wip_issues.count + 4) * 24,
+      chartArea: { width: '100%', height: '100%' },
+      bar: { groupWidth: '80%' },
+      tooltip: { isHtml: true },
+      legend: { position: 'none' },
+      vAxis: { textPosition: 'none' },
+      annotations: {
+        alwaysOutside: true,
+        textStyle: {
+          fontSize: 12,
+          color: 'black'
+        }
+      },
     }
   end
 
   def json_data
     {
       chartOpts: chart_opts,
-      data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'started_time' => { type: 'datetime' }, 'now' => { type: 'datetime' })
+      data: data_table.to_json('tooltip' => { role: 'tooltip', type: 'string', p: {'html': true} }, 'age' => { type: 'number' }, 'annotation' => { role: 'annotation' }, 'style' => { role: 'style' })
     }
   end
 
   def render_issue_tooltip(issue, now)
     @issue_tooltip_template ||= load_template('_aging_wip_issue_tooltip.html.erb')
-    @issue_tooltip_template.result(IssueTooltipBinding.new(issue, now).binding)
+    @issue_tooltip_template.result(IssueTooltipBinding.new(issue, @params.aging_type, now).binding)
   end
 
   def render_percentile_tooltip(percentile)
@@ -58,8 +64,9 @@ class JiraTeamMetrics::AgingWipChart
   class IssueTooltipBinding
     include JiraTeamMetrics::HtmlHelper
 
-    def initialize(issue, now)
+    def initialize(issue, age_type, now)
       @issue = issue
+      @age_type = age_type
       @now = now
     end
 
@@ -83,8 +90,20 @@ class JiraTeamMetrics::AgingWipChart
     [85, 70, 50].map{ |p| render_percentile_tooltip(p) }
   end
 
-  def issue_tooltips(wip_issues, now)
+  def issue_tooltips(now)
     wip_issues.map{ |i| render_issue_tooltip(i, now) }
+  end
+
+  def issue_styles(now)
+    wip_issues.map do |issue|
+      if issue.age(@params.aging_type, now) < percentiles[70]
+        '#03a9f4'
+      elsif issue.age(@params.aging_type, now) < percentiles[85]
+        '#ff9800'
+      else
+        '#f44336'
+      end
+    end
   end
 
   def load_template(file_name)
@@ -92,11 +111,13 @@ class JiraTeamMetrics::AgingWipChart
   end
 
   def wip_issues
-    issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
-    JiraTeamMetrics::MqlInterpreter.new
-        .eval(@params.to_query, @board, issues)
-        .rows
-        .sort_by { |issue| issue.started_time }
+    @wip_issues ||= begin
+      issues = @board.wip_issues.select { |issue| issue.status_category == 'In Progress' }
+      JiraTeamMetrics::MqlInterpreter.new
+          .eval(@params.to_query, @board, issues)
+          .rows
+          .sort_by { |issue| -issue.age(@params.aging_type, DateTime.now) }
+    end
   end
 
   def completed_issues
@@ -105,12 +126,12 @@ class JiraTeamMetrics::AgingWipChart
     JiraTeamMetrics::MqlInterpreter.new
         .eval(query_builder.query, @board, @board.completed_issues(@params.date_range))
         .rows
-        .sort_by { |issue| issue.cycle_time }
+        .sort_by { |issue| -issue.age(@params.aging_type, DateTime.now) }
   end
 
   def percentiles
     @percentiles ||= begin
-      cycle_times = completed_issues.map{ |issue| issue.cycle_time }
+      cycle_times = completed_issues.map{ |issue| issue.age(@params.aging_type, DateTime.now) }
       {
         50 => cycle_times.percentile(50),
         70 => cycle_times.percentile(70),

@@ -3,12 +3,12 @@
 
 <h1>Aging Work In Progress</h1>
 
-<%= render partial: 'partials/search_form' %>
+<%= render partial: 'partials/search_form', locals: { show_aging_type: true } %>
 
 <div id="aging-wip-chart">
 <%= render partial: 'partials/chart', locals: {
     chart_id: generate_id,
-    chart_type: 'Timeline',
+    chart_type: 'BarChart',
     url: "#{board_api_path(@board)}/aging_wip.json"
 } %>
 </div>

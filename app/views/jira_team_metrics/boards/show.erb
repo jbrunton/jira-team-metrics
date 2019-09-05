@@ -64,6 +64,12 @@
           <td>
             <span class="ui blue horizontal label">Beta</span>
             See which in progress issues are aging into higher cycle time percentiles
+            <div class="ui small borderless menu">
+              <div class="header item">Quick Links</div>
+              <%= link_to('Time In Progress', "#{reports_path(@board)}/aging_wip?aging_type=in+progress", class: 'item') %>
+              <%= link_to('Age Since Started', "#{reports_path(@board)}/aging_wip?aging_type=since+started", class: 'item') %>
+              <%= link_to('Age Since Created', "#{reports_path(@board)}/aging_wip?aging_type=since+created", class: 'item') %>
+            </div>
           </td>
         </tr>
         <tr>
@@ -78,6 +84,21 @@
               <div class="header item">Quick Links</div>
               <%= link_to('Issues by Month', @issue_throughput_ql, class: 'item') %>
               <%= link_to('Epics by Month', @epic_throughput_ql, class: 'item') %>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="four wide">
+            <a href="<%= reports_path(@board) %>/cfd">CFD</a>
+          </td>
+          <td>
+            <span class="ui blue horizontal label">Beta</span>
+            Cumulative flow diagrams
+
+            <div class="ui small borderless menu">
+              <div class="header item">Quick Links</div>
+              <%= link_to('Issues CFD', @issues_cfd_ql, class: 'item') %>
+              <%= link_to('Epics CFD', @epics_cfd_ql, class: 'item') %>
             </div>
           </td>
         </tr>

@@ -22,6 +22,10 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
     render json: chart_data_for(:throughput)
   end
 
+  def cfd
+    render json: chart_data_for(:cfd)
+  end
+
   def progress_cfd
     @scope = @board.issues.find_by(key: params[:issue_key]).issues(recursive: true).select{ |issue| issue.is_scope? }
     if @report_params.team
@@ -49,22 +53,14 @@ class JiraTeamMetrics::ApiController < JiraTeamMetrics::ApplicationController
         begin
           render json: chart_data_for(:query)
         rescue Parslet::ParseFailed => e
-          render status: :bad_request, json: {
-            error: 'syntax_error',
-            message: 'Syntax Error',
-            details: e.parse_failure_cause.ascii_tree
-          }
+          syntax_error(e)
+        rescue JiraTeamMetrics::ParserError => e
+          parser_error(e)
         end
       end
       format.csv do
         data_table = chart_for(:query).data_table
-        csv_string = CSV.generate do |csv|
-          csv << data_table.columns
-          data_table.rows.each do |row|
-            csv << row
-          end
-        end
-        render plain: csv_string
+        render plain: data_table.to_csv
       end
     end
   end
@@ -77,5 +73,21 @@ private
 
   def chart_data_for(chart_name)
     chart_for(chart_name).json_data
+  end
+
+  def syntax_error(exception)
+    render status: :bad_request, json: {
+      error: 'syntax_error',
+      message: 'Syntax Error',
+      details: exception.parse_failure_cause.ascii_tree
+    }
+  end
+
+  def parser_error(exception)
+    render status: :bad_request, json: {
+      error: 'runtime_error',
+      message: 'Runtime Error',
+      details: exception.message
+    }
   end
 end

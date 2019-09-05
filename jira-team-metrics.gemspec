@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency "pickadate-rails"
   s.add_dependency "gretel"
   s.add_dependency "humanize"
+  s.add_dependency "config"
 
   s.add_development_dependency "sqlite3", '1.3.13'
   s.add_development_dependency "byebug"

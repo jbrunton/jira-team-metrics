@@ -54,7 +54,7 @@ RSpec.describe JiraTeamMetrics::BoardsController, type: :controller do
 
     context "with invalid params" do
       let(:new_attributes) {
-        { config_string: "sync:\n  months: 6\ninvalid: attribute" }
+        { config_string: "sync:\n  months: 'invalid value'" }
       }
 
       it "doesn't update the board" do

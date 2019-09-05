@@ -12,6 +12,10 @@ RSpec.describe JiraTeamMetrics::Eval::MqlTable do
       expect(table.select_field('Name', 0)).to eq('Alice')
       expect(table.select_field('Age', 1)).to eq(28)
     end
+
+    it "raises an error if the column doesn't exist" do
+      expect { table.select_field('Address', 0) }.to raise_error(JiraTeamMetrics::ParserError, 'Unknown field: Address')
+    end
   end
 
   context "#select_rows" do

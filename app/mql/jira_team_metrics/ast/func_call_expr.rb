@@ -14,6 +14,6 @@ class JiraTeamMetrics::AST::FuncCallExpr
   end
 
   def expr_name
-    "#{@func_name}()"
+    "#{@func_name}"
   end
 end

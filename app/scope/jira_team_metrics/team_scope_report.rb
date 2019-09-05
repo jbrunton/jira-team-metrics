@@ -162,19 +162,22 @@ private
   end
 
   def build_predicted_scope_for(epic)
-    return if @team == 'None'
-
-    if add_predicted_scope?(epic)
-      predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
-      predicted_size ||= @predicted_epic_scope unless @predicted_epic_scope.nil?
-      predicted_size.round.times { |k| @scope << build_predicted_story_for(epic, k) } unless predicted_size.nil?
+    predicted_issues_count_for(epic).times do |k|
+      @scope << build_predicted_story_for(epic, k)
     end
   end
 
-  def add_predicted_scope?(epic)
-    return false if @team == 'None'
-    issues_for_team = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team)
-    issues_for_team.empty? && epic.status_category != 'Done'
+  def predicted_issues_count_for(epic)
+    return 0 if @team == 'None'
+
+    actual_size = JiraTeamMetrics::TeamScopeReport.issues_for_team(epic.issues(recursive: false), @team).count
+    predicted_size = @project.metric_adjustments.override_for(@short_team_name, epic) unless @project.metric_adjustments.nil?
+
+    if predicted_size.nil? && actual_size == 0 && epic.status_category != 'Done'
+      predicted_size = @predicted_epic_scope
+    end
+
+    [(predicted_size || 0) - actual_size, 0].max.round
   end
 
   def build_predicted_story_for(epic, k)

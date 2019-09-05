@@ -24,6 +24,7 @@ class JiraTeamMetrics::Eval::MqlTable
       JiraTeamMetrics::IssueFieldResolver.new(row).resolve(col_name)
     else
       col_index = columns.index(col_name)
+      raise JiraTeamMetrics::ParserError, "Unknown field: #{col_name}" if col_index.nil?
       row[col_index]
     end
   end

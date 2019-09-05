@@ -28,6 +28,19 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
     end
   end
 
+  def refresh
+    @project = @board.issues.find_by(key: params[:issue_key])
+    JiraTeamMetrics::RefreshReportJob.perform_now(@board.jira_id, @project.key, @domain)
+    redirect_to project_report_path(@project)
+  end
+
+  def project_histories
+    @project = @board.issues.find_by(key: params[:issue_key])
+    @report_fragments = JiraTeamMetrics::ReportFragment.includes(:sync_history)
+      .fragment_histories(@board.jira_id, report_key, 'team_dashboard')
+      .map { |fragment| fragment }
+  end
+
   def epics
     @report_options = @board.config.reports.epics
     @sections = sections_for(@board.epics, @report_options)
@@ -45,6 +58,9 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def aging_wip
+  end
+
+  def cfd
   end
 
   def query
@@ -86,14 +102,19 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   helper_method :epic_cfd_data
   helper_method :team_dashboard_data
   helper_method :team_dashboard_data_for
+  helper_method :team_dashboard_timestamp
   helper_method :project_report
 
   def project_cfd_data(cfd_type)
-    JiraTeamMetrics::ReportFragment.fetch_contents(@project.board, report_key, "cfd:#{cfd_type}")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@board.jira_id, report_key, "cfd:#{cfd_type}", params[:history_id])
   end
 
   def epic_cfd_data
     JiraTeamMetrics::ScopeCfdBuilder.new(@epic).build
+  end
+
+  def team_dashboard_timestamp
+    JiraTeamMetrics::ReportFragment.fetch(@board.jira_id, report_key_for(@project), "team_dashboard", params[:history_id]).updated_at
   end
 
   def team_dashboard_data
@@ -101,7 +122,7 @@ class JiraTeamMetrics::ReportsController < JiraTeamMetrics::ApplicationControlle
   end
 
   def team_dashboard_data_for(project)
-    JiraTeamMetrics::ReportFragment.fetch_contents(project.board, report_key_for(project), "team_dashboard")
+    JiraTeamMetrics::ReportFragment.fetch_contents(@board.jira_id, report_key_for(project), "team_dashboard", params[:history_id])
   end
 
   def report_key
@@ -153,9 +174,7 @@ private
   end
 
   def build_quicklinks
-    query = JiraTeamMetrics::QueryBuilder.new("project = '#{@project.key}' and Teams includes '#{@team}'", :mql)
-        .and(@board.config.reports.throughput.default_query(@domain))
-        .query
+    query = "project = '#{@project.key}' and Teams includes '#{@team}'"
     opts = {
         from_date: @report.started_date.at_beginning_of_month,
         to_date: @report.completed_date.at_beginning_of_month + 2.months,
@@ -165,6 +184,8 @@ private
     epics_by_month_link = JiraTeamMetrics::QuicklinkBuilder.throughput_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
     issues_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.scatterplot_quicklink(@board, opts.merge(hierarchy_level: 'Scope'))
     epics_scatterplot_link = JiraTeamMetrics::QuicklinkBuilder.scatterplot_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
+    issues_cfd_link = JiraTeamMetrics::QuicklinkBuilder.cfd_quicklink(@board, opts.merge(hierarchy_level: 'Scope'))
+    epics_cfd_link = JiraTeamMetrics::QuicklinkBuilder.cfd_quicklink(@board, opts.merge(hierarchy_level: 'Epic'))
     {
       'Throughput Reports' => {
         'Issues by Month' => issues_by_month_link,
@@ -173,6 +194,10 @@ private
       'Cycle Time Reports' => {
         'Issue Cycle Times' => issues_scatterplot_link,
         'Epic Cycle Times' => epics_scatterplot_link
+      },
+      'CFD Reports' => {
+        'Issues CFD' => issues_cfd_link,
+        'Epics CFD' => epics_cfd_link
       }
     }
   end

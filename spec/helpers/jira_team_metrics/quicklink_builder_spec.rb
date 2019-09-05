@@ -34,8 +34,23 @@ RSpec.describe JiraTeamMetrics::QuicklinkBuilder do
       expect(params).to eq({
           'from_date' => '2018-04-01',
           'to_date' => '2018-10-01',
-          'hierarchy_level' => 'Scope',
-          'step_interval' => 'Monthly'
+          'step_interval' => 'Monthly',
+          'hierarchy_level' => 'Scope'
+      })
+    end
+
+    it "builds default cfd reports" do
+      builder = JiraTeamMetrics::QuicklinkBuilder.new(report_name: 'cfd', hierarchy_level: 'Scope')
+        .set_defaults(today)
+
+      uri = URI(builder.build_for(board))
+
+      expect(uri.path).to eq("#{reports_path(board)}/cfd")
+      params = Rack::Utils.parse_nested_query(uri.query)
+      expect(params).to eq({
+        'from_date' => '2018-09-16',
+        'to_date' => '2018-10-16',
+        'hierarchy_level' => 'Scope'
       })
     end
   end

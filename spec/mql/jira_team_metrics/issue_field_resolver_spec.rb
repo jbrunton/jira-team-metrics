@@ -15,7 +15,8 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       fields: {'MyField' => 'foo'},
       labels: ['foo'],
       started_time: started_time,
-      completed_time: completed_time)
+      completed_time: completed_time,
+      jira_project: 'MYPROJ')
   end
 
   let(:resolver) { JiraTeamMetrics::IssueFieldResolver.new(issue) }
@@ -29,6 +30,7 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
       expect(resolver.resolve('statusCategory')).to eq('In Progress')
       expect(resolver.resolve('hierarchyLevel')).to eq('Scope')
       expect(resolver.resolve('labels')).to eq(['foo'])
+      expect(resolver.resolve('jiraProject')).to eq('MYPROJ')
     end
 
     it "resolves Jira fields" do
@@ -50,6 +52,10 @@ RSpec.describe JiraTeamMetrics::IssueFieldResolver do
 
     it "resolves cycle time" do
       expect(resolver.resolve('cycleTime')).to eq(31)
+    end
+
+    it "raises an error if the field doesn't exist" do
+      expect { resolver.resolve('Address') }.to raise_error(JiraTeamMetrics::ParserError, 'Unknown field: Address')
     end
   end
 end

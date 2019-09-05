@@ -25,6 +25,32 @@ RSpec.describe JiraTeamMetrics::MqlStatementParser do
     })
   end
 
+  it "parses select-from statements with arbitrary expressions" do
+    expect(parser.parse('select key + 1 from issues()')).to eq({
+      stmt: {
+        select: {
+          select_clause: {
+            exprs: [{
+              lhs: { field: { ident: 'key' } },
+              op: '+',
+              rhs: { int: '1' }
+            }]
+          }
+        },
+        from: {
+          from_clause: {
+            data_source: {
+              fun: { ident: 'issues', args: [] }
+            }
+          }
+        },
+        where: nil,
+        group: nil,
+        sort: nil
+      }
+    })
+  end
+
   it "parses select-from-sort statements" do
     expect(parser.parse('select 1 from issues() sort by 1 asc')).to eq({
       stmt: {

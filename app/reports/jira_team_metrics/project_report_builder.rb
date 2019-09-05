@@ -1,6 +1,7 @@
 class JiraTeamMetrics::ProjectReportBuilder < JiraTeamMetrics::ReportBuilder
-  def initialize(project)
+  def initialize(project, sync_history_id)
     super(project.board,
+      sync_history_id,
       "project/#{project.key}",
       %w(team_dashboard cfd:raw cfd:trained))
     @project = project

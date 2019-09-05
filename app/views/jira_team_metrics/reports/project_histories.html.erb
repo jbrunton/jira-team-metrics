@@ -1,0 +1,49 @@
+<% breadcrumb :project_histories, @project %>
+<% content_for :title, "#{projects_name_singular} Forecast Histories: #{@project.key} - #{@board.name}" %>
+
+<table class="ui table">
+  <thead>
+    <tr>
+      <th class="center aligned">Date</th>
+      <th class="center aligned">Remaining</th>
+      <th class="center aligned">Predicted</th>
+      <th class="center aligned">Completed</th>
+      <th></th>
+      <th class="center aligned">Rolling Throughput</th>
+      <th class="center aligned">History-based Throughput</th>
+      <th></th>
+    </tr>
+  </thead>
+<% @report_fragments.each_with_index do |fragment, index| %>
+  <tbody>
+    <tr>
+      <td><%= pretty_print_time(fragment.sync_history.updated_at) %></td>
+
+      <td class="right aligned">
+        <%= fragment.contents[:totals][:remaining_scope] %>
+      </td>
+      <td>
+        [<%= fragment.contents[:totals][:predicted_scope] %>]
+      </td>
+      <td class="right aligned">
+        <%= fragment.contents[:totals][:completed_scope] %>
+      </td>
+      <td>
+        (<%= pretty_print_number(fragment.contents[:totals][:progress_percent], round: true) %>%)
+      </td>
+      <td class="right aligned highlight">
+        <%= pretty_print_number(fragment.contents[:totals][:rolling_throughput] * 7) %>
+      </td>
+      <td class="right aligned">
+        <%= pretty_print_number(fragment.contents[:totals][:predicted_throughput] * 7) %>
+      </td>
+      <% if index == 0 %>
+        <td><%= link_to 'Report', project_report_path(@project) %></td>
+      <% else %>
+        <td><%= link_to 'Report', "#{project_report_path(@project)}?history_id=#{fragment.sync_history.id}" %></td>
+      <% end  %>
+    </tr>
+  </tbody>
+<% end %>
+</table>
+

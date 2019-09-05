@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_180050) do
+ActiveRecord::Schema.define(version: 2019_06_08_102303) do
 
   create_table "jira_team_metrics_boards", force: :cascade do |t|
     t.string "jira_id"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 2018_12_27_180050) do
     t.string "issue_type_icon"
     t.string "global_rank"
     t.string "resolution"
+    t.string "jira_project"
     t.index ["board_id"], name: "index_jira_team_metrics_issues_on_board_id"
     t.index ["epic_id"], name: "index_jira_team_metrics_issues_on_epic_id"
     t.index ["parent_id"], name: "index_jira_team_metrics_issues_on_parent_id"
@@ -78,13 +79,13 @@ ActiveRecord::Schema.define(version: 2018_12_27_180050) do
   end
 
   create_table "jira_team_metrics_report_fragments", force: :cascade do |t|
-    t.integer "board_id"
     t.string "report_key"
     t.string "fragment_key"
     t.text "contents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["board_id"], name: "index_jira_team_metrics_report_fragments_on_board_id"
+    t.integer "sync_history_id"
+    t.index ["sync_history_id"], name: "index_jira_team_metrics_report_fragments_on_sync_history_id"
   end
 
   create_table "jira_team_metrics_sync_histories", force: :cascade do |t|

@@ -45,6 +45,11 @@ crumb :project do |project|
   parent :projects, project.board
 end
 
+crumb :project_histories do |project|
+  link project.key, project_report_path(project)
+  parent :projects, project.board
+end
+
 crumb :project_scope_report do |project, team|
   link "#{team} Scope", project_scope_report_path(project, team)
   parent :project, project

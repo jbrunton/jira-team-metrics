@@ -4,7 +4,6 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   belongs_to :domain
   has_many :issues, :dependent => :delete_all
   has_many :filters, :dependent => :delete_all
-  has_many :report_fragments, :dependent => :delete_all
 
   scope :search, ->(query) {
     where('lower(name) LIKE ?', "%#{query.downcase}%")
@@ -57,7 +56,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def training_board
-    if config.predictive_scope
+    if config.predictive_scope.board_id
       JiraTeamMetrics::Board.find_by(jira_id: config.predictive_scope.board_id)
     else
       nil
@@ -65,7 +64,7 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
   end
 
   def training_projects
-    if config.predictive_scope
+    if config.predictive_scope.board_id
       training_board.projects
     else
       []
@@ -94,6 +93,10 @@ class JiraTeamMetrics::Board < JiraTeamMetrics::ApplicationRecord
       end
       DateTime.new(new_year, new_month)
     end
+  end
+
+  def to_s
+    "Board(name=\"#{name}\", jira_id=#{jira_id})"
   end
 
 private
