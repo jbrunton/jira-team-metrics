@@ -204,7 +204,7 @@
         return `${this.downloadBaseUrl}?${this.queryParams}`;
       },
       queryParams: function() {
-        return `query=${encodeURI(this.query)}&from_date=${this.fromDate}&to_date=${this.toDate}`;
+        return `query=${encodeURIComponent(this.query)}&from_date=${this.fromDate}&to_date=${this.toDate}`;
       }
     },
     watch: {
