@@ -30,14 +30,14 @@
 </template>
 
 <script>
-  export default {
-    name: 'Domain',
-    data () {
-      return {
-        msg: 'Jira Team Metrics / Domain'
-      }
+export default {
+  name: 'Domain',
+  data () {
+    return {
+      msg: 'Jira Team Metrics / Domain'
     }
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
