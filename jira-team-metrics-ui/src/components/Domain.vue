@@ -1,85 +1,31 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+  <div class="container">
+    <div class="columns">
+      <div class="column is-three-fifths">is-four-fifths</div>
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              Domain Status
+            </p>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+              <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
+              <br>
+              <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <a href="#" class="card-footer-item">Sync</a>
+            <a href="#" class="card-footer-item">Config</a>
+            <a href="#" class="card-footer-item">Metadata</a>
+            <a href="#" class="card-footer-item">Sync History</a>
+          </footer>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
