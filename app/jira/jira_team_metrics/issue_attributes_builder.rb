@@ -66,7 +66,7 @@ private
   def fields
     @fields ||= begin
       fields = {}
-      (@domain.fields + ['Global Rank']).each do |field|
+      @domain.fields.each do |field|
         field_id = field['id']
         field_value = @json['fields'][field_id]
         fields[field['name']] =
@@ -114,13 +114,13 @@ private
       issue_links = @json['fields']['issuelinks'].map do |link|
         if link['inwardIssue']
           {
-            inward_link_type: link['type']['inward'],
-            issue: link_hash_for(link['inwardIssue'])
+            'inward_link_type' => link['type']['inward'],
+            'issue' => link_hash_for(link['inwardIssue'])
           }
         elsif link['outwardIssue']
           {
-            outward_link_type: link['type']['outward'],
-            issue: link_hash_for(link['outwardIssue'])
+            'outward_link_type' => link['type']['outward'],
+            'issue' => link_hash_for(link['outwardIssue'])
           }
         end
       end
@@ -130,9 +130,9 @@ private
 
   def link_hash_for(issue_hash)
     {
-      key: issue_hash['key'],
-      issue_type: issue_hash['fields']['issuetype']['name'],
-      summary: issue_hash['fields']['summary']
+      'key' => issue_hash['key'],
+      'issue_type' => issue_hash['fields']['issuetype']['name'],
+      'summary' => issue_hash['fields']['summary']
     }
   end
 end

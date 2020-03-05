@@ -56,7 +56,7 @@ class JiraTeamMetrics::JiraClient
     url = "/rest/api/2/field"
     response = request(url)
     response.select{ |field| field['schema'] }.map do |field|
-      field.slice('id', 'name').merge(type: field['schema']['type'])
+      field.slice('id', 'name').merge('type' => field['schema']['type'])
     end
   end
 

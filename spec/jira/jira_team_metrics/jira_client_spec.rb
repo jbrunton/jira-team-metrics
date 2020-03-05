@@ -51,7 +51,7 @@ RSpec.describe JiraTeamMetrics::JiraClient do
         to_return(status: 200, body: fields_response)
       fields = client.get_fields
       expect(fields).to eq([
-        {'id'=>'customfield_12345', 'name'=>'My Field', :type=>'string'}
+        {'id'=>'customfield_12345', 'name'=>'My Field', 'type' => 'string'}
       ])
     end
   end
