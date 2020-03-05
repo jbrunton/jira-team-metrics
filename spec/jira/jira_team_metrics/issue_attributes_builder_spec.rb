@@ -70,19 +70,19 @@ RSpec.describe JiraTeamMetrics::IssueAttributesBuilder do
     it "sets the links" do
       expect(attrs['links']).to eq([
         {
-          outward_link_type: 'blocks',
-          issue: {
-            key: 'ISSUE-2',
-            issue_type: 'Story',
-            summary: 'Blocked Issue'
+          'outward_link_type' => 'blocks',
+          'issue' => {
+            'key' => 'ISSUE-2',
+            'issue_type' => 'Story',
+            'summary' => 'Blocked Issue'
           }
         },
         {
-          inward_link_type: 'is blocked by',
-          issue: {
-            key: 'ISSUE-3',
-            issue_type: 'Story',
-            summary: 'Blocking Issue'
+          'inward_link_type' => 'is blocked by',
+          'issue' => {
+            'key' => 'ISSUE-3',
+            'issue_type' => 'Story',
+            'summary' => 'Blocking Issue'
           }
         }
       ])
