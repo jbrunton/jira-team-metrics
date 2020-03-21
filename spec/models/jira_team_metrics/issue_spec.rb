@@ -47,6 +47,14 @@ RSpec.describe JiraTeamMetrics::Issue do
     }
   }
 
+  let (:released_transition) {
+    {
+        'date' => '2017-01-04T18:00:00.000-0000',
+        'toStatus' => 'Done',
+        'toStatusCategory' => 'Done'
+    }
+  }
+
   let (:reopened_transition) {
     {
       'date' => '2017-01-04T18:00:00.000-0000',
@@ -190,6 +198,11 @@ RSpec.describe JiraTeamMetrics::Issue do
       it "returns nil if the issue was reopened" do
         issue.transitions << reopened_transition
         expect(issue.completed_time).to eq(nil)
+      end
+
+      it "returns the time of the first completed transition if the issue moves through several done transitions" do
+        issue.transitions << released_transition
+        expect(issue.completed_time).to eq(DateTime.parse(done_transition['date']))
       end
     end
 
