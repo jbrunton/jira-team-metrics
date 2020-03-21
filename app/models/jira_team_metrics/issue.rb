@@ -204,7 +204,9 @@ private
 
   def jira_completed_time
     if transitions.any? && transitions.last['toStatusCategory'] == 'Done'
-      DateTime.parse(transitions.last['date'])
+      last_done_transitions = transitions.reverse.take_while { |transition| transition['toStatusCategory'] == 'Done' }
+      first_done_transition = last_done_transitions.last
+      DateTime.parse(first_done_transition['date'])
     end
   end
 
