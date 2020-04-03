@@ -15,7 +15,9 @@ class JiraTeamMetrics::Fn::DataSource
   end
 
   def self.register(ctx)
-    projects_function_name = projects_path_plural(ctx.board.domain)
+    unless JiraTeamMetrics::Domain.get_active_instance.config.projects.issue_type.nil?
+      projects_function_name = projects_path_plural(ctx.board.domain)
+    end
     ctx.register_function('issues()', JiraTeamMetrics::Fn::DataSource.new)
     ctx.register_function('issues(String)', JiraTeamMetrics::Fn::DataSource.new)
     ctx.register_function('scope()', JiraTeamMetrics::Fn::DataSource.new(:scope))
