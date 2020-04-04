@@ -9,7 +9,7 @@
 require 'factory_bot_rails'
 include FactoryBot::Syntax::Methods
 
-puts "running sb:seeds"
+srand(123)
 
 FactoryBot.definition_file_paths = %w{spec/factories}
 FactoryBot.find_definitions
@@ -24,7 +24,7 @@ def ensure_board(name)
   board = domain.boards.find_by(jira_id: jira_id)
 
   if board.nil?
-    board = build(:board, name: name, domain: domain)
+    board = build(:board, name: name, domain: domain, jira_id: jira_id)
   end
 
   yield(board) if block_given?
@@ -32,8 +32,19 @@ def ensure_board(name)
   board.save
 end
 
+def create_completed_issue(board)
+  started_time = DateTime.now - (rand * 10 + 5).days
+  completed_time = started_time + (rand * 10).days
+  issue = create(:issue, board: board, started_time: started_time, completed_time: completed_time)
+  puts "Created issue #{issue.key}, completed: #{issue.completed_time}, cycle time: #{issue.cycle_time}"
+end
+
 ensure_board('Empty Board')
 
 ensure_board('Single Issue Board') do |board|
-  board.issues << create(:issue, board: board) if board.issues.empty?
+  create_completed_issue(board) if board.issues.empty?
+end
+
+ensure_board('Five Issue Board') do |board|
+  5.times { create_completed_issue(board) } if board.issues.empty?
 end
