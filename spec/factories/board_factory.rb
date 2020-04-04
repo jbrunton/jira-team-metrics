@@ -6,5 +6,6 @@ FactoryBot.define do
     config_string { "default_query: filter = 'MyFilter'" }
     query 'Project = MyProject'
     active true
+    last_synced DateTime.now
   end
 end
