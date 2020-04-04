@@ -50,6 +50,8 @@ class JiraTeamMetrics::Domain < JiraTeamMetrics::ApplicationRecord
   end
 
   def self.get_active_instance
+    # Notes that this won't create a domain if one doesn't exist, since validation will fail (on a missing url).
+    # However, this is typically fine - we can still show the domain page in order to let the user sync it.
     @active_domain ||= JiraTeamMetrics::Domain.first_or_create(active: true)
   end
 

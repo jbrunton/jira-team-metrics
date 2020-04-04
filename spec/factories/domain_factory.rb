@@ -14,6 +14,7 @@ FactoryBot.define do
       if domain.config_string.nil?
         domain.config_string = <<~CONFIG
           url: https://jira.example.com
+          name: Test Domain
           projects:
             issue_type: #{evaluator.project_issue_type}
             inward_link_type: is included in
