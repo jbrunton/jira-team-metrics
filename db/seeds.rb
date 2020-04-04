@@ -9,7 +9,7 @@
 require 'factory_bot_rails'
 include FactoryBot::Syntax::Methods
 
-srand(123)
+srand(125)
 
 FactoryBot.definition_file_paths = %w{spec/factories}
 FactoryBot.find_definitions
@@ -33,10 +33,9 @@ def ensure_board(name)
 end
 
 def create_completed_issue(board)
-  started_time = DateTime.now - (rand * 10 + 5).days
-  completed_time = started_time + (rand * 10).days
-  issue = create(:issue, board: board, started_time: started_time, completed_time: completed_time)
-  puts "Created issue #{issue.key}, completed: #{issue.completed_time}, cycle time: #{issue.cycle_time}"
+  started_time = DateTime.now - (rand * 12 + 12).days
+  completed_time = started_time + (rand * 12).days
+  create(:issue, board: board, started_time: started_time, completed_time: completed_time)
 end
 
 ensure_board('Empty Board')
@@ -47,4 +46,8 @@ end
 
 ensure_board('Five Issue Board') do |board|
   5.times { create_completed_issue(board) } if board.issues.empty?
+end
+
+ensure_board('Twenty Issue Board') do |board|
+  20.times { create_completed_issue(board) } if board.issues.empty?
 end
