@@ -105,6 +105,8 @@ private
           'toStatus' => toStatus,
           'toStatusCategory' => @domain.status_category_for(toStatus)
         }
+      end.sort_by do |transition|
+        DateTime.parse(transition['date'])
       end
     end
   end
