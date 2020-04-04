@@ -28,7 +28,13 @@ private
 
   def clean(query)
     if /ORDER BY/.match(query)
-      /(.*)(\sORDER BY.*)/.match(query)[1]
+      # remove any ordering clauses, as we may wish to AND other clauses to the query (and order doesn't matter for
+      # purposes of syncing)
+      if query.upcase.start_with?('ORDER BY')
+        ''
+      else
+        /(.*)(\sORDER BY.*)/.match(query)[1]
+      end
     else
       query
     end
