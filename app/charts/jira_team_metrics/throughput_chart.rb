@@ -20,7 +20,8 @@ class JiraTeamMetrics::ThroughputChart
         .group(if_nil: 0, &method(:group_by))
         .sort_by('completed_time')
         .insert_if_missing(@params.date_range.to_a(@params.step_interval), [0], &method(:group_by))
-        .add_percentiles('Count', [25, 50, 75])
+
+    data_table.add_percentiles('Count', [25, 50, 75]) if issues.count >= 5
 
     data_table
   end

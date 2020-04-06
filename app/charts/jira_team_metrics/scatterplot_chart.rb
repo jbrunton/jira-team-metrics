@@ -14,7 +14,8 @@ class JiraTeamMetrics::ScatterplotChart
       .pick(:completed_time, :cycle_time, :key)
       .build
       .sort_by('completed_time')
-      .add_percentiles('cycle_time', [50, 70, 85, 95])
+
+    data_table.add_percentiles('cycle_time', [50, 70, 85, 95]) if filtered_issues.count >= 5
 
     data_table
   end
