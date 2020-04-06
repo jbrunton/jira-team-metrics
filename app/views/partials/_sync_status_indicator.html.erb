@@ -1,10 +1,10 @@
 <script>
   (function() {
-    var channelOpts = {
+    const channelOpts = {
       channel: "<%= channel %>"
     };
     <% if defined?(jira_id) %>
-      channelOpts.jira_id = <%= jira_id %>;
+      channelOpts.jira_id = '<%= jira_id %>';
     <% end %>
     App.cable.subscriptions.create(channelOpts, {
       received: statusReceived

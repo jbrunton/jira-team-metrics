@@ -13,12 +13,13 @@ describe JiraTeamMetrics::ThroughputChart do
 
   describe "#data_table" do
     context "when @params = 'Daily'" do
-      it "returns a table with a moving weekly average" do
+      it "returns a table with percentiles" do
         board = create(:board)
         create(:issue, board: board, started_time: date, completed_time: date + 1)
         create(:issue, board: board, started_time: date + 2, completed_time: date + 3)
         create(:issue, board: board, started_time: date + 7, completed_time: date + 8)
         create(:issue, board: board, started_time: date + 21, completed_time: date + 22)
+        create(:issue, board: board, started_time: date + 22, completed_time: date + 23)
 
         data_table = JiraTeamMetrics::ThroughputChart.new(board, report_params).data_table
 
@@ -28,10 +29,10 @@ describe JiraTeamMetrics::ThroughputChart do
             [date,        2, nil, nil, nil],
             [date + 7,    1, nil, nil, nil],
             [date + 14,   0, nil, nil, nil],
-            [date + 21,   1, nil, nil, nil],
+            [date + 21,   2, nil, nil, nil],
             [date + 28,   0, nil, nil, nil],
-            [date,      nil, 1.0, 1.0, 0.0],
-            [date + 28, nil, 1.0, 1.0, 0.0]
+            [date,      nil, 2.0, 1.0, 0.0],
+            [date + 28, nil, 2.0, 1.0, 0.0]
           ]
         ))
       end
